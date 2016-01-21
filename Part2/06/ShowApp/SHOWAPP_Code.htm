@@ -1,0 +1,105 @@
+<HTML><HEAD>
+<TITLE>Project: SHOWAPP.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: SHOWAPP.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#SHOWAPP.DPR> SHOWAPP.DPR</A>
+<LI> <A HREF=#SHOWFORM.PAS> SHOWFORM.PAS</A>
+<LI> <A HREF=#SHOWFORM.DFM> SHOWFORM.DFM</A>
+</UL>
+<HR>
+<A NAME=SHOWAPP.DPR><H3>SHOWAPP.DPR</H3></A>
+
+<PRE>
+<B>program</B> ShowApp;
+
+<B>uses</B>
+  Forms,
+  ShowForm <B>in</B> <I>'ShowForm.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=SHOWFORM.PAS><H3>SHOWFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> ShowForm;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    Button1: TButton;
+    <B>procedure</B> Button1Click(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.Button1Click(Sender: TObject);
+<B>var</B>
+  OldStyle: Integer;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// add border and caption to the app window</I></FONT>
+  OldStyle := GetWindowLong (
+    Application.Handle, gwl_Style);
+  SetWindowLong (Application.Handle, gwl_Style,
+    OldStyle <B>or</B> ws_ThickFrame <B>or</B> ws_Caption);
+  <FONT COLOR="#000080"><I>// set the size of the app window</I></FONT>
+  SetWindowPos (Application.Handle,
+    0, 0, 0, 200, 100,
+    swp_NoMove <B>or</B> swp_NoZOrder);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=SHOWFORM.DFM><H3>SHOWFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 260
+  Top = 206
+  Width = 161
+  Height = 87
+  Caption = <I>'Show App'</I>
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Button1: TButton
+    Left = 40
+    Top = 17
+    Width = 73
+    Height = 25
+    Caption = <I>'Show !'</I>
+    TabOrder = 0
+    OnClick = Button1Click
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

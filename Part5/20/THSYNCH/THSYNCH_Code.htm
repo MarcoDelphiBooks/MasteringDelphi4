@@ -1,0 +1,757 @@
+<HTML><HEAD>
+<TITLE>Project: THSYNCH.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: THSYNCH.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#THSYNCH.DPR> THSYNCH.DPR</A>
+<LI> <A HREF=#SYNCFORM.PAS> SYNCFORM.PAS</A>
+<LI> <A HREF=#MUTEX.PAS> MUTEX.PAS</A>
+<LI> <A HREF=#PLAIN.PAS> PLAIN.PAS</A>
+<LI> <A HREF=#CRITSEC.PAS> CRITSEC.PAS</A>
+<LI> <A HREF=#TCRISECT.PAS> TCRISECT.PAS</A>
+<LI> <A HREF=#SYNCFORM.DFM> SYNCFORM.DFM</A>
+<LI> <A HREF=#MUTEX.DFM> MUTEX.DFM</A>
+<LI> <A HREF=#PLAIN.DFM> PLAIN.DFM</A>
+<LI> <A HREF=#CRITSEC.DFM> CRITSEC.DFM</A>
+<LI> <A HREF=#TCRISECT.DFM> TCRISECT.DFM</A>
+</UL>
+<HR>
+<A NAME=THSYNCH.DPR><H3>THSYNCH.DPR</H3></A>
+
+<PRE>
+<B>program</B> ThSynch;
+
+<B>uses</B>
+  Forms,
+  SyncForm <B>in</B> <I>'SyncForm.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>,
+  Mutex <B>in</B> <I>'Mutex.pas'</I> <FONT COLOR="#000080"><I>{Form4}</I></FONT>,
+  Plain <B>in</B> <I>'Plain.pas'</I> <FONT COLOR="#000080"><I>{Form2}</I></FONT>,
+  CritSec <B>in</B> <I>'CritSec.pas'</I> <FONT COLOR="#000080"><I>{Form3}</I></FONT>,
+  TCriSect <B>in</B> <I>'TCriSect.pas'</I> <FONT COLOR="#000080"><I>{Form5}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.CreateForm(TForm4, Form4);
+  Application.CreateForm(TForm2, Form2);
+  Application.CreateForm(TForm3, Form3);
+  Application.CreateForm(TForm5, Form5);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=SYNCFORM.PAS><H3>SYNCFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> SyncForm;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    Button1: TButton;
+    Button2: TButton;
+    Button3: TButton;
+    Button4: TButton;
+    <B>procedure</B> Button1Click(Sender: TObject);
+    <B>procedure</B> Button2Click(Sender: TObject);
+    <B>procedure</B> Button3Click(Sender: TObject);
+    <B>procedure</B> Button4Click(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<B>uses</B>
+  Plain, CritSec, Mutex, TCriSect;
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.Button1Click(Sender: TObject);
+<B>begin</B>
+  Form2.Show;
+<B>end</B>;
+
+<B>procedure</B> TForm1.Button2Click(Sender: TObject);
+<B>begin</B>
+  Form3.Show;
+<B>end</B>;
+
+<B>procedure</B> TForm1.Button3Click(Sender: TObject);
+<B>begin</B>
+  Form4.Show;
+<B>end</B>;
+
+<B>procedure</B> TForm1.Button4Click(Sender: TObject);
+<B>begin</B>
+  Form5.Show;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MUTEX.PAS><H3>MUTEX.PAS</H3></A>
+
+<PRE>
+<B>unit</B> Mutex;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls;
+
+<B>type</B>
+  TListThread = <B>class</B> (TThread)
+  <B>private</B>
+    Str: <B>String</B>;
+  <B>protected</B>
+    <B>procedure</B> AddToList;
+    <B>procedure</B> Execute; <B>override</B>;
+  <B>public</B>
+    LBox: TListBox;
+  <B>end</B>;
+
+  TForm4 = <B>class</B>(TForm)
+    BtnStart: TButton;
+    ListBox1: TListBox;
+    ListBox2: TListBox;
+    <B>procedure</B> BtnStartClick(Sender: TObject);
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> FormDestroy(Sender: TObject);
+  <B>private</B>
+    Th1, Th2: TListThread;
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form4: TForm4;
+  Letters: <B>string</B> = <I>'AAAAAAAAAAAAAAAAAAAA'</I>;
+  hMutex: THandle;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TListThread.AddToList;
+<B>begin</B>
+  <B>if</B> Assigned (LBox) <B>then</B>
+    LBox.Items.Add (Str);
+<B>end</B>;
+
+<B>procedure</B> TListThread.Execute;
+<B>var</B>
+  I, J, K: Integer;
+<B>begin</B>
+  <B>for</B> I := 0 <B>to</B> 50 <B>do</B>
+  <B>begin</B>
+    WaitForSingleObject (hMutex, INFINITE);
+    <B>for</B> J := 1 <B>to</B> 20 <B>do</B>
+      <B>for</B> K := 1 <B>to</B> 2601 <B>do</B> <FONT COLOR="#000080"><I>// useless repetition...</I></FONT>
+        <B>if</B> Letters [J] &lt; <I>'Z'</I> <B>then</B>
+          Letters [J] := Succ (Letters [J])
+        <B>else</B>
+          Letters [J] := <I>'A'</I>;
+    Str := Letters;
+    ReleaseMutex (hMutex);
+    Synchronize (AddToList);
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TForm4.BtnStartClick(Sender: TObject);
+<B>begin</B>
+  ListBox1.Clear;
+  ListBox2.Clear;
+  Th1 := TListThread.Create (True);
+  Th2 := TListThread.Create (True);
+  Th1.LBox := Listbox1;
+  Th2.LBox := Listbox2;
+  Th1.Resume;
+  Th2.Resume;
+<B>end</B>;
+
+<B>procedure</B> TForm4.FormCreate(Sender: TObject);
+<B>begin</B>
+  hMutex := CreateMutex (<B>nil</B>, false, <B>nil</B>);
+<B>end</B>;
+
+<B>procedure</B> TForm4.FormDestroy(Sender: TObject);
+<B>begin</B>
+  CloseHandle (hMutex);
+<B>end</B>;
+
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=PLAIN.PAS><H3>PLAIN.PAS</H3></A>
+
+<PRE>
+<B>unit</B> Plain;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls;
+
+<B>type</B>
+  TListThread = <B>class</B> (TThread)
+  <B>private</B>
+    Str: <B>String</B>;
+  <B>protected</B>
+    <B>procedure</B> AddToList;
+    <B>procedure</B> Execute; <B>override</B>;
+  <B>public</B>
+    LBox: TListBox;
+  <B>end</B>;
+
+  TForm2 = <B>class</B>(TForm)
+    ListBox1: TListBox;
+    ListBox2: TListBox;
+    BtnStart: TButton;
+    <B>procedure</B> BtnStartClick(Sender: TObject);
+  <B>private</B>
+    Th1, Th2: TListThread;
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form2: TForm2;
+  Letters: <B>string</B> = <I>'AAAAAAAAAAAAAAAAAAAA'</I>;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TListThread.AddToList;
+<B>begin</B>
+  <B>if</B> Assigned (LBox) <B>then</B>
+    LBox.Items.Add (Str);
+<B>end</B>;
+
+<B>procedure</B> TListThread.Execute;
+<B>var</B>
+  I, J, K: Integer;
+<B>begin</B>
+  <B>for</B> I := 0 <B>to</B> 50 <B>do</B>
+  <B>begin</B>
+    <B>for</B> J := 1 <B>to</B> 20 <B>do</B>
+      <B>for</B> K := 1 <B>to</B> 2601 <B>do</B> <FONT COLOR="#000080"><I>// useless repetition...</I></FONT>
+        <B>if</B> Letters [J] &lt; <I>'Z'</I> <B>then</B>
+          Letters [J] := Succ (Letters [J])
+        <B>else</B>
+          Letters [J] := <I>'A'</I>;
+    Str := Letters;
+    Synchronize (AddToList);
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TForm2.BtnStartClick(Sender: TObject);
+<B>begin</B>
+  ListBox1.Clear;
+  ListBox2.Clear;
+  Th1 := TListThread.Create (True);
+  Th2 := TListThread.Create (True);
+  Th1.LBox := Listbox1;
+  Th2.LBox := Listbox2;
+  Th1.Resume;
+  Th2.Resume;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=CRITSEC.PAS><H3>CRITSEC.PAS</H3></A>
+
+<PRE>
+<B>unit</B> CritSec;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls;
+
+<B>type</B>
+  TListThread = <B>class</B> (TThread)
+  <B>private</B>
+    Str: <B>String</B>;
+  <B>protected</B>
+    <B>procedure</B> AddToList;
+    <B>procedure</B> Execute; <B>override</B>;
+  <B>public</B>
+    LBox: TListBox;
+  <B>end</B>;
+
+  TForm3 = <B>class</B>(TForm)
+    BtnStart: TButton;
+    ListBox1: TListBox;
+    ListBox2: TListBox;
+    <B>procedure</B> BtnStartClick(Sender: TObject);
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> FormDestroy(Sender: TObject);
+  <B>private</B>
+    Th1, Th2: TListThread;
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form3: TForm3;
+  Letters: <B>string</B> = <I>'AAAAAAAAAAAAAAAAAAAA'</I>;
+  Critical1: TRTLCriticalSection;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TListThread.AddToList;
+<B>begin</B>
+  <B>if</B> Assigned (LBox) <B>then</B>
+    LBox.Items.Add (Str);
+<B>end</B>;
+
+<B>procedure</B> TListThread.Execute;
+<B>var</B>
+  I, J, K: Integer;
+<B>begin</B>
+  <B>for</B> I := 0 <B>to</B> 50 <B>do</B>
+  <B>begin</B>
+    EnterCriticalSection (Critical1);
+    <B>for</B> J := 1 <B>to</B> 20 <B>do</B>
+      <B>for</B> K := 1 <B>to</B> 2601 <B>do</B> <FONT COLOR="#000080"><I>// useless repetition...</I></FONT>
+        <B>if</B> Letters [J] &lt; <I>'Z'</I> <B>then</B>
+          Letters [J] := Succ (Letters [J])
+        <B>else</B>
+          Letters [J] := <I>'A'</I>;
+    Str := Letters;
+    LeaveCriticalSection (Critical1);
+    Synchronize (AddToList);
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TForm3.BtnStartClick(Sender: TObject);
+<B>begin</B>
+  ListBox1.Clear;
+  ListBox2.Clear;
+  Th1 := TListThread.Create (True);
+  Th2 := TListThread.Create (True);
+  Th1.LBox := Listbox1;
+  Th2.LBox := Listbox2;
+  Th1.Resume;
+  Th2.Resume;
+<B>end</B>;
+
+<B>procedure</B> TForm3.FormCreate(Sender: TObject);
+<B>begin</B>
+  InitializeCriticalSection (Critical1);
+<B>end</B>;
+
+<B>procedure</B> TForm3.FormDestroy(Sender: TObject);
+<B>begin</B>
+  DeleteCriticalSection (Critical1);
+<B>end</B>;
+
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=TCRISECT.PAS><H3>TCRISECT.PAS</H3></A>
+
+<PRE>
+<B>unit</B> TCriSect;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls, SyncObjs;
+
+<B>type</B>
+  TListThread = <B>class</B> (TThread)
+  <B>private</B>
+    Str: <B>String</B>;
+  <B>protected</B>
+    <B>procedure</B> AddToList;
+    <B>procedure</B> Execute; <B>override</B>;
+  <B>public</B>
+    LBox: TListBox;
+  <B>end</B>;
+
+  TForm5 = <B>class</B>(TForm)
+    BtnStart: TButton;
+    ListBox1: TListBox;
+    ListBox2: TListBox;
+    <B>procedure</B> BtnStartClick(Sender: TObject);
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> FormDestroy(Sender: TObject);
+  <B>private</B>
+    Th1, Th2: TListThread;
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form5: TForm5;
+  Letters: <B>string</B> = <I>'AAAAAAAAAAAAAAAAAAAA'</I>;
+  Critical1: TCriticalSection;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TListThread.AddToList;
+<B>begin</B>
+  <B>if</B> Assigned (LBox) <B>then</B>
+    LBox.Items.Add (Str);
+<B>end</B>;
+
+<B>procedure</B> TListThread.Execute;
+<B>var</B>
+  I, J, K: Integer;
+<B>begin</B>
+  <B>for</B> I := 0 <B>to</B> 50 <B>do</B>
+  <B>begin</B>
+    Critical1.Enter;
+    <B>for</B> J := 1 <B>to</B> 20 <B>do</B>
+      <B>for</B> K := 1 <B>to</B> 2601 <B>do</B> <FONT COLOR="#000080"><I>// useless repetition...</I></FONT>
+        <B>if</B> Letters [J] &lt; <I>'Z'</I> <B>then</B>
+          Letters [J] := Succ (Letters [J])
+        <B>else</B>
+          Letters [J] := <I>'A'</I>;
+    Str := Letters;
+    Critical1.Leave;
+    Synchronize (AddToList);
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TForm5.BtnStartClick(Sender: TObject);
+<B>begin</B>
+  ListBox1.Clear;
+  ListBox2.Clear;
+  Th1 := TListThread.Create (True);
+  Th2 := TListThread.Create (True);
+  Th1.LBox := Listbox1;
+  Th2.LBox := Listbox2;
+  Th1.Resume;
+  Th2.Resume;
+<B>end</B>;
+
+<B>procedure</B> TForm5.FormCreate(Sender: TObject);
+<B>begin</B>
+  Critical1 := TCriticalSection.Create;
+<B>end</B>;
+
+<B>procedure</B> TForm5.FormDestroy(Sender: TObject);
+<B>begin</B>
+  Critical1.Free;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=SYNCFORM.DFM><H3>SYNCFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 142
+  Top = 220
+  Width = 296
+  Height = 127
+  Caption = <I>'Thread Win32 Synch'</I>
+  Font.Charset = ANSI_CHARSET
+  Font.Color = clBlack
+  Font.Height = -13
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  PixelsPerInch = 96
+  TextHeight = 16
+  <B>object</B> Button1: TButton
+    Left = 12
+    Top = 12
+    Width = 125
+    Height = 30
+    Caption = <I>'Plain'</I>
+    TabOrder = 0
+    OnClick = Button1Click
+  <B>end</B>
+  <B>object</B> Button2: TButton
+    Left = 144
+    Top = 12
+    Width = 129
+    Height = 30
+    Caption = <I>'Critical Section (API)'</I>
+    TabOrder = 1
+    OnClick = Button2Click
+  <B>end</B>
+  <B>object</B> Button3: TButton
+    Left = 12
+    Top = 53
+    Width = 125
+    Height = 30
+    Caption = <I>'Mutex (API)'</I>
+    TabOrder = 2
+    OnClick = Button3Click
+  <B>end</B>
+  <B>object</B> Button4: TButton
+    Left = 144
+    Top = 52
+    Width = 129
+    Height = 30
+    Caption = <I>'TCriticalSection'</I>
+    TabOrder = 3
+    OnClick = Button4Click
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<A NAME=MUTEX.DFM><H3>MUTEX.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form4: TForm4
+  Left = 249
+  Top = 170
+  Width = 449
+  Height = 274
+  Caption = <I>'Mutex'</I>
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -10
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> BtnStart: TButton
+    Left = 7
+    Top = 7
+    Width = 60
+    Height = 20
+    Caption = <I>'Start'</I>
+    TabOrder = 0
+    OnClick = BtnStartClick
+  <B>end</B>
+  <B>object</B> ListBox1: TListBox
+    Left = 7
+    Top = 32
+    Width = 210
+    Height = 211
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clBlack
+    Font.Height = -13
+    Font.Name = <I>'Courier New'</I>
+    Font.Style = []
+    ItemHeight = 16
+    ParentFont = False
+    TabOrder = 1
+  <B>end</B>
+  <B>object</B> ListBox2: TListBox
+    Left = 222
+    Top = 32
+    Width = 211
+    Height = 211
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clBlack
+    Font.Height = -13
+    Font.Name = <I>'Courier New'</I>
+    Font.Style = []
+    ItemHeight = 16
+    ParentFont = False
+    TabOrder = 2
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<A NAME=PLAIN.DFM><H3>PLAIN.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form2: TForm2
+  Left = 193
+  Top = 110
+  Width = 448
+  Height = 275
+  Caption = <I>'Plain'</I>
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -10
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> ListBox1: TListBox
+    Left = 7
+    Top = 30
+    Width = 210
+    Height = 211
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clBlack
+    Font.Height = -13
+    Font.Name = <I>'Courier New'</I>
+    Font.Style = []
+    ItemHeight = 16
+    ParentFont = False
+    TabOrder = 0
+  <B>end</B>
+  <B>object</B> ListBox2: TListBox
+    Left = 222
+    Top = 30
+    Width = 211
+    Height = 211
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clBlack
+    Font.Height = -13
+    Font.Name = <I>'Courier New'</I>
+    Font.Style = []
+    ItemHeight = 16
+    ParentFont = False
+    TabOrder = 1
+  <B>end</B>
+  <B>object</B> BtnStart: TButton
+    Left = 7
+    Top = 7
+    Width = 60
+    Height = 20
+    Caption = <I>'Start'</I>
+    TabOrder = 2
+    OnClick = BtnStartClick
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<A NAME=CRITSEC.DFM><H3>CRITSEC.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form3: TForm3
+  Left = 218
+  Top = 140
+  Width = 449
+  Height = 274
+  Caption = <I>'Critical Section'</I>
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -10
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> BtnStart: TButton
+    Left = 7
+    Top = 7
+    Width = 60
+    Height = 20
+    Caption = <I>'Start'</I>
+    TabOrder = 0
+    OnClick = BtnStartClick
+  <B>end</B>
+  <B>object</B> ListBox1: TListBox
+    Left = 7
+    Top = 32
+    Width = 210
+    Height = 211
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clBlack
+    Font.Height = -13
+    Font.Name = <I>'Courier New'</I>
+    Font.Style = []
+    ItemHeight = 16
+    ParentFont = False
+    TabOrder = 1
+  <B>end</B>
+  <B>object</B> ListBox2: TListBox
+    Left = 222
+    Top = 32
+    Width = 211
+    Height = 211
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clBlack
+    Font.Height = -13
+    Font.Name = <I>'Courier New'</I>
+    Font.Style = []
+    ItemHeight = 16
+    ParentFont = False
+    TabOrder = 2
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<A NAME=TCRISECT.DFM><H3>TCRISECT.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form5: TForm5
+  Left = 229
+  Top = 147
+  Width = 448
+  Height = 274
+  Caption = <I>'TCriticalSection'</I>
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> BtnStart: TButton
+    Left = 7
+    Top = 7
+    Width = 60
+    Height = 20
+    Caption = <I>'Start'</I>
+    TabOrder = 0
+    OnClick = BtnStartClick
+  <B>end</B>
+  <B>object</B> ListBox1: TListBox
+    Left = 7
+    Top = 32
+    Width = 210
+    Height = 211
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clBlack
+    Font.Height = -13
+    Font.Name = <I>'Courier New'</I>
+    Font.Style = []
+    ItemHeight = 16
+    ParentFont = False
+    TabOrder = 1
+  <B>end</B>
+  <B>object</B> ListBox2: TListBox
+    Left = 222
+    Top = 32
+    Width = 211
+    Height = 211
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clBlack
+    Font.Height = -13
+    Font.Name = <I>'Courier New'</I>
+    Font.Style = []
+    ItemHeight = 16
+    ParentFont = False
+    TabOrder = 2
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

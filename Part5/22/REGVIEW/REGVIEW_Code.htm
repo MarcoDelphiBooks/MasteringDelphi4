@@ -1,0 +1,243 @@
+<HTML><HEAD>
+<TITLE>Project: REGVIEW.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: REGVIEW.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#REGVIEW.DPR> REGVIEW.DPR</A>
+<LI> <A HREF=#REGFORM.PAS> REGFORM.PAS</A>
+<LI> <A HREF=#REGFORM.DFM> REGFORM.DFM</A>
+</UL>
+<HR>
+<A NAME=REGVIEW.DPR><H3>REGVIEW.DPR</H3></A>
+
+<PRE>
+<B>program</B> regview;
+
+<B>uses</B>
+  Forms,
+  regform <B>in</B> <I>'regform.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=REGFORM.PAS><H3>REGFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> regform;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls, Registry;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    ListSub: TListBox;
+    ListValues: TListBox;
+    ComboKey: TComboBox;
+    Label1: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
+    Label4: TLabel;
+    ComboLast: TComboBox;
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> FormDestroy(Sender: TObject);
+    <B>procedure</B> ListSubClick(Sender: TObject);
+    <B>procedure</B> ComboKeyChange(Sender: TObject);
+    <B>procedure</B> ComboLastChange(Sender: TObject);
+  <B>private</B>
+    Reg: TRegistry;
+  <B>public</B>
+    <B>procedure</B> UpdateAll;
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.FormCreate(Sender: TObject);
+<B>begin</B>
+  Reg := TRegistry.Create;
+  Reg.OpenKey (<I>'\'</I>, False);
+  UpdateAll;
+  <FONT COLOR="#000080"><I>// select the current root</I></FONT>
+  ComboKey.ItemIndex := 1;
+  ComboLast.Items.Add(<I>'\'</I>); <FONT COLOR="#000080"><I>///////</I></FONT>
+  ComboLast.ItemIndex := 0;
+<B>end</B>;
+
+<B>procedure</B> TForm1.UpdateAll;
+<B>begin</B>
+  Caption := Reg.CurrentPath;
+  <B>if</B> Caption = <I>''</I> <B>then</B>
+    Caption := <I>'[Root]'</I>;
+  <B>if</B> Reg.HasSubKeys <B>then</B>
+    Reg.GetKeyNames(ListSub.Items)
+  <B>else</B>
+    ListSub.Clear;
+  Reg.GetValueNames(ListValues.Items);
+<B>end</B>;
+
+<B>procedure</B> TForm1.FormDestroy(Sender: TObject);
+<B>begin</B>
+  Reg.CloseKey;
+  Reg.Free;
+<B>end</B>;
+
+<B>procedure</B> TForm1.ListSubClick(Sender: TObject);
+<B>var</B>
+  NewKey, Path: <B>string</B>;
+  nItem: Integer;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// get the selection</I></FONT>
+  NewKey := ListSub.Items [ListSub.ItemIndex];
+  Reg.OpenKey (NewKey, False);
+  <FONT COLOR="#000080"><I>// save the current path (eventually adding a \)</I></FONT>
+  <FONT COLOR="#000080"><I>// only if the it is not already listed</I></FONT>
+  Path := Reg.CurrentPath;
+  <B>if</B> Path &lt; <I>'\'</I> <B>then</B>
+    Path := <I>'\'</I> + Path;
+  nItem := ComboLast.Items.IndexOf (Path);
+  <B>if</B> nItem &lt; 0 <B>then</B>
+  <B>begin</B>
+    ComboLast.Items.Insert (0, Path);
+    ComboLast.ItemIndex := 0;
+  <B>end</B>
+  <B>else</B>
+    ComboLast.ItemIndex := nItem;
+  UpdateAll;
+<B>end</B>;
+
+<B>procedure</B> TForm1.ComboKeyChange(Sender: TObject);
+<B>begin</B>
+  <B>case</B> ComboKey.ItemIndex <B>of</B>
+    0: Reg.RootKey := HKEY_CLASSES_ROOT;
+    1: Reg.RootKey := HKEY_CURRENT_USER;
+    2: Reg.RootKey := HKEY_LOCAL_MACHINE;
+    3: Reg.RootKey := HKEY_USERS;
+    4: Reg.RootKey := HKEY_CURRENT_CONFIG;
+    5: Reg.RootKey := HKEY_DYN_DATA;
+  <B>end</B>;
+  Reg.OpenKey (<I>'\'</I>, False);
+  UpdateAll;
+  ComboLast.Items.Clear;
+<B>end</B>;
+
+<B>procedure</B> TForm1.ComboLastChange(Sender: TObject);
+<B>begin</B>
+  Reg.OpenKey (ComboLast.Text, False);
+  UpdateAll;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=REGFORM.DFM><H3>REGFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 123
+  Top = 109
+  Width = 430
+  Height = 331
+  Caption = <I>'RegView'</I>
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Label1: TLabel
+    Left = 8
+    Top = 72
+    Width = 45
+    Height = 13
+    Caption = <I>'Sub Keys'</I>
+  <B>end</B>
+  <B>object</B> Label2: TLabel
+    Left = 216
+    Top = 72
+    Width = 53
+    Height = 13
+    Caption = <I>'Key Values'</I>
+  <B>end</B>
+  <B>object</B> Label3: TLabel
+    Left = 8
+    Top = 11
+    Width = 23
+    Height = 13
+    Caption = <I>'Keys'</I>
+  <B>end</B>
+  <B>object</B> Label4: TLabel
+    Left = 8
+    Top = 44
+    Width = 46
+    Height = 13
+    Caption = <I>'Last Keys'</I>
+  <B>end</B>
+  <B>object</B> ListSub: TListBox
+    Left = 8
+    Top = 88
+    Width = 201
+    Height = 209
+    ItemHeight = 13
+    TabOrder = 0
+    OnClick = ListSubClick
+  <B>end</B>
+  <B>object</B> ListValues: TListBox
+    Left = 216
+    Top = 88
+    Width = 201
+    Height = 209
+    ItemHeight = 13
+    TabOrder = 1
+  <B>end</B>
+  <B>object</B> ComboKey: TComboBox
+    Left = 64
+    Top = 8
+    Width = 193
+    Height = 21
+    Style = csDropDownList
+    ItemHeight = 13
+    Items.Strings = (
+      <I>'HKEY_CLASSES_ROOT'</I>
+      <I>'HKEY_CURRENT_USER'</I>
+      <I>'HKEY_LOCAL_MACHINE'</I>
+      <I>'HKEY_USERS'</I>
+      <I>'HKEY_CURRENT_CONFIG'</I>
+      <I>'HKEY_DYN_DATA'</I>)
+    TabOrder = 2
+    OnChange = ComboKeyChange
+  <B>end</B>
+  <B>object</B> ComboLast: TComboBox
+    Left = 64
+    Top = 40
+    Width = 353
+    Height = 21
+    Style = csDropDownList
+    ItemHeight = 13
+    Sorted = True
+    TabOrder = 3
+    OnChange = ComboLastChange
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

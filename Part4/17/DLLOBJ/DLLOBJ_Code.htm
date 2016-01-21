@@ -1,0 +1,82 @@
+<HTML><HEAD>
+<TITLE>Project: DLLOBJ.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: DLLOBJ.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#DLLOBJ.DPR> DLLOBJ.DPR</A>
+<LI> <A HREF=#DLLCLASS.PAS> DLLCLASS.PAS</A>
+</UL>
+<HR>
+<A NAME=DLLOBJ.DPR><H3>DLLOBJ.DPR</H3></A>
+
+<PRE>
+<B>library</B> DllObj;
+
+<B>uses</B>
+  DllClass <B>in</B> <I>'DllClass.pas'</I>;
+
+<B>exports</B>
+  NewObject;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=DLLCLASS.PAS><H3>DLLCLASS.PAS</H3></A>
+
+<PRE>
+<B>unit</B> DllClass;
+
+<B>interface</B>
+
+<B>uses</B>
+  Base;
+
+<B>type</B>
+  TDllNumberImpl = <B>class</B> (TDllNumber)
+  <B>private</B>
+    Value: Integer;
+  <B>public</B>
+    <B>constructor</B> Create;
+    <B>function</B> GetValue: Integer; <B>override</B>;
+    <B>procedure</B> SetValue (New: Integer); <B>override</B>;
+    <B>procedure</B> Increase; <B>override</B>;
+  <B>end</B>;
+
+  <B>function</B> NewObject: TDllNumber; <B>stdcall</B>;
+
+<B>implementation</B>
+
+<B>function</B> NewObject: TDllNumber;
+<B>begin</B>
+  Result := TDllNumberImpl.Create;
+<B>end</B>;
+
+<B>constructor</B> TDllNumberImpl.Create;
+<B>begin</B>
+  Value := 0;
+  <B>inherited</B> Create;
+<B>end</B>;
+
+<B>function</B> TDllNumberImpl.GetValue: Integer;
+<B>begin</B>
+  Result := Value;
+<B>end</B>;
+
+<B>procedure</B> TDllNumberImpl.SetValue (New: Integer);
+<B>begin</B>
+  Value := New;
+<B>end</B>;
+
+<B>procedure</B> TDllNumberImpl.Increase;
+<B>begin</B>
+  Inc (Value);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

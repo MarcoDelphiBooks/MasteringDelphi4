@@ -1,0 +1,142 @@
+<HTML><HEAD>
+<TITLE>Project: STRREF.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: STRREF.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#STRREF.DPR> STRREF.DPR</A>
+<LI> <A HREF=#STRREFF.PAS> STRREFF.PAS</A>
+<LI> <A HREF=#STRREFF.DFM> STRREFF.DFM</A>
+</UL>
+<HR>
+<A NAME=STRREF.DPR><H3>STRREF.DPR</H3></A>
+
+<PRE>
+<B>program</B> StrRef;
+
+<B>uses</B>
+  Forms,
+  StrRefF <B>in</B> <I>'StrRefF.pas'</I> <FONT COLOR="#000080"><I>{FormStrRef}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TFormStrRef, FormStrRef);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=STRREFF.PAS><H3>STRREFF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> StrRefF;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls;
+
+<B>type</B>
+  TFormStrRef = <B>class</B>(TForm)
+    BtnAssign: TButton;
+    BtnChange: TButton;
+    ListBox1: TListBox;
+    <B>procedure</B> BtnAssignClick(Sender: TObject);
+    <B>procedure</B> BtnChangeClick(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  FormStrRef: TFormStrRef;
+  Str1, Str2: <B>string</B>;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>function</B> StringStatus (<B>const</B> Str: <B>string</B>): <B>string</B>;
+<B>begin</B>
+  Result := <I>'Address: '</I> + IntToStr (Integer (Str)) +
+    <I>', Length: '</I> + IntToStr (Length (Str)) +
+     <I>', References: '</I> + IntToStr (PInteger (Integer (Str) - 8)^) +
+    <I>', Value: '</I> + Str;
+<B>end</B>;
+
+<B>procedure</B> TFormStrRef.BtnAssignClick(Sender: TObject);
+<B>begin</B>
+  Str1 := <I>'Hello'</I>;
+  Str2 := Str1;
+  ListBox1.Items.Add (<I>'Str2 := Str1;'</I>);
+  ListBox1.Items.Add (<I>'Str1 - '</I> + StringStatus (Str1));
+  ListBox1.Items.Add (<I>'Str2 - '</I> + StringStatus (Str2));
+  BtnChange.Enabled := True;
+<B>end</B>;
+
+<B>procedure</B> TFormStrRef.BtnChangeClick(Sender: TObject);
+<B>begin</B>
+  Str1 [2] := <I>'a'</I>;
+  ListBox1.Items.Add (<I>'Str1 [2] := ''a'''</I>);
+  ListBox1.Items.Add (<I>'Str1 - '</I> + StringStatus (Str1));
+  ListBox1.Items.Add (<I>'Str2 - '</I> + StringStatus (Str2));
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=STRREFF.DFM><H3>STRREFF.DFM</H3></A>
+
+<PRE>
+<B>object</B> FormStrRef: TFormStrRef
+  Left = 197
+  Top = 124
+  Width = 481
+  Height = 252
+  Caption = <I>'String References'</I>
+  Color = clBtnFace
+  Font.Charset = ANSI_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> BtnAssign: TButton
+    Left = 16
+    Top = 24
+    Width = 75
+    Height = 25
+    Caption = <I>'Assign'</I>
+    TabOrder = 0
+    OnClick = BtnAssignClick
+  <B>end</B>
+  <B>object</B> BtnChange: TButton
+    Left = 16
+    Top = 56
+    Width = 75
+    Height = 25
+    Caption = <I>'Change'</I>
+    Enabled = False
+    TabOrder = 1
+    OnClick = BtnChangeClick
+  <B>end</B>
+  <B>object</B> ListBox1: TListBox
+    Left = 104
+    Top = 24
+    Width = 337
+    Height = 177
+    ItemHeight = 13
+    TabOrder = 2
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

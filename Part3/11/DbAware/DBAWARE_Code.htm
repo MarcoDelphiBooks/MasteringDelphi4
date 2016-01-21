@@ -1,0 +1,371 @@
+<HTML><HEAD>
+<TITLE>Project: DBAWARE.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: DBAWARE.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#DBAWARE.DPR> DBAWARE.DPR</A>
+<LI> <A HREF=#DBAWFORM.PAS> DBAWFORM.PAS</A>
+<LI> <A HREF=#DBAWFORM.DFM> DBAWFORM.DFM</A>
+</UL>
+<HR>
+<A NAME=DBAWARE.DPR><H3>DBAWARE.DPR</H3></A>
+
+<PRE>
+<B>program</B> DbAware;
+
+<B>uses</B>
+  Forms,
+  DbAwForm <B>in</B> <I>'DbAwForm.pas'</I> <FONT COLOR="#000080"><I>{DbaForm}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TDbaForm, DbaForm);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=DBAWFORM.PAS><H3>DBAWFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> DbAwForm;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  Db, DBTables, StdCtrls, Mask, DBCtrls, ExtCtrls, Grids, DBGrids, ComCtrls;
+
+<B>type</B>
+  TDbaForm = <B>class</B>(TForm)
+    Table1: TTable;
+    DataSource1: TDataSource;
+    Panel1: TPanel;
+    Button2: TButton;
+    PageControl1: TPageControl;
+    TabSheet1: TTabSheet;
+    TabSheet2: TTabSheet;
+    DBGrid1: TDBGrid;
+    DBNavigator1: TDBNavigator;
+    DBRadioGroup1: TDBRadioGroup;
+    DBCheckBox1: TDBCheckBox;
+    DBEdit1: TDBEdit;
+    DBEdit2: TDBEdit;
+    DBComboBox1: TDBComboBox;
+    DBText1: TDBText;
+    Label1: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
+    Label4: TLabel;
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> Button2Click(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <B>procedure</B> AddRandomData;
+  <B>end</B>;
+
+<B>var</B>
+  DbaForm: TDbaForm;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TDbaForm.FormCreate(Sender: TObject);
+<B>begin</B>
+  <B>if</B> <B>not</B> Table1.Exists <B>then</B>
+    Table1.CreateTable;
+  Table1.Open;
+<B>end</B>;
+
+<B>procedure</B> TDbaForm.Button2Click(Sender: TObject);
+<B>begin</B>
+  AddRandomData;
+<B>end</B>;
+
+<B>const</B>
+  FirstNames : <B>array</B> [1..10] <B>of</B> <B>string</B> =
+    (<I>'John'</I>, <I>'Paul'</I>, <I>'Mark'</I>, <I>'Joseph'</I>, <I>'Bill'</I>,
+    <I>'Peter'</I>, <I>'Tim'</I>, <I>'Ralph'</I>, <I>'Bob'</I>, <I>'Gary'</I>);
+  LastNames : <B>array</B> [1..10] <B>of</B> <B>string</B> =
+    (<I>'Ford'</I>, <I>'Osborse'</I>, <I>'White'</I>, <I>'MacDonald'</I>, <I>'Lee'</I>,
+    <I>'Young'</I>, <I>'Parker'</I>, <I>'Reed'</I>, <I>'Gates'</I>, <I>'Green'</I>);
+  NoDept = 4;
+  NoBranch = 30;
+  NewRecords = 10;
+
+<B>procedure</B> TDbaForm.AddRandomData;
+<B>var</B>
+  I: Integer;
+<B>begin</B>
+  Randomize;
+  <B>for</B> I := 1 <B>to</B> NewRecords <B>do</B>
+    Table1.InsertRecord ([
+      LastNames [Random (High (LastNames)) + 1],
+      FirstNames [Random (High (FirstNames)) + 1],
+      Random (NoDept) + 1,
+      DbComboBox1.Items [Random (NoBranch) + 1],
+      Boolean (Random (2)),
+      Date - Random (1000)]);
+  ShowMessage (IntToStr (NewRecords) + <I>' added'</I>);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=DBAWFORM.DFM><H3>DBAWFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> DbaForm: TDbaForm
+  Left = 196
+  Top = 109
+  Width = 489
+  Height = 289
+  Caption = <I>'Workers (Data Aware Demo)'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Panel1: TPanel
+    Left = 0
+    Top = 0
+    Width = 481
+    Height = 41
+    Align = alTop
+    TabOrder = 0
+    <B>object</B> Button2: TButton
+      Left = 16
+      Top = 8
+      Width = 121
+      Height = 25
+      Caption = <I>'&amp;Add Random Data'</I>
+      TabOrder = 0
+      OnClick = Button2Click
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> PageControl1: TPageControl
+    Left = 0
+    Top = 41
+    Width = 481
+    Height = 221
+    ActivePage = TabSheet1
+    Align = alClient
+    TabOrder = 1
+    <B>object</B> TabSheet1: TTabSheet
+      Caption = <I>'Record View'</I>
+      <B>object</B> DBText1: TDBText
+        Left = 336
+        Top = 16
+        Width = 42
+        Height = 13
+        AutoSize = True
+        DataField = <I>'HireDate'</I>
+        DataSource = DataSource1
+      <B>end</B>
+      <B>object</B> Label1: TLabel
+        Left = 280
+        Top = 16
+        Width = 46
+        Height = 13
+        Caption = <I>'Hire date:'</I>
+      <B>end</B>
+      <B>object</B> Label2: TLabel
+        Left = 18
+        Top = 52
+        Width = 51
+        Height = 13
+        Caption = <I>'&amp;Last Name'</I>
+        FocusControl = DBEdit1
+      <B>end</B>
+      <B>object</B> Label3: TLabel
+        Left = 18
+        Top = 80
+        Width = 50
+        Height = 13
+        Caption = <I>'&amp;First Name'</I>
+        FocusControl = DBEdit2
+      <B>end</B>
+      <B>object</B> Label4: TLabel
+        Left = 18
+        Top = 112
+        Width = 34
+        Height = 13
+        Caption = <I>'&amp;Branch'</I>
+        FocusControl = DBComboBox1
+      <B>end</B>
+      <B>object</B> DBNavigator1: TDBNavigator
+        Left = 16
+        Top = 8
+        Width = 240
+        Height = 25
+        DataSource = DataSource1
+        TabOrder = 0
+      <B>end</B>
+      <B>object</B> DBRadioGroup1: TDBRadioGroup
+        Left = 272
+        Top = 48
+        Width = 185
+        Height = 121
+        Caption = <I>'&amp;Department'</I>
+        DataField = <I>'Department'</I>
+        DataSource = DataSource1
+        Items.Strings = (
+          <I>'Sales'</I>
+          <I>'Accounting'</I>
+          <I>'Production'</I>
+          <I>'Management'</I>)
+        TabOrder = 1
+        Values.Strings = (
+          <I>'1'</I>
+          <I>'2'</I>
+          <I>'3'</I>
+          <I>'4'</I>)
+      <B>end</B>
+      <B>object</B> DBCheckBox1: TDBCheckBox
+        Left = 80
+        Top = 144
+        Width = 81
+        Height = 17
+        Caption = <I>'&amp;Senior'</I>
+        DataField = <I>'Senior'</I>
+        DataSource = DataSource1
+        TabOrder = 2
+        ValueChecked = <I>'True'</I>
+        ValueUnchecked = <I>'False'</I>
+      <B>end</B>
+      <B>object</B> DBEdit1: TDBEdit
+        Left = 80
+        Top = 48
+        Width = 121
+        Height = 21
+        DataField = <I>'LastName'</I>
+        DataSource = DataSource1
+        TabOrder = 3
+      <B>end</B>
+      <B>object</B> DBEdit2: TDBEdit
+        Left = 80
+        Top = 80
+        Width = 121
+        Height = 21
+        DataField = <I>'FirstName'</I>
+        DataSource = DataSource1
+        TabOrder = 4
+      <B>end</B>
+      <B>object</B> DBComboBox1: TDBComboBox
+        Left = 80
+        Top = 112
+        Width = 121
+        Height = 21
+        DataField = <I>'Branch'</I>
+        DataSource = DataSource1
+        ItemHeight = 13
+        Items.Strings = (
+          <I>'Baltimore'</I>
+          <I>'Berlin'</I>
+          <I>'Boston'</I>
+          <I>'Brasilia'</I>
+          <I>'Cape Town'</I>
+          <I>'Chicago'</I>
+          <I>'Dallas'</I>
+          <I>'Denver'</I>
+          <I>'Dublin'</I>
+          <I>'Las Vegas'</I>
+          <I>'London'</I>
+          <I>'Los Angeles'</I>
+          <I>'Louisville'</I>
+          <I>'Mexico City'</I>
+          <I>'Miami'</I>
+          <I>'Minneapolis'</I>
+          <I>'Moscow'</I>
+          <I>'New Orleans'</I>
+          <I>'New York'</I>
+          <I>'Orlando'</I>
+          <I>'Rome'</I>
+          <I>'Salt Lake City'</I>
+          <I>'San Diego'</I>
+          <I>'San Francisco'</I>
+          <I>'San Jose'</I>
+          <I>'Seattle'</I>
+          <I>'Singapore'</I>
+          <I>'Tokio'</I>
+          <I>'Toronto'</I>
+          <I>'Vancouver'</I>)
+        Sorted = True
+        TabOrder = 5
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> TabSheet2: TTabSheet
+      Caption = <I>'Grid View'</I>
+      ImageIndex = 1
+      <B>object</B> DBGrid1: TDBGrid
+        Left = 0
+        Top = 0
+        Width = 473
+        Height = 193
+        Align = alClient
+        DataSource = DataSource1
+        TabOrder = 0
+        TitleFont.Charset = DEFAULT_CHARSET
+        TitleFont.Color = clWindowText
+        TitleFont.Height = -11
+        TitleFont.Name = <I>'MS Sans Serif'</I>
+        TitleFont.Style = []
+      <B>end</B>
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> Table1: TTable
+    DatabaseName = <I>'DBDEMOS'</I>
+    FieldDefs = &lt;
+      <B>item</B>
+        Name = <I>'LastName'</I>
+        DataType = ftString
+        Size = 20
+      <B>end</B>
+      <B>item</B>
+        Name = <I>'FirstName'</I>
+        DataType = ftString
+        Size = 20
+      <B>end</B>
+      <B>item</B>
+        Name = <I>'Department'</I>
+        DataType = ftSmallint
+      <B>end</B>
+      <B>item</B>
+        Name = <I>'Branch'</I>
+        DataType = ftString
+        Size = 20
+      <B>end</B>
+      <B>item</B>
+        Name = <I>'Senior'</I>
+        DataType = ftBoolean
+      <B>end</B>
+      <B>item</B>
+        Name = <I>'HireDate'</I>
+        DataType = ftDate
+      <B>end</B>&gt;
+    StoreDefs = True
+    TableName = <I>'Workers'</I>
+    Left = 384
+    Top = 8
+  <B>end</B>
+  <B>object</B> DataSource1: TDataSource
+    DataSet = Table1
+    Left = 344
+    Top = 8
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

@@ -1,0 +1,225 @@
+<HTML><HEAD>
+<TITLE>Project: CALLBACK.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: CALLBACK.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#CALLBACK.DPR> CALLBACK.DPR</A>
+<LI> <A HREF=#CBACKF.PAS> CBACKF.PAS</A>
+<LI> <A HREF=#CBACKF.DFM> CBACKF.DFM</A>
+</UL>
+<HR>
+<A NAME=CALLBACK.DPR><H3>CALLBACK.DPR</H3></A>
+
+<PRE>
+<B>program</B> CallBack;
+
+<B>uses</B>
+  Forms,
+  CBackF <B>in</B> <I>'CBackF.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=CBACKF.PAS><H3>CBACKF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> CBackF;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  Db, DBTables, Grids, DBGrids, ComCtrls, StdCtrls, Bde;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    Button1: TButton;
+    Button2: TButton;
+    ProgressBar1: TProgressBar;
+    Query1: TQuery;
+    DataSource2: TDataSource;
+    DBGrid2: TDBGrid;
+    ListBox1: TListBox;
+    <B>procedure</B> Button2Click(Sender: TObject);
+    <B>procedure</B> Button1Click(Sender: TObject);
+  <B>private</B>
+    fAborted: Boolean;
+    CallBackObj: TBDECallBack;
+    <B>function</B> fnCallBack (CBInfo: Pointer): CBRType;
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.Button2Click(Sender: TObject);
+<B>begin</B>
+  fAborted := True;
+  Button2.Enabled := False;
+<B>end</B>;
+
+<B>function</B> TForm1.fnCallBack(CBInfo: Pointer): CBRType;
+<B>var</B>
+  I: Integer;
+<B>begin</B>
+  <B>if</B> fAborted <B>then</B>
+    Result := cbrAbort
+  <B>else</B>
+    Result := cbrContinue;
+
+  <B>with</B> PCBPROGRESSDesc(CBInfo)^ <B>do</B>
+    <FONT COLOR="#000080"><I>// se iPercent e' &lt;0 allora le informazioni si trovano in szMsg</I></FONT>
+<FONT COLOR="#000080"><I>//    if iPercentDone &lt; 0 then</I></FONT>
+    <B>begin</B>
+      <FONT COLOR="#000080"><I>//aggiorna la prima label</I></FONT>
+      <FONT COLOR="#000080"><I>// Label1.Caption :=</I></FONT>
+      ListBox1.Items.Add (<I>'1:'</I> + szMsg);
+      <FONT COLOR="#000080"><I>// Copy(szMsg, Pos(':', szMsg) + 1, StrLen(szMsg)));</I></FONT>
+<FONT COLOR="#000080"><I>//      ProgressBar1.Position := StrToInt (</I></FONT>
+<FONT COLOR="#000080"><I>//        Copy(szMsg, Pos(':', szMsg) + 1, StrLen(szMsg))) div 10;</I></FONT>
+<FONT COLOR="#000080"><I>//    end</I></FONT>
+<FONT COLOR="#000080"><I>//    else</I></FONT>
+<FONT COLOR="#000080"><I>//    begin</I></FONT>
+      ProgressBar1.Position := iPercentDone;
+      ListBox1.Items.Add (<I>'2: '</I> + IntToStr (iPercentDone));
+    <B>end</B>;
+
+  <FONT COLOR="#000080"><I>// slow down a little</I></FONT>
+  <B>for</B> I := 1 <B>to</B> 1000 <B>do</B>
+    Application.ProcessMessages;
+<B>end</B>;
+
+<B>procedure</B> TForm1.Button1Click(Sender: TObject);
+<B>var</B>
+  Buffer: CBPROGRESSDesc; <FONT COLOR="#000080"><I>// ??name</I></FONT>
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// activate the DBE first</I></FONT>
+  Session.Open;
+  <FONT COLOR="#000080"><I>// create and install the callback object</I></FONT>
+  CallBackObj := TBDECallBack.Create (self, <B>nil</B>,
+    cbGenProgress <FONT COLOR="#000080"><I>{cbCancelQry}</I></FONT>, @Buffer, sizeof (Buffer),
+    fnCallBack, True);
+  <B>try</B>
+    Query1.Open;
+  <B>finally</B>
+    CallBackObj.Free;
+  <B>end</B>;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=CBACKF.DFM><H3>CBACKF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 192
+  Top = 107
+  Width = 529
+  Height = 472
+  Caption = <I>'Form1'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Button1: TButton
+    Left = 32
+    Top = 336
+    Width = 75
+    Height = 25
+    Caption = <I>'Open'</I>
+    TabOrder = 0
+    OnClick = Button1Click
+  <B>end</B>
+  <B>object</B> Button2: TButton
+    Left = 120
+    Top = 336
+    Width = 75
+    Height = 25
+    Caption = <I>'Cancel'</I>
+    TabOrder = 1
+    OnClick = Button2Click
+  <B>end</B>
+  <B>object</B> ProgressBar1: TProgressBar
+    Left = 24
+    Top = 304
+    Width = 417
+    Height = 17
+    Min = 0
+    Max = 1000
+    TabOrder = 2
+  <B>end</B>
+  <B>object</B> DBGrid2: TDBGrid
+    Left = 24
+    Top = 16
+    Width = 409
+    Height = 265
+    DataSource = DataSource2
+    TabOrder = 3
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = <I>'MS Sans Serif'</I>
+    TitleFont.Style = []
+  <B>end</B>
+  <B>object</B> ListBox1: TListBox
+    Left = 216
+    Top = 336
+    Width = 257
+    Height = 97
+    ItemHeight = 13
+    TabOrder = 4
+  <B>end</B>
+  <B>object</B> Query1: TQuery
+    DatabaseName = <I>'DBDEMOS'</I>
+    SQL.Strings = (
+
+              <I>'SELECT items.ItemNo, items.Qty, items.Discount, Customer.Company'</I> +
+        <I>', Orders.OrderNo, Parts.Description, Vendors.VendorName'</I>
+      <I>'FROM items'</I>
+      <I>'   INNER JOIN &quot;parts.db&quot; Parts'</I>
+      <I>'   ON  (Parts.PartNo = items.PartNo)  '</I>
+      <I>'   AND  (Parts.PartNo = items.PartNo)  '</I>
+      <I>'   INNER JOIN &quot;orders.DB&quot; Orders'</I>
+      <I>'   ON  (items.OrderNo = Orders.OrderNo)  '</I>
+      <I>'   AND  (items.OrderNo = Orders.OrderNo)  '</I>
+      <I>'   INNER JOIN &quot;vendors.db&quot; Vendors'</I>
+      <I>'   ON  (Vendors.VendorNo = Parts.VendorNo)  '</I>
+      <I>'   INNER JOIN &quot;customer.db&quot; Customer'</I>
+      <I>'   ON  (Orders.CustNo = Customer.CustNo)  '</I>
+      <I>'   AND  (Orders.CustNo = Customer.CustNo)  '</I>
+      <I>'WHERE   (items.Qty &gt; 0)  '</I>
+      <I>'   AND  (items.OrderNo &lt; 1000000)  '</I>)
+    Left = 456
+    Top = 72
+    ParamData = &lt;&gt;
+  <B>end</B>
+  <B>object</B> DataSource2: TDataSource
+    DataSet = Query1
+    Left = 472
+    Top = 200
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

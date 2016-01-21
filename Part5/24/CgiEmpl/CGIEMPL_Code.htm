@@ -1,0 +1,218 @@
+<HTML><HEAD>
+<TITLE>Project: CGIEMPL.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: CGIEMPL.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#CGIEMPL.DPR> CGIEMPL.DPR</A>
+</UL>
+<HR>
+<A NAME=CGIEMPL.DPR><H3>CGIEMPL.DPR</H3></A>
+
+<PRE>
+<B>program</B> CgiEmpl;
+
+<FONT COLOR="#000080"><I>{$APPTYPE CONSOLE}</I></FONT>
+
+<B>uses</B>
+  Windows, SysUtils, DBTables, DB;
+
+<B>var</B>
+  ScriptName: <B>array</B> [0..100] <B>of</B> Char;
+  PathName: <B>array</B> [0..30] <B>of</B> Char;
+  MethodName: <B>array</B> [0..5] <B>of</B> Char;
+  Table1: TTable;
+
+<B>procedure</B> ShowHeader; <B>forward</B>;
+<B>procedure</B> ShowRecord; <B>forward</B>;
+<B>function</B> ExtractFromData (
+  DataStr: <B>string</B>; SearchTag: <B>string</B>): <B>string</B>; <B>forward</B>;
+
+<B>procedure</B> ShowHeader;
+<B>begin</B>
+  writeln(<I>'Content type: text/html'</I>);
+  writeln;
+  writeln(<I>'&lt;HTML&gt;&lt;HEAD&gt;'</I>);
+  writeln(<I>'&lt;TITLE&gt;CgiEmpl&lt;/TITLE&gt;'</I>);
+  writeln(<I>'&lt;/HEAD&gt;&lt;BODY&gt;'</I>);
+  writeln(<I>'&lt;H2&gt;CGI Employee Demo&lt;/H2&gt;'</I>);
+  writeln(<I>'&lt;HR&gt;'</I>);
+<B>end</B>;
+
+<B>procedure</B> ShowTableIndex;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// show a summary of the entire table</I></FONT>
+  Table1.First;
+  <FONT COLOR="#000080"><I>// show a list</I></FONT>
+  writeln (<I>'&lt;ul&gt;'</I>);
+  <B>while</B> <B>not</B> Table1.EOF <B>do</B>
+  <B>begin</B>
+    <FONT COLOR="#000080"><I>// show the names with a link to the CGI application</I></FONT>
+    writeln (Format (
+      <I>'&lt;li&gt; &lt;a HREF=&quot;%s/record?LastName=%s+FirstName=%s&quot;&gt;%s %s&lt;/a&gt;'</I>,
+      [ScriptName,
+      Table1.FieldByName (<I>'LastName'</I>).AsString,
+      Table1.FieldByName (<I>'FirstName'</I>).AsString,
+      Table1.FieldByName (<I>'FirstName'</I>).AsString,
+      Table1.FieldByName (<I>'LastName'</I>).AsString]));
+    Table1.Next;
+  <B>end</B>;
+  <FONT COLOR="#000080"><I>// end of the list</I></FONT>
+  writeln (<I>'&lt;/ul&gt;'</I>);
+<B>end</B>;
+
+<B>procedure</B> ShowRecord;
+<B>var</B>
+  DataStr, First, Last: <B>string</B>;
+  ContentLength: <B>array</B> [0..10] <B>of</B> Char;
+  I: Integer;
+  ch: Char;
+<B>begin</B>
+  <B>if</B> StrComp (MethodName, <I>'POST'</I>) = 0 <B>then</B>
+  <B>begin</B>
+    <FONT COLOR="#000080"><I>// method is post: read from the input</I></FONT>
+    GetEnvironmentVariable (<I>'CONTENT_LENGTH'</I>,
+      ContentLength, sizeof (ContentLength));
+    SetLength (DataStr, StrToIntDef (ContentLength, 255));
+    <FONT COLOR="#000080"><I>// doesn't work on PWS for Win98!</I></FONT>
+    readln (DataStr);
+  <B>end</B>
+  <B>else</B>
+  <B>begin</B>
+    <FONT COLOR="#000080"><I>// method is get: read the query string</I></FONT>
+    SetLength (DataStr, 255);
+    GetEnvironmentVariable (<I>'QUERY_STRING'</I>,
+      PChar (DataStr), Length (DataStr));
+    DataStr := pChar (DataStr);
+  <B>end</B>;
+
+  <FONT COLOR="#000080"><I>// extract the paraemters</I></FONT>
+  First := ExtractFromData (DataStr, <I>'FirstName'</I>);
+  Last := ExtractFromData (DataStr, <I>'LastName'</I>);
+  <FONT COLOR="#000080"><I>// debug information</I></FONT>
+  writeln (<I>'&lt;i&gt;Request (Post): Last Name = &quot;'</I> + Last +
+    <I>'&quot;, First Name = &quot;'</I> + First + <I>'&quot;&lt;/i&gt;&lt;p&gt;'</I>);
+
+  <FONT COLOR="#000080"><I>// move to the requested record</I></FONT>
+  <B>if</B> Last &lt;&gt; <I>''</I> <B>then</B>
+    Table1.FindNearest ([Last, First])
+  <B>else</B>
+    <FONT COLOR="#000080"><I>// look for the first name only</I></FONT>
+    Table1.Locate(<I>'FirstName'</I>, First,
+      [loPartialKey, loCaseInsensitive]);
+
+  <FONT COLOR="#000080"><I>// output the current record</I></FONT>
+  writeln (<I>'&lt;table border&gt;'</I>);
+  <B>for</B> I := 1 <B>to</B> Table1.FieldCount - 1 <B>do</B>
+    writeln (<I>'&lt;tr&gt;&lt;td&gt;'</I> + Table1.Fields [I].FieldName +
+      <I>'&lt;/td&gt;&lt;td&gt;'</I> + Table1.Fields [I].AsString +
+      <I>'&lt;/td&gt;&lt;/tr&gt;'</I>);
+  writeln (<I>'&lt;/table&gt;&lt;hr&gt;'</I>);
+  writeln (<I>'&lt;table border&gt;&lt;tr&gt;'</I>);
+  <FONT COLOR="#000080"><I>// add pointer to the index</I></FONT>
+  writeln (<I>'&lt;td&gt;&lt;a HREF=&quot;'</I> +
+    ScriptName + <I>'&quot;&gt; Index &lt;/a&gt;&lt;/td&gt;'</I>);
+  <FONT COLOR="#000080"><I>// add pointer to the prior record</I></FONT>
+  Table1.Prior;
+  <B>if</B> <B>not</B> Table1.BOF <B>then</B>
+  <B>begin</B>
+    writeln (Format (
+      <I>'&lt;td&gt;&lt;a HREF=&quot;%s/record?LastName=%s+FirstName=%s&quot;&gt; Prior &lt;/a&gt;&lt;/td&gt;'</I>,
+      [ScriptName,
+      Table1.FieldByName (<I>'LastName'</I>).AsString,
+      Table1.FieldByName (<I>'FirstName'</I>).AsString]));
+    <FONT COLOR="#000080"><I>// get back</I></FONT>
+    Table1.Next;
+  <B>end</B>
+  <B>else</B>
+    <FONT COLOR="#000080"><I>// empty spot</I></FONT>
+    writeln (<I>'&lt;td&gt;&lt;i&gt;Prior&lt;/i&gt;&lt;/td&gt;'</I>);
+  <FONT COLOR="#000080"><I>// add pointer to the next record</I></FONT>
+  Table1.Next;
+  <B>if</B> <B>not</B> Table1.EOF <B>then</B>
+    <B>write</B> (Format (
+      <I>'&lt;td&gt;&lt;a HREF=&quot;%s/record?LastName=%s+FirstName=%s&quot;&gt; Next &lt;/a&gt;&lt;/td&gt;'</I>,
+      [ScriptName,
+      Table1.FieldByName (<I>'LastName'</I>).AsString,
+      Table1.FieldByName (<I>'FirstName'</I>).AsString]))
+  <B>else</B>
+    <FONT COLOR="#000080"><I>// empty spot</I></FONT>
+    writeln (<I>'&lt;td&gt;&lt;i&gt;Next&lt;/i&gt;&lt;/td&gt;'</I>);
+  <FONT COLOR="#000080"><I>// end of the line and table</I></FONT>
+  writeln (<I>'&lt;/tr&gt;&lt;/table&gt;'</I>);
+<B>end</B>;
+
+<B>function</B> ExtractFromData (
+  DataStr: <B>string</B>; SearchTag: <B>string</B>): <B>string</B>;
+<B>var</B>
+  nPos: Integer;
+<B>begin</B>
+  nPos := Pos (SearchTag + <I>'='</I>, DataStr);
+  <B>if</B> nPos &gt; 0 <B>then</B>
+  <B>begin</B>
+    Result := Copy (DataStr, nPos + 1 + Length (SearchTag),
+      Length (DataStr) - nPos);
+    <FONT COLOR="#000080"><I>// the separator is +</I></FONT>
+    nPos := Pos (<I>'+'</I>, Result);
+    <B>if</B> nPos &gt; 0 <B>then</B>
+      Result := Copy (Result, 1, nPos - 1);
+  <B>end</B>
+  <B>else</B>
+    Result := <I>''</I>;
+  <FONT COLOR="#000080"><I>// check for converted white spaces</I></FONT>
+  <B>repeat</B>
+    nPos := Pos (<I>'%20'</I>, Result);
+    <B>if</B> nPos &gt; 0 <B>then</B>
+      Result := Copy (Result, 0, nPos - 1) + <I>' '</I> +
+        Copy (Result, nPos + 3, Length (Result));
+  <B>until</B> nPos = 0;
+<B>end</B>;
+
+<FONT COLOR="#000080"><I>// main program</I></FONT>
+<B>begin</B>
+  ShowHeader;
+
+  <FONT COLOR="#000080"><I>// get the name of the script,</I></FONT>
+  <FONT COLOR="#000080"><I>// the method, and the path name</I></FONT>
+  GetEnvironmentVariable (<I>'SCRIPT_NAME'</I>,
+    ScriptName, sizeof (ScriptName));
+  GetEnvironmentVariable (<I>'REQUEST_METHOD'</I>,
+    MethodName, sizeof (MethodName));
+  GetEnvironmentVariable (<I>'PATH_INFO'</I>,
+    PathName, sizeof (PathName));
+
+  <FONT COLOR="#000080"><I>// debug</I></FONT>
+  writeln (<I>'&lt;i&gt;Script: '</I> + ScriptName +
+    <I>', Method: '</I> + MethodName +
+    <I>', Path: '</I> + PathName + <I>'&lt;/i&gt;&lt;p&gt;'</I>);
+
+
+  <FONT COLOR="#000080"><I>// create and connect the table</I></FONT>
+  Table1 := TTable.Create (<B>nil</B>);
+  <B>try</B>
+    Table1.DatabaseName := <I>'DBDEMOS'</I>;
+    Table1.TableName := <I>'Employee.db'</I>;
+    Table1.IndexName := <I>'ByName'</I>;
+    Table1.Open;
+
+    <FONT COLOR="#000080"><I>// if the pathname is 'record' then read the data</I></FONT>
+    <B>if</B> (StrComp (PathName, <I>'/record'</I>) = 0) <B>then</B>
+    <B>begin</B>
+      ShowRecord;
+    <B>end</B>
+    <B>else</B>
+      <FONT COLOR="#000080"><I>// no pathname: get the index</I></FONT>
+      ShowTableIndex
+  <B>finally</B>
+    Table1.Close;
+    Table1.Free;
+  <B>end</B>;
+  <FONT COLOR="#000080"><I>// show footer</I></FONT>
+  writeln(<I>'&lt;/BODY&gt;&lt;/HTML&gt;'</I>);
+<B>end</B>.</PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

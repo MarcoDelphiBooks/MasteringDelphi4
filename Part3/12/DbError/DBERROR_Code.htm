@@ -1,0 +1,283 @@
+<HTML><HEAD>
+<TITLE>Project: DBERROR.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: DBERROR.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#DBERROR.DPR> DBERROR.DPR</A>
+<LI> <A HREF=#DBERRFO.PAS> DBERRFO.PAS</A>
+<LI> <A HREF=#DBERRFO.DFM> DBERRFO.DFM</A>
+</UL>
+<HR>
+<A NAME=DBERROR.DPR><H3>DBERROR.DPR</H3></A>
+
+<PRE>
+<B>program</B> DbError;
+
+<B>uses</B>
+  Forms,
+  DBErrFo <B>in</B> <I>'DBErrFo.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=DBERRFO.PAS><H3>DBERRFO.PAS</H3></A>
+
+<PRE>
+<B>unit</B> DBErrFo;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  Grids, DBGrids, DB, DBTables, StdCtrls;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    Memo1: TMemo;
+    Label1: TLabel;
+    Table1: TTable;
+    DataSource1: TDataSource;
+    DBGrid1: TDBGrid;
+    Button1: TButton;
+    Button2: TButton;
+    Button3: TButton;
+    Button4: TButton;
+    Query1: TQuery;
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> Button1Click(Sender: TObject);
+    <B>procedure</B> Button2Click(Sender: TObject);
+    <B>procedure</B> Button3Click(Sender: TObject);
+    <B>procedure</B> Button4Click(Sender: TObject);
+    <B>procedure</B> Table1DeleteError(DataSet: TDataSet; E: EDatabaseError;
+      <B>var</B> Action: TDataAction);
+    <B>procedure</B> Table1EditError(DataSet: TDataSet; E: EDatabaseError;
+      <B>var</B> Action: TDataAction);
+    <B>procedure</B> Table1PostError(DataSet: TDataSet; E: EDatabaseError;
+      <B>var</B> Action: TDataAction);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <B>procedure</B> ShowError (E: EDBEngineError);
+    <B>procedure</B> MyError (Sender: TObject; E: Exception);
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.MyError (Sender: TObject; E: Exception);
+<B>begin</B>
+  Beep;
+  <B>if</B> E <B>is</B> EDBEngineError <B>then</B>
+    ShowError (EDBEngineError (E))
+  <B>else</B>
+    ShowMessage (E.<B>Message</B>);
+<B>end</B>;
+
+<B>procedure</B> TForm1.ShowError(E: EDBEngineError);
+<B>var</B>
+  I: Integer;
+<B>begin</B>
+  Memo1.Lines.Add(<I>''</I>);
+  Memo1.Lines.Add(<I>'Error: '</I> + (E.<B>Message</B>));
+  Memo1.Lines.Add(<I>'Number of errors: '</I> +
+    IntToStr(E.ErrorCount));
+  <FONT COLOR="#000080"><I>// iterate through the Errors</I></FONT>
+  <B>for</B> I := 0 <B>to</B> E.ErrorCount - 1 <B>do</B>
+  <B>begin</B>
+    Memo1.Lines.Add(<I>'Message: '</I> +
+      E.Errors[I].<B>Message</B>);
+    Memo1.Lines.Add(<I>'   Category: '</I> +
+      IntToStr(E.Errors[I].Category));
+     Memo1.Lines.Add(<I>'   Error Code: '</I> +
+      IntToStr(E.Errors[I].ErrorCode));
+    Memo1.Lines.Add(<I>'   SubCode: '</I> +
+      IntToStr(E.Errors[I].SubCode));
+    Memo1.Lines.Add(<I>'   Native Error: '</I> +
+      IntToStr(E.Errors[I].NativeError));
+    Memo1.Lines.Add(<I>''</I>);
+  <B>end</B>;
+<B>end</B>;
+
+
+<B>procedure</B> TForm1.FormCreate(Sender: TObject);
+<B>begin</B>
+  Application.OnException := MyError;
+<B>end</B>;
+
+<B>procedure</B> TForm1.Button1Click(Sender: TObject);
+<B>begin</B>
+  Table1.FieldByName (<I>'Name'</I>).Value := <I>'something'</I>;
+<B>end</B>;
+
+<B>procedure</B> TForm1.Button2Click(Sender: TObject);
+<B>var</B>
+  S: <B>String</B>;
+<B>begin</B>
+  s := Table1.FieldByName (<I>'Name'</I>).Value;
+  Table1.Insert;
+  Table1.FieldByName (<I>'Name'</I>).Value := s;
+  Table1.Post;
+<B>end</B>;
+
+<B>procedure</B> TForm1.Button3Click(Sender: TObject);
+<B>begin</B>
+  Query1.SQL.Clear;
+  Query1.SQL.Add (
+    <I>'select * from Countries where Population &gt; 100000'</I>);
+  Query1.Open;
+<B>end</B>;
+
+<B>procedure</B> TForm1.Button4Click(Sender: TObject);
+<B>begin</B>
+  Query1.SQL.Clear;
+  Query1.SQL.Add (
+    <I>'select * from Country where Populations &gt; 100000'</I>);
+  Query1.Open;
+<B>end</B>;
+
+<B>procedure</B> TForm1.Table1DeleteError(DataSet: TDataSet; E: EDatabaseError;
+  <B>var</B> Action: TDataAction);
+<B>begin</B>
+  Memo1.Lines.Add (<I>' -&gt; Delete Error: '</I> + E.<B>Message</B>);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Table1EditError(DataSet: TDataSet; E: EDatabaseError;
+  <B>var</B> Action: TDataAction);
+<B>begin</B>
+  Memo1.Lines.Add (<I>' -&gt; Edit Error: '</I> + E.<B>Message</B>);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Table1PostError(DataSet: TDataSet; E: EDatabaseError;
+  <B>var</B> Action: TDataAction);
+<B>begin</B>
+  Memo1.Lines.Add (<I>' -&gt; Post Error: '</I> + E.<B>Message</B>);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=DBERRFO.DFM><H3>DBERRFO.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 206
+  Top = 111
+  Width = 435
+  Height = 447
+  Caption = <I>'Database Errors'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Label1: TLabel
+    Left = 112
+    Top = 152
+    Width = 27
+    Height = 13
+    Caption = <I>'Errors'</I>
+  <B>end</B>
+  <B>object</B> Memo1: TMemo
+    Left = 112
+    Top = 168
+    Width = 313
+    Height = 233
+    ScrollBars = ssVertical
+    TabOrder = 0
+  <B>end</B>
+  <B>object</B> DBGrid1: TDBGrid
+    Left = 5
+    Top = 5
+    Width = 417
+    Height = 137
+    DataSource = DataSource1
+    TabOrder = 1
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = <I>'MS Sans Serif'</I>
+    TitleFont.Style = []
+  <B>end</B>
+  <B>object</B> Button1: TButton
+    Left = 8
+    Top = 168
+    Width = 97
+    Height = 25
+    Caption = <I>'Change data'</I>
+    TabOrder = 2
+    OnClick = Button1Click
+  <B>end</B>
+  <B>object</B> Button2: TButton
+    Left = 8
+    Top = 200
+    Width = 97
+    Height = 25
+    Caption = <I>'Duplicate record'</I>
+    TabOrder = 3
+    OnClick = Button2Click
+  <B>end</B>
+  <B>object</B> Button3: TButton
+    Left = 8
+    Top = 232
+    Width = 97
+    Height = 25
+    Caption = <I>'SQL Error 1'</I>
+    TabOrder = 4
+    OnClick = Button3Click
+  <B>end</B>
+  <B>object</B> Button4: TButton
+    Left = 8
+    Top = 264
+    Width = 97
+    Height = 25
+    Caption = <I>'SQL Error 2'</I>
+    TabOrder = 5
+    OnClick = Button4Click
+  <B>end</B>
+  <B>object</B> Table1: TTable
+    Active = True
+    OnDeleteError = Table1DeleteError
+    OnEditError = Table1EditError
+    OnPostError = Table1PostError
+    DatabaseName = <I>'DBDEMOS'</I>
+    TableName = <I>'COUNTRY.DB'</I>
+    Left = 16
+    Top = 8
+  <B>end</B>
+  <B>object</B> DataSource1: TDataSource
+    DataSet = Table1
+    Left = 16
+    Top = 56
+  <B>end</B>
+  <B>object</B> Query1: TQuery
+    OnDeleteError = Table1DeleteError
+    OnEditError = Table1EditError
+    OnPostError = Table1PostError
+    DatabaseName = <I>'DBDEMOS'</I>
+    Left = 16
+    Top = 104
+    ParamData = &lt;&gt;
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

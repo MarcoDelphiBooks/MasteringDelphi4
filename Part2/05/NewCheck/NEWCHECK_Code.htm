@@ -1,0 +1,144 @@
+<HTML><HEAD>
+<TITLE>Project: NEWCHECK.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: NEWCHECK.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#NEWCHECK.DPR> NEWCHECK.DPR</A>
+<LI> <A HREF=#CHECK.PAS> CHECK.PAS</A>
+<LI> <A HREF=#CHECK.DFM> CHECK.DFM</A>
+</UL>
+<HR>
+<A NAME=NEWCHECK.DPR><H3>NEWCHECK.DPR</H3></A>
+
+<PRE>
+<B>program</B> Newcheck;
+
+<B>uses</B>
+  Forms,
+  CHECK <B>in</B> <I>'CHECK.PAS'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=CHECK.PAS><H3>CHECK.PAS</H3></A>
+
+<PRE>
+<B>unit</B> Check;
+
+<B>interface</B>
+
+<B>uses</B> Windows, Classes, Graphics, Forms, Controls, Menus,
+  StdCtrls;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    MainMenu1: TMainMenu;
+    Command1: TMenuItem;
+    Toggle1: TMenuItem;
+    Label1: TLabel;
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> Toggle1Click(Sender: TObject);
+    <B>procedure</B> FormDestroy(Sender: TObject);
+  <B>private</B>
+    Bmp1, Bmp2: TBitmap;
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.FormCreate(Sender: TObject);
+<B>begin</B>
+  Bmp1 := TBitmap.Create;
+  Bmp2 := TBitmap.Create;
+  Bmp1.LoadFromFile (<I>'ok.bmp'</I>);
+  Bmp2.LoadFromFile (<I>'no.bmp'</I>);
+
+  <FONT COLOR="#000080"><I>{Windows API call}</I></FONT>
+  SetMenuItemBitmaps (Command1.Handle, Toggle1.Command, MF_BYCOMMAND,
+    Bmp2.Handle, Bmp1.Handle);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Toggle1Click(Sender: TObject);
+<B>begin</B>
+  Toggle1.Checked := <B>not</B> Toggle1.Checked;
+  <B>if</B> Toggle1.Checked <B>then</B>
+    Label1.Caption := <I>'ON'</I>
+  <B>else</B>
+    Label1.Caption := <I>'OFF'</I>;
+<B>end</B>;
+
+<B>procedure</B> TForm1.FormDestroy(Sender: TObject);
+<B>begin</B>
+  Bmp1.Free;
+  Bmp2.Free;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=CHECK.DFM><H3>CHECK.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 97
+  Top = 243
+  Width = 435
+  Height = 235
+  Caption = <I>'New Check'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -13
+  Font.Name = <I>'System'</I>
+  Font.Style = []
+  Menu = MainMenu1
+  OldCreateOrder = True
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  PixelsPerInch = 96
+  TextHeight = 16
+  <B>object</B> Label1: TLabel
+    Left = 0
+    Top = 48
+    Width = 425
+    Height = 111
+    Alignment = taCenter
+    AutoSize = False
+    Caption = <I>'OFF'</I>
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clBlack
+    Font.Height = -96
+    Font.Name = <I>'Arial'</I>
+    Font.Style = [fsBold]
+    ParentFont = False
+  <B>end</B>
+  <B>object</B> MainMenu1: TMainMenu
+    Left = 8
+    Top = 8
+    <B>object</B> Command1: TMenuItem
+      Caption = <I>'&amp;Command'</I>
+      <B>object</B> Toggle1: TMenuItem
+        Caption = <I>'&amp;Toggle'</I>
+        OnClick = Toggle1Click
+      <B>end</B>
+    <B>end</B>
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

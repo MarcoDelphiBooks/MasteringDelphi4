@@ -1,0 +1,231 @@
+<HTML><HEAD>
+<TITLE>Project: OVERDEF.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: OVERDEF.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#OVERDEF.DPR> OVERDEF.DPR</A>
+<LI> <A HREF=#OVERDEFF.PAS> OVERDEFF.PAS</A>
+<LI> <A HREF=#OVERDEFF.DFM> OVERDEFF.DFM</A>
+</UL>
+<HR>
+<A NAME=OVERDEF.DPR><H3>OVERDEF.DPR</H3></A>
+
+<PRE>
+<B>program</B> OverDef;
+
+<B>uses</B>
+  Forms,
+  OverDefF <B>in</B> <I>'OverDefF.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=OVERDEFF.PAS><H3>OVERDEFF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> OverDefF;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    Button1: TButton;
+    Button2: TButton;
+    Button3: TButton;
+    Button4: TButton;
+    Button5: TButton;
+    Button6: TButton;
+    <B>procedure</B> Button1Click(Sender: TObject);
+    <B>procedure</B> Button2Click(Sender: TObject);
+    <B>procedure</B> Button3Click(Sender: TObject);
+    <B>procedure</B> Button4Click(Sender: TObject);
+    <B>procedure</B> Button5Click(Sender: TObject);
+    <B>procedure</B> Button6Click(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> Test;
+<B>begin</B>
+  Beep;
+<B>end</B>;
+
+<FONT COLOR="#000080"><I>// error overload missing in Test (previous version)</I></FONT>
+<FONT COLOR="#000080"><I>{procedure Test (I: integer); overload;
+begin
+  Beep;
+end;}</I></FONT>
+
+<B>procedure</B> ShowMsg (str: <B>string</B>); <B>overload</B>;
+<B>begin</B>
+  MessageDlg (str, mtInformation, [mbOK], 0);
+<B>end</B>;
+
+<B>procedure</B> ShowMsg (FormatStr: <B>string</B>;
+  Params: <B>array</B> <B>of</B> <B>const</B>); <B>overload</B>;
+<B>begin</B>
+  MessageDlg (Format (FormatStr, Params),
+    mtInformation, [mbOK], 0);
+<B>end</B>;
+
+<B>procedure</B> ShowMsg (I: Integer; Str: <B>string</B>); <B>overload</B>;
+<B>begin</B>
+  ShowMsg (IntToStr (I) + <I>' '</I> + Str);
+<B>end</B>;
+
+<FONT COLOR="#000080"><I>// error: ambiguous call</I></FONT>
+<FONT COLOR="#000080"><I>{procedure ShowMsg (Str: string; I: Integer = 0); overload;
+begin
+  MessageDlg (Str + ': ' + IntToStr (I),
+    mtInformation, [mbOK], 0);
+end;}</I></FONT>
+
+<B>procedure</B> MessageDlg (str: <B>string</B>); <B>overload</B>;
+<B>begin</B>
+  Dialogs.MessageDlg (str, mtInformation, [mbOK], 0);
+<B>end</B>;
+
+<B>procedure</B> MessBox (Msg: <B>string</B>;
+  Caption: <B>string</B> = <I>'Warning'</I>;
+  Flags: LongInt = mb_OK <B>or</B> mb_IconHand);
+<B>begin</B>
+  Application.MessageBox (PChar (Msg),
+    PChar (Caption), Flags);
+<B>end</B>;
+
+<FONT COLOR="#000080"><I>// TForm1 //</I></FONT>
+
+<B>procedure</B> TForm1.Button1Click(Sender: TObject);
+<B>begin</B>
+  OverDefF.MessageDlg (<I>'Hello'</I>);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Button2Click(Sender: TObject);
+<B>begin</B>
+  ShowMsg (<I>'Hello'</I>);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Button3Click(Sender: TObject);
+<B>begin</B>
+  ShowMsg (10, <I>'MBytes'</I>);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Button4Click(Sender: TObject);
+<B>begin</B>
+  ShowMsg (<I>'Total = %d.'</I>, [100]);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Button5Click(Sender: TObject);
+<B>begin</B>
+  MessBox (<I>'Something wrong here!'</I>);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Button6Click(Sender: TObject);
+<B>begin</B>
+  MessBox (<I>'Something wrong here!'</I>, <I>'Attention'</I>);
+  <FONT COLOR="#000080"><I>// doens't compile</I></FONT>
+  <FONT COLOR="#000080"><I>// MessBox ('Hello', mb_OK);</I></FONT>
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=OVERDEFF.DFM><H3>OVERDEFF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 192
+  Top = 107
+  Width = 206
+  Height = 307
+  Caption = <I>'OverDef'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = False
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Button1: TButton
+    Left = 24
+    Top = 24
+    Width = 145
+    Height = 25
+    Caption = <I>'MessageDlg'</I>
+    TabOrder = 0
+    OnClick = Button1Click
+  <B>end</B>
+  <B>object</B> Button2: TButton
+    Left = 24
+    Top = 64
+    Width = 145
+    Height = 25
+    Caption = <I>'ShowMsg (''Hello'')'</I>
+          TabOrder = 1
+    OnClick = Button2Click
+  <B>end</B>
+  <B>object</B> Button3: TButton
+    Left = 24
+    Top = 104
+    Width = 145
+    Height = 25
+    Caption = <I>'  ShowMsg (10, ''MBytes'');'</I>
+          TabOrder = 2
+    OnClick = Button3Click
+  <B>end</B>
+  <B>object</B> Button4: TButton
+    Left = 24
+    Top = 144
+    Width = 145
+    Height = 25
+    Caption = <I>'  ShowMsg (''Total = %d.'', [100]);'</I>
+          TabOrder = 3
+    OnClick = Button4Click
+  <B>end</B>
+  <B>object</B> Button5: TButton
+    Left = 24
+    Top = 184
+    Width = 145
+    Height = 25
+    Caption = <I>'MessBox'</I>
+    TabOrder = 4
+    OnClick = Button5Click
+  <B>end</B>
+  <B>object</B> Button6: TButton
+    Left = 24
+    Top = 224
+    Width = 145
+    Height = 25
+    Caption = <I>'MessBox / Attention'</I>
+    TabOrder = 5
+    OnClick = Button6Click
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

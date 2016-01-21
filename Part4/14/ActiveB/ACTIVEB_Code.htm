@@ -1,0 +1,110 @@
+<HTML><HEAD>
+<TITLE>Project: ACTIVEB.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: ACTIVEB.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#ACTIVEB.DPR> ACTIVEB.DPR</A>
+<LI> <A HREF=#ACTIVEF.PAS> ACTIVEF.PAS</A>
+<LI> <A HREF=#ACTIVEF.DFM> ACTIVEF.DFM</A>
+</UL>
+<HR>
+<A NAME=ACTIVEB.DPR><H3>ACTIVEB.DPR</H3></A>
+
+<PRE>
+<B>program</B> ActiveB;
+
+<B>uses</B>
+  Forms,
+  ActiveF <B>in</B> <I>'ActiveF.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=ACTIVEF.PAS><H3>ACTIVEF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> ActiveF;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls, Md4ActiveBtn;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    Md4ActiveButton1: TMd4ActiveButton;
+    Md4ActiveButton2: TMd4ActiveButton;
+    Md4ActiveButton3: TMd4ActiveButton;
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=ACTIVEF.DFM><H3>ACTIVEF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 192
+  Top = 107
+  Width = 314
+  Height = 340
+  Caption = <I>'Active Button Demo'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = False
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Md4ActiveButton1: TMd4ActiveButton
+    Left = 72
+    Top = 40
+    Width = 153
+    Height = 49
+    Caption = <I>'Md4ActiveButton1'</I>
+    TabOrder = 0
+  <B>end</B>
+  <B>object</B> Md4ActiveButton2: TMd4ActiveButton
+    Left = 72
+    Top = 104
+    Width = 153
+    Height = 57
+    Caption = <I>'Md4ActiveButton2'</I>
+    TabOrder = 1
+  <B>end</B>
+  <B>object</B> Md4ActiveButton3: TMd4ActiveButton
+    Left = 72
+    Top = 176
+    Width = 153
+    Height = 57
+    Caption = <I>'Md4ActiveButton3'</I>
+    TabOrder = 2
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

@@ -1,0 +1,158 @@
+<HTML><HEAD>
+<TITLE>Project: PROCTYPE.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: PROCTYPE.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#PROCTYPE.DPR> PROCTYPE.DPR</A>
+<LI> <A HREF=#PROCFORM.PAS> PROCFORM.PAS</A>
+<LI> <A HREF=#PROCFORM.DFM> PROCFORM.DFM</A>
+</UL>
+<HR>
+<A NAME=PROCTYPE.DPR><H3>PROCTYPE.DPR</H3></A>
+
+<PRE>
+<B>program</B> Proctype;
+
+<B>uses</B>
+  Forms,
+  ProcForm <B>in</B> <I>'ProcForm.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=PROCFORM.PAS><H3>PROCFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> ProcForm;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics,
+  Controls, Forms, Dialogs, StdCtrls;
+
+<B>type</B>
+  <FONT COLOR="#000080"><I>{procedure type definition}</I></FONT>
+  IntProc = <B>procedure</B> (<B>var</B> Num: Integer);
+
+  TForm1 = <B>class</B>(TForm)
+    ApplyButton: TButton;
+    DoubleRadioButton: TRadioButton;
+    TripleRadioButton: TRadioButton;
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> ApplyButtonClick(Sender: TObject);
+    <B>procedure</B> DoubleRadioButtonClick(Sender: TObject);
+    <B>procedure</B> TripleRadioButtonClick(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+    IP: IntProc;
+    X: Integer;
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<FONT COLOR="#000080"><I>{procedures of the IntProc type}</I></FONT>
+<B>procedure</B> DoubleTheValue (<B>var</B> Value: Integer);
+<B>begin</B>
+  Value := Value * 2;
+  ShowMessage (<I>'Value doubled: '</I> + IntToStr (Value));
+<B>end</B>;
+
+<B>procedure</B> TripleTheValue (<B>var</B> Value: Integer);
+<B>begin</B>
+  Value := Value * 3;
+  ShowMessage (<I>'Value tripled: '</I> + IntToStr (Value));
+<B>end</B>;
+
+<FONT COLOR="#000080"><I>{initialization code}</I></FONT>
+<B>procedure</B> TForm1.FormCreate(Sender: TObject);
+<B>begin</B>
+  IP := DoubleTheValue;
+  X := 2;
+<B>end</B>;
+
+<FONT COLOR="#000080"><I>{push button OnClick event}</I></FONT>
+<B>procedure</B> TForm1.ApplyButtonClick(Sender: TObject);
+<B>begin</B>
+  IP (X);
+<B>end</B>;
+
+<FONT COLOR="#000080"><I>{Radio buttons OnClick events}</I></FONT>
+<B>procedure</B> TForm1.DoubleRadioButtonClick(Sender: TObject);
+<B>begin</B>
+  IP := DoubleTheValue;
+<B>end</B>;
+
+<B>procedure</B> TForm1.TripleRadioButtonClick(Sender: TObject);
+<B>begin</B>
+  IP := TripleTheValue;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=PROCFORM.DFM><H3>PROCFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 201
+  Top = 141
+  Width = 305
+  Height = 179
+  ActiveControl = ApplyButton
+  Caption = <I>'Proc Type'</I>
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> ApplyButton: TButton
+    Left = 168
+    Top = 56
+    Width = 89
+    Height = 41
+    Caption = <I>'Apply'</I>
+    TabOrder = 0
+    OnClick = ApplyButtonClick
+  <B>end</B>
+  <B>object</B> DoubleRadioButton: TRadioButton
+    Left = 40
+    Top = 40
+    Width = 81
+    Height = 33
+    Caption = <I>'Double'</I>
+    Checked = True
+    TabOrder = 1
+    TabStop = True
+    OnClick = DoubleRadioButtonClick
+  <B>end</B>
+  <B>object</B> TripleRadioButton: TRadioButton
+    Left = 40
+    Top = 88
+    Width = 81
+    Height = 25
+    Caption = <I>'Triple'</I>
+    TabOrder = 2
+    OnClick = TripleRadioButtonClick
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

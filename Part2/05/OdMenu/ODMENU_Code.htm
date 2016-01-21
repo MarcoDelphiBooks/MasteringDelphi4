@@ -1,0 +1,312 @@
+<HTML><HEAD>
+<TITLE>Project: ODMENU.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: ODMENU.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#ODMENU.DPR> ODMENU.DPR</A>
+<LI> <A HREF=#BITMENUF.PAS> BITMENUF.PAS</A>
+<LI> <A HREF=#BITMENUF.DFM> BITMENUF.DFM</A>
+</UL>
+<HR>
+<A NAME=ODMENU.DPR><H3>ODMENU.DPR</H3></A>
+
+<PRE>
+<B>program</B> ODMenu;
+
+<B>uses</B>
+  Forms,
+  BitMenuF <B>in</B> <I>'BitMenuF.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=BITMENUF.PAS><H3>BITMENUF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> BitMenuF;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  ExtCtrls, Menus;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    ShapeDemo: TShape;
+    MainMenu1: TMainMenu;
+    File1: TMenuItem;
+    Exit1: TMenuItem;
+    Shape1: TMenuItem;
+    Ellipse1: TMenuItem;
+    RoundRec1: TMenuItem;
+    Rectang1: TMenuItem;
+    Color1: TMenuItem;
+    Red1: TMenuItem;
+    Green1: TMenuItem;
+    Blue1: TMenuItem;
+    Help1: TMenuItem;
+    About1: TMenuItem;
+    <B>procedure</B> FormResize(Sender: TObject);
+    <B>procedure</B> Exit1Click(Sender: TObject);
+    <B>procedure</B> About1Click(Sender: TObject);
+    <B>procedure</B> ColorClick(Sender: TObject);
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> Ellipse1Click(Sender: TObject);
+    <B>procedure</B> RoundRec1Click(Sender: TObject);
+    <B>procedure</B> Rectang1Click(Sender: TObject);
+    <B>procedure</B> ColorMeasureItem(Sender: TObject; ACanvas: TCanvas;
+      <B>var</B> Width, Height: Integer);
+    <B>procedure</B> ColorDrawItem(Sender: TObject; ACanvas: TCanvas;
+      ARect: TRect; Selected: Boolean);
+    <B>procedure</B> ShapeMeasureItem(Sender: TObject; ACanvas: TCanvas;
+      <B>var</B> Width, Height: Integer);
+    <B>procedure</B> Ellipse1DrawItem(Sender: TObject; ACanvas: TCanvas;
+      ARect: TRect; Selected: Boolean);
+    <B>procedure</B> RoundRec1DrawItem(Sender: TObject; ACanvas: TCanvas;
+      ARect: TRect; Selected: Boolean);
+    <B>procedure</B> Rectang1DrawItem(Sender: TObject; ACanvas: TCanvas;
+      ARect: TRect; Selected: Boolean);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.FormResize(Sender: TObject);
+<B>begin</B>
+  ShapeDemo.SetBounds (ClientWidth <B>div</B> 6, ClientHeight <B>div</B> 6,
+    2 * ClientWidth <B>div</B> 3, 2 * ClientHeight <B>div</B> 3);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Exit1Click(Sender: TObject);
+<B>begin</B>
+  Close;
+<B>end</B>;
+
+<B>procedure</B> TForm1.About1Click(Sender: TObject);
+<B>begin</B>
+  MessageDlg (<I>'Owner-draw menu example,'#13</I> +
+    <I>'from &quot;Mastering Delphi&quot; by Marco Cantù'</I>,
+    mtInformation, [mbOK], 0);
+<B>end</B>;
+
+<B>procedure</B> TForm1.ColorClick(Sender: TObject);
+<B>begin</B>
+  ShapeDemo.Brush.Color :=
+    (Sender <B>as</B> TComponent).Tag
+<B>end</B>;
+
+<B>procedure</B> TForm1.FormCreate(Sender: TObject);
+<B>begin</B>
+  Blue1.Tag := clBlue;
+  Red1.Tag := clRed;
+  Green1.Tag := clGreen;
+<B>end</B>;
+
+<B>procedure</B> TForm1.Ellipse1Click(Sender: TObject);
+<B>begin</B>
+  ShapeDemo.Shape := stEllipse;
+<B>end</B>;
+
+<B>procedure</B> TForm1.RoundRec1Click(Sender: TObject);
+<B>begin</B>
+  ShapeDemo.Shape := stRoundRect;
+<B>end</B>;
+
+<B>procedure</B> TForm1.Rectang1Click(Sender: TObject);
+<B>begin</B>
+  ShapeDemo.Shape := stRectangle;
+<B>end</B>;
+
+<B>procedure</B> TForm1.ColorMeasureItem(Sender: TObject;
+  ACanvas: TCanvas;
+  <B>var</B> Width, Height: Integer);
+<B>begin</B>
+  Width := 80;
+  Height := 30;
+<B>end</B>;
+
+<B>procedure</B> TForm1.ColorDrawItem(Sender: TObject;
+  ACanvas: TCanvas; ARect: TRect; Selected: Boolean);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// set the background color and draw it</I></FONT>
+  <B>if</B> Selected <B>then</B>
+    ACanvas.Brush.Color := clHighlight
+  <B>else</B>
+    ACanvas.Brush.Color := clMenu;
+  ACanvas.FillRect (ARect);
+  <FONT COLOR="#000080"><I>// show the color</I></FONT>
+  ACanvas.Brush.Color := (Sender <B>as</B> TComponent).Tag;
+  InflateRect (ARect, -5, -5);
+  ACanvas.Rectangle (ARect.Left, ARect.Top,
+    ARect.Right, ARect.Bottom);
+<B>end</B>;
+
+<B>procedure</B> TForm1.ShapeMeasureItem(Sender: TObject; ACanvas: TCanvas;
+  <B>var</B> Width, Height: Integer);
+<B>begin</B>
+  Width := 90;
+  Height := 40;
+<B>end</B>;
+
+<B>procedure</B> TForm1.Ellipse1DrawItem(Sender: TObject; ACanvas: TCanvas;
+  ARect: TRect; Selected: Boolean);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// set the background color and draw it</I></FONT>
+  <B>if</B> Selected <B>then</B>
+    ACanvas.Brush.Color := clHighlight
+  <B>else</B>
+    ACanvas.Brush.Color := clMenu;
+  ACanvas.FillRect (ARect);
+  <FONT COLOR="#000080"><I>// draw the ellipse</I></FONT>
+  ACanvas.Brush.Color := clWhite;
+  InflateRect (ARect, -5, -5);
+  ACanvas.Ellipse (ARect.Left, ARect.Top,
+    ARect.Right, ARect.Bottom);
+<B>end</B>;
+
+<B>procedure</B> TForm1.RoundRec1DrawItem(Sender: TObject; ACanvas: TCanvas;
+  ARect: TRect; Selected: Boolean);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// set the background color and draw it</I></FONT>
+  <B>if</B> Selected <B>then</B>
+    ACanvas.Brush.Color := clHighlight
+  <B>else</B>
+    ACanvas.Brush.Color := clMenu;
+  ACanvas.FillRect (ARect);
+  <FONT COLOR="#000080"><I>// draw the round rectangle</I></FONT>
+  ACanvas.Brush.Color := clWhite;
+  InflateRect (ARect, -5, -5);
+  ACanvas.RoundRect (ARect.Left, ARect.Top,
+    ARect.Right, ARect.Bottom, 5, 5);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Rectang1DrawItem(Sender: TObject; ACanvas: TCanvas;
+  ARect: TRect; Selected: Boolean);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// set the background color and draw it</I></FONT>
+  <B>if</B> Selected <B>then</B>
+    ACanvas.Brush.Color := clHighlight
+  <B>else</B>
+    ACanvas.Brush.Color := clMenu;
+  ACanvas.FillRect (ARect);
+  <FONT COLOR="#000080"><I>// draw the rectangle</I></FONT>
+  ACanvas.Brush.Color := clWhite;
+  InflateRect (ARect, -5, -5);
+  ACanvas.Rectangle (ARect.Left, ARect.Top,
+    ARect.Right, ARect.Bottom);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=BITMENUF.DFM><H3>BITMENUF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 200
+  Top = 112
+  Width = 425
+  Height = 298
+  Caption = <I>'ODMenu'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  Menu = MainMenu1
+  OldCreateOrder = True
+  OnCreate = FormCreate
+  OnResize = FormResize
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> ShapeDemo: TShape
+    Left = 120
+    Top = 72
+    Width = 145
+    Height = 81
+    Shape = stEllipse
+  <B>end</B>
+  <B>object</B> MainMenu1: TMainMenu
+    OwnerDraw = True
+    Left = 56
+    Top = 16
+    <B>object</B> File1: TMenuItem
+      Caption = <I>'&amp;File'</I>
+      <B>object</B> Exit1: TMenuItem
+        Caption = <I>'E&amp;xit'</I>
+        ShortCut = 32883
+        OnClick = Exit1Click
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> Shape1: TMenuItem
+      Caption = <I>'&amp;Shape'</I>
+      <B>object</B> Ellipse1: TMenuItem
+        Caption = <I>'Ellipse'</I>
+        OnClick = Ellipse1Click
+        OnDrawItem = Ellipse1DrawItem
+        OnMeasureItem = ShapeMeasureItem
+      <B>end</B>
+      <B>object</B> RoundRec1: TMenuItem
+        Caption = <I>'RoundRec'</I>
+        OnClick = RoundRec1Click
+        OnDrawItem = RoundRec1DrawItem
+        OnMeasureItem = ShapeMeasureItem
+      <B>end</B>
+      <B>object</B> Rectang1: TMenuItem
+        Caption = <I>'Rectang'</I>
+        OnClick = Rectang1Click
+        OnDrawItem = Rectang1DrawItem
+        OnMeasureItem = ShapeMeasureItem
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> Color1: TMenuItem
+      Caption = <I>'&amp;Color'</I>
+      <B>object</B> Red1: TMenuItem
+        Caption = <I>'Red'</I>
+        OnClick = ColorClick
+        OnDrawItem = ColorDrawItem
+        OnMeasureItem = ColorMeasureItem
+      <B>end</B>
+      <B>object</B> Green1: TMenuItem
+        Caption = <I>'Green'</I>
+        OnClick = ColorClick
+        OnDrawItem = ColorDrawItem
+        OnMeasureItem = ColorMeasureItem
+      <B>end</B>
+      <B>object</B> Blue1: TMenuItem
+        Caption = <I>'Blue'</I>
+        OnClick = ColorClick
+        OnDrawItem = ColorDrawItem
+        OnMeasureItem = ColorMeasureItem
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> Help1: TMenuItem
+      Caption = <I>'&amp;Help'</I>
+      <B>object</B> About1: TMenuItem
+        Caption = <I>'&amp;About...'</I>
+        OnClick = About1Click
+      <B>end</B>
+    <B>end</B>
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

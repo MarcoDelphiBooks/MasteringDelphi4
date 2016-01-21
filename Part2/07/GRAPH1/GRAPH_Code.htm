@@ -1,0 +1,262 @@
+<HTML><HEAD>
+<TITLE>Project: GRAPH.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: GRAPH.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#GRAPH.DPR> GRAPH.DPR</A>
+<LI> <A HREF=#GRAPHF.PAS> GRAPHF.PAS</A>
+<LI> <A HREF=#GRAPHF.DFM> GRAPHF.DFM</A>
+</UL>
+<HR>
+<A NAME=GRAPH.DPR><H3>GRAPH.DPR</H3></A>
+
+<PRE>
+<B>program</B> Graph;
+
+<B>uses</B>
+  Forms,
+  GraphF <B>in</B> <I>'GraphF.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=GRAPHF.PAS><H3>GRAPHF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> GraphF;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes, Graphics, Controls,
+  Forms, Dialogs, Grids, StdCtrls, TeEngine,
+  Series, ExtCtrls, TeeProcs, Chart;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    Chart1: TChart;
+    Series1: TBarSeries;
+    Series2: TBarSeries;
+    Series3: TBarSeries;
+    Series4: TBarSeries;
+    Panel1: TPanel;
+    ChBoxMarks: TCheckBox;
+    UpdateButton: TButton;
+    StringGrid1: TStringGrid;
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> UpdateButtonClick(Sender: TObject);
+    <B>procedure</B> StringGrid1GetEditMask(Sender: TObject; ACol, ARow: Longint;
+      <B>var</B> Value: <B>string</B>);
+    <B>procedure</B> ChBoxMarksClick(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.FormCreate(Sender: TObject);
+<B>var</B>
+  I, J: Integer;
+<B>begin</B>
+  <B>with</B> StringGrid1 <B>do</B>
+  <B>begin</B>
+    <FONT COLOR="#000080"><I>{fills the fixed column and row,
+    and the chart series names}</I></FONT>
+    <B>for</B> I := 1 <B>to</B> 5 <B>do</B>
+      Cells [I, 0] := Format (<I>'Group%d'</I>, [I]);
+    <B>for</B> J := 1 <B>to</B> 4 <B>do</B>
+    <B>begin</B>
+      Cells [0, J] := Format (<I>'Series%d'</I>, [J]);
+      Chart1.Series [J-1].Title := Format (<I>'Series%d'</I>, [J]);
+    <B>end</B>;
+
+    <FONT COLOR="#000080"><I>// fills the grid with random values</I></FONT>
+    Randomize;
+    <B>for</B> I := 1 <B>to</B> 5 <B>do</B>
+      <B>for</B> J := 1 <B>to</B> 4 <B>do</B>
+        Cells [I, J] := IntToStr (Random (100));
+  <B>end</B>; <FONT COLOR="#000080"><I>// with</I></FONT>
+
+  <FONT COLOR="#000080"><I>// update the chart</I></FONT>
+  UpdateButtonClick (self);
+<B>end</B>;
+
+<B>procedure</B> TForm1.UpdateButtonClick(Sender: TObject);
+<B>var</B>
+  I, J: Integer;
+<B>begin</B>
+  <B>for</B> I := 1 <B>to</B> 4 <B>do</B>
+  <B>begin</B>
+    Chart1.Series [I-1].Clear;
+    <B>for</B> J := 1 <B>to</B> 5 <B>do</B>
+      Chart1.Series [I-1].Add (
+        StrToInt (StringGrid1.Cells [J, I]),
+        <I>''</I>, Chart1.Series [I-1].SeriesColor);
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TForm1.StringGrid1GetEditMask(Sender: TObject; ACol,
+  ARow: Longint; <B>var</B> Value: <B>string</B>);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// edit mask for the grid cells</I></FONT>
+  Value := <I>'09;0'</I>;
+<B>end</B>;
+
+<B>procedure</B> TForm1.ChBoxMarksClick(Sender: TObject);
+<B>var</B>
+  I: Integer;
+<B>begin</B>
+  <B>for</B> I := 1 <B>to</B> 4 <B>do</B>
+    Chart1.Series [I-1].Marks.Visible :=
+      ChBoxMarks.Checked;
+<B>end</B>;
+
+
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=GRAPHF.DFM><H3>GRAPHF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 188
+  Top = 82
+  Width = 485
+  Height = 462
+  Caption = <I>'Graph'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clBlack
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Chart1: TChart
+    Left = 0
+    Top = 0
+    Width = 477
+    Height = 291
+    AnimatedZoom = True
+    BackWall.Color = clBtnFace
+    Title.Text.Strings = (
+      <I>'Simple TeeChart Demo for Mastering Delphi'</I>)
+    BackColor = clBtnFace
+    Align = alClient
+    BevelOuter = bvLowered
+    TabOrder = 0
+    <B>object</B> Series1: TBarSeries
+      Marks.ArrowLength = 20
+      Marks.Visible = False
+      SeriesColor = clRed
+      XValues.DateTime = False
+      XValues.Name = <I>'X'</I>
+      XValues.Multiplier = 1
+      XValues.Order = loAscending
+      YValues.DateTime = False
+      YValues.Name = <I>'Bar'</I>
+      YValues.Multiplier = 1
+      YValues.Order = loNone
+    <B>end</B>
+    <B>object</B> Series2: TBarSeries
+      Marks.ArrowLength = 20
+      Marks.Visible = False
+      SeriesColor = clGreen
+      XValues.DateTime = False
+      XValues.Name = <I>'X'</I>
+      XValues.Multiplier = 1
+      XValues.Order = loAscending
+      YValues.DateTime = False
+      YValues.Name = <I>'Bar'</I>
+      YValues.Multiplier = 1
+      YValues.Order = loNone
+    <B>end</B>
+    <B>object</B> Series3: TBarSeries
+      Marks.ArrowLength = 20
+      Marks.Visible = False
+      SeriesColor = clYellow
+      XValues.DateTime = False
+      XValues.Name = <I>'X'</I>
+      XValues.Multiplier = 1
+      XValues.Order = loAscending
+      YValues.DateTime = False
+      YValues.Name = <I>'Bar'</I>
+      YValues.Multiplier = 1
+      YValues.Order = loNone
+    <B>end</B>
+    <B>object</B> Series4: TBarSeries
+      Marks.ArrowLength = 20
+      Marks.Visible = False
+      SeriesColor = clBlue
+      XValues.DateTime = False
+      XValues.Name = <I>'X'</I>
+      XValues.Multiplier = 1
+      XValues.Order = loAscending
+      YValues.DateTime = False
+      YValues.Name = <I>'Bar'</I>
+      YValues.Multiplier = 1
+      YValues.Order = loNone
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> Panel1: TPanel
+    Left = 0
+    Top = 291
+    Width = 477
+    Height = 144
+    Align = alBottom
+    BevelOuter = bvLowered
+    TabOrder = 1
+    <B>object</B> ChBoxMarks: TCheckBox
+      Left = 352
+      Top = 82
+      Width = 57
+      Height = 17
+      Caption = <I>'Marks'</I>
+      TabOrder = 0
+      OnClick = ChBoxMarksClick
+    <B>end</B>
+    <B>object</B> UpdateButton: TButton
+      Left = 336
+      Top = 37
+      Width = 89
+      Height = 30
+      Caption = <I>'&amp;Update'</I>
+      TabOrder = 1
+      OnClick = UpdateButtonClick
+    <B>end</B>
+    <B>object</B> StringGrid1: TStringGrid
+      Left = 8
+      Top = 8
+      Width = 309
+      Height = 128
+      ColCount = 6
+      DefaultColWidth = 50
+      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goEditing]
+      ScrollBars = ssNone
+      TabOrder = 2
+      OnGetEditMask = StringGrid1GetEditMask
+    <B>end</B>
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

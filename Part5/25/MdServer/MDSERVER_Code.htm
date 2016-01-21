@@ -1,0 +1,250 @@
+<HTML><HEAD>
+<TITLE>Project: MDSERVER.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: MDSERVER.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#MDSERVER.DPR> MDSERVER.DPR</A>
+<LI> <A HREF=#MDSFORM.PAS> MDSFORM.PAS</A>
+<LI> <A HREF=#MDSERVER_TLB.PAS> MDSERVER_TLB.PAS</A>
+<LI> <A HREF=#MDSDM.PAS> MDSDM.PAS</A>
+<LI> <A HREF=#MDSFORM.DFM> MDSFORM.DFM</A>
+<LI> <A HREF=#MDSDM.DFM> MDSDM.DFM</A>
+</UL>
+<HR>
+<A NAME=MDSERVER.DPR><H3>MDSERVER.DPR</H3></A>
+
+<PRE>
+<B>program</B> MdServer;
+
+<B>uses</B>
+  Forms,
+  MdsForm <B>in</B> <I>'MdsForm.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>,
+  MdServer_TLB <B>in</B> <I>'MdServer_TLB.pas'</I>,
+  MdsDm <B>in</B> <I>'MdsDm.pas'</I> <FONT COLOR="#000080"><I>{MdDataModule: TDataModule}</I></FONT> <FONT COLOR="#000080"><I>{MdDataModule: CoClass}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<FONT COLOR="#000080"><I>{$R *.TLB}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MDSFORM.PAS><H3>MDSFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> MdsForm;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MDSERVER_TLB.PAS><H3>MDSERVER_TLB.PAS</H3></A>
+
+<PRE>
+<B>unit</B> MdServer_TLB;
+
+<FONT COLOR="#000080"><I>{ This file contains pascal declarations imported from a type library.
+  This file will be written during each import or refresh of the type
+  library editor.  Changes to this file will be discarded during the
+  refresh process. }</I></FONT>
+
+<FONT COLOR="#000080"><I>{ MdServer Library }</I></FONT>
+<FONT COLOR="#000080"><I>{ Version 1.0 }</I></FONT>
+
+<B>interface</B>
+
+<B>uses</B> Windows, ActiveX, Classes, Graphics, OleCtrls, StdVCL;
+
+<B>const</B>
+  LIBID_MdServer: TGUID = <I>'{C5DDE904-2214-11D1-98D0-444553540000}'</I>;
+
+<B>const</B>
+
+<FONT COLOR="#000080"><I>{ Component class GUIDs }</I></FONT>
+  Class_MdDataModule: TGUID = <I>'{C5DDE906-2214-11D1-98D0-444553540000}'</I>;
+
+<B>type</B>
+
+<FONT COLOR="#000080"><I>{ Forward declarations: Interfaces }</I></FONT>
+  IMdDataModule = <B>interface</B>;
+  IMdDataModuleDisp = <B>dispinterface</B>;
+
+<FONT COLOR="#000080"><I>{ Forward declarations: CoClasses }</I></FONT>
+  MdDataModule = IMdDataModule;
+
+<FONT COLOR="#000080"><I>{ Dispatch interface for MdDataModule Object }</I></FONT>
+
+  IMdDataModule = <B>interface</B>(IDataBroker)
+    [<I>'{C5DDE905-2214-11D1-98D0-444553540000}'</I>]
+    <B>function</B> Get_TableCustomers: IProvider; safecall;
+    <B>function</B> Get_TableOrders: IProvider; safecall;
+    <B>procedure</B> GetBoth(out Customer, Order: OleVariant); safecall;
+    <B>property</B> TableCustomers: IProvider <B>read</B> Get_TableCustomers;
+    <B>property</B> TableOrders: IProvider <B>read</B> Get_TableOrders;
+  <B>end</B>;
+
+<FONT COLOR="#000080"><I>{ DispInterface declaration for Dual Interface IMdDataModule }</I></FONT>
+
+  IMdDataModuleDisp = <B>dispinterface</B>
+    [<I>'{C5DDE905-2214-11D1-98D0-444553540000}'</I>]
+    <B>function</B> GetProviderNames: OleVariant; <B>dispid</B> 22929905;
+    <B>property</B> TableCustomers: IProvider readonly <B>dispid</B> 1;
+    <B>property</B> TableOrders: IProvider readonly <B>dispid</B> 2;
+    <B>procedure</B> GetBoth(out Customer, Order: OleVariant); <B>dispid</B> 3;
+  <B>end</B>;
+
+<FONT COLOR="#000080"><I>{ MdDataModuleObject }</I></FONT>
+
+  CoMdDataModule = <B>class</B>
+    <B>class</B> <B>function</B> Create: IMdDataModule;
+    <B>class</B> <B>function</B> CreateRemote(<B>const</B> MachineName: <B>string</B>): IMdDataModule;
+  <B>end</B>;
+
+
+
+<B>implementation</B>
+
+<B>uses</B> ComObj;
+
+<B>class</B> <B>function</B> CoMdDataModule.Create: IMdDataModule;
+<B>begin</B>
+  Result := CreateComObject(Class_MdDataModule) <B>as</B> IMdDataModule;
+<B>end</B>;
+
+<B>class</B> <B>function</B> CoMdDataModule.CreateRemote(<B>const</B> MachineName: <B>string</B>): IMdDataModule;
+<B>begin</B>
+  Result := CreateRemoteComObject(MachineName, Class_MdDataModule) <B>as</B> IMdDataModule;
+<B>end</B>;
+
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MDSDM.PAS><H3>MDSDM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> MdsDm;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  ComServ, ComObj, VCLCom, StdVcl, BdeProv, DataBkr, MdServer_TLB, Db,
+  DBTables;
+
+<B>type</B>
+  TMdDataModule = <B>class</B>(TDataModule, IMdDataModule)
+    TableCustomers: TTable;
+    TableOrders: TTable;
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>protected</B>
+    <B>function</B> Get_TableCustomers: IProvider; safecall;
+    <B>function</B> Get_TableOrders: IProvider; safecall;
+    <B>procedure</B> GetBoth(out Customer, Order: OleVariant); safecall;
+  <B>end</B>;
+
+<B>var</B>
+  MdDataModule: TMdDataModule;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>function</B> TMdDataModule.Get_TableCustomers: IProvider;
+<B>begin</B>
+  Result := TableCustomers.Provider;
+<B>end</B>;
+
+<B>function</B> TMdDataModule.Get_TableOrders: IProvider;
+<B>begin</B>
+  Result := TableOrders.Provider;
+<B>end</B>;
+
+<B>procedure</B> TMdDataModule.GetBoth(out Customer, Order: OleVariant);
+<B>begin</B>
+  Customer := TableCustomers.Provider.Data;
+  Order := TableOrders.Provider.Data;
+<B>end</B>;
+
+<B>initialization</B>
+  TComponentFactory.Create(ComServer, TMdDataModule,
+    Class_MdDataModule, ciMultiInstance);
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MDSFORM.DFM><H3>MDSFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 201
+  Top = 135
+  Width = 200
+  Height = 74
+  Caption = <I>'Master-detail server'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  PixelsPerInch = 96
+  TextHeight = 13
+<B>end</B></PRE>
+<HR>
+
+<A NAME=MDSDM.DFM><H3>MDSDM.DFM</H3></A>
+
+<PRE>
+<B>object</B> MdDataModule: TMdDataModule
+  OldCreateOrder = True
+  Left = 216
+  Top = 184
+  Height = 163
+  Width = 143
+  <B>object</B> TableCustomers: TTable
+    DatabaseName = <I>'DBDEMOS'</I>
+    TableName = <I>'CUSTOMER.DB'</I>
+    Left = 48
+    Top = 8
+  <B>end</B>
+  <B>object</B> TableOrders: TTable
+    DatabaseName = <I>'DBDEMOS'</I>
+    TableName = <I>'ORDERS.DB'</I>
+    Left = 48
+    Top = 56
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

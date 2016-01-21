@@ -1,0 +1,178 @@
+<HTML><HEAD>
+<TITLE>Project: CLASSREF.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: CLASSREF.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#CLASSREF.DPR> CLASSREF.DPR</A>
+<LI> <A HREF=#CREFF.PAS> CREFF.PAS</A>
+<LI> <A HREF=#CREFF.DFM> CREFF.DFM</A>
+</UL>
+<HR>
+<A NAME=CLASSREF.DPR><H3>CLASSREF.DPR</H3></A>
+
+<PRE>
+<B>program</B> ClassRef;
+
+<B>uses</B>
+  Forms,
+  CRefF <B>in</B> <I>'CRefF.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=CREFF.PAS><H3>CREFF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> CRefF;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes, Graphics, Controls,
+  Forms, Dialogs, StdCtrls, ExtCtrls;
+
+<B>type</B>
+  <FONT COLOR="#000080"><I>// class reference type (redeclaration)</I></FONT>
+  TControlClass = <B>class</B> <B>of</B> TControl;
+
+  TForm1 = <B>class</B>(TForm)
+    Panel1: TPanel;
+    RbtnRadio: TRadioButton;
+    RbtnButton: TRadioButton;
+    RbtnEdit: TRadioButton;
+    <B>procedure</B> RbtnRadioClick(Sender: TObject);
+    <B>procedure</B> RbtnButtonClick(Sender: TObject);
+    <B>procedure</B> RbtnEditClick(Sender: TObject);
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> FormMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+  <B>private</B>
+    ClassRef: TControlClass;
+    Counter: Integer;
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.RbtnRadioClick(Sender: TObject);
+<B>begin</B>
+  ClassRef := TRadioButton;
+<B>end</B>;
+
+<B>procedure</B> TForm1.RbtnButtonClick(Sender: TObject);
+<B>begin</B>
+  ClassRef := TButton;
+<B>end</B>;
+
+<B>procedure</B> TForm1.RbtnEditClick(Sender: TObject);
+<B>begin</B>
+  ClassRef := TEdit;
+<B>end</B>;
+
+<B>procedure</B> TForm1.FormCreate(Sender: TObject);
+<B>begin</B>
+  ClassRef := TRadioButton;
+<B>end</B>;
+
+<B>procedure</B> TForm1.FormMouseDown(
+  Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+<B>var</B>
+  NewCtrl: TControl;
+  MyName: <B>String</B>;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// create the control</I></FONT>
+  NewCtrl := ClassRef.Create (self);
+  <FONT COLOR="#000080"><I>// hide it temporarily, to avoid flickering</I></FONT>
+  NewCtrl.Visible := False;
+  <FONT COLOR="#000080"><I>// set parent and position</I></FONT>
+  NewCtrl.Parent := self;
+  NewCtrl.Left := X;
+  NewCtrl.Top := Y;
+  <FONT COLOR="#000080"><I>// compute the unique name (and caption)</I></FONT>
+  Inc (Counter);
+  MyName := ClassRef.ClassName + IntToStr (Counter);
+  Delete (MyName, 1, 1);
+  NewCtrl.Name := MyName;
+  <FONT COLOR="#000080"><I>// now show it</I></FONT>
+  NewCtrl.Visible := True;
+<B>end</B>;
+
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=CREFF.DFM><H3>CREFF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 183
+  Top = 148
+  Width = 474
+  Height = 344
+  Caption = <I>'Component Builder'</I>
+  Font.Charset = ANSI_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OnCreate = FormCreate
+  OnMouseDown = FormMouseDown
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Panel1: TPanel
+    Left = 0
+    Top = 0
+    Width = 466
+    Height = 33
+    Align = alTop
+    TabOrder = 0
+    <B>object</B> RbtnRadio: TRadioButton
+      Left = 24
+      Top = 8
+      Width = 89
+      Height = 17
+      Caption = <I>'Radio Button'</I>
+      Checked = True
+      TabOrder = 0
+      TabStop = True
+      OnClick = RbtnRadioClick
+    <B>end</B>
+    <B>object</B> RbtnButton: TRadioButton
+      Left = 144
+      Top = 8
+      Width = 61
+      Height = 17
+      Caption = <I>'Button'</I>
+      TabOrder = 1
+      OnClick = RbtnButtonClick
+    <B>end</B>
+    <B>object</B> RbtnEdit: TRadioButton
+      Left = 240
+      Top = 8
+      Width = 49
+      Height = 17
+      Caption = <I>'Edit'</I>
+      TabOrder = 2
+      OnClick = RbtnEditClick
+    <B>end</B>
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

@@ -1,0 +1,143 @@
+<HTML><HEAD>
+<TITLE>Project: MYWEBSRV.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: MYWEBSRV.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#MYWEBSRV.DPR> MYWEBSRV.DPR</A>
+<LI> <A HREF=#WEBDATAMODULE.PAS> WEBDATAMODULE.PAS</A>
+<LI> <A HREF=#WEBDATAMODULE.DFM> WEBDATAMODULE.DFM</A>
+</UL>
+<HR>
+<A NAME=MYWEBSRV.DPR><H3>MYWEBSRV.DPR</H3></A>
+
+<PRE>
+<B>library</B> MyWebSrv;
+
+<B>uses</B>
+  HTTPApp,
+  ISAPIApp,
+  WebDataModule <B>in</B> <I>'WebDataModule.pas'</I> <FONT COLOR="#000080"><I>{WebModule1: TWebModule}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>exports</B>
+  GetExtensionVersion,
+  HttpExtensionProc,
+  TerminateExtension;
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TWebModule1, WebModule1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=WEBDATAMODULE.PAS><H3>WEBDATAMODULE.PAS</H3></A>
+
+<PRE>
+<B>unit</B> WebDataModule;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, HTTPApp, Db, DBTables;
+
+<B>type</B>
+  TWebModule1 = <B>class</B>(TWebModule)
+    Session1: TSession;
+    Table1: TTable;
+    <B>procedure</B> WebModule1WebActionItem1Action(Sender: TObject;
+      Request: TWebRequest; Response: TWebResponse; <B>var</B> Handled: Boolean);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  WebModule1: TWebModule1;
+
+  <B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TWebModule1.WebModule1WebActionItem1Action(
+  Sender: TObject;
+  Request: TWebRequest;
+  Response: TWebResponse;
+  <B>var</B> Handled: Boolean);
+<B>var</B>
+  Str1: <B>string</B>;
+  I: Integer;
+<B>begin</B>
+  Str1 :=
+    <I>'&lt;HTML&gt; &lt;HEAD&gt; &lt;TITLE&gt;Server Database&lt;/TITLE&gt; &lt;/HEAD&gt; '</I> +
+    <I>'&lt;BODY&gt; &lt;H1&gt;&lt;CENTER&gt;Query&lt;/CENTER&gt;&lt;/H1&gt; '</I>;
+
+  Str1 := Str1 + <I>'&lt;b&gt;'</I> + Request.Query + <I>'&lt;/b&gt;&lt;p&gt;'</I>;
+
+  <B>if</B> Request.Query &lt;&gt; <I>''</I> <B>then</B>
+  <B>begin</B>
+    Table1.FindNearest ([Request.Query]);
+    <B>for</B> I := 1 <B>to</B> Table1.FieldCount - 1 <B>do</B>
+      Str1 := Str1 + (Table1.Fields [I].FieldName + <I>': '</I> +
+        Table1.Fields [I].AsString + <I>'&lt;p&gt;'</I>);
+  <B>end</B>
+  <B>else</B>
+  <B>begin</B>
+    Table1.First;
+    <B>while</B> <B>not</B> Table1.EOF <B>do</B>
+    <B>begin</B>
+      <FONT COLOR="#000080"><I>// entire table</I></FONT>
+      Str1 := Str1 + Format (
+        <I>'The capital of &lt;a HREF=&quot;'</I> +
+        Request.ScriptName + <I>'?%s&quot;&gt; %s &lt;/a&gt; is %s&lt;p&gt;'</I>,
+        [Table1.FieldByName (<I>'Name'</I>).AsString,
+        Table1.FieldByName (<I>'Name'</I>).AsString,
+        Table1.FieldByName (<I>'Capital'</I>).AsString]);
+      Table1.Next;
+    <B>end</B>;
+  <B>end</B>;
+  Response.Content := Str1 + <I>'&lt;/BODY&gt;&lt;/HTML&gt;'</I>;
+  Handled := True;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=WEBDATAMODULE.DFM><H3>WEBDATAMODULE.DFM</H3></A>
+
+<PRE>
+<B>object</B> WebModule1: TWebModule1
+  OldCreateOrder = True
+  Actions = &lt;
+    <B>item</B>
+      Name = <I>'WebActionItem1'</I>
+      OnAction = WebModule1WebActionItem1Action
+    <B>end</B>&gt;
+  Left = 195
+  Top = 108
+  Height = 125
+  Width = 164
+  <B>object</B> Session1: TSession
+    Active = True
+    SessionName = <I>'mysess'</I>
+    Left = 24
+    Top = 8
+  <B>end</B>
+  <B>object</B> Table1: TTable
+    Active = True
+    DatabaseName = <I>'DBDEMOS'</I>
+    SessionName = <I>'mysess'</I>
+    TableName = <I>'COUNTRY.DB'</I>
+    Left = 64
+    Top = 8
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

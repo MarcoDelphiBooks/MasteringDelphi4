@@ -1,0 +1,710 @@
+<HTML><HEAD>
+<TITLE>Project: MDIVIEW.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: MDIVIEW.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#MDIVIEW.DPR> MDIVIEW.DPR</A>
+<LI> <A HREF=#GRIDVIEW.PAS> GRIDVIEW.PAS</A>
+<LI> <A HREF=#DATAM.PAS> DATAM.PAS</A>
+<LI> <A HREF=#FORMVIEW.PAS> FORMVIEW.PAS</A>
+<LI> <A HREF=#MAIN.PAS> MAIN.PAS</A>
+<LI> <A HREF=#GRIDVIEW.DFM> GRIDVIEW.DFM</A>
+<LI> <A HREF=#DATAM.DFM> DATAM.DFM</A>
+<LI> <A HREF=#FORMVIEW.DFM> FORMVIEW.DFM</A>
+<LI> <A HREF=#MAIN.DFM> MAIN.DFM</A>
+</UL>
+<HR>
+<A NAME=MDIVIEW.DPR><H3>MDIVIEW.DPR</H3></A>
+
+<PRE>
+<B>program</B> MdiView;
+
+<B>uses</B>
+  Forms,
+  GridView <B>in</B> <I>'GridView.pas'</I> <FONT COLOR="#000080"><I>{GridForm}</I></FONT>,
+  DataM <B>in</B> <I>'DataM.pas'</I> <FONT COLOR="#000080"><I>{CustomerDM}</I></FONT>,
+  FormView <B>in</B> <I>'FormView.pas'</I> <FONT COLOR="#000080"><I>{RecordForm}</I></FONT>,
+  Main <B>in</B> <I>'Main.pas'</I> <FONT COLOR="#000080"><I>{FrameForm}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TFrameForm, FrameForm);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=GRIDVIEW.PAS><H3>GRIDVIEW.PAS</H3></A>
+
+<PRE>
+<B>unit</B> GridView;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  Grids, DBGrids, Buttons, DBCtrls, DataM, ExtCtrls;
+
+<B>type</B>
+  TGridForm = <B>class</B>(TForm)
+    DBGrid1: TDBGrid;
+    <B>procedure</B> FormClose(Sender: TObject; <B>var</B> Action: TCloseAction);
+    <B>procedure</B> FormCreate(Sender: TObject);
+  <B>private</B>
+    DM: TCustomerDM;
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TGridForm.FormClose(Sender: TObject; <B>var</B> Action: TCloseAction);
+<B>begin</B>
+  Action := caFree;
+<B>end</B>;
+
+<B>procedure</B> TGridForm.FormCreate(Sender: TObject);
+<B>begin</B>
+  DM := TCustomerDM.Create (self);
+  DBGrid1.DataSource := DM.DataSource1;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=DATAM.PAS><H3>DATAM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> DataM;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  DBTables, DB;
+
+<B>type</B>
+  TCustomerDM = <B>class</B>(TDataModule)
+    Table1: TTable;
+    DataSource1: TDataSource;
+    Table1CustNo: TFloatField;
+    Table1Company: TStringField;
+    Table1Addr1: TStringField;
+    Table1Addr2: TStringField;
+    Table1City: TStringField;
+    Table1State: TStringField;
+    Table1Zip: TStringField;
+    Table1Country: TStringField;
+    Table1Phone: TStringField;
+    Table1FAX: TStringField;
+    Table1TaxRate: TFloatField;
+    Table1Contact: TStringField;
+    Table1LastInvoiceDate: TDateTimeField;
+    <B>procedure</B> DataSource1DataChange(Sender: TObject; Field: TField);
+  <B>end</B>;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TCustomerDM.DataSource1DataChange(Sender: TObject;
+  Field: TField);
+<B>begin</B>
+  (Owner <B>as</B> TForm).Caption :=
+    (Owner <B>as</B> TForm).Hint + <I>' - '</I> +
+    Table1Company.AsString;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=FORMVIEW.PAS><H3>FORMVIEW.PAS</H3></A>
+
+<PRE>
+<B>unit</B> FormView;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  ExtCtrls, DBCtrls, StdCtrls, Mask, DataM;
+
+<B>type</B>
+  TRecordForm = <B>class</B>(TForm)
+    DBEdit1: TDBEdit;
+    DBEdit2: TDBEdit;
+    DBEdit3: TDBEdit;
+    DBEdit4: TDBEdit;
+    DBEdit5: TDBEdit;
+    DBEdit6: TDBEdit;
+    DBEdit7: TDBEdit;
+    DBEdit8: TDBEdit;
+    DBEdit9: TDBEdit;
+    DBEdit10: TDBEdit;
+    DBEdit11: TDBEdit;
+    DBEdit12: TDBEdit;
+    Label1: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
+    Label4: TLabel;
+    Label5: TLabel;
+    Label6: TLabel;
+    Label7: TLabel;
+    Label8: TLabel;
+    Label9: TLabel;
+    Label10: TLabel;
+    Label11: TLabel;
+    Label12: TLabel;
+    DBNavigator1: TDBNavigator;
+    <B>procedure</B> FormClose(Sender: TObject; <B>var</B> Action: TCloseAction);
+    <B>procedure</B> FormCreate(Sender: TObject);
+  <B>private</B>
+    DM: TCustomerDM;
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TRecordForm.FormClose(Sender: TObject; <B>var</B> Action: TCloseAction);
+<B>begin</B>
+  Action := caFree;
+<B>end</B>;
+
+<B>procedure</B> TRecordForm.FormCreate(Sender: TObject);
+<B>var</B>
+  I: Integer;
+<B>begin</B>
+  DM := TCustomerDM.Create (self);
+  <FONT COLOR="#000080"><I>// connect the navigator</I></FONT>
+  DBNavigator1.DataSource := DM.DataSource1;
+  <FONT COLOR="#000080"><I>// connect all DBEdit controls</I></FONT>
+  <B>for</B> I := 0 <B>to</B> ControlCount - 1 <B>do</B>
+    <B>if</B> Controls [i] <B>is</B> TDBEdit <B>then</B>
+      TDBEdit (Controls [I]).DataSource :=
+        DM.DataSource1;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MAIN.PAS><H3>MAIN.PAS</H3></A>
+
+<PRE>
+<B>unit</B> Main;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  Menus;
+
+<B>type</B>
+  TFrameForm = <B>class</B>(TForm)
+    MainMenu1: TMainMenu;
+    File1: TMenuItem;
+    NewRecordView1: TMenuItem;
+    NewGridView1: TMenuItem;
+    Close1: TMenuItem;
+    N1: TMenuItem;
+    Windows1: TMenuItem;
+    Tile1: TMenuItem;
+    Cascade1: TMenuItem;
+    Help1: TMenuItem;
+    About1: TMenuItem;
+    <B>procedure</B> NewRecordView1Click(Sender: TObject);
+    <B>procedure</B> NewGridView1Click(Sender: TObject);
+    <B>procedure</B> Tile1Click(Sender: TObject);
+    <B>procedure</B> Cascade1Click(Sender: TObject);
+    <B>procedure</B> About1Click(Sender: TObject);
+    <B>procedure</B> Close1Click(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  FrameForm: TFrameForm;
+
+<B>implementation</B>
+
+<B>uses</B> FormView, GridView;
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TFrameForm.NewRecordView1Click(Sender: TObject);
+<B>begin</B>
+  <B>with</B> TRecordForm.Create (Application) <B>do</B>
+    Show;
+<B>end</B>;
+
+<B>procedure</B> TFrameForm.NewGridView1Click(Sender: TObject);
+<B>begin</B>
+  <B>with</B> TGridForm.Create (Application) <B>do</B>
+    Show;
+<B>end</B>;
+
+<B>procedure</B> TFrameForm.Tile1Click(Sender: TObject);
+<B>begin</B>
+  Tile;
+<B>end</B>;
+
+<B>procedure</B> TFrameForm.Cascade1Click(Sender: TObject);
+<B>begin</B>
+  Cascade;
+<B>end</B>;
+
+<B>procedure</B> TFrameForm.About1Click(Sender: TObject);
+<B>begin</B>
+  ShowMessage (<I>'MDI datamodule based demo'#13</I> +
+    <I>'from the book &quot;Mastering Delphi 4&quot;'</I>);
+<B>end</B>;
+
+<B>procedure</B> TFrameForm.Close1Click(Sender: TObject);
+<B>begin</B>
+  Close;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=GRIDVIEW.DFM><H3>GRIDVIEW.DFM</H3></A>
+
+<PRE>
+<B>object</B> GridForm: TGridForm
+  Left = 286
+  Top = 234
+  Width = 479
+  Height = 300
+  Hint = <I>'Grid View'</I>
+  Caption = <I>'Grid View'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  FormStyle = fsMDIChild
+  OldCreateOrder = True
+  Position = poDefault
+  Visible = True
+  OnClose = FormClose
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> DBGrid1: TDBGrid
+    Left = 0
+    Top = 0
+    Width = 471
+    Height = 273
+    Align = alClient
+    DataSource = CustomerDM.DataSource1
+    TabOrder = 0
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = <I>'MS Sans Serif'</I>
+    TitleFont.Style = []
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<A NAME=DATAM.DFM><H3>DATAM.DFM</H3></A>
+
+<PRE>
+<B>object</B> CustomerDM: TCustomerDM
+  OldCreateOrder = True
+  Left = 268
+  Top = 373
+  Height = 159
+  Width = 196
+  <B>object</B> Table1: TTable
+    Active = True
+    DatabaseName = <I>'DBDEMOS'</I>
+    IndexName = <I>'ByCompany'</I>
+    TableName = <I>'CUSTOMER.DB'</I>
+    Left = 24
+    Top = 16
+    <B>object</B> Table1CustNo: TFloatField
+      Alignment = taLeftJustify
+      DisplayWidth = 7
+      FieldName = <I>'CustNo'</I>
+      DisplayFormat = <I>'CN 0000'</I>
+      MaxValue = 9999
+      MinValue = 1000
+    <B>end</B>
+    <B>object</B> Table1Company: TStringField
+      DisplayWidth = 25
+      FieldName = <I>'Company'</I>
+      Size = 30
+    <B>end</B>
+    <B>object</B> Table1Addr1: TStringField
+      DisplayWidth = 21
+      FieldName = <I>'Addr1'</I>
+      Size = 30
+    <B>end</B>
+    <B>object</B> Table1Addr2: TStringField
+      DisplayWidth = 28
+      FieldName = <I>'Addr2'</I>
+      Size = 30
+    <B>end</B>
+    <B>object</B> Table1City: TStringField
+      DisplayWidth = 15
+      FieldName = <I>'City'</I>
+      Size = 15
+    <B>end</B>
+    <B>object</B> Table1State: TStringField
+      DisplayWidth = 20
+      FieldName = <I>'State'</I>
+    <B>end</B>
+    <B>object</B> Table1Country: TStringField
+      DisplayWidth = 20
+      FieldName = <I>'Country'</I>
+    <B>end</B>
+    <B>object</B> Table1Zip: TStringField
+      DisplayWidth = 10
+      FieldName = <I>'Zip'</I>
+      Size = 10
+      AttributeSet = <I>'ZipCode'</I>
+    <B>end</B>
+    <B>object</B> Table1Phone: TStringField
+      DisplayWidth = 15
+      FieldName = <I>'Phone'</I>
+      EditMask = <I>'!999-000-0000;1;_'</I>
+      Size = 15
+    <B>end</B>
+    <B>object</B> Table1FAX: TStringField
+      DisplayWidth = 15
+      FieldName = <I>'FAX'</I>
+      EditMask = <I>'!999-000-0000;1;_'</I>
+      Size = 15
+      AttributeSet = <I>'USPhone'</I>
+    <B>end</B>
+    <B>object</B> Table1TaxRate: TFloatField
+      DisplayWidth = 10
+      FieldName = <I>'TaxRate'</I>
+      DisplayFormat = <I>'0.00%'</I>
+      AttributeSet = <I>'TaxRate'</I>
+    <B>end</B>
+    <B>object</B> Table1Contact: TStringField
+      DisplayWidth = 20
+      FieldName = <I>'Contact'</I>
+    <B>end</B>
+    <B>object</B> Table1LastInvoiceDate: TDateTimeField
+      DisplayWidth = 13
+      FieldName = <I>'LastInvoiceDate'</I>
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> DataSource1: TDataSource
+    DataSet = Table1
+    OnDataChange = DataSource1DataChange
+    Left = 88
+    Top = 16
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<A NAME=FORMVIEW.DFM><H3>FORMVIEW.DFM</H3></A>
+
+<PRE>
+<B>object</B> RecordForm: TRecordForm
+  Left = 506
+  Top = 209
+  Hint = <I>'Form View'</I>
+  BorderStyle = bsSingle
+  Caption = <I>'Form View'</I>
+  ClientHeight = 333
+  ClientWidth = 281
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  FormStyle = fsMDIChild
+  OldCreateOrder = True
+  Position = poDefault
+  Visible = True
+  OnClose = FormClose
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Label1: TLabel
+    Left = 16
+    Top = 44
+    Width = 64
+    Height = 13
+    Caption = <I>'Customer No.'</I>
+  <B>end</B>
+  <B>object</B> Label2: TLabel
+    Left = 16
+    Top = 68
+    Width = 44
+    Height = 13
+    Caption = <I>'Company'</I>
+  <B>end</B>
+  <B>object</B> Label3: TLabel
+    Left = 16
+    Top = 92
+    Width = 53
+    Height = 13
+    Caption = <I>'Address (1)'</I>
+  <B>end</B>
+  <B>object</B> Label4: TLabel
+    Left = 16
+    Top = 116
+    Width = 53
+    Height = 13
+    Caption = <I>'Address (2)'</I>
+  <B>end</B>
+  <B>object</B> Label5: TLabel
+    Left = 16
+    Top = 140
+    Width = 17
+    Height = 13
+    Caption = <I>'City'</I>
+  <B>end</B>
+  <B>object</B> Label6: TLabel
+    Left = 16
+    Top = 164
+    Width = 25
+    Height = 13
+    Caption = <I>'State'</I>
+  <B>end</B>
+  <B>object</B> Label7: TLabel
+    Left = 16
+    Top = 188
+    Width = 17
+    Height = 13
+    Caption = <I>'ZIP'</I>
+  <B>end</B>
+  <B>object</B> Label8: TLabel
+    Left = 16
+    Top = 212
+    Width = 36
+    Height = 13
+    Caption = <I>'Country'</I>
+  <B>end</B>
+  <B>object</B> Label9: TLabel
+    Left = 16
+    Top = 236
+    Width = 31
+    Height = 13
+    Caption = <I>'Phone'</I>
+  <B>end</B>
+  <B>object</B> Label10: TLabel
+    Left = 16
+    Top = 260
+    Width = 20
+    Height = 13
+    Caption = <I>'FAX'</I>
+  <B>end</B>
+  <B>object</B> Label11: TLabel
+    Left = 16
+    Top = 284
+    Width = 44
+    Height = 13
+    Caption = <I>'Tax Rate'</I>
+  <B>end</B>
+  <B>object</B> Label12: TLabel
+    Left = 16
+    Top = 308
+    Width = 37
+    Height = 13
+    Caption = <I>'Contact'</I>
+  <B>end</B>
+  <B>object</B> DBEdit1: TDBEdit
+    Left = 88
+    Top = 40
+    Width = 89
+    Height = 21
+    DataField = <I>'CustNo'</I>
+    DataSource = CustomerDM.DataSource1
+    TabOrder = 0
+  <B>end</B>
+  <B>object</B> DBEdit2: TDBEdit
+    Left = 88
+    Top = 64
+    Width = 177
+    Height = 21
+    DataField = <I>'Company'</I>
+    DataSource = CustomerDM.DataSource1
+    TabOrder = 1
+  <B>end</B>
+  <B>object</B> DBEdit3: TDBEdit
+    Left = 88
+    Top = 88
+    Width = 177
+    Height = 21
+    DataField = <I>'Addr1'</I>
+    DataSource = CustomerDM.DataSource1
+    TabOrder = 2
+  <B>end</B>
+  <B>object</B> DBEdit4: TDBEdit
+    Left = 88
+    Top = 112
+    Width = 177
+    Height = 21
+    DataField = <I>'Addr2'</I>
+    DataSource = CustomerDM.DataSource1
+    TabOrder = 3
+  <B>end</B>
+  <B>object</B> DBEdit5: TDBEdit
+    Left = 88
+    Top = 136
+    Width = 97
+    Height = 21
+    DataField = <I>'City'</I>
+    DataSource = CustomerDM.DataSource1
+    TabOrder = 4
+  <B>end</B>
+  <B>object</B> DBEdit6: TDBEdit
+    Left = 88
+    Top = 160
+    Width = 97
+    Height = 21
+    DataField = <I>'State'</I>
+    DataSource = CustomerDM.DataSource1
+    TabOrder = 5
+  <B>end</B>
+  <B>object</B> DBEdit7: TDBEdit
+    Left = 88
+    Top = 184
+    Width = 97
+    Height = 21
+    DataField = <I>'Zip'</I>
+    DataSource = CustomerDM.DataSource1
+    TabOrder = 6
+  <B>end</B>
+  <B>object</B> DBEdit8: TDBEdit
+    Left = 88
+    Top = 208
+    Width = 97
+    Height = 21
+    DataField = <I>'Country'</I>
+    DataSource = CustomerDM.DataSource1
+    TabOrder = 7
+  <B>end</B>
+  <B>object</B> DBEdit9: TDBEdit
+    Left = 88
+    Top = 232
+    Width = 97
+    Height = 21
+    DataField = <I>'Phone'</I>
+    DataSource = CustomerDM.DataSource1
+    MaxLength = 12
+    TabOrder = 8
+  <B>end</B>
+  <B>object</B> DBEdit10: TDBEdit
+    Left = 88
+    Top = 256
+    Width = 97
+    Height = 21
+    DataField = <I>'FAX'</I>
+    DataSource = CustomerDM.DataSource1
+    MaxLength = 12
+    TabOrder = 9
+  <B>end</B>
+  <B>object</B> DBEdit11: TDBEdit
+    Left = 88
+    Top = 280
+    Width = 97
+    Height = 21
+    DataField = <I>'TaxRate'</I>
+    DataSource = CustomerDM.DataSource1
+    TabOrder = 10
+  <B>end</B>
+  <B>object</B> DBEdit12: TDBEdit
+    Left = 88
+    Top = 304
+    Width = 177
+    Height = 21
+    DataField = <I>'Contact'</I>
+    DataSource = CustomerDM.DataSource1
+    TabOrder = 11
+  <B>end</B>
+  <B>object</B> DBNavigator1: TDBNavigator
+    Left = 16
+    Top = 8
+    Width = 250
+    Height = 25
+    DataSource = CustomerDM.DataSource1
+    TabOrder = 12
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<A NAME=MAIN.DFM><H3>MAIN.DFM</H3></A>
+
+<PRE>
+<B>object</B> FrameForm: TFrameForm
+  Left = 227
+  Top = 187
+  Width = 696
+  Height = 480
+  Caption = <I>'Mdi View'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  FormStyle = fsMDIForm
+  Menu = MainMenu1
+  OldCreateOrder = False
+  WindowMenu = Windows1
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> MainMenu1: TMainMenu
+    Left = 40
+    Top = 24
+    <B>object</B> File1: TMenuItem
+      Caption = <I>'&amp;File'</I>
+      <B>object</B> NewRecordView1: TMenuItem
+        Caption = <I>'New Record View'</I>
+        OnClick = NewRecordView1Click
+      <B>end</B>
+      <B>object</B> NewGridView1: TMenuItem
+        Caption = <I>'New Grid View'</I>
+        OnClick = NewGridView1Click
+      <B>end</B>
+      <B>object</B> N1: TMenuItem
+        Caption = <I>'-'</I>
+      <B>end</B>
+      <B>object</B> Close1: TMenuItem
+        Caption = <I>'Close'</I>
+        OnClick = Close1Click
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> Windows1: TMenuItem
+      Caption = <I>'Windows'</I>
+      <B>object</B> Tile1: TMenuItem
+        Caption = <I>'&amp;Tile'</I>
+        OnClick = Tile1Click
+      <B>end</B>
+      <B>object</B> Cascade1: TMenuItem
+        Caption = <I>'&amp;Cascade'</I>
+        OnClick = Cascade1Click
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> Help1: TMenuItem
+      Caption = <I>'&amp;Help'</I>
+      <B>object</B> About1: TMenuItem
+        Caption = <I>'&amp;About...'</I>
+        OnClick = About1Click
+      <B>end</B>
+    <B>end</B>
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

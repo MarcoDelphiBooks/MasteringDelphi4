@@ -1,0 +1,178 @@
+<HTML><HEAD>
+<TITLE>Project: CLIENT1.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: CLIENT1.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#CLIENT1.DPR> CLIENT1.DPR</A>
+<LI> <A HREF=#CLIENT1FORM.PAS> CLIENT1FORM.PAS</A>
+<LI> <A HREF=#CLIENT1FORM.DFM> CLIENT1FORM.DFM</A>
+</UL>
+<HR>
+<A NAME=CLIENT1.DPR><H3>CLIENT1.DPR</H3></A>
+
+<PRE>
+<B>program</B> Client1;
+
+<B>uses</B>
+  Forms,
+  Client1Form <B>in</B> <I>'Client1Form.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=CLIENT1FORM.PAS><H3>CLIENT1FORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> Client1Form;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls, ScktComp;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    ClientSocket1: TClientSocket;
+    EditMsg: TEdit;
+    btnSend: TButton;
+    cbActivate: TCheckBox;
+    EditServer: TEdit;
+    Server: TLabel;
+    Label1: TLabel;
+    <B>procedure</B> btnSendClick(Sender: TObject);
+    <B>procedure</B> ClientSocket1Connect(Sender: TObject;
+      Socket: TCustomWinSocket);
+    <B>procedure</B> ClientSocket1Disconnect(Sender: TObject;
+      Socket: TCustomWinSocket);
+    <B>procedure</B> cbActivateClick(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.btnSendClick(Sender: TObject);
+<B>begin</B>
+  ClientSocket1.Socket.SendText (EditMsg.Text);
+<B>end</B>;
+
+<B>procedure</B> TForm1.ClientSocket1Connect(Sender: TObject;
+  Socket: TCustomWinSocket);
+<B>begin</B>
+  Caption := <I>'Connected'</I>;
+<B>end</B>;
+
+<B>procedure</B> TForm1.ClientSocket1Disconnect(Sender: TObject;
+  Socket: TCustomWinSocket);
+<B>begin</B>
+  Caption := <I>'Disconnected'</I>;
+<B>end</B>;
+
+<B>procedure</B> TForm1.cbActivateClick(Sender: TObject);
+<B>begin</B>
+  <B>if</B> <B>not</B> ClientSocket1.Active <B>then</B>
+    ClientSocket1.Address := EditServer.Text;
+  ClientSocket1.Active := cbActivate.Checked;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=CLIENT1FORM.DFM><H3>CLIENT1FORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 197
+  Top = 114
+  Width = 304
+  Height = 202
+  Caption = <I>'Client'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Server: TLabel
+    Left = 32
+    Top = 16
+    Width = 84
+    Height = 13
+    Caption = <I>'Server IP address'</I>
+  <B>end</B>
+  <B>object</B> Label1: TLabel
+    Left = 32
+    Top = 80
+    Width = 43
+    Height = 13
+    Caption = <I>'Message'</I>
+  <B>end</B>
+  <B>object</B> EditMsg: TEdit
+    Left = 32
+    Top = 96
+    Width = 121
+    Height = 21
+    TabOrder = 0
+    Text = <I>'Hello'</I>
+  <B>end</B>
+  <B>object</B> btnSend: TButton
+    Left = 184
+    Top = 96
+    Width = 75
+    Height = 25
+    Caption = <I>'&amp;Send'</I>
+    TabOrder = 1
+    OnClick = btnSendClick
+  <B>end</B>
+  <B>object</B> cbActivate: TCheckBox
+    Left = 184
+    Top = 32
+    Width = 97
+    Height = 17
+    Caption = <I>'&amp;Activate'</I>
+    TabOrder = 2
+    OnClick = cbActivateClick
+  <B>end</B>
+  <B>object</B> EditServer: TEdit
+    Left = 32
+    Top = 32
+    Width = 121
+    Height = 21
+    TabOrder = 3
+    Text = <I>'222.1.1.2'</I>
+  <B>end</B>
+  <B>object</B> ClientSocket1: TClientSocket
+    Active = False
+    Address = <I>'222.1.1.1'</I>
+    ClientType = ctNonBlocking
+    Port = 50
+    OnConnect = ClientSocket1Connect
+    OnDisconnect = ClientSocket1Disconnect
+    Left = 112
+    Top = 120
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

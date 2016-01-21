@@ -1,0 +1,115 @@
+<HTML><HEAD>
+<TITLE>Project: NEWGUID.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: NEWGUID.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#NEWGUID.DPR> NEWGUID.DPR</A>
+<LI> <A HREF=#GUIDFORM.PAS> GUIDFORM.PAS</A>
+<LI> <A HREF=#GUIDFORM.DFM> GUIDFORM.DFM</A>
+</UL>
+<HR>
+<A NAME=NEWGUID.DPR><H3>NEWGUID.DPR</H3></A>
+
+<PRE>
+<B>program</B> NewGUID;
+
+<B>uses</B>
+  Forms,
+  GUIDForm <B>in</B> <I>'GUIDForm.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=GUIDFORM.PAS><H3>GUIDFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> GUIDForm;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    BtnNew: TButton;
+    Memo1: TMemo;
+    <B>procedure</B> BtnNewClick(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>uses</B>
+  ComObj, ActiveX;
+
+<B>procedure</B> TForm1.BtnNewClick(Sender: TObject);
+<B>var</B>
+  ID: TGUID;
+  S: <B>string</B>;
+<B>begin</B>
+  <B>if</B> CoCreateGuid (Id) = s_OK <B>then</B>
+  <B>begin</B>
+    s := GUIDToString (Id);
+    Memo1.Lines.Add (S);
+  <B>end</B>;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=GUIDFORM.DFM><H3>GUIDFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 207
+  Top = 109
+  Width = 435
+  Height = 244
+  Caption = <I>'New GUID'</I>
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> BtnNew: TButton
+    Left = 8
+    Top = 16
+    Width = 75
+    Height = 25
+    Caption = <I>'&amp;New'</I>
+    TabOrder = 0
+    OnClick = BtnNewClick
+  <B>end</B>
+  <B>object</B> Memo1: TMemo
+    Left = 96
+    Top = 16
+    Width = 321
+    Height = 185
+    TabOrder = 1
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

@@ -1,0 +1,165 @@
+<HTML><HEAD>
+<TITLE>Project: CUSTHINT.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: CUSTHINT.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#CUSTHINT.DPR> CUSTHINT.DPR</A>
+<LI> <A HREF=#HINTFORM.PAS> HINTFORM.PAS</A>
+<LI> <A HREF=#HINTFORM.DFM> HINTFORM.DFM</A>
+</UL>
+<HR>
+<A NAME=CUSTHINT.DPR><H3>CUSTHINT.DPR</H3></A>
+
+<PRE>
+<B>program</B> CustHint;
+
+<B>uses</B>
+  Forms,
+  HintForm <B>in</B> <I>'HintForm.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=HINTFORM.PAS><H3>HINTFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> HintForm;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes, Graphics, Controls,
+  Forms, Dialogs, StdCtrls, ExtCtrls;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    RadioGroup1: TRadioGroup;
+    Label1: TLabel;
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> RadioGroup1Click(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <B>procedure</B> ShowHint (<B>var</B> HintStr: <B>string</B>;
+      <B>var</B> CanShow: Boolean; <B>var</B> HintInfo: THintInfo);
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.FormCreate(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// enable special hints handling</I></FONT>
+  Application.OnShowHint := ShowHint;
+<B>end</B>;
+
+<B>procedure</B> TForm1.ShowHint (<B>var</B> HintStr: <B>string</B>;
+  <B>var</B> CanShow: Boolean; <B>var</B> HintInfo: THintInfo);
+<B>var</B>
+  RadioItem, RadioHeight: Integer;
+  RadioRect: TRect;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>{if the control is the label show the hint in the middle of it}</I></FONT>
+  <B>with</B> HintInfo <B>do</B>
+    <B>if</B> HintControl = Label1 <B>then</B>
+      HintPos := HintControl.ClientToScreen (Point (
+        HintControl.Width <B>div</B> 2, HintControl.Height <B>div</B> 2))
+    <B>else</B>
+    <FONT COLOR="#000080"><I>{ if the control is the radio group, determine which
+    radio button the cursor is over, and set a proper
+    hint string, hint rectangle, and hint position}</I></FONT>
+    <B>if</B> HintControl = RadioGroup1 <B>then</B>
+    <B>begin</B>
+      RadioHeight := (RadioGroup1.Height) <B>div</B>
+        RadioGroup1.Items.Count;
+      RadioItem := (CursorPos.Y) <B>div</B> RadioHeight;
+      HintStr := <I>'Choose the '</I> +
+        RadioGroup1.Items [RadioItem] + <I>' button'</I>;
+      RadioRect := RadioGroup1.ClientRect;
+      RadioRect.Top := RadioRect.Top +
+        RadioHeight * RadioItem;
+      RadioRect.Bottom := RadioRect.Top + RadioHeight;
+      <FONT COLOR="#000080"><I>// assign the hints rect and pos</I></FONT>
+      CursorRect := RadioRect;
+    <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TForm1.RadioGroup1Click(Sender: TObject);
+<B>begin</B>
+  Label1.Caption := Label1.Caption +
+    <I>' - '</I> + RadioGroup1.Items [RadioGroup1.ItemIndex];
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=HINTFORM.DFM><H3>HINTFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 206
+  Top = 110
+  Width = 478
+  Height = 227
+  Hint = <I>'This is the form of the CustHint example'</I>
+  Caption = <I>'CustHint'</I>
+  Color = clBtnFace
+  Font.Charset = ANSI_CHARSET
+  Font.Color = clBlack
+  Font.Height = -12
+  Font.Name = <I>'Arial'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  ShowHint = True
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 15
+  <B>object</B> Label1: TLabel
+    Left = 136
+    Top = 16
+    Width = 321
+    Height = 177
+    Hint = <I>'Shoes the selection sequence'</I>
+    AutoSize = False
+    Caption = <I>'Selection sequence: one'</I>
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clBlack
+    Font.Height = -16
+    Font.Name = <I>'Arial'</I>
+    Font.Style = []
+    ParentFont = False
+    WordWrap = True
+  <B>end</B>
+  <B>object</B> RadioGroup1: TRadioGroup
+    Left = 8
+    Top = 8
+    Width = 121
+    Height = 185
+    Hint = <I>'Choose the button'</I>
+    Caption = <I>'Choose'</I>
+    ItemIndex = 0
+    Items.Strings = (
+      <I>'one'</I>
+      <I>'two'</I>
+      <I>'three'</I>
+      <I>'four'</I>)
+    TabOrder = 0
+    OnClick = RadioGroup1Click
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

@@ -1,0 +1,415 @@
+<HTML><HEAD>
+<TITLE>Project: SENDLIST.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: SENDLIST.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#SENDLIST.DPR> SENDLIST.DPR</A>
+<LI> <A HREF=#SENDFORM.PAS> SENDFORM.PAS</A>
+<LI> <A HREF=#SENDFORM.DFM> SENDFORM.DFM</A>
+</UL>
+<HR>
+<A NAME=SENDLIST.DPR><H3>SENDLIST.DPR</H3></A>
+
+<PRE>
+<B>program</B> SendList;
+
+<B>uses</B>
+  Forms,
+  SendForm <B>in</B> <I>'SendForm.pas'</I> <FONT COLOR="#000080"><I>{MainForm}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Title := <I>'SimpleMail'</I>;
+  Application.CreateForm(TMainForm, MainForm);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=SENDFORM.PAS><H3>SENDFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> SendForm;
+
+<B>interface</B>
+
+<B>uses</B> Windows, SysUtils, Classes, Graphics, Forms, Controls, Menus,
+  StdCtrls, Dialogs, Buttons, Messages, ExtCtrls, ComCtrls,
+  Psock, NMsmtp;
+
+<B>type</B>
+  TMainForm = <B>class</B>(TForm)
+    Panel2: TPanel;
+    reMessageText: TRichEdit;
+    Panel1: TPanel;
+    Label1: TLabel;
+    eName: TEdit;
+    Splitter1: TSplitter;
+    ListLog: TListBox;
+    Label2: TLabel;
+    eSubject: TEdit;
+    Label3: TLabel;
+    BbtnAddToList: TButton;
+    ListAddr: TListBox;
+    BtnRemove: TButton;
+    BtnFind: TButton;
+    Mail: TNMSMTP;
+    Label5: TLabel;
+    eFrom: TEdit;
+    BtnSendAll: TButton;
+    eServer: TEdit;
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> FormClose(Sender: TObject; <B>var</B> Action: TCloseAction);
+    <B>procedure</B> BtnSendAllClick(Sender: TObject);
+    <B>procedure</B> BbtnAddToListClick(Sender: TObject);
+    <B>procedure</B> BtnRemoveClick(Sender: TObject);
+    <B>procedure</B> BtnFindClick(Sender: TObject);
+    <B>procedure</B> MailSendStart(Sender: TObject);
+    <B>procedure</B> MailSuccess(Sender: TObject);
+    <B>procedure</B> MailFailure(Sender: TObject);
+    <B>procedure</B> MailConnect(Sender: TObject);
+    <B>procedure</B> MailDisconnect(Sender: TObject);
+  <B>private</B>
+    FileName: <B>string</B>;
+  <B>end</B>;
+
+<B>var</B>
+  MainForm: TMainForm;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TMainForm.FormCreate(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// load the list of addresses</I></FONT>
+  FileName := ChangeFileExt (Application.ExeName, <I>'.txt'</I>);
+  ListAddr.Items.LoadFromFile (FileName);
+  ListLog.Items.Add (<I>'Addresses: '</I> + IntToStr (
+    ListAddr.Items.Count));
+  <FONT COLOR="#000080"><I>// select the first item</I></FONT>
+  ListAddr.ItemIndex := 0;
+<B>end</B>;
+
+<B>procedure</B> TMainForm.FormClose(Sender: TObject; <B>var</B> Action: TCloseAction);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// save the list of addresses</I></FONT>
+  ListAddr.Items.SaveToFile (FileName);
+<B>end</B>;
+
+<B>const</B>
+  BccInMsg = 30;
+
+<B>procedure</B> TMainForm.BtnSendAllClick(Sender: TObject);
+<B>var</B>
+  nItem, nBcc: Integer;
+  Res: Word;
+<B>begin</B>
+  Res := MessageDlg (<I>'Start sending from item '</I> +
+      IntToStr (ListAddr.ItemIndex) + <I>' ('</I> +
+      ListAddr.Items [ListAddr.ItemIndex] + <I>')?'#13</I> +
+      <I>'(No starts form 0)'</I>,
+      mtConfirmation,
+      [mbYes, mbNo, mbCancel], 0);
+  <B>if</B> Res = mrCancel <B>then</B>
+    Exit;
+  <B>if</B> Res = mrYes <B>then</B>
+    nItem := ListAddr.ItemIndex
+  <B>else</B>
+    nItem := 0;
+
+  <FONT COLOR="#000080"><I>// connect</I></FONT>
+  Mail.Host := eServer.Text;
+  Mail.UserID := eFrom.Text;
+  Mail.Connect;
+
+  <FONT COLOR="#000080"><I>// set the fixed part of the header</I></FONT>
+  Mail.PostMessage.FromAddress := eFrom.Text;
+  Mail.PostMessage.ToAddress.Clear;
+  Mail.PostMessage.ToAddress.Add (eFrom.Text);
+  Mail.PostMessage.Subject := eSubject.Text;
+  Mail.PostMessage.Body.SetText (
+    reMessageText.Lines.GetText);
+
+  <FONT COLOR="#000080"><I>// send to list, in groups</I></FONT>
+  <B>while</B> nItem &lt; ListAddr.Items.Count <B>do</B>
+  <B>begin</B>
+    <FONT COLOR="#000080"><I>// show the current selection</I></FONT>
+    ListAddr.ItemIndex := nItem;
+    Application.ProcessMessages;
+
+    <FONT COLOR="#000080"><I>// fill the bcc list</I></FONT>
+    Mail.PostMessage.ToBlindCarbonCopy.Clear;
+    nBcc := 0;
+    <B>while</B> (nBcc &lt; BccInMsg) <B>and</B> (nBcc + nItem &lt; ListAddr.Items.Count) <B>do</B>
+    <B>begin</B>
+      Mail.PostMessage.ToBlindCarbonCopy.Add (ListAddr.Items [nItem + nBcc]);
+      Inc (nBcc);
+    <B>end</B>;
+
+    <FONT COLOR="#000080"><I>// send the message</I></FONT>
+    Mail.SendMail;
+
+    <FONT COLOR="#000080"><I>// increse the counter</I></FONT>
+    Inc (nItem, nBcc);
+  <B>end</B>;
+
+  <FONT COLOR="#000080"><I>// we're done</I></FONT>
+  Mail.Disconnect;
+<B>end</B>;
+
+<B>procedure</B> TMainForm.BbtnAddToListClick(Sender: TObject);
+<B>begin</B>
+  ListAddr.ItemIndex :=
+    ListAddr.Items.Add (eName.Text);
+<B>end</B>;
+
+<B>procedure</B> TMainForm.BtnRemoveClick(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// copy the item to the name edit box and remove it</I></FONT>
+  eName.Text := ListAddr.Items [ListAddr.ItemIndex];
+  ListAddr.Items.Delete (ListAddr.ItemIndex);
+<B>end</B>;
+
+<B>procedure</B> TMainForm.BtnFindClick(Sender: TObject);
+<B>var</B>
+  I: Integer;
+<B>begin</B>
+  <B>for</B> I := 0 <B>to</B> ListAddr.Items.Count - 1 <B>do</B>
+    <B>if</B> Pos (eName.Text, ListAddr.Items [I]) &gt; 0 <B>then</B>
+    <B>begin</B>
+      ListAddr.ItemIndex := I;
+      Break;
+    <B>end</B>;
+  Beep;
+<B>end</B>;
+
+<B>procedure</B> TMainForm.MailSendStart(Sender: TObject);
+<B>begin</B>
+  ListLog.Items.Add (<I>'Sending to group: '</I> +
+    Mail.PostMessage.ToBlindCarbonCopy [0]);
+<B>end</B>;
+
+<B>procedure</B> TMainForm.MailSuccess(Sender: TObject);
+<B>begin</B>
+  ListLog.Items.Add (<I>'Done'</I>);
+<B>end</B>;
+
+<B>procedure</B> TMainForm.MailFailure(Sender: TObject);
+<B>begin</B>
+  ListLog.Items.Add (<I>'Error'</I>);
+<B>end</B>;
+
+<B>procedure</B> TMainForm.MailConnect(Sender: TObject);
+<B>begin</B>
+  ListLog.Items.Add (<I>'Connected to host'</I>);
+<B>end</B>;
+
+<B>procedure</B> TMainForm.MailDisconnect(Sender: TObject);
+<B>begin</B>
+  ListLog.Items.Add (<I>'Disconnected for host'</I>);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=SENDFORM.DFM><H3>SENDFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> MainForm: TMainForm
+  Left = 193
+  Top = 109
+  AutoScroll = False
+  Caption = <I>'Send List'</I>
+  ClientHeight = 501
+  ClientWidth = 593
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clBlack
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  Position = poDefaultPosOnly
+  OnClose = FormClose
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Splitter1: TSplitter
+    Left = 321
+    Top = 241
+    Width = 3
+    Height = 260
+    Cursor = crHSplit
+  <B>end</B>
+  <B>object</B> Panel1: TPanel
+    Left = 0
+    Top = 30
+    Width = 593
+    Height = 211
+    Align = alTop
+    BevelOuter = bvLowered
+    TabOrder = 2
+    <B>object</B> Label1: TLabel
+      Left = 12
+      Top = 11
+      Width = 31
+      Height = 13
+      Hint = <I>'Recipient''s name(s), comma delimited'</I>
+         Caption = <I>'Name:'</I>
+      ParentShowHint = False
+      ShowHint = True
+    <B>end</B>
+    <B>object</B> Label3: TLabel
+      Left = 12
+      Top = 34
+      Width = 19
+      Height = 13
+      Caption = <I>'List:'</I>
+    <B>end</B>
+    <B>object</B> eName: TEdit
+      Left = 48
+      Top = 7
+      Width = 441
+      Height = 21
+      ParentShowHint = False
+      ShowHint = False
+      TabOrder = 0
+    <B>end</B>
+    <B>object</B> BbtnAddToList: TButton
+      Left = 504
+      Top = 32
+      Width = 75
+      Height = 25
+      Caption = <I>'Add To &amp;List'</I>
+      TabOrder = 1
+      OnClick = BbtnAddToListClick
+    <B>end</B>
+    <B>object</B> ListAddr: TListBox
+      Left = 48
+      Top = 32
+      Width = 441
+      Height = 169
+      ItemHeight = 13
+      Sorted = True
+      TabOrder = 2
+    <B>end</B>
+    <B>object</B> BtnRemove: TButton
+      Left = 504
+      Top = 72
+      Width = 75
+      Height = 25
+      Caption = <I>'&amp;Remove'</I>
+      TabOrder = 3
+      OnClick = BtnRemoveClick
+    <B>end</B>
+    <B>object</B> BtnFind: TButton
+      Left = 504
+      Top = 112
+      Width = 75
+      Height = 25
+      Caption = <I>'&amp;Find'</I>
+      TabOrder = 4
+      OnClick = BtnFindClick
+    <B>end</B>
+    <B>object</B> BtnSendAll: TButton
+      Left = 504
+      Top = 152
+      Width = 75
+      Height = 25
+      Caption = <I>'Send to &amp;All'</I>
+      TabOrder = 5
+      OnClick = BtnSendAllClick
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> reMessageText: TRichEdit
+    Left = 0
+    Top = 241
+    Width = 321
+    Height = 260
+    Align = alLeft
+    Lines.Strings = (
+      <I>'This is a test message.'</I>
+      <I>''</I>
+      <I>'Message sent by the Send List program '</I>
+      <I>'of the book Mastering Delphi.'</I>)
+    TabOrder = 1
+  <B>end</B>
+  <B>object</B> Panel2: TPanel
+    Left = 0
+    Top = 0
+    Width = 593
+    Height = 30
+    Align = alTop
+    BevelOuter = bvNone
+    TabOrder = 0
+    <B>object</B> Label2: TLabel
+      Left = 11
+      Top = 8
+      Width = 39
+      Height = 13
+      Hint = <I>'Subject of this message'</I>
+      Caption = <I>'Subject:'</I>
+      ParentShowHint = False
+      ShowHint = True
+    <B>end</B>
+    <B>object</B> Label5: TLabel
+      Left = 208
+      Top = 8
+      Width = 44
+      Height = 13
+      Caption = <I>'From/To:'</I>
+    <B>end</B>
+    <B>object</B> eSubject: TEdit
+      Left = 53
+      Top = 4
+      Width = 148
+      Height = 21
+      TabOrder = 0
+    <B>end</B>
+    <B>object</B> eFrom: TEdit
+      Left = 256
+      Top = 3
+      Width = 153
+      Height = 21
+      TabOrder = 1
+    <B>end</B>
+    <B>object</B> eServer: TEdit
+      Left = 463
+      Top = 4
+      Width = 121
+      Height = 21
+      TabOrder = 2
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> ListLog: TListBox
+    Left = 324
+    Top = 241
+    Width = 269
+    Height = 260
+    Align = alClient
+    ItemHeight = 13
+    TabOrder = 3
+  <B>end</B>
+  <B>object</B> Mail: TNMSMTP
+    Port = 25
+    ReportLevel = 0
+    OnDisconnect = MailDisconnect
+    OnConnect = MailConnect
+    EncodeType = uuMime
+    ClearParams = False
+    SubType = mtPlain
+    OnSendStart = MailSendStart
+    OnSuccess = MailSuccess
+    OnFailure = MailFailure
+    Left = 72
+    Top = 78
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

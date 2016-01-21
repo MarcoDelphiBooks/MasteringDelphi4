@@ -1,0 +1,515 @@
+<HTML><HEAD>
+<TITLE>Project: MASTDET.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: MASTDET.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#MASTDET.DPR> MASTDET.DPR</A>
+<LI> <A HREF=#MASTDETF.PAS> MASTDETF.PAS</A>
+<LI> <A HREF=#MASTDETF.DFM> MASTDETF.DFM</A>
+</UL>
+<HR>
+<A NAME=MASTDET.DPR><H3>MASTDET.DPR</H3></A>
+
+<PRE>
+<B>program</B> Mastdet;
+
+<B>uses</B>
+  Forms,
+  MastdetF <B>in</B> <I>'MastdetF.pas'</I> <FONT COLOR="#000080"><I>{Form2}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TForm2, Form2);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MASTDETF.PAS><H3>MASTDETF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> MastdetF;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes, Graphics, Controls,
+  StdCtrls, Forms, DBCtrls, DB, DBGrids, DBTables, Grids, Mask, ExtCtrls;
+
+<B>type</B>
+  TForm2 = <B>class</B>(TForm)
+    ScrollBox: TScrollBox;
+    Label1: TLabel;
+    EditCompany: TDBEdit;
+    Label2: TLabel;
+    EditAddr: TDBEdit;
+    Label3: TLabel;
+    EditAddr2: TDBEdit;
+    Label4: TLabel;
+    EditCity: TDBEdit;
+    Label5: TLabel;
+    EditState: TDBEdit;
+    Label6: TLabel;
+    EditZip: TDBEdit;
+    Label7: TLabel;
+    EditCountry: TDBEdit;
+    Label8: TLabel;
+    EditPhone: TDBEdit;
+    Label9: TLabel;
+    EditFAX: TDBEdit;
+    DBGrid1: TDBGrid;
+    DBNavigator: TDBNavigator;
+    Panel1: TPanel;
+    DataSource1: TDataSource;
+    Panel2: TPanel;
+    Panel3: TPanel;
+    Table1: TTable;
+    Table2: TTable;
+    DataSource2: TDataSource;
+    Table2OrderNo: TFloatField;
+    Table2CustNo: TFloatField;
+    Table2SaleDate: TDateTimeField;
+    Table2ShipDate: TDateTimeField;
+    Table2EmpNo: TIntegerField;
+    Table2ShipToContact: TStringField;
+    Table2ShipToAddr1: TStringField;
+    Table2ShipToAddr2: TStringField;
+    Table2ShipToCity: TStringField;
+    Table2ShipToState: TStringField;
+    Table2ShipToZip: TStringField;
+    Table2ShipToCountry: TStringField;
+    Table2ShipToPhone: TStringField;
+    Table2ShipVIA: TStringField;
+    Table2PO: TStringField;
+    Table2Terms: TStringField;
+    Table2PaymentMethod: TStringField;
+    Table2ItemsTotal: TCurrencyField;
+    Table2TaxRate: TFloatField;
+    Table2Freight: TCurrencyField;
+    Table2AmountPaid: TCurrencyField;
+    Table2Employee: TStringField;
+    Table3: TTable;
+    DataSource3: TDataSource;
+    <B>procedure</B> FormCreate(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form2: TForm2;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm2.FormCreate(Sender: TObject);
+<B>begin</B>
+  Table1.Open;
+  Table2.Open;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MASTDETF.DFM><H3>MASTDETF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form2: TForm2
+  Left = 205
+  Top = 116
+  Width = 596
+  Height = 305
+  ActiveControl = Panel1
+  Caption = <I>'Master Detail with Lookup'</I>
+  Font.Color = clBlack
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  Position = poScreenCenter
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Panel1: TPanel
+    Left = 0
+    Top = 0
+    Width = 588
+    Height = 41
+    Align = alTop
+    TabOrder = 0
+    <B>object</B> DBNavigator: TDBNavigator
+      Left = 8
+      Top = 8
+      Width = 161
+      Height = 25
+      DataSource = DataSource1
+      VisibleButtons = [nbFirst, nbPrior, nbNext, nbLast, nbPost, nbCancel, nbRefresh]
+      Flat = False
+      Ctl3D = False
+      ParentCtl3D = False
+      TabOrder = 0
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> Panel2: TPanel
+    Left = 0
+    Top = 41
+    Width = 588
+    Height = 104
+    Align = alTop
+    BevelInner = bvLowered
+    BorderWidth = 4
+    Caption = <I>'Panel2'</I>
+    TabOrder = 1
+    <B>object</B> ScrollBox: TScrollBox
+      Left = 6
+      Top = 6
+      Width = 576
+      Height = 92
+      HorzScrollBar.Margin = 6
+      VertScrollBar.Margin = 6
+      Align = alClient
+      BorderStyle = bsNone
+      TabOrder = 0
+      <B>object</B> Label1: TLabel
+        Left = 6
+        Top = 6
+        Width = 44
+        Height = 13
+        Caption = <I>'Company'</I>
+        FocusControl = EditCompany
+      <B>end</B>
+      <B>object</B> Label2: TLabel
+        Left = 162
+        Top = 6
+        Width = 28
+        Height = 13
+        Caption = <I>'Addr1'</I>
+        FocusControl = EditAddr
+      <B>end</B>
+      <B>object</B> Label3: TLabel
+        Left = 318
+        Top = 6
+        Width = 28
+        Height = 13
+        Caption = <I>'Addr2'</I>
+        FocusControl = EditAddr2
+      <B>end</B>
+      <B>object</B> Label4: TLabel
+        Left = 474
+        Top = 6
+        Width = 17
+        Height = 13
+        Caption = <I>'City'</I>
+        FocusControl = EditCity
+      <B>end</B>
+      <B>object</B> Label5: TLabel
+        Left = 6
+        Top = 50
+        Width = 25
+        Height = 13
+        Caption = <I>'State'</I>
+        FocusControl = EditState
+      <B>end</B>
+      <B>object</B> Label6: TLabel
+        Left = 112
+        Top = 50
+        Width = 15
+        Height = 13
+        Caption = <I>'Zip'</I>
+        FocusControl = EditZip
+      <B>end</B>
+      <B>object</B> Label7: TLabel
+        Left = 168
+        Top = 50
+        Width = 36
+        Height = 13
+        Caption = <I>'Country'</I>
+        FocusControl = EditCountry
+      <B>end</B>
+      <B>object</B> Label8: TLabel
+        Left = 318
+        Top = 50
+        Width = 31
+        Height = 13
+        Caption = <I>'Phone'</I>
+        FocusControl = EditPhone
+      <B>end</B>
+      <B>object</B> Label9: TLabel
+        Left = 439
+        Top = 50
+        Width = 20
+        Height = 13
+        Caption = <I>'FAX'</I>
+        FocusControl = EditFAX
+      <B>end</B>
+      <B>object</B> EditCompany: TDBEdit
+        Left = 6
+        Top = 21
+        Width = 150
+        Height = 21
+        DataField = <I>'Company'</I>
+        DataSource = DataSource1
+        MaxLength = 30
+        TabOrder = 0
+      <B>end</B>
+      <B>object</B> EditAddr: TDBEdit
+        Left = 162
+        Top = 21
+        Width = 150
+        Height = 21
+        DataField = <I>'Addr1'</I>
+        DataSource = DataSource1
+        MaxLength = 30
+        TabOrder = 1
+      <B>end</B>
+      <B>object</B> EditAddr2: TDBEdit
+        Left = 318
+        Top = 21
+        Width = 150
+        Height = 21
+        DataField = <I>'Addr2'</I>
+        DataSource = DataSource1
+        MaxLength = 30
+        TabOrder = 2
+      <B>end</B>
+      <B>object</B> EditCity: TDBEdit
+        Left = 474
+        Top = 21
+        Width = 75
+        Height = 21
+        DataField = <I>'City'</I>
+        DataSource = DataSource1
+        MaxLength = 15
+        TabOrder = 3
+      <B>end</B>
+      <B>object</B> EditState: TDBEdit
+        Left = 6
+        Top = 65
+        Width = 100
+        Height = 21
+        DataField = <I>'State'</I>
+        DataSource = DataSource1
+        MaxLength = 20
+        TabOrder = 4
+      <B>end</B>
+      <B>object</B> EditZip: TDBEdit
+        Left = 112
+        Top = 65
+        Width = 50
+        Height = 21
+        DataField = <I>'Zip'</I>
+        DataSource = DataSource1
+        MaxLength = 10
+        TabOrder = 5
+      <B>end</B>
+      <B>object</B> EditCountry: TDBEdit
+        Left = 168
+        Top = 65
+        Width = 145
+        Height = 21
+        DataField = <I>'Country'</I>
+        DataSource = DataSource1
+        MaxLength = 20
+        TabOrder = 6
+      <B>end</B>
+      <B>object</B> EditPhone: TDBEdit
+        Left = 318
+        Top = 65
+        Width = 115
+        Height = 21
+        DataField = <I>'Phone'</I>
+        DataSource = DataSource1
+        MaxLength = 15
+        TabOrder = 7
+      <B>end</B>
+      <B>object</B> EditFAX: TDBEdit
+        Left = 439
+        Top = 65
+        Width = 114
+        Height = 21
+        DataField = <I>'FAX'</I>
+        DataSource = DataSource1
+        MaxLength = 15
+        TabOrder = 8
+      <B>end</B>
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> Panel3: TPanel
+    Left = 0
+    Top = 145
+    Width = 588
+    Height = 133
+    Align = alClient
+    BevelInner = bvLowered
+    BorderWidth = 4
+    Caption = <I>'Panel3'</I>
+    TabOrder = 2
+    <B>object</B> DBGrid1: TDBGrid
+      Left = 6
+      Top = 6
+      Width = 576
+      Height = 121
+      Align = alClient
+      BorderStyle = bsNone
+      DataSource = DataSource2
+      TabOrder = 0
+      TitleFont.Color = clBlack
+      TitleFont.Height = -11
+      TitleFont.Name = <I>'MS Sans Serif'</I>
+      TitleFont.Style = []
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> DataSource1: TDataSource
+    DataSet = Table1
+    Left = 311
+    Top = 5
+  <B>end</B>
+  <B>object</B> DataSource2: TDataSource
+    DataSet = Table2
+    Left = 429
+    Top = 5
+  <B>end</B>
+  <B>object</B> Table1: TTable
+    Active = True
+    DatabaseName = <I>'DBDEMOS'</I>
+    TableName = <I>'customer.db'</I>
+    Left = 260
+    Top = 5
+  <B>end</B>
+  <B>object</B> Table2: TTable
+    Active = True
+    DatabaseName = <I>'DBDEMOS'</I>
+    IndexFieldNames = <I>'CustNo'</I>
+    MasterFields = <I>'CustNo'</I>
+    MasterSource = DataSource1
+    TableName = <I>'orders.db'</I>
+    Left = 378
+    Top = 5
+    <B>object</B> Table2OrderNo: TFloatField
+      DisplayWidth = 10
+      FieldName = <I>'OrderNo'</I>
+    <B>end</B>
+    <B>object</B> Table2CustNo: TFloatField
+      DisplayWidth = 10
+      FieldName = <I>'CustNo'</I>
+      Required = True
+    <B>end</B>
+    <B>object</B> Table2SaleDate: TDateTimeField
+      DisplayWidth = 10
+      FieldName = <I>'SaleDate'</I>
+    <B>end</B>
+    <B>object</B> Table2ShipDate: TDateTimeField
+      DisplayWidth = 10
+      FieldName = <I>'ShipDate'</I>
+    <B>end</B>
+    <B>object</B> Table2Employee: TStringField
+      DisplayWidth = 16
+      FieldName = <I>'Employee'</I>
+      Lookup = True
+      LookupDataSet = Table3
+      LookupKeyFields = <I>'EmpNo'</I>
+      LookupResultField = <I>'LastName'</I>
+      KeyFields = <I>'EmpNo'</I>
+      Size = 25
+    <B>end</B>
+    <B>object</B> Table2EmpNo: TIntegerField
+      FieldName = <I>'EmpNo'</I>
+      Required = True
+      Visible = False
+    <B>end</B>
+    <B>object</B> Table2ShipToContact: TStringField
+      DisplayWidth = 13
+      FieldName = <I>'ShipToContact'</I>
+    <B>end</B>
+    <B>object</B> Table2ShipToAddr1: TStringField
+      DisplayWidth = 20
+      FieldName = <I>'ShipToAddr1'</I>
+      Size = 30
+    <B>end</B>
+    <B>object</B> Table2ShipToAddr2: TStringField
+      DisplayWidth = 19
+      FieldName = <I>'ShipToAddr2'</I>
+      Size = 30
+    <B>end</B>
+    <B>object</B> Table2ShipToCity: TStringField
+      DisplayWidth = 12
+      FieldName = <I>'ShipToCity'</I>
+      Size = 15
+    <B>end</B>
+    <B>object</B> Table2ShipToState: TStringField
+      DisplayWidth = 16
+      FieldName = <I>'ShipToState'</I>
+    <B>end</B>
+    <B>object</B> Table2ShipToZip: TStringField
+      DisplayWidth = 10
+      FieldName = <I>'ShipToZip'</I>
+      Size = 10
+    <B>end</B>
+    <B>object</B> Table2ShipToCountry: TStringField
+      DisplayWidth = 20
+      FieldName = <I>'ShipToCountry'</I>
+    <B>end</B>
+    <B>object</B> Table2ShipToPhone: TStringField
+      DisplayWidth = 15
+      FieldName = <I>'ShipToPhone'</I>
+      Size = 15
+    <B>end</B>
+    <B>object</B> Table2ShipVIA: TStringField
+      DisplayWidth = 7
+      FieldName = <I>'ShipVIA'</I>
+      Size = 7
+    <B>end</B>
+    <B>object</B> Table2PO: TStringField
+      DisplayWidth = 15
+      FieldName = <I>'PO'</I>
+      Size = 15
+    <B>end</B>
+    <B>object</B> Table2Terms: TStringField
+      DisplayWidth = 6
+      FieldName = <I>'Terms'</I>
+      Size = 6
+    <B>end</B>
+    <B>object</B> Table2PaymentMethod: TStringField
+      DisplayWidth = 13
+      FieldName = <I>'PaymentMethod'</I>
+      Size = 7
+    <B>end</B>
+    <B>object</B> Table2ItemsTotal: TCurrencyField
+      DisplayWidth = 10
+      FieldName = <I>'ItemsTotal'</I>
+    <B>end</B>
+    <B>object</B> Table2TaxRate: TFloatField
+      DisplayWidth = 10
+      FieldName = <I>'TaxRate'</I>
+    <B>end</B>
+    <B>object</B> Table2Freight: TCurrencyField
+      DisplayWidth = 10
+      FieldName = <I>'Freight'</I>
+    <B>end</B>
+    <B>object</B> Table2AmountPaid: TCurrencyField
+      DisplayWidth = 10
+      FieldName = <I>'AmountPaid'</I>
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> Table3: TTable
+    Active = True
+    DatabaseName = <I>'DBDEMOS'</I>
+    IndexName = <I>'ByName'</I>
+    TableName = <I>'EMPLOYEE.DB'</I>
+    Left = 488
+    Top = 8
+  <B>end</B>
+  <B>object</B> DataSource3: TDataSource
+    DataSet = Table3
+    Left = 536
+    Top = 8
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

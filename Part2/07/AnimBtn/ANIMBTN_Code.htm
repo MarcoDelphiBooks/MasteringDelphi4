@@ -1,0 +1,121 @@
+<HTML><HEAD>
+<TITLE>Project: ANIMBTN.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: ANIMBTN.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#ANIMBTN.DPR> ANIMBTN.DPR</A>
+<LI> <A HREF=#ANIMBF.PAS> ANIMBF.PAS</A>
+<LI> <A HREF=#ANIMBF.DFM> ANIMBF.DFM</A>
+</UL>
+<HR>
+<A NAME=ANIMBTN.DPR><H3>ANIMBTN.DPR</H3></A>
+
+<PRE>
+<B>program</B> AnimBtn;
+
+<B>uses</B>
+  Forms,
+  AnimBF <B>in</B> <I>'AnimBF.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=ANIMBF.PAS><H3>ANIMBF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> AnimBF;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  ComCtrls, StdCtrls;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    Button1: TButton;
+    Animate1: TAnimate;
+    <B>procedure</B> FormCreate(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.FormCreate(Sender: TObject);
+<B>var</B>
+  hDiff: Integer;
+<B>begin</B>
+  Animate1.Parent := Button1;
+  hDiff := Button1.Height - Animate1.Height;
+  Animate1.SetBounds (hDiff <B>div</B> 2, hDiff <B>div</B> 2,
+    Animate1.Width, Animate1.Height);
+  Animate1.Active := True;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=ANIMBF.DFM><H3>ANIMBF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 228
+  Top = 107
+  Width = 372
+  Height = 223
+  Caption = <I>'AnimBtn'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = False
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Button1: TButton
+    Left = 56
+    Top = 56
+    Width = 249
+    Height = 73
+    Caption = <I>'Find'</I>
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -16
+    Font.Name = <I>'MS Sans Serif'</I>
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 0
+  <B>end</B>
+  <B>object</B> Animate1: TAnimate
+    Left = 8
+    Top = 8
+    Width = 48
+    Height = 50
+    Active = False
+    CommonAVI = aviFindFile
+    StopFrame = 23
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

@@ -1,0 +1,307 @@
+<HTML><HEAD>
+<TITLE>Project: VIEWDATE.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: VIEWDATE.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#VIEWDATE.DPR> VIEWDATE.DPR</A>
+<LI> <A HREF=#DATEF.PAS> DATEF.PAS</A>
+<LI> <A HREF=#DATES.PAS> DATES.PAS</A>
+<LI> <A HREF=#DATEF.DFM> DATEF.DFM</A>
+</UL>
+<HR>
+<A NAME=VIEWDATE.DPR><H3>VIEWDATE.DPR</H3></A>
+
+<PRE>
+<B>program</B> Viewdate;
+
+<B>uses</B>
+  Forms,
+  DateF <B>in</B> <I>'DateF.pas'</I> <FONT COLOR="#000080"><I>{DateForm}</I></FONT>,
+  Dates <B>in</B> <I>'DATES.PAS'</I>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TDateForm, DateForm);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=DATEF.PAS><H3>DATEF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> DateF;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes, Graphics, Controls,
+  Forms, Dialogs, Dates, StdCtrls;
+
+<B>type</B>
+  TDateForm = <B>class</B>(TForm)
+    LabelDate: TLabel;
+    BtnIncrease: TButton;
+    BtnDecrease: TButton;
+    BtnAdd10: TButton;
+    BtnSubtract10: TButton;
+    BtnLeap: TButton;
+    BtnToday: TButton;
+    <B>procedure</B> BtnIncreaseClick(Sender: TObject);
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> BtnDecreaseClick(Sender: TObject);
+    <B>procedure</B> BtnAdd10Click(Sender: TObject);
+    <B>procedure</B> BtnSubtract10Click(Sender: TObject);
+    <B>procedure</B> FormDestroy(Sender: TObject);
+    <B>procedure</B> BtnLeapClick(Sender: TObject);
+    <B>procedure</B> BtnTodayClick(Sender: TObject);
+  <B>private</B>
+    TheDay: TDate;
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  DateForm: TDateForm;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TDateForm.FormCreate(Sender: TObject);
+<B>begin</B>
+  TheDay := TDate.Create (1998, 12, 25);
+  LabelDate.Caption := TheDay.GetText;
+<B>end</B>;
+
+<B>procedure</B> TDateForm.BtnIncreaseClick(Sender: TObject);
+<B>begin</B>
+  TheDay.Increase;
+  LabelDate.Caption := TheDay.GetText;
+<B>end</B>;
+
+<B>procedure</B> TDateForm.BtnDecreaseClick(Sender: TObject);
+<B>begin</B>
+  TheDay.Decrease;
+  LabelDate.Caption := TheDay.GetText;
+<B>end</B>;
+
+<B>procedure</B> TDateForm.BtnAdd10Click(Sender: TObject);
+<B>begin</B>
+  TheDay.Increase (10);
+  LabelDate.Caption := TheDay.GetText;
+<B>end</B>;
+
+<B>procedure</B> TDateForm.BtnSubtract10Click(Sender: TObject);
+<B>begin</B>
+  TheDay.Decrease (10);
+  LabelDate.Caption := TheDay.GetText;
+<B>end</B>;
+
+<B>procedure</B> TDateForm.FormDestroy(Sender: TObject);
+<B>begin</B>
+  TheDay.Free;
+<B>end</B>;
+
+<B>procedure</B> TDateForm.BtnLeapClick(Sender: TObject);
+<B>begin</B>
+  <B>if</B> TheDay.LeapYear <B>then</B>
+    ShowMessage (<I>'Leap year'</I>)
+  <B>else</B>
+    ShowMessage (<I>'NON Leap year'</I>);
+<B>end</B>;
+
+<B>procedure</B> TDateForm.BtnTodayClick(Sender: TObject);
+<B>begin</B>
+  TheDay.SetValue (Date);
+  LabelDate.Caption := TheDay.GetText;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=DATES.PAS><H3>DATES.PAS</H3></A>
+
+<PRE>
+<B>unit</B> Dates;
+
+<B>interface</B>
+
+<B>type</B>
+  TDate = <B>class</B>
+  <B>private</B>
+    fDate: TDateTime;
+    <B>function</B> GetYear: Integer;
+  <B>public</B>
+    <B>constructor</B> Create; <B>overload</B>;
+    <B>constructor</B> Create (y, m, d: Integer); <B>overload</B>;
+    <B>procedure</B> SetValue (y, m, d: Integer); <B>overload</B>;
+    <B>procedure</B> SetValue (NewDate: TDateTime); <B>overload</B>;
+    <B>function</B> LeapYear: Boolean;
+    <B>procedure</B> Increase (NumberOfDays: Integer = 1);
+    <B>procedure</B> Decrease (NumberOfDays: Integer = 1);
+    <B>function</B> GetText: <B>string</B>;
+  <B>end</B>;
+
+<B>implementation</B>
+
+<B>uses</B>
+  SysUtils;
+
+<B>procedure</B> TDate.SetValue (y, m, d: Integer);
+<B>begin</B>
+  fDate := EncodeDate (y, m, d);
+<B>end</B>;
+
+<B>function</B> TDate.LeapYear: Boolean;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// compute leap years, considering &quot;exceptions&quot;</I></FONT>
+  <B>if</B> (GetYear <B>mod</B> 4 &lt;&gt; 0) <B>then</B>
+    LeapYear := False
+  <B>else</B> <B>if</B> (GetYear <B>mod</B> 100 &lt;&gt; 0) <B>then</B>
+    LeapYear := True
+  <B>else</B> <B>if</B> (GetYear <B>mod</B> 400 &lt;&gt; 0) <B>then</B>
+    LeapYear := False
+  <B>else</B>
+    LeapYear := True;
+<B>end</B>;
+
+<B>procedure</B> TDate.Increase (NumberOfDays: Integer = 1);
+<B>begin</B>
+  fDate := fDate + NumberOfDays;
+<B>end</B>;
+
+<B>function</B> TDate.GetText: <B>string</B>;
+<B>begin</B>
+  GetText := DateToStr (fDate);
+<B>end</B>;
+
+<B>procedure</B> TDate.Decrease (NumberOfDays: Integer = 1);
+<B>begin</B>
+  fDate := fDate - NumberOfDays;
+<B>end</B>;
+
+<B>constructor</B> TDate.Create (y, m, d: Integer);
+<B>begin</B>
+  fDate := EncodeDate (y, m, d);
+<B>end</B>;
+
+<B>constructor</B> TDate.Create;
+<B>begin</B>
+  fDate := Date;
+<B>end</B>;
+
+<B>function</B> TDate.GetYear: Integer;
+<B>var</B>
+  y, m, d: Word;
+<B>begin</B>
+  DecodeDate (fDate, y, m, d);
+  Result := y;
+<B>end</B>;
+
+<B>procedure</B> TDate.SetValue(NewDate: TDateTime);
+<B>begin</B>
+  fDate := NewDate;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=DATEF.DFM><H3>DATEF.DFM</H3></A>
+
+<PRE>
+<B>object</B> DateForm: TDateForm
+  Left = 225
+  Top = 114
+  Width = 257
+  Height = 265
+  ActiveControl = BtnIncrease
+  Caption = <I>'Dates'</I>
+  Color = clBtnFace
+  Font.Charset = ANSI_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> LabelDate: TLabel
+    Left = 16
+    Top = 16
+    Width = 217
+    Height = 32
+    Alignment = taCenter
+    AutoSize = False
+    Caption = <I>'date'</I>
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clBlack
+    Font.Height = -27
+    Font.Name = <I>'Arial'</I>
+    Font.Style = [fsBold]
+    ParentFont = False
+  <B>end</B>
+  <B>object</B> BtnIncrease: TButton
+    Left = 32
+    Top = 64
+    Width = 81
+    Height = 41
+    Caption = <I>'&amp;Increase'</I>
+    TabOrder = 0
+    OnClick = BtnIncreaseClick
+  <B>end</B>
+  <B>object</B> BtnDecrease: TButton
+    Left = 128
+    Top = 64
+    Width = 89
+    Height = 41
+    Caption = <I>'&amp;Decrease'</I>
+    TabOrder = 1
+    OnClick = BtnDecreaseClick
+  <B>end</B>
+  <B>object</B> BtnAdd10: TButton
+    Left = 32
+    Top = 120
+    Width = 81
+    Height = 41
+    Caption = <I>'&amp;Add 10'</I>
+    TabOrder = 2
+    OnClick = BtnAdd10Click
+  <B>end</B>
+  <B>object</B> BtnSubtract10: TButton
+    Left = 128
+    Top = 120
+    Width = 89
+    Height = 41
+    Caption = <I>'&amp;Subtract 10'</I>
+    TabOrder = 3
+    OnClick = BtnSubtract10Click
+  <B>end</B>
+  <B>object</B> BtnLeap: TButton
+    Left = 32
+    Top = 176
+    Width = 81
+    Height = 41
+    Caption = <I>'&amp;Leap Year?'</I>
+    TabOrder = 4
+    OnClick = BtnLeapClick
+  <B>end</B>
+  <B>object</B> BtnToday: TButton
+    Left = 128
+    Top = 176
+    Width = 89
+    Height = 41
+    Caption = <I>'&amp;Today'</I>
+    TabOrder = 5
+    OnClick = BtnTodayClick
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

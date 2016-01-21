@@ -1,0 +1,678 @@
+PART I: DELPHI AND OBJECT PASCAL
+	CHAPTER 1: THE DELPHI 4 INTEGRATED DEVELOPMENT ENVIRONMENT (IDE)
+		Different Editions of Delphi 4
+			The AppBrowser Editor
+				The Code Explorer
+				Browsing in the Editor
+				Class Completion
+				Code Insight
+				Using Editor Bookmarks
+				More Editor Shortcut Keys
+			The Form Designer
+				The Component Editors
+				Secrets of the Component Palette
+				Defining Event Handlers
+				Copying and Pasting Components
+				Copy with Component Templates
+			Managing Projects
+				Project Options
+				Compiling and Building Projects
+			Additional and External Delphi Tools
+			The Files Produced by the System
+				Looking at Source Code File
+			The Object Repository
+			What's Next
+	CHAPTER 2: DELPHI 4 AND ADVANCED PASCAL
+		Delphi 4 Numerical Types
+			The LongWord and Int64 Integral types
+			The New Real Type
+		Strings in Delphi
+			Looking at Strings in Memory
+			Delphi Strings and Windows PChars
+			Formatting Strings
+			Resource String Constants
+		Delphi 4 Dynamic Arrays
+			Open and Dynamic Array Parameters
+			Type-Variant Open Array Parameters
+		The Variant Type
+			Variants in Depth
+			Variants Are Slow!
+		Overloading and Default Parameters in Delphi 4
+			Function Overloading
+			Default Parameters
+		Windows Programming
+			Windows Handles
+			External Declarations
+			Procedural Types
+			A Windows Callback Function
+			A Minimal Windows Program
+		Units and the Structure of a Program
+			Units and Scope
+			Units and Name Clashes
+			Units and Programs
+		What's Next
+	CHAPTER 3: OBJECT-ORIENTED PROGRAMMING IN DELPHI
+		Introducing Classes and Objects
+			Delphi's Object Reference Model
+			Private, Protected, and Public
+			Encapsulation and Forms
+			The Self Keyword
+			Creating Components Dynamically
+			Declaring a Constructor
+			Overloaded Methods and Constructors
+			The Complete TDate Class
+		Inheriting from Existing Types
+			Inheritance and Type Compatibility
+		Late Binding and Polymorphism
+			Overriding, Redefining, and Reintroducing Methods
+			Virtual versus Dynamic Methods
+			Message Handlers
+			Abstract Methods
+		Run-Time Type Information
+		Visual Form Inheritance
+			Inheriting from a Base Form
+			Polymorphic Forms
+		Interfaces and Multiple Inheritance
+			Declaring an Interface
+			An Example of Multiple Inheritance
+			Plain and Interface Polymorphism
+			Using an Array of Interface Variables
+			Is This Multiple Inheritance?
+		Handling Exceptions
+			Exceptions and the Stack
+			The Finally Block
+		What's Next?
+	CHAPTER 4: VCL PROGRAMMING TECHNIQUES
+		Class Methods and Class Data
+			A Class with an Object Counter
+			Method Pointers
+			The Updated Counter Example
+		Class References
+			Creating Components at Run Time Using Class References
+		The Published Access Specifier
+		Defining Properties
+			Adding Properties to Forms
+			Adding Properties to the TDate Class
+		Events in Delphi
+			Events Are Properties
+			Adding an Event to the TDate Class
+		Creating a TDate Component
+		The TObject Class
+			Showing Class Information
+		The VCL Hierarchy
+			Components
+			Windows' Own Components
+			Objects
+		Common VCL Properties
+			The Name Property
+				Removing Form Fields
+			Properties Related to Component Size and Position
+			Activation and Visibility Properties
+			The Customizable Tag Property
+			The User Interface: Color and Font
+		Common VCL Methods
+		Common VCL Events
+		Using Delphi Lists
+			Using Lists of Objects and Data
+		Studying the VCL Source Code
+		What's Next
+PART II: USING COMPONENTS
+	CHAPTER 5: ADVANCED USE OF THE STANDARD COMPONENTS
+		Opening the Component Tool Box
+			Text Input
+				Edit
+				MaskEdit
+				Memo and RichEdit
+			Selecting Options
+				CheckBox and RadioButton
+				GroupBox
+				RadioGroup
+			Lists
+				ListBox
+				ComboBox
+				CheckListBox
+				ListView and TreeView
+			Ranges
+				ScrollBar
+				TrackBar and ProgressBar
+				UpDown
+				PageScroller
+			Dragging from One Component to Another
+			Handling the Input Focus
+		Working with Menus
+			Pop-up Menus
+			Creating Menu Items Dynamically
+			Delphi 4 Menus Images
+			Customizing the Menu Check Mark
+			Customizing the System Menu
+		Delphi 4 Action Commands
+			Actions in Practice
+		Owner-Draw Controls
+			Bitmap Menu Items
+			Owner-Draw Menu Items in Delphi 4
+			A ListBox of Colors
+		ListView and TreeView
+			A Graphical Reference List
+			A Tree of Chapters
+		What's Next
+	CHAPTER 6: FORMS, WINDOWS, AND APPLICATIONS
+		Forms versus Windows
+			Overlapped, Pop-Up, and Child Windows
+		The Application Is a Window
+			Displaying the Application Window
+			The Application System Menu
+			Activating Applications and Forms
+		Setting Form and Border Styles
+			The Border Style
+			The Border Icons
+			Setting More Window Styles
+		Scaling Forms
+			Manual Form Scaling
+			Automatic Form Scaling
+		Setting the Form's Position and Size
+			Adding Sound to an Application
+			The Size of a Form and Its Client Area
+			Delphi 4 Form Constraints
+		Creating Forms
+			Delphi 4 Form Creation Order
+			Tracking Forms with the Screen Object
+			Closing a Form
+		Form Input
+			Supervising Keyboard Input
+			Getting Mouse Input
+				The Mouse Buttons
+				Using Windows without a Mouse
+				The Parameters of the Mouse Events
+				The Mouse Wheel
+		What's Next
+	CHAPTER 7: GRAPHICS, PAINTING, AND BITMAPS
+		Drawing on a Form
+			Drawing and Painting in Windows
+			The Drawing Tools
+		Drawing Shapes
+		Delphi Graphical Components
+		Drawing in a Bitmap
+			Drawing Shapes
+			An Image Viewer
+			Bitmaps to the Max
+		An Animated Bitmap in a Button
+			A Two-State Button
+			Many Images in a Bitmap
+			The Rotating World
+			A List of Bitmaps, the Use of Resources, and a PaintBox
+		The Animate Control
+			The Animate Control in a Button
+		Graphical Grids
+			A Grid of Fonts
+			Mines in a Grid
+		Using TeeChart
+			Building a First Example
+			Adding Data to the Chart
+			Creating Series Dynamically
+		Using Metafiles
+		What's Next
+	CHAPTER 8: TOOLBARS AND OTHER INTERFACE ELEMENTS
+		Building a Toolbar with a Panel
+			A Combo Box in a Toolbar
+		Customizing the Hints
+		The Toolbar Control
+		A Really Cool Toolbar
+		The Delphi 4 Control Bar
+			A Menu in a Control Bar
+		Creating a Status Bar
+			Menu Hints in the Status Bar
+			Speed Button Hints in the Status Bar
+		Scrolling a Form
+			The Scroll Testing Example
+			Automatic Scrolling
+			Scrolling an Image
+			Scrolling and Form Coordinates
+		Form-Splitting Techniques
+			Horizontal Splitting
+			Splitting with a Header
+			Delphi 4 Control Anchors
+		Docking Toolbars and Controls in Delphi 4
+			Docking Tool Bars in Control Bars
+		What's Next?
+	CHAPTER 9: DIALOG BOXES AND MULTIPLE-PAGE FORMS
+		Dialog Boxes versus Forms
+			Adding a Second Form to a Program
+			Creating Secondary Forms at Run Time
+			Merging Form Menus
+		Creating a Dialog Box
+			The Dialog Box of the RefList Example
+			A Modeless Dialog Box
+			Windows Common Dialogs
+			A Parade of Message Boxes
+			Extensible Dialog Boxes
+		About Boxes and Splash Screens
+			Building a Custom Hidden Screen
+			Building a Splash Screen
+		Multiple-Page Forms
+			PageControls and TabSheets
+			An Image Viewer with Tabs
+			The User Interface of a Wizard
+		Docking to a PageControl
+		What's Next
+	CHAPTER 10: CREATING MDI APPLICATIONS
+		MDI in Windows: A Technical Overview
+			Using Child Forms
+			Making Child Forms Behave Properly
+			The Real Solution: MDI
+		Frame and Child Windows in Delphi
+			Building a Complete Window Menu
+			The MdiDemo Example
+		MDI Applications with Different Child Windows
+			Child Forms and Menus
+			Adding a Bouncing Shape
+			Changing the Main Form
+			Subclassing the MdiClient Window
+		What's Next
+PART III: WRITING DATABASE APPLICATIONS
+	CHAPTER 11: BUILDING DATABASE APPLICATIONS
+		Data, Files, Databases, and Tables
+		Delphi Database Components
+			Tables and Queries
+			The Status of a Data Set
+			Other Data-Access Components
+			Delphi Data-Aware Controls
+		Customizing a Database Grid
+			The Table State
+		Field-Oriented Data-Aware Controls
+			Using DBEdit Controls
+			Creating a Database Table in Delphi 4
+			Listing Alternative Values
+		Accessing the Data Fields
+			The Hierarchy of Field Classes
+			Adding a Calculated Field
+		Searching and Adding the Fields of a Table
+			Looking for Records in a Table
+				The Find Methods
+				The Goto Methods
+				The Locate Method
+			The Total of a Table Column
+			Editing a Table Column
+		Database Application with Standard Controls
+			Mimicking Delphi Data-Aware Controls
+			Sending Requests to the Database
+			Database Events
+			Field Events
+			Editing Dates with a Calendar
+		Exploring the Tables of a Database
+			Choosing a Database and a Table at Run Time
+			Viewing Multiple Tables
+		Using Tables as Files
+			The Form and Its Startup Code
+			Creating a New Table
+			Choosing an Existing Table with the Proper Fields
+			Adding or Removing Records
+		A Multi-Record Grid
+			Moving Control Grid Panels
+		Database Charts
+		What's Next?
+	CHAPTER 12: ADVANCED DATABASE ACCESS
+		Data Modules
+			A Data Module for Multiple Views
+			Setting Field Properties and Initial Values
+			Standard Table Filtering
+			Custom Table Filtering
+			An MDI Application with Unsynchronized Views
+		Using a Query
+			A Query with Parameters
+		Using Multiple Tables
+			Building a Master/Detail Form with the Wizard
+			A Master/Detail Structure with Queries
+			Using a Lookup Combo Box
+			A Lookup in a Grid
+		Advanced Use of the DBGrid Control
+			Painting a DBGrid
+			A Check Box Cell
+			A Grid Allowing Multiple Selection
+		The Data Dictionary
+			The Data Dictionary and the Fields editor
+			What's In an Attribute Set?
+			Exploring the Data Dictionary
+		Handling Database Errors
+		Multiuser Paradox Applications
+			Low-level BDE
+			Packing a Local Table
+			Using Paradox Files on a Network
+			Concurrency Control
+			Database Transactions
+				A Simple Example of Transactions
+			Using Cached Updates as Transactions
+			Crash Recovery
+		What's Next
+	CHAPTER 13: CLIENT/SERVER PROGRAMMING
+		An Overview of Client/Server Programming
+		Client/Server and Delphi
+			The Database Component
+			The Role of the BDE
+		From Local to Client/Server
+			Monodirectional Cursors
+			Table and Query Components in Client/Server
+		Getting Started with Local InterBase
+		SQL: The Data Definition Language
+			Data Types
+			Domains
+			Creating Tables
+			Indexes
+			Views
+		SQL: The Data Manipulation Language
+			Select
+			Insert
+			Update
+			Delete
+			Using SQL Builder
+		Server-Side Programming
+			Stored Procedures
+			Triggers (and Generators)
+		Live Queries and Cached Updates
+			The UpdateSQL Component
+			Update Conflicts
+			Using Transactions
+		Client/Server Optimization
+			Using SQL Monitor
+			Performance Tuning
+		What's Next
+PART IV: COMPONENTS AND LIBRARIES
+	CHAPTER 14: CREATING COMPONENTS
+		Extending the VCL
+			Component Packages
+			Rules for Writing Components
+			The Base Component Classes
+		Building Your First Components
+			The Fonts Combo Box
+			Creating a Package
+				What's Behind a Package?
+				Installing the Components of This Chapter
+			Using the Fonts Combo Box
+			A Clock in a Label
+			The Component Palette Bitmaps
+			An Active Button
+		A Complex Graphical Component
+			Defining an Enumerated Property
+			Writing the Paint Method
+			Adding TPersistent Properties
+			Defining a New Custom Event
+			Testing the Arrow Component
+		Customizing a Windows Control
+			Defining an Array Property
+			Using Dialog Box Units
+			A Header and a Tabbed List Box
+		A Nonvisual Dialog Component
+			Using the Nonvisual Component
+		Defining Custom Actions
+		What's Next
+	CHAPTER 15: COMPONENTS AND THE TOOLSAPI
+		Writing a Property Editor
+			Types of Property Editors
+			An Editor for the TabsString Property
+			Installing the Property Editor
+		Writing a Component Editor
+			Subclassing the TComponentEditor Class
+			A Component Editor for the Tabbed List
+			Registering the Component Editor
+		Writing a Simple Wizard
+			Subclassing the TIExpert Class
+			The Code of the Wizard
+			Other Interfaces of the ToolsAPI
+		Accessing Properties by Name
+		What's Next
+	CHAPTER 16: DYNAMIC LINK LIBRARIES AND PACKAGES
+		The Role of DLLs in Windows
+			What Is Dynamic Linking?
+			What Are DLLs For?
+			Understanding System DLLs
+			Differences between DLLs and EXEs
+			Rules for Delphi DLL Writers
+			Win16 and Win32 DLLs
+		Using Existing DLLs
+			Using a C++ DLL
+		Creating a DLL in Delphi
+			A First Simple Delphi DLL
+			Overloaded Functions in Delphi DLLs
+			Exporting Strings from a DLL
+			Calling the Delphi DLL
+		A Delphi Form in a DLL
+			Using the DLL Form as Modal
+			A Modeless Form in a DLL
+			Calling a Delphi DLL from Visual Basic for Applications
+		Calling a DLL Function at Run-Time
+		A DLL in Memory: Code and Data
+			Sharing Data with Memory-Mapped Files
+		Using Delphi Packages
+			Packages for Versioning of Applications
+			Executables and DLLs Sharing the VCL Packages
+		What's Next
+	CHAPTER 17: OLE AND COM
+		What Is OLE? And What Is COM?
+		Objects in DLLs
+			Writing the Class in the DLL
+			Using a Class from a DLL
+		Implementing IUnknown
+			Implementing IUnknown Methods
+			Global Unique Identifiers
+			The Role of Class Factories
+		Using the Delphi 4 COM Object Wizard
+			The TComObject Class
+			Initializing the COM Object
+			Class Factories and Other Delphi COM Classes
+			Testing the COM Server
+			Using Interface Properties
+		Using a Shell Interface
+			Creating Shortcuts
+			The "To-Do File" Application
+				Creating the Database
+		Dragging Files to the Form
+			Creating a Context Menu Handler
+			Sending Data to Another Application with wm_CopyData
+			Registering the Shell Extension
+		What's Next
+	CHAPTER 18: OLE AUTOMATION AND COMPOUND DOCUMENTS
+		What Is OLE Automation?
+			Introducing Type Libraries
+		Writing an OLE Automation Server
+			The Delphi 4 Type Library Editor
+			The Code of the Server
+			Registering the Automation Server
+			Writing a Client for Our Server
+				Interfaces, Variants, and Dispatch Interfaces: Testing the 				Speed Difference
+				The Scope of Automation Objects
+		OLE Data Types
+			Exposing Strings Lists and Fonts
+		Sending Data to Word
+			Is the Server Running?
+			One Application, Multiple Automation Interfaces
+			Sending Database Data to Microsoft Word and Excel
+		What Is a Compound Document?
+			The OLE Container Component
+			Merging Menus and Toolbars
+			The OLE Standard Dialog Boxes
+			Loading and Saving Objects in Files
+		Using the Internal Object
+		What's Next
+	CHAPTER 19: ACTIVEX CONTROLS AND FORMS
+		Introducing ActiveX Controls
+			ActiveX Controls versus Delphi Components
+		Using ActiveX Controls in Delphi
+			Installing an ActiveX Control
+			The TOleControl Class
+			Using the WebBrowser Control
+			Using Delphi ActiveX Controls
+		Writing ActiveX Controls
+			Building an ActiveX Arrow
+			Adding New Properties
+			Adding a Property Page
+		ActiveForms
+		What's Next
+PART V: REAL WORLD DELPHI PROGRAMMING
+	CHAPTER 20: MUTEXES, THREADS, AND SYNCHRONIZATION
+		Checking for a Previous Instance of an Application
+			Traditional Techniques
+				Looking for a Copy of the Main Window
+				Activating the Previous Main Form
+				Handling User-Defined Window Messages
+				Searching the Window List
+			Using a Mutex
+		Events, Messages, and Multitasking in Windows
+			Event-Driven Programming
+			Windows Message Delivery
+		Idle Computing and Multitasking
+			Background Processing
+		Multithreading in Delphi
+			The TThread Class
+			A First Example
+			A Locking Example
+			Synchronization Alternatives
+			Thread Priorities
+			A Database Example
+		Synchronizing Threads
+			Waiting for a Thread
+			Windows Synchronization Techniques
+				Building an Example
+				The Plain Thread
+				Using Critical Sections
+				Using a Mutex
+				Using a TCriticalSection VCL Object
+		What's Next?
+	CHAPTER 21: DEBUGGING DELPHI PROGRAMS
+		Using the Integrated Debugger
+			Debug Information
+			Setting Breakpoints
+			Viewing Breakpoints
+			Monitoring the Program's Execution
+			Inspecting Values
+			Tracing through the VCL Source Code
+		Alternative Debugging Techniques
+			Debugging with the Event Log
+			Using Conditional Compilation for Debug and Release Versions
+			Using Assertions
+		Exploring the Message Flow
+			Using WinSight
+			A Look at Posted Messages
+		Viewing a Compiled Program
+			Using the Object Browser
+			Using the Modules Window
+			Using the CPU Window
+		What's Next?
+	CHAPTER 22: REAL-WORLD TECHNIQUES
+		Managing Resources
+			Using Resource Editors
+			Loading an Icon or Bitmap as a Property
+			The Manual Approach to Loading Resources
+			The Icons for Applications and Forms
+			Using the Icon Tray of the Taskbar
+			Using the Cursor in Delphi
+			Using String Table Resources
+			Version Information
+		Printing in Delphi
+			A Print Preview of Graphics
+			Sharing the Output Code
+			The QuickReport Components
+		Manipulating Files
+			File Support in Delphi Components
+			Streaming Data
+			Streaming Numbers
+			Streaming Components
+		The Clipboard
+			Copying and Pasting Text
+			Copying and Pasting Bitmaps
+		Support Files
+			Using Windows INI Files
+			Using the Registry
+		Help and Installation
+			Online Help
+			InstallShield Express
+		What's Next?
+	CHAPTER 23: INTERNET PROGRAMMING
+		Browsing HTML Files
+		Generating HTML Files
+			Building a Plain HTML File
+			Producing HTML Tables
+		Using the HTML Producer Components
+			Producing HTML Pages
+			Producing Pages of Data
+			Producing HTML Tables
+		Converting a Database to HTML
+			Generating Master/Detail HTML Files
+			Cross Referencing the HTML Files
+			Publishing Static Databases on the Web
+		ActiveForms in Web Pages
+			The Role of an ActiveX Form on a Web Page
+			A Multi-Page ActiveForm
+			Setting Properties for the XArrow
+		Socket Programming with Delphi
+			Foundations of Socket Programming
+				Configuring a Local Network: IP Addresses
+				Local Domain Names
+				TCP Ports
+				High-Level Protocols
+				Socket Connections
+			Delphi Socket Components
+			Using Sockets
+			Using Sockets with a Custom Protocol
+			Blocking, Non-Blocking, and Multi-Threaded Connections
+			Sending Database Data over a Socket Connection
+		Internet Protocols
+			The NetMasters Components
+			Sending and Receiving Mail
+				Sending Messages to the Mail Program
+				The Mail Components
+				Sending Mail to a List
+			The Components for the FTP and HTTP Protocols
+			The WinInet API
+		What's Next
+	CHAPTER 24: SERVER-SIDE WEB PROGRAMMING
+		Dynamic Web Pages
+			An Overview of CGI
+			An Overview of ISAPI/NSAPI
+		Introducing CGI Programming
+			What's the Time?
+			Processing the Command Line
+			CGI Environment Variables
+		CGI Database Programming
+			Listing the Records of a Table
+			Displaying a Specific Record
+			An HTML Search Form
+		Using Plain ISAPI
+			A Simple ISAPI DLL
+		Delphi WebModules
+			The Building Blocks
+			Building a Multipurpose WebModule
+			Simple ISAPI Database Reporting
+			Of Queries and Forms
+		Adding JPEG Graphics
+			A Web Hit Counter
+			A Database Chart on the Web
+		Handling Mail Feedback
+			A CGI Mail Server
+			Retrieving Mail-Based Requests
+		What's Next
+	CHAPTER 25: DISTRIBUTED DATABASE APPLICATIONS
+		One, Two, Three Levels
+			The Technical Foundation: MIDAS
+			The Connection Protocol
+			Providing Data Packets
+			Delphi Support Components (Client-Side)
+			Delphi Support Components (Server Side)
+		Building a Sample Application
+			The First Application Server
+			The First Thin Client
+		Adding Constraints to the Server
+		Adding Features to the Client
+			The Status of the Records
+			Accessing the Delta
+			Updating the Data
+			Adding an Undo Feature
+			Supporting the Briefcase Model	
+		Supporting Microsoft Transaction Server (MTS)
+			What Is Microsoft Transaction Server For?
+			Creating an MTS Data Module
+		Delphi and CORBA
+			A Simple CORBA Server
+			A Simple CORBA Client
+		ActiveForms as Database Front-Ends
+			Distributing ActiveForm and Database Table
+			Three-Tier Intranet Applications
+		What's Next

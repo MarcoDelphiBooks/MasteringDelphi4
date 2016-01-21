@@ -1,0 +1,141 @@
+<HTML><HEAD>
+<TITLE>Project: ASSERT.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: ASSERT.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#ASSERT.DPR> ASSERT.DPR</A>
+<LI> <A HREF=#ASSERTF.PAS> ASSERTF.PAS</A>
+<LI> <A HREF=#ASSERTF.DFM> ASSERTF.DFM</A>
+</UL>
+<HR>
+<A NAME=ASSERT.DPR><H3>ASSERT.DPR</H3></A>
+
+<PRE>
+<B>program</B> Assert;
+
+<B>uses</B>
+  Forms,
+  AssertF <B>in</B> <I>'AssertF.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=ASSERTF.PAS><H3>ASSERTF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> AssertF;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  ComCtrls, StdCtrls;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    BtnInc: TButton;
+    BtnDec: TButton;
+    ProgressBar1: TProgressBar;
+    <B>procedure</B> BtnIncClick(Sender: TObject);
+    <B>procedure</B> BtnDecClick(Sender: TObject);
+    <B>procedure</B> FormCreate(Sender: TObject);
+  <B>private</B>
+    Number: Integer;
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<FONT COLOR="#000080"><I>// disable assertions</I></FONT>
+<FONT COLOR="#000080"><I>// {$C-}</I></FONT>
+
+<B>procedure</B> TForm1.BtnIncClick(Sender: TObject);
+<B>begin</B>
+  <B>if</B> Number &lt; 100 <B>then</B>
+    Inc (Number);
+  ProgressBar1.Position := Number;
+  <FONT COLOR="#000080"><I>// test the condition</I></FONT>
+  Assert ((Number &gt; 0) <B>and</B> (Number &lt;= 100));
+<B>end</B>;
+
+<B>procedure</B> TForm1.BtnDecClick(Sender: TObject);
+<B>begin</B>
+  <B>if</B> Number &gt; 0 <B>then</B>
+    Dec (Number);
+  ProgressBar1.Position := Number;
+  <FONT COLOR="#000080"><I>// test the condition</I></FONT>
+  Assert ((Number &gt; 0) <B>and</B> (Number &lt;= 100));
+<B>end</B>;
+
+<B>procedure</B> TForm1.FormCreate(Sender: TObject);
+<B>begin</B>
+  Number := 1;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=ASSERTF.DFM><H3>ASSERTF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 305
+  Top = 160
+  Width = 248
+  Height = 161
+  Caption = <I>'Assertions Test'</I>
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> BtnInc: TButton
+    Left = 32
+    Top = 16
+    Width = 75
+    Height = 25
+    Caption = <I>'&amp;Inc'</I>
+    TabOrder = 0
+    OnClick = BtnIncClick
+  <B>end</B>
+  <B>object</B> BtnDec: TButton
+    Left = 144
+    Top = 16
+    Width = 75
+    Height = 25
+    Caption = <I>'&amp;Dec'</I>
+    TabOrder = 1
+    OnClick = BtnDecClick
+  <B>end</B>
+  <B>object</B> ProgressBar1: TProgressBar
+    Left = 32
+    Top = 64
+    Width = 185
+    Height = 33
+    Min = 1
+    Max = 100
+    Position = 1
+    TabOrder = 2
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

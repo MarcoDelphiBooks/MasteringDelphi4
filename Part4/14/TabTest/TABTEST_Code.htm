@@ -1,0 +1,227 @@
+<HTML><HEAD>
+<TITLE>Project: TABTEST.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: TABTEST.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#TABTEST.DPR> TABTEST.DPR</A>
+<LI> <A HREF=#LISTSF.PAS> LISTSF.PAS</A>
+<LI> <A HREF=#LISTSF.DFM> LISTSF.DFM</A>
+</UL>
+<HR>
+<A NAME=TABTEST.DPR><H3>TABTEST.DPR</H3></A>
+
+<PRE>
+<B>program</B> Tabtest;
+
+<B>uses</B>
+  Forms,
+  ListsF <B>in</B> <I>'ListsF.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=LISTSF.PAS><H3>LISTSF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> ListsF;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes, Graphics, Controls,
+  Forms, Dialogs, StdCtrls, ExtCtrls, Md4TabList;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    Md4TabbedList1: TMd4TabbedList;
+    Edit1: TEdit;
+    AddButton: TButton;
+    Edit2: TEdit;
+    Edit3: TEdit;
+    Label3: TLabel;
+    Label4: TLabel;
+    Label5: TLabel;
+    Header1: THeader;
+    <B>procedure</B> AddButtonClick(Sender: TObject);
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> Header1Sized(Sender: TObject; ASection, AWidth: Integer);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.AddButtonClick(Sender: TObject);
+<B>var</B>
+  NewItem: <B>String</B>;
+<B>begin</B>
+  <B>if</B> Edit1.Text &lt;&gt; <I>''</I> <B>then</B>
+  <B>begin</B>
+    NewItem := Edit1.Text + <I>#9</I> + Edit2.Text +
+      <I>#9</I> + Edit3.Text;
+    Md4TabbedList1.Items.Add (NewItem);
+  <B>end</B>;
+<B>end</B>;
+
+<B>const</B>
+  MaxNumSections = 9;
+
+<B>procedure</B> TForm1.FormCreate(Sender: TObject);
+<B>var</B>
+  I, Last: Integer;
+<B>begin</B>
+  Last := 0;
+  <B>for</B> I := 0 <B>to</B> Header1.Sections.Count - 1 <B>do</B>
+  <B>begin</B>
+    Last := Last + Header1.SectionWidth [I];
+    Md4TabbedList1.TabStops [I] := Last;
+  <B>end</B>;
+  <B>for</B> I := Header1.Sections.Count <B>to</B> MaxNumSections <B>do</B>
+    Md4TabbedList1.TabStops [I] := 1000;
+<B>end</B>;
+
+<B>procedure</B> TForm1.Header1Sized(Sender: TObject; ASection, AWidth: Integer);
+<B>var</B>
+  I, Last: Integer;
+<B>begin</B>
+  Last := 0;
+  <B>for</B> I := 0 <B>to</B> Header1.Sections.Count - 1 <B>do</B>
+  <B>begin</B>
+    Last := Last + Header1.SectionWidth [I];
+    Md4TabbedList1.TabStops [I] := Last;
+  <B>end</B>;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=LISTSF.DFM><H3>LISTSF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 222
+  Top = 96
+  Width = 420
+  Height = 400
+  Caption = <I>'Tab Test'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clBlack
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Label3: TLabel
+    Left = 8
+    Top = 272
+    Width = 37
+    Height = 13
+    Caption = <I>'English:'</I>
+  <B>end</B>
+  <B>object</B> Label4: TLabel
+    Left = 8
+    Top = 304
+    Width = 40
+    Height = 13
+    Caption = <I>'Number:'</I>
+  <B>end</B>
+  <B>object</B> Label5: TLabel
+    Left = 8
+    Top = 336
+    Width = 31
+    Height = 13
+    Caption = <I>'Italian:'</I>
+  <B>end</B>
+  <B>object</B> Md4TabbedList1: TMd4TabbedList
+    Left = 0
+    Top = 25
+    Width = 412
+    Height = 224
+    Align = alTop
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clBlack
+    Font.Height = -32
+    Font.Name = <I>'Arial'</I>
+    Font.Style = [fsBold]
+    ItemHeight = 37
+    Items.Strings = (
+      <I>'one'#9'1'#9'uno'</I>
+          <I>'two'#9'2'#9'due'</I>
+          <I>'three'#9'3'#9'tre'</I>
+          <I>'four'#9'4'#9'quattro'</I>
+          <I>'five'#9'5'#9'cinque'</I>
+          <I>'six'#9'6'#9'sei'</I>
+          <I>'seven'#9'7'#9'sette'</I>
+          <I>'eight'#9'8'#9'otto'</I>
+          <I>'nine'#9'9'#9'nove'</I>
+          <I>'ten'#9'10'#9'dieci'</I>    )
+    ParentFont = False
+    TabOrder = 4
+    TabsString = <I>'0;0;0;0;0;0;0;0;0;0;'</I>
+  <B>end</B>
+  <B>object</B> Edit1: TEdit
+    Left = 96
+    Top = 268
+    Width = 185
+    Height = 21
+    TabOrder = 0
+  <B>end</B>
+  <B>object</B> AddButton: TButton
+    Left = 310
+    Top = 295
+    Width = 81
+    Height = 36
+    Caption = <I>'Add'</I>
+    TabOrder = 3
+    OnClick = AddButtonClick
+  <B>end</B>
+  <B>object</B> Edit2: TEdit
+    Left = 96
+    Top = 300
+    Width = 185
+    Height = 21
+    TabOrder = 1
+  <B>end</B>
+  <B>object</B> Edit3: TEdit
+    Left = 96
+    Top = 332
+    Width = 185
+    Height = 21
+    TabOrder = 2
+  <B>end</B>
+  <B>object</B> Header1: THeader
+    Left = 0
+    Top = 0
+    Width = 412
+    Height = 25
+    Align = alTop
+    Sections.Sections = (
+      <I>#0'99'#0'English'</I>
+        <I>#0'100'#0'Number'</I>
+        <I>#0'48'#0'Italian'</I>  )
+    TabOrder = 5
+    OnSized = Header1Sized
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

@@ -1,0 +1,102 @@
+<HTML><HEAD>
+<TITLE>Project: CREATEC.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: CREATEC.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#CREATEC.DPR> CREATEC.DPR</A>
+<LI> <A HREF=#CREATECF.PAS> CREATECF.PAS</A>
+<LI> <A HREF=#CREATECF.DFM> CREATECF.DFM</A>
+</UL>
+<HR>
+<A NAME=CREATEC.DPR><H3>CREATEC.DPR</H3></A>
+
+<PRE>
+<B>program</B> CreateC;
+
+<B>uses</B>
+  Forms,
+  CreateCF <B>in</B> <I>'CreateCF.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=CREATECF.PAS><H3>CREATECF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> CreateCF;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    <B>procedure</B> FormMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>uses</B>
+  StdCtrls;
+
+<B>procedure</B> TForm1.FormMouseDown(
+  Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+<B>var</B>
+  Btn: TButton;
+<B>begin</B>
+  Btn := TButton.Create (self);
+  Btn.Parent := self;
+  Btn.Left := X;
+  Btn.Top := Y;
+  Btn.Width := Btn.Width + 50;
+  Btn.Caption := Format (<I>'Button at %d, %d'</I>, [X, Y]);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=CREATECF.DFM><H3>CREATECF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 230
+  Top = 109
+  Width = 353
+  Height = 306
+  Caption = <I>'Create Comp'</I>
+  Color = clBtnFace
+  Font.Charset = ANSI_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  OnMouseDown = FormMouseDown
+  PixelsPerInch = 96
+  TextHeight = 13
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

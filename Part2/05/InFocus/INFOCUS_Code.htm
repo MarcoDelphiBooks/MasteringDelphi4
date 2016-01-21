@@ -1,0 +1,181 @@
+<HTML><HEAD>
+<TITLE>Project: INFOCUS.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: INFOCUS.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#INFOCUS.DPR> INFOCUS.DPR</A>
+<LI> <A HREF=#FOCUSF.PAS> FOCUSF.PAS</A>
+<LI> <A HREF=#FOCUSF.DFM> FOCUSF.DFM</A>
+</UL>
+<HR>
+<A NAME=INFOCUS.DPR><H3>INFOCUS.DPR</H3></A>
+
+<PRE>
+<B>program</B> InFocus;
+
+<B>uses</B>
+  Forms,
+  FocusF <B>in</B> <I>'FocusF.pas'</I> <FONT COLOR="#000080"><I>{FocusForm}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TFocusForm, FocusForm);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=FOCUSF.PAS><H3>FOCUSF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> FocusF;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes, Graphics, Controls,
+  Forms, Dialogs, StdCtrls, ComCtrls;
+
+<B>type</B>
+  TFocusForm = <B>class</B>(TForm)
+    Label1: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
+    EditFirstName: TEdit;
+    EditLastName: TEdit;
+    EditPassword: TEdit;
+    StatusBar1: TStatusBar;
+    <B>procedure</B> GlobalEnter(Sender: TObject);
+    <B>procedure</B> EditFirstNameExit(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  FocusForm: TFocusForm;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TFocusForm.GlobalEnter(Sender: TObject);
+<B>var</B>
+  I: Integer;
+<B>begin</B>
+  <B>for</B> I := 0 <B>to</B> ControlCount - 1 <B>do</B>
+    <FONT COLOR="#000080"><I>// if the control is a label</I></FONT>
+    <B>if</B> (Controls [I] <B>is</B> TLabel) <B>and</B>
+      <FONT COLOR="#000080"><I>// and the label is connected to the current edit box</I></FONT>
+      (TLabel(Controls[I]).FocusControl = Sender) <B>then</B>
+    <FONT COLOR="#000080"><I>// copy the text leaving off the initial &amp; character</I></FONT>
+    StatusBar1.SimpleText := <I>'Enter '</I> +
+      Copy (TLabel(Controls[I]).Caption, 2, 1000);
+<B>end</B>;
+
+<B>procedure</B> TFocusForm.EditFirstNameExit(Sender: TObject);
+<B>begin</B>
+  <B>if</B> EditFirstName.Text = <I>''</I> <B>then</B>
+  <B>begin</B>
+    <FONT COLOR="#000080"><I>// don't let the user get out</I></FONT>
+    EditFirstName.SetFocus;
+    MessageDlg (<I>'First name is required'</I>,
+      mtError, [mbOK], 0);
+  <B>end</B>
+  <B>else</B> <B>if</B> EditFirstName.Text = <I>'Admin'</I> <B>then</B>
+  <B>begin</B>
+    <FONT COLOR="#000080"><I>// fill the second edit and jump to the third</I></FONT>
+    EditLastName.Text := <I>'Admin'</I>;
+    EditPassword.SetFocus;
+  <B>end</B>;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=FOCUSF.DFM><H3>FOCUSF.DFM</H3></A>
+
+<PRE>
+<B>object</B> FocusForm: TFocusForm
+  Left = 255
+  Top = 110
+  Width = 308
+  Height = 189
+  ActiveControl = EditFirstName
+  Caption = <I>'InFocus'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clBlack
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Label1: TLabel
+    Left = 16
+    Top = 24
+    Width = 48
+    Height = 13
+    Caption = <I>'&amp;First name'</I>
+    FocusControl = EditFirstName
+  <B>end</B>
+  <B>object</B> Label2: TLabel
+    Left = 16
+    Top = 64
+    Width = 49
+    Height = 13
+    Caption = <I>'&amp;Last name'</I>
+    FocusControl = EditLastName
+  <B>end</B>
+  <B>object</B> Label3: TLabel
+    Left = 16
+    Top = 104
+    Width = 46
+    Height = 13
+    Caption = <I>'&amp;Password'</I>
+    FocusControl = EditPassword
+  <B>end</B>
+  <B>object</B> EditFirstName: TEdit
+    Left = 84
+    Top = 20
+    Width = 189
+    Height = 21
+    TabOrder = 0
+    OnEnter = GlobalEnter
+    OnExit = EditFirstNameExit
+  <B>end</B>
+  <B>object</B> EditLastName: TEdit
+    Left = 84
+    Top = 60
+    Width = 189
+    Height = 21
+    TabOrder = 1
+    OnEnter = GlobalEnter
+  <B>end</B>
+  <B>object</B> EditPassword: TEdit
+    Left = 84
+    Top = 100
+    Width = 189
+    Height = 21
+    PasswordChar = <I>'*'</I>
+    TabOrder = 2
+    OnEnter = GlobalEnter
+  <B>end</B>
+  <B>object</B> StatusBar1: TStatusBar
+    Left = 0
+    Top = 143
+    Width = 300
+    Height = 19
+    Panels = &lt;&gt;
+    SimplePanel = True
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

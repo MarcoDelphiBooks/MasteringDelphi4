@@ -1,0 +1,551 @@
+<HTML><HEAD>
+<TITLE>Project: PANELBAR.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: PANELBAR.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#PANELBAR.DPR> PANELBAR.DPR</A>
+<LI> <A HREF=#PANELBF.PAS> PANELBF.PAS</A>
+<LI> <A HREF=#PANELBF.DFM> PANELBF.DFM</A>
+</UL>
+<HR>
+<A NAME=PANELBAR.DPR><H3>PANELBAR.DPR</H3></A>
+
+<PRE>
+<B>program</B> PanelBar;
+
+<B>uses</B>
+  Forms,
+  PanelBF <B>in</B> <I>'PanelBF.pas'</I> <FONT COLOR="#000080"><I>{ToolbarForm}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TToolbarForm, ToolbarForm);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=PANELBF.PAS><H3>PANELBF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> PanelBF;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, SysUtils, Classes, Graphics, Forms, Controls,
+  Menus, Buttons, StdCtrls, Dialogs, ExtCtrls;
+
+<B>type</B>
+  TToolbarForm = <B>class</B>(TForm)
+    Panel1: TPanel;
+    SpeedButtonNote: TSpeedButton;
+    SpeedButtonBig: TSpeedButton;
+    SpeedButtonBold: TSpeedButton;
+    SpeedButtonItalic: TSpeedButton;
+    SpeedButtonUnderline: TSpeedButton;
+    SpeedButtonLeft: TSpeedButton;
+    SpeedButtonCenter: TSpeedButton;
+    SpeedButtonRight: TSpeedButton;
+    Label1: TLabel;
+    MainMenu1: TMainMenu;
+    File1: TMenuItem;
+    Exit1: TMenuItem;
+    Toolbar1: TMenuItem;
+    Visible1: TMenuItem;
+    DisableSound1: TMenuItem;
+    DisableStyles1: TMenuItem;
+    Help1: TMenuItem;
+    AboutToolbar1: TMenuItem;
+    DisableSize1: TMenuItem;
+    N1: TMenuItem;
+    HintColor1: TMenuItem;
+    ColorDialog1: TColorDialog;
+    FlatStyle1: TMenuItem;
+    <B>procedure</B> SpeedButtonNoteClick(Sender: TObject);
+    <B>procedure</B> SpeedButtonLeftClick(Sender: TObject);
+    <B>procedure</B> SpeedButtonCenterClick(Sender: TObject);
+    <B>procedure</B> SpeedButtonRightClick(Sender: TObject);
+    <B>procedure</B> SpeedButtonBoldClick(Sender: TObject);
+    <B>procedure</B> SpeedButtonItalicClick(Sender: TObject);
+    <B>procedure</B> SpeedButtonUnderlineClick(Sender: TObject);
+    <B>procedure</B> SpeedButtonBigClick(Sender: TObject);
+    <B>procedure</B> Exit1Click(Sender: TObject);
+    <B>procedure</B> Visible1Click(Sender: TObject);
+    <B>procedure</B> DisableSound1Click(Sender: TObject);
+    <B>procedure</B> DisableStyles1Click(Sender: TObject);
+    <B>procedure</B> AboutToolbar1Click(Sender: TObject);
+    <B>procedure</B> DisableSize1Click(Sender: TObject);
+    <B>procedure</B> HintColor1Click(Sender: TObject);
+    <B>procedure</B> FlatStyle1Click(Sender: TObject);
+    <B>procedure</B> FormCreate(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>// current hint color for buttons </I></FONT>
+    FHintColor: TColor;
+  <B>public</B>
+    <B>procedure</B> DoShowHint(<B>var</B> HintStr: <B>string</B>;
+      <B>var</B> CanShow: Boolean; <B>var</B> HintInfo: THintInfo);
+  <B>end</B>;
+
+<B>var</B>
+  ToolbarForm: TToolbarForm;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TToolbarForm.DoShowHint(<B>var</B> HintStr: <B>string</B>;
+  <B>var</B> CanShow: Boolean; <B>var</B> HintInfo: THintInfo);
+<B>begin</B>
+  <B>if</B> HintInfo.HintControl.Parent = Panel1 <B>then</B>
+    HintInfo.HintColor := FHintColor;
+<B>end</B>;
+
+<B>procedure</B> TToolbarForm.SpeedButtonNoteClick(Sender: TObject);
+<B>begin</B>
+  Beep;
+<B>end</B>;
+
+<B>procedure</B> TToolbarForm.SpeedButtonLeftClick(Sender: TObject);
+<B>begin</B>
+  Label1.Alignment := taLeftJustify;
+<B>end</B>;
+
+<B>procedure</B> TToolbarForm.SpeedButtonCenterClick(Sender: TObject);
+<B>begin</B>
+  Label1.Alignment := taCenter;
+<B>end</B>;
+
+<B>procedure</B> TToolbarForm.SpeedButtonRightClick(Sender: TObject);
+<B>begin</B>
+  Label1.Alignment := taRightJustify;
+<B>end</B>;
+
+<B>procedure</B> TToolbarForm.SpeedButtonBoldClick(Sender: TObject);
+<B>begin</B>
+  <B>if</B> SpeedButtonBold.Down <B>then</B>
+    Label1.Font.Style := [fsBold]
+  <B>else</B>
+    Label1.Font.Style := [];
+<B>end</B>;
+
+<B>procedure</B> TToolbarForm.SpeedButtonItalicClick(Sender: TObject);
+<B>begin</B>
+  <B>if</B> SpeedButtonItalic.Down <B>then</B>
+    Label1.Font.Style := [fsItalic]
+  <B>else</B>
+    Label1.Font.Style := [];
+<B>end</B>;
+
+<B>procedure</B> TToolbarForm.SpeedButtonUnderlineClick(Sender: TObject);
+<B>begin</B>
+  <B>if</B> SpeedButtonUnderline.Down <B>then</B>
+    Label1.Font.Style := [fsUnderline]
+  <B>else</B>
+    Label1.Font.Style := [];
+<B>end</B>;
+
+<B>procedure</B> TToolbarForm.SpeedButtonBigClick(Sender: TObject);
+<B>begin</B>
+  <B>if</B> SpeedButtonBig.Down <B>then</B>
+  <B>begin</B>
+    Label1.Font.Size := 24;
+    SpeedButtonBig.Hint := <I>'Shrink'</I>;
+  <B>end</B>
+  <B>else</B>
+  <B>begin</B>
+    Label1.Font.Size := 12;
+    SpeedButtonBig.Hint := <I>'Expand'</I>;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TToolbarForm.Exit1Click(Sender: TObject);
+<B>begin</B>
+  Close;
+<B>end</B>;
+
+<B>procedure</B> TToolbarForm.Visible1Click(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>{hide or display the toolbar, setting the maneitem checkmark}</I></FONT>
+  Panel1.Visible := <B>not</B> Panel1.Visible;
+  Visible1.Checked := <B>not</B> Visible1.Checked;
+<B>end</B>;
+
+<B>procedure</B> TToolbarForm.DisableSound1Click(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>{disable or enable button and set menu check mark}</I></FONT>
+  SpeedButtonNote.Enabled := <B>not</B> SpeedButtonNote.Enabled;
+  DisableSound1.Checked := <B>not</B> DisableSound1.Checked;
+<B>end</B>;
+
+<B>procedure</B> TToolbarForm.DisableStyles1Click(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>{disable or enable buttons and set menu text properly}</I></FONT>
+  <B>if</B> SpeedButtonBold.Enabled <B>then</B>
+  <B>begin</B>
+    SpeedButtonBold.Enabled := False;
+    SpeedButtonItalic.Enabled := False;
+    SpeedButtonUnderline.Enabled := False;
+    DisableStyles1.Checked := True;
+  <B>end</B>
+  <B>else</B>
+  <B>begin</B>
+    SpeedButtonBold.Enabled := True;
+    SpeedButtonItalic.Enabled := True;
+    SpeedButtonUnderline.Enabled := True;
+    DisableStyles1.Checked := False;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TToolbarForm.AboutToolbar1Click(Sender: TObject);
+<B>begin</B>
+  MessageDlg (<I>'Toolbar example for &quot;Mastering Delphi&quot;'</I> +
+    Chr (13) +  <I>'Written by Marco Cantù'</I>,
+    mtInformation, [mbOk], 0);
+<B>end</B>;
+
+<B>procedure</B> TToolbarForm.DisableSize1Click(Sender: TObject);
+<B>begin</B>
+  SpeedButtonBig.Enabled := <B>not</B> SpeedButtonBig.Enabled;
+  DisableSize1.Checked := <B>not</B> DisableSize1.Checked;
+<B>end</B>;
+
+<B>procedure</B> TToolbarForm.HintColor1Click(Sender: TObject);
+<B>begin</B>
+  ColorDialog1.Color := FHintColor;
+  <B>if</B> ColorDialog1.Execute <B>then</B>
+    FHintColor := ColorDialog1.Color;
+<B>end</B>;
+
+<B>procedure</B> TToolbarForm.FlatStyle1Click(Sender: TObject);
+<B>var</B>
+  I: Integer;
+<B>begin</B>
+  FlatStyle1.Checked := <B>not</B> FlatStyle1.Checked;
+  <B>for</B> I := 0 <B>to</B> Panel1.ControlCount - 1 <B>do</B>
+    (Panel1.Controls [I] <B>as</B> TSpeedButton).Flat :=
+       FlatStyle1.Checked;
+<B>end</B>;
+
+<B>procedure</B> TToolbarForm.FormCreate(Sender: TObject);
+<B>begin</B>
+  Application.OnShowHint := DoShowHint;
+  FHintColor := Application.HintColor;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=PANELBF.DFM><H3>PANELBF.DFM</H3></A>
+
+<PRE>
+<B>object</B> ToolbarForm: TToolbarForm
+  Left = 305
+  Top = 225
+  Width = 366
+  Height = 326
+  ActiveControl = Panel1
+  Caption = <I>'Toolbar'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -13
+  Font.Name = <I>'System'</I>
+  Font.Style = []
+  Menu = MainMenu1
+  OldCreateOrder = True
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 16
+  <B>object</B> Label1: TLabel
+    Left = 0
+    Top = 33
+    Width = 358
+    Height = 247
+    Hint =
+       <I>'A caption with some sample text to show the effect of the speed '</I> +
+      <I>'buttons of the toolbar. You can replace it with something more u'</I> +
+      <I>'seful.'</I>
+    Align = alClient
+    AutoSize = False
+    Caption =
+       <I>'A caption with some sample text to show the effect of the speed '</I> +
+      <I>'buttons of the toolbar. You can replace it with something more u'</I> +
+      <I>'seful.'</I>
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clBlack
+    Font.Height = -16
+    Font.Name = <I>'Arial'</I>
+    Font.Style = []
+    ParentFont = False
+    ParentShowHint = False
+    ShowHint = True
+    WordWrap = True
+  <B>end</B>
+  <B>object</B> Panel1: TPanel
+    Left = 0
+    Top = 0
+    Width = 358
+    Height = 33
+    Align = alTop
+    BevelWidth = 2
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 0
+    <B>object</B> SpeedButtonNote: TSpeedButton
+      Left = 8
+      Top = 4
+      Width = 25
+      Height = 25
+      Hint = <I>'Play Note'</I>
+      Flat = True
+      Glyph.Data = <FONT COLOR="#000080"><I>{
+        42010000424D4201000000000000760000002800000012000000110000000100
+        040000000000CC00000000000000000000001000000010000000000000000000
+        80000080000000808000800000008000800080800000C0C0C000808080000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333333333333
+        3333330000003330033333333333330000003300003330033333330000003300
+        0003000033333300000033300003000003333300000033333303300003333300
+        0000333333033333033333000000333333033333033333000000333333033333
+        0333330000003333330333330333330000003333330333330333330000003333
+        3300033303333300000033333303300003333300000033333300033303333300
+        0000333333333000033333000000333333333333333333000000333333333333
+        333333000000}</I></FONT>
+      OnClick = SpeedButtonNoteClick
+    <B>end</B>
+    <B>object</B> SpeedButtonBig: TSpeedButton
+      Left = 213
+      Top = 4
+      Width = 25
+      Height = 25
+      Hint = <I>'Expand'</I>
+      AllowAllUp = True
+      GroupIndex = 3
+      Flat = True
+      Glyph.Data = <FONT COLOR="#000080"><I>{
+        DA020000424DDA02000000000000760000002800000048000000110000000100
+        0400000000006402000000000000000000001000000010000000000000000000
+        80000080000000808000800000008000800080800000C0C0C000808080000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333333333333
+        3333333333333333333333333333333333333333333333333333333333333333
+        333333333333333333FFFFF33333333333333333333333333333333333333333
+        3333333000003333333333333888883333333333333000000333333333333000
+        0003333333333330333333333333333338F33333333333333330333333333333
+        333330333333333333333330333333333333333338F333333333333333303333
+        33333333333330333333333333333330333333333333333338FFFF3333333333
+        3330333333333333333330333333333333333330000333333333333338888333
+        3333333333303333333333333333303333333333333333303333333333333333
+        38F3333333333333333000003333333333333000003333333333333033333033
+        3333333338FFFFF8F33333333330333333333333333330333333333333333330
+        0000330333333333388888338F3333F333303333333333333333303333333333
+        3333333333333330333033333333333338F338F3333033333330333033333033
+        3333300000333333333333330330333333333333338F38F33330333333330330
+        3333303333333003333333333333333330303333333333333338F8F333300000
+        0333303033333000000330303333333333333333330033333333333333FF88F3
+        3333333333333300333333333333303303333333333333300000333333333333
+        3888883333333333333000003333333333333033303333333333333333333333
+</I></FONT>        3333333333333333333333333333333333333333333333333303333333333333
+        333333333333333333333333333333333333333333333333333333333333}
+      NumGlyphs = 4
+      OnClick = SpeedButtonBigClick
+    <B>end</B>
+    <B>object</B> SpeedButtonBold: TSpeedButton
+      Left = 128
+      Top = 4
+      Width = 25
+      Height = 25
+      Hint = <I>'Bold'</I>
+      AllowAllUp = True
+      GroupIndex = 2
+      Flat = True
+      Glyph.Data = <FONT COLOR="#000080"><I>{
+        42010000424D4201000000000000760000002800000012000000110000000100
+        040000000000CC00000000000000000000001000000010000000000000000000
+        80000080000000808000800000008000800080800000C0C0C000808080000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333333333333
+        3333330000003333333333333333330000003333333333333333330000003333
+        0000000033333300000033330000000003333300000033333003333003333300
+        0000333330033330033333000000333330033300033333000000333330000000
+        3333330000003333300000000333330000003333300333300333330000003333
+        3003333003333300000033330000000003333300000033330000000033333300
+        0000333333333333333333000000333333333333333333000000333333333333
+        333333000000}</I></FONT>
+      OnClick = SpeedButtonBoldClick
+    <B>end</B>
+    <B>object</B> SpeedButtonItalic: TSpeedButton
+      Left = 153
+      Top = 4
+      Width = 25
+      Height = 25
+      Hint = <I>'Italic'</I>
+      AllowAllUp = True
+      GroupIndex = 2
+      Flat = True
+      Glyph.Data = <FONT COLOR="#000080"><I>{
+        42010000424D4201000000000000760000002800000012000000110000000100
+        040000000000CC00000000000000000000001000000010000000000000000000
+        80000080000000808000800000008000800080800000C0C0C000808080000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333333333333
+        3333330000003333333333333333330000003333333333333333330000003333
+        3000000333333300000033333330033333333300000033333330033333333300
+        0000333333300333333333000000333333330033333333000000333333330033
+        3333330000003333333300333333330000003333333330033333330000003333
+        3333300333333300000033333330000003333300000033333333333333333300
+        0000333333333333333333000000333333333333333333000000333333333333
+        333333000000}</I></FONT>
+      OnClick = SpeedButtonItalicClick
+    <B>end</B>
+    <B>object</B> SpeedButtonUnderline: TSpeedButton
+      Left = 178
+      Top = 4
+      Width = 25
+      Height = 25
+      Hint = <I>'Underlined'</I>
+      AllowAllUp = True
+      GroupIndex = 2
+      Flat = True
+      Glyph.Data = <FONT COLOR="#000080"><I>{
+        42010000424D4201000000000000760000002800000012000000110000000100
+        040000000000CC00000000000000000000001000000010000000000000000000
+        80000080000000808000800000008000800080800000C0C0C000808080000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333333333333
+        3333330000003333333333333333330000003333333333333333330000003333
+        3000000003333300000033333000000003333300000033333333333333333300
+        0000333333300030033333000000333333000000033333000000333333003000
+        3333330000003333330033003333330000003333330033003333330000003333
+        3300330033333300000033333000300033333300000033333333333333333300
+        0000333333333333333333000000333333333333333333000000333333333333
+        333333000000}</I></FONT>
+      OnClick = SpeedButtonUnderlineClick
+    <B>end</B>
+    <B>object</B> SpeedButtonLeft: TSpeedButton
+      Left = 43
+      Top = 4
+      Width = 25
+      Height = 25
+      Hint = <I>'Left Align'</I>
+      GroupIndex = 1
+      Down = True
+      Flat = True
+      Glyph.Data = <FONT COLOR="#000080"><I>{
+        42010000424D4201000000000000760000002800000012000000110000000100
+        040000000000CC00000000000000000000001000000010000000000000000000
+        80000080000000808000800000008000800080800000C0C0C000808080000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333333333333
+        333333000000330000000000000033000000330FFFFFFFFFFFF033000000330F
+        0000000FFFF033000000330FFFFFFFFFFFF033000000330F000FFFFFFFF03300
+        0000330FFFFFFFFFFFF033000000330F00000FFFFFF033000000330FFFFFFFFF
+</I></FONT>        FFF033000000330F000FFFFFFFF033000000330FFFFFFFFFFFF033000000330F
+        00000000FFF033000000330FFFFFFFFFFFF033000000330F000000FFFFF03300
+        0000330FFFFFFFFFFFF033000000330000000000000033000000333333333333
+        333333000000}
+      OnClick = SpeedButtonLeftClick
+    <B>end</B>
+    <B>object</B> SpeedButtonCenter: TSpeedButton
+      Left = 68
+      Top = 4
+      Width = 25
+      Height = 25
+      Hint = <I>'Center'</I>
+      GroupIndex = 1
+      Flat = True
+      Glyph.Data = <FONT COLOR="#000080"><I>{
+        42010000424D4201000000000000760000002800000012000000110000000100
+        040000000000CC00000000000000000000001000000010000000000000000000
+        80000080000000808000800000008000800080800000C0C0C000808080000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333333333333
+        333333000000330000000000000033000000330FFFFFFFFFFFF033000000330F
+        FF000000FFF033000000330FFFFFFFFFFFF033000000330FFFF0000FFFF03300
+        0000330FFFFFFFFFFFF033000000330FFF000000FFF033000000330FFFFFFFFF
+        FFF033000000330FFFFF00FFFFF033000000330FFFFFFFFFFFF033000000330F
+        F00000000FF033000000330FFFFFFFFFFFF033000000330FFF000000FFF03300
+        0000330FFFFFFFFFFFF033000000330000000000000033000000333333333333
+        333333000000}</I></FONT>
+      OnClick = SpeedButtonCenterClick
+    <B>end</B>
+    <B>object</B> SpeedButtonRight: TSpeedButton
+      Left = 93
+      Top = 4
+      Width = 25
+      Height = 25
+      Hint = <I>'Right Align'</I>
+      GroupIndex = 1
+      Flat = True
+      Glyph.Data = <FONT COLOR="#000080"><I>{
+        42010000424D4201000000000000760000002800000012000000110000000100
+        040000000000CC00000000000000000000001000000010000000000000000000
+        80000080000000808000800000008000800080800000C0C0C000808080000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333333333333
+        333333000000330000000000000033000000330FFFFFFFFFFFF033000000330F
+        FFF0000000F033000000330FFFFFFFFFFFF033000000330FFFFFFFF000F03300
+        0000330FFFFFFFFFFFF033000000330FFFFFF00000F033000000330FFFFFFFFF
+        FFF033000000330FFFFFFFF000F033000000330FFFFFFFFFFFF033000000330F
+        FF00000000F033000000330FFFFFFFFFFFF033000000330FFFFF000000F03300
+        0000330FFFFFFFFFFFF033000000330000000000000033000000333333333333
+        333333000000}</I></FONT>
+      OnClick = SpeedButtonRightClick
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> MainMenu1: TMainMenu
+    Left = 32
+    Top = 56
+    <B>object</B> File1: TMenuItem
+      Caption = <I>'&amp;File'</I>
+      <B>object</B> Exit1: TMenuItem
+        Caption = <I>'E&amp;xit'</I>
+        OnClick = Exit1Click
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> Toolbar1: TMenuItem
+      Caption = <I>'&amp;Toolbar'</I>
+      <B>object</B> Visible1: TMenuItem
+        Caption = <I>'&amp;Visible'</I>
+        Checked = True
+        OnClick = Visible1Click
+      <B>end</B>
+      <B>object</B> DisableSound1: TMenuItem
+        Caption = <I>'Disable &amp;Sound'</I>
+        OnClick = DisableSound1Click
+      <B>end</B>
+      <B>object</B> DisableStyles1: TMenuItem
+        Caption = <I>'Disable S&amp;tyles'</I>
+        OnClick = DisableStyles1Click
+      <B>end</B>
+      <B>object</B> DisableSize1: TMenuItem
+        Caption = <I>'Disable Si&amp;ze'</I>
+        OnClick = DisableSize1Click
+      <B>end</B>
+      <B>object</B> N1: TMenuItem
+        Caption = <I>'-'</I>
+      <B>end</B>
+      <B>object</B> HintColor1: TMenuItem
+        Caption = <I>'&amp;Hint Color...'</I>
+        OnClick = HintColor1Click
+      <B>end</B>
+      <B>object</B> FlatStyle1: TMenuItem
+        Caption = <I>'&amp;Flat Style'</I>
+        Checked = True
+        OnClick = FlatStyle1Click
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> Help1: TMenuItem
+      Caption = <I>'&amp;Help'</I>
+      <B>object</B> AboutToolbar1: TMenuItem
+        Caption = <I>'&amp;About Toolbar...'</I>
+        OnClick = AboutToolbar1Click
+      <B>end</B>
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> ColorDialog1: TColorDialog
+    Ctl3D = True
+    Left = 32
+    Top = 104
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

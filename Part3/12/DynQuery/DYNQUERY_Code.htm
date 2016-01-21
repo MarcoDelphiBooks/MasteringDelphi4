@@ -1,0 +1,241 @@
+<HTML><HEAD>
+<TITLE>Project: DYNQUERY.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: DYNQUERY.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#DYNQUERY.DPR> DYNQUERY.DPR</A>
+<LI> <A HREF=#DYNQFORM.PAS> DYNQFORM.PAS</A>
+<LI> <A HREF=#DYNQFORM.DFM> DYNQFORM.DFM</A>
+</UL>
+<HR>
+<A NAME=DYNQUERY.DPR><H3>DYNQUERY.DPR</H3></A>
+
+<PRE>
+<B>program</B> DynQuery;
+
+<B>uses</B>
+  Forms,
+  DynQForm <B>in</B> <I>'DynQForm.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=DYNQFORM.PAS><H3>DYNQFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> DynQForm;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls, Grids, DBGrids, Db, DBTables;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    Query1: TQuery;
+    DataSource1: TDataSource;
+    DBGrid1: TDBGrid;
+    GroupBox1: TGroupBox;
+    RadioButton1: TRadioButton;
+    RadioButton2: TRadioButton;
+    RadioButton3: TRadioButton;
+    RadioButton4: TRadioButton;
+    Edit1: TEdit;
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> RadioButton1Click(Sender: TObject);
+    <B>procedure</B> RadioButton2Click(Sender: TObject);
+    <B>procedure</B> RadioButton4Click(Sender: TObject);
+    <B>procedure</B> Edit1Change(Sender: TObject);
+    <B>procedure</B> Edit1KeyPress(Sender: TObject; <B>var</B> Key: Char);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.FormCreate(Sender: TObject);
+<B>begin</B>
+  Query1.Open;
+<B>end</B>;
+
+<B>procedure</B> TForm1.RadioButton1Click(Sender: TObject);
+<B>begin</B>
+  Query1.Close;
+  Query1.Sql.Clear;
+  Query1.Sql.Add (<I>'select * from Country'</I>);
+  Query1.Open;
+<B>end</B>;
+
+<B>procedure</B> TForm1.RadioButton2Click(Sender: TObject);
+<B>begin</B>
+  Query1.Close;
+  Query1.Sql.Clear;
+  Query1.Sql.Add (<I>'select * from Country'</I>);
+  Query1.Sql.Add (<I>'where Continent = &quot;'</I> +
+    (Sender <B>as</B> TRadioButton).Caption + <I>'&quot;'</I>);
+  Query1.Open;
+<B>end</B>;
+
+<B>procedure</B> TForm1.RadioButton4Click(Sender: TObject);
+<B>begin</B>
+  Query1.Close;
+  <B>if</B> (Edit1.Text &lt;&gt; <I>''</I>) <B>then</B>
+  <B>begin</B>
+    Query1.Sql.Clear;
+    Query1.Sql.Add (<I>'select * from Country'</I>);
+    Query1.Sql.Add (<I>'where '</I> + Edit1.Text);
+  <B>end</B>;
+  <B>try</B>
+    Query1.Open;
+  <B>except</B>
+    <B>on</B> EDatabaseError <B>do</B>
+      ShowMessage (<I>'Invalid condition:'#13</I> +
+        Edit1.Text);
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TForm1.Edit1Change(Sender: TObject);
+<B>begin</B>
+  RadioButton4.Enabled := Edit1.Text &lt;&gt; <I>''</I>;
+<B>end</B>;
+
+<B>procedure</B> TForm1.Edit1KeyPress(Sender: TObject; <B>var</B> Key: Char);
+<B>begin</B>
+  <B>if</B> Key = <I>#13</I> <B>then</B>
+  <B>begin</B>
+    <B>if</B> RadioButton4.Checked <B>then</B>
+      RadioButton4Click (self)
+    <B>else</B>
+      RadioButton4.Checked := True;
+    Key := <I>#0</I>;
+  <B>end</B>;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=DYNQFORM.DFM><H3>DYNQFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 192
+  Top = 107
+  Width = 534
+  Height = 305
+  Caption = <I>'DynQuery'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = False
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> DBGrid1: TDBGrid
+    Left = 0
+    Top = 0
+    Width = 526
+    Height = 173
+    Align = alClient
+    DataSource = DataSource1
+    TabOrder = 0
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = <I>'MS Sans Serif'</I>
+    TitleFont.Style = []
+  <B>end</B>
+  <B>object</B> GroupBox1: TGroupBox
+    Left = 0
+    Top = 173
+    Width = 526
+    Height = 105
+    Align = alBottom
+    Caption = <I>'Selection'</I>
+    TabOrder = 1
+    <B>object</B> RadioButton1: TRadioButton
+      Left = 16
+      Top = 16
+      Width = 113
+      Height = 17
+      Caption = <I>'All'</I>
+      Checked = True
+      TabOrder = 0
+      TabStop = True
+      OnClick = RadioButton1Click
+    <B>end</B>
+    <B>object</B> RadioButton2: TRadioButton
+      Left = 16
+      Top = 35
+      Width = 113
+      Height = 17
+      Caption = <I>'North America'</I>
+      TabOrder = 1
+      OnClick = RadioButton2Click
+    <B>end</B>
+    <B>object</B> RadioButton3: TRadioButton
+      Left = 16
+      Top = 53
+      Width = 137
+      Height = 17
+      Caption = <I>'South America'</I>
+      TabOrder = 2
+      OnClick = RadioButton2Click
+    <B>end</B>
+    <B>object</B> RadioButton4: TRadioButton
+      Left = 16
+      Top = 72
+      Width = 81
+      Height = 17
+      Caption = <I>'Custom:'</I>
+      Enabled = False
+      TabOrder = 3
+      OnClick = RadioButton4Click
+    <B>end</B>
+    <B>object</B> Edit1: TEdit
+      Left = 104
+      Top = 72
+      Width = 193
+      Height = 21
+      TabOrder = 4
+      OnChange = Edit1Change
+      OnKeyPress = Edit1KeyPress
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> Query1: TQuery
+    DatabaseName = <I>'DBDEMOS'</I>
+    SQL.Strings = (
+      <I>'select * from Country'</I>)
+    Left = 32
+    Top = 80
+    ParamData = &lt;&gt;
+  <B>end</B>
+  <B>object</B> DataSource1: TDataSource
+    DataSet = Query1
+    Left = 32
+    Top = 32
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

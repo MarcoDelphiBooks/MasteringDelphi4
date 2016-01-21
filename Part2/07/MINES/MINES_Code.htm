@@ -1,0 +1,452 @@
+<HTML><HEAD>
+<TITLE>Project: MINES.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: MINES.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#MINES.DPR> MINES.DPR</A>
+<LI> <A HREF=#MINESF.PAS> MINESF.PAS</A>
+<LI> <A HREF=#MINESF.DFM> MINESF.DFM</A>
+</UL>
+<HR>
+<A NAME=MINES.DPR><H3>MINES.DPR</H3></A>
+
+<PRE>
+<B>program</B> Mines;
+
+<B>uses</B>
+  Forms,
+  MinesF <B>in</B> <I>'MINESF.PAS'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+   <B>begin</B>
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MINESF.PAS><H3>MINESF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> Minesf;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes, Graphics,
+  Controls, Forms, Dialogs, Grids, StdCtrls, Menus, ExtCtrls;
+
+<FONT COLOR="#000080"><I>{constant values used by the program; if you change the
+number of items, you should resize the grid accordingly}</I></FONT>
+<B>const</B> NItems = 10;      <FONT COLOR="#000080"><I>{items on each side of the 'square' grid}</I></FONT>
+<B>const</B> NMines = 12;      <FONT COLOR="#000080"><I>{number of mines in the grid}</I></FONT>
+
+<FONT COLOR="#000080"><I>{character codes use to describe the contents
+of the cells of the grid:
+  'M': Mine
+  'K': Known mine
+  'W': Wrong mine
+  '0'..'8': Number of mines}</I></FONT>
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    DrawGrid1: TDrawGrid;
+    Panel1: TPanel;
+    LabelShots: TLabel;
+    MainMenu1: TMainMenu;
+    File1: TMenuItem;
+    NewGame1: TMenuItem;
+    N1: TMenuItem;
+    Exit1: TMenuItem;
+    Help1: TMenuItem;
+    About1: TMenuItem;
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> DrawGrid1MouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    <B>procedure</B> DrawGrid1DrawCell(Sender: TObject; Col, Row: Integer;
+      Rect: TRect; State: TGridDrawState);
+    <B>procedure</B> FormDestroy(Sender: TObject);
+    <B>procedure</B> About1Click(Sender: TObject);
+    <B>procedure</B> NewGame1Click(Sender: TObject);
+    <B>procedure</B> Exit1Click(Sender: TObject);
+  <B>private</B>
+    Playing: Boolean;                <FONT COLOR="#000080"><I>{still playing or terminated}</I></FONT>
+    Bmp: TBitmap;                    <FONT COLOR="#000080"><I>{temporary bitmap}</I></FONT>
+    LastBmp: Char;                   <FONT COLOR="#000080"><I>{code of the temporary bitmap}</I></FONT>
+    Shots,                           <FONT COLOR="#000080"><I>{numer of shots}</I></FONT>
+    MinesFound: Integer;             <FONT COLOR="#000080"><I>{mines really found}</I></FONT>
+
+    <FONT COLOR="#000080"><I>{boolean array indicating visible elements}</I></FONT>
+    Display: <B>array</B> [0 .. NItems - 1, 0 .. NItems -1] <B>of</B> Boolean;
+
+    <FONT COLOR="#000080"><I>{map with the codes for the cells (see above for the codes)}</I></FONT>
+    Map: <B>array</B> [0 .. NItems - 1, 0 .. NItems -1] <B>of</B> Char;
+
+    <FONT COLOR="#000080"><I>{compute the number of mines surrounding the given cell}</I></FONT>
+    <B>procedure</B> ComputeMines (X, Y: Integer);
+
+    <FONT COLOR="#000080"><I>{display items near a visible zero-cell, using a recursive call}</I></FONT>
+    <B>procedure</B> FloodZeros (X, Y: Integer);
+
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+<FONT COLOR="#000080"><I>{$R BITMAPS.RES}</I></FONT>
+
+<B>uses</B>
+  MMSystem;
+
+<B>procedure</B> TForm1.FormCreate(Sender: TObject);
+<B>var</B>
+  I, J, X, Y, MinesToPlace: Integer;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// initializations</I></FONT>
+  Randomize;
+  Playing := True;
+  Shots := 0;
+  MinesFound := 0;
+  Bmp := TBitmap.Create;
+  LastBmp := <I>' '</I>;
+
+  <FONT COLOR="#000080"><I>// empty the two arrays</I></FONT>
+  <B>for</B> I := 0 <B>to</B> NItems - 1 <B>do</B>
+    <B>for</B> J := 0 <B>to</B> NItems - 1 <B>do</B>
+    <B>begin</B>
+      Map [I, J] := <I>' '</I>;
+      Display [I, J] := False;
+    <B>end</B>;
+
+  <FONT COLOR="#000080"><I>// place 'NMines' non-overlapping mines</I></FONT>
+  MinesToPlace := NMines;
+  <B>while</B> MinesToPlace &gt; 0 <B>do</B>
+  <B>begin</B>
+    X := Random (NItems);
+    Y := Random (NItems);
+    <FONT COLOR="#000080"><I>// if there is not a mine</I></FONT>
+    <B>if</B> Map [X, Y] &lt;&gt; <I>'M'</I> <B>then</B>
+    <B>begin</B>
+      <FONT COLOR="#000080"><I>// add a mine</I></FONT>
+      Map [X, Y] := <I>'M'</I>;
+      Dec (MinesToPlace);
+    <B>end</B>;
+  <B>end</B>;
+
+  <FONT COLOR="#000080"><I>{compute the number of surrounding mines in
+  every location not having a mine}</I></FONT>
+  <B>for</B> I := 0 <B>to</B> NItems - 1 <B>do</B>
+    <B>for</B> J := 0 <B>to</B> NItems - 1 <B>do</B>
+      <B>if</B> <B>not</B> (Map [I, J] = <I>'M'</I>) <B>then</B>
+        ComputeMines (I, J);
+<B>end</B>;
+
+<FONT COLOR="#000080"><I>// compute the number of mines surrounding the given cell</I></FONT>
+<B>procedure</B> TForm1.ComputeMines (X, Y: Integer);
+<B>var</B>
+  Col, Row: Integer;
+  Total : Char;
+<B>begin</B>
+  Total := <I>'0'</I>;
+  <FONT COLOR="#000080"><I>// for every contiguos cell...</I></FONT>
+  <B>for</B> Col := X - 1 <B>to</B> X + 1 <B>do</B>
+    <B>for</B> Row := Y -1 <B>to</B> Y + 1 <B>do</B>
+      <FONT COLOR="#000080"><I>// excluding those out of the borders...</I></FONT>
+      <B>if</B> (Col &gt;= 0) <B>and</B> (Col &lt; NItems) <B>and</B>
+          (Row &gt;= 0) <B>and</B> (Row &lt; NItems) <B>then</B>
+        <FONT COLOR="#000080"><I>{if there is a mine, hidden or known,
+        increase the total surrounding mines}</I></FONT>
+        <B>if</B> (Map [Col, Row] = <I>'M'</I>) <B>or</B>
+            (Map [Col, Row] = <I>'K'</I>) <B>then</B>
+          Inc (Total);
+  <FONT COLOR="#000080"><I>// store the total number of surrounding mines in the map</I></FONT>
+  Map [X, Y] := Total;
+<B>end</B>;
+
+<FONT COLOR="#000080"><I>// display items near a visible zero-cell, using a recursive call</I></FONT>
+<B>procedure</B> TForm1.FloodZeros (X, Y: Integer);
+<B>var</B>
+  Col, Row: Integer;
+  MyRect: TRect;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// double check that we are on a zero</I></FONT>
+  <B>if</B> Map [X, Y] = <I>'0'</I> <B>then</B>
+    <FONT COLOR="#000080"><I>// for every contiguos cell...</I></FONT>
+    <B>for</B> Col := X - 1 <B>to</B> X + 1 <B>do</B>
+      <B>for</B> Row := Y -1 <B>to</B> Y + 1 <B>do</B>
+        <FONT COLOR="#000080"><I>// excluding out of borders and the item itself...</I></FONT>
+        <B>if</B> (Col &gt;= 0) <B>and</B> (Col &lt; NItems) <B>and</B>
+          (Row &gt;= 0) <B>and</B> (Row &lt; NItems) <B>and</B>
+          <B>not</B> ( (Col = X) <B>and</B> (Row = Y) )<B>then</B>
+        <B>begin</B>
+          <FONT COLOR="#000080"><I>{display the element, and if it is a zero, repeat the
+          operation; the code seems redundant but the program
+          needs to avoid infinite recursion with great care}</I></FONT>
+          <B>if</B> (Map [Col, Row] = <I>'0'</I>) <B>and</B>
+              (Display [Col, Row] = False) <B>then</B>
+          <B>begin</B>
+            <FONT COLOR="#000080"><I>{if the cell is still hidden and there is a zero
+            display it, then make the flood the zeros near the cell}</I></FONT>
+            Display [Col, Row] := True;
+            FloodZeros (Col, Row);
+          <B>end</B>
+          <B>else</B>
+            <FONT COLOR="#000080"><I>// if it is not a zero, display it</I></FONT>
+            Display [Col, Row] := True;
+          <FONT COLOR="#000080"><I>// compute the area of the cell, and invalidate it</I></FONT>
+          MyRect := DrawGrid1.CellRect (Col, Row);
+          InvalidateRect (DrawGrid1.Handle, @MyRect, False);
+        <B>end</B>
+<B>end</B>;
+
+<B>procedure</B> TForm1.DrawGrid1MouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+<B>var</B>
+  Col, Row: LongInt;
+  MyRect: TRect;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// get the current column and grid</I></FONT>
+  DrawGrid1.MouseToCell (X, Y, Col, Row);
+  <FONT COLOR="#000080"><I>// if game has ended, beep and ignore the action</I></FONT>
+  <B>if</B> <B>not</B> Playing <B>then</B>
+    SysUtils.Beep
+  <B>else</B> <B>if</B> Button = mbLeft <B>then</B>
+  <B>begin</B>
+    <FONT COLOR="#000080"><I>// left mouse button click: shot</I></FONT>
+    Inc (Shots);
+    LabelShots.Caption := <I>'Shots: '</I> + IntToStr (Shots);
+
+    <FONT COLOR="#000080"><I>// if there is a mine, end the game, else display the cell</I></FONT>
+    <B>if</B> (Map [Col, Row] = <I>'M'</I>) <B>or</B> (Map [Col, Row] = <I>'K'</I>) <B>then</B>
+    <FONT COLOR="#000080"><I>// mine found...</I></FONT>
+    <B>begin</B>
+      PlaySound (<I>'Boom.wav'</I>, 0, snd_async);
+      <FONT COLOR="#000080"><I>// end the game and redisplay the grid</I></FONT>
+      Playing := False;
+      DrawGrid1.Repaint;
+      MessageDlg (<I>'B O O M !'#13#13</I> +
+        <I>'You have found a mine'</I>, mtError, [mbOK], 0);
+    <B>end</B>
+    <B>else</B> <FONT COLOR="#000080"><I>// not a mine...</I></FONT>
+    <B>begin</B>
+      <FONT COLOR="#000080"><I>// show location</I></FONT>
+      Display [Col, Row] := True;
+      <FONT COLOR="#000080"><I>// if the click was on a 0, then show near elements</I></FONT>
+      <B>if</B> Map [Col, Row] = <I>'0'</I> <B>then</B>
+        FloodZeros (Col, Row);
+    <B>end</B>;
+  <B>end</B>
+  <B>else</B>
+  <B>begin</B>
+    <FONT COLOR="#000080"><I>// right mouse button click: mine?</I></FONT>
+    <B>case</B> Map [Col, Row] <B>of</B>
+      <FONT COLOR="#000080"><I>{if there is a mine turn code to K, known mine,
+      display the cell, increment points}</I></FONT>
+      <I>'M'</I>: <B>begin</B>
+        Map [Col, Row] := <I>'K'</I>;
+        Display [Col, Row] := True;
+        Inc (MinesFound);
+        <FONT COLOR="#000080"><I>// if all mines have been found, the game ends</I></FONT>
+        <B>if</B> MinesFound = NMines <B>then</B>
+        <B>begin</B>
+          MessageDlg (<I>'You have won. Congratulations!'</I>,
+            mtInformation, [mbOK], 0);
+          Playing := False;
+          DrawGrid1.Repaint;
+        <B>end</B>
+      <B>end</B>;
+      <FONT COLOR="#000080"><I>{if there was a known mine, the 'hidden' mine
+      is restored, and the points decremented}</I></FONT>
+      <I>'K'</I>: <B>begin</B>
+        Map [Col, Row] := <I>'M'</I>;
+        Display [Col, Row] := False;
+        Dec (MinesFound);
+      <B>end</B>;
+      <FONT COLOR="#000080"><I>// if there was a number, set W, wrong mine</I></FONT>
+      <I>'0'</I>..<I>'8'</I>: <B>begin</B>
+        Map [Col, Row] := <I>'W'</I>;
+        Display [Col, Row] := True;
+      <B>end</B>;
+      <FONT COLOR="#000080"><I>{if there was a wrong mine, restore the
+      number computing it again}</I></FONT>
+      <I>'W'</I>: <B>begin</B>
+        ComputeMines (Col, Row);
+        Display [Col, Row] := False;
+      <B>end</B>;
+    <B>end</B>;
+  <B>end</B>;
+  <FONT COLOR="#000080"><I>// redraw the cell of the grid</I></FONT>
+  MyRect := DrawGrid1.CellRect (Col, Row);
+  InvalidateRect (DrawGrid1.Handle, @MyRect, False);
+<B>end</B>;
+
+<B>procedure</B> TForm1.DrawGrid1DrawCell(Sender: TObject;
+  Col, Row: Integer;
+  Rect: TRect; State: TGridDrawState);
+<B>var</B>
+  Code: Char;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// extract the code and check its value</I></FONT>
+  Code := Map [Col, Row];
+
+  <FONT COLOR="#000080"><I>// if the cell is visible</I></FONT>
+  <B>if</B> Display [Col, Row] <B>then</B>
+  <B>begin</B>
+    <FONT COLOR="#000080"><I>{if the code corresponds to that of the 'cached' bitmap,
+    use it, else load the new bitmap}</I></FONT>
+    <B>if</B> <B>not</B> (Code = LastBmp) <B>then</B>
+    <B>begin</B>
+      Bmp.LoadFromResourceName (HInstance, <I>'M'</I> + Code);
+      LastBmp := Code;
+    <B>end</B>;
+    DrawGrid1.Canvas.Draw (Rect.Left, Rect.Top, Bmp);
+  <B>end</B>
+  <B>else</B>
+  <FONT COLOR="#000080"><I>{the cell is not visible: show the default bitmap,
+  using the cache mechanism again}</I></FONT>
+  <B>begin</B>
+    <B>if</B> <B>not</B> (LastBmp = <I>'U'</I>) <B>then</B>     <FONT COLOR="#000080"><I>// 'U': undefined</I></FONT>
+    <B>begin</B>
+      Bmp.LoadFromResourceName (HInstance, <I>'UNDEF'</I>);
+      LastBmp := <I>'U'</I>;
+    <B>end</B>;
+    DrawGrid1.Canvas.Draw (Rect.Left, Rect.Top, Bmp);
+  <B>end</B>;
+
+  <FONT COLOR="#000080"><I>{if the game is done, show the mines that were not found
+  using the cache again}</I></FONT>
+  <B>if</B> (<B>not</B> Playing) <B>and</B> (Code = <I>'M'</I>) <B>then</B>
+  <B>begin</B>
+    <B>if</B> <B>not</B> (Code = LastBmp) <B>then</B>
+    <B>begin</B>
+      Bmp.LoadFromResourceName (HInstance, <I>'M'</I> + Code);
+      LastBmp := Code;
+    <B>end</B>;
+    DrawGrid1.Canvas.Draw (Rect.Left, Rect.Top, Bmp);
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TForm1.FormDestroy(Sender: TObject);
+<B>begin</B>
+  Bmp.Free;
+<B>end</B>;
+
+
+<B>procedure</B> TForm1.About1Click(Sender: TObject);
+<B>begin</B>
+  MessageDlg (<I>'Mastering Delphi Mines'</I>,
+    mtInformation, [mbOK], 0);
+<B>end</B>;
+
+<B>procedure</B> TForm1.NewGame1Click(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// reinitialize and repaint</I></FONT>
+  FormCreate (self);
+  DrawGrid1.Repaint;
+<B>end</B>;
+
+<B>procedure</B> TForm1.Exit1Click(Sender: TObject);
+<B>begin</B>
+  Close;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MINESF.DFM><H3>MINESF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 321
+  Top = 116
+  Width = 319
+  Height = 397
+  Caption = <I>'Mines'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clBlack
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  Menu = MainMenu1
+  OldCreateOrder = True
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> DrawGrid1: TDrawGrid
+    Left = 0
+    Top = 40
+    Width = 311
+    Height = 311
+    Align = alClient
+    BorderStyle = bsNone
+    ColCount = 10
+    DefaultColWidth = 30
+    DefaultRowHeight = 30
+    DefaultDrawing = False
+    FixedCols = 0
+    RowCount = 10
+    FixedRows = 0
+    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine]
+    ScrollBars = ssNone
+    TabOrder = 0
+    OnDrawCell = DrawGrid1DrawCell
+    OnMouseDown = DrawGrid1MouseDown
+  <B>end</B>
+  <B>object</B> Panel1: TPanel
+    Left = 0
+    Top = 0
+    Width = 311
+    Height = 40
+    Align = alTop
+    TabOrder = 1
+    <B>object</B> LabelShots: TLabel
+      Left = 13
+      Top = 13
+      Width = 39
+      Height = 13
+      Caption = <I>'Shots: 0'</I>
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> MainMenu1: TMainMenu
+    Left = 248
+    Top = 16
+    <B>object</B> File1: TMenuItem
+      Caption = <I>'&amp;File'</I>
+      <B>object</B> NewGame1: TMenuItem
+        Caption = <I>'New &amp;Game'</I>
+        ShortCut = 113
+        OnClick = NewGame1Click
+      <B>end</B>
+      <B>object</B> N1: TMenuItem
+        Caption = <I>'-'</I>
+        ShortCut = 189
+      <B>end</B>
+      <B>object</B> Exit1: TMenuItem
+        Caption = <I>'E&amp;xit'</I>
+        ShortCut = 32883
+        OnClick = Exit1Click
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> Help1: TMenuItem
+      Caption = <I>'&amp;Help'</I>
+      <B>object</B> About1: TMenuItem
+        Caption = <I>'&amp;About...'</I>
+        OnClick = About1Click
+      <B>end</B>
+    <B>end</B>
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

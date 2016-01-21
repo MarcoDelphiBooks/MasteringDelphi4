@@ -1,0 +1,305 @@
+<HTML><HEAD>
+<TITLE>Project: TLIBDEMO.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: TLIBDEMO.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#TLIBDEMO.DPR> TLIBDEMO.DPR</A>
+<LI> <A HREF=#PROJECT1LIB_TLB.PAS> PROJECT1LIB_TLB.PAS</A>
+<LI> <A HREF=#MAINFORM.PAS> MAINFORM.PAS</A>
+<LI> <A HREF=#DEMOOBJ.PAS> DEMOOBJ.PAS</A>
+<LI> <A HREF=#MAINFORM.DFM> MAINFORM.DFM</A>
+</UL>
+<HR>
+<A NAME=TLIBDEMO.DPR><H3>TLIBDEMO.DPR</H3></A>
+
+<PRE>
+<B>program</B> TLibDemo;
+
+<B>uses</B>
+  Forms,
+  MainForm <B>in</B> <I>'MainForm.pas'</I> <FONT COLOR="#000080"><I>{ServerForm}</I></FONT>,
+  DemoObj <B>in</B> <I>'DemoObj.pas'</I> <FONT COLOR="#000080"><I>{FirstServer: CoClass}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<FONT COLOR="#000080"><I>{$R *.TLB}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TServerForm, ServerForm);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=PROJECT1LIB_TLB.PAS><H3>PROJECT1LIB_TLB.PAS</H3></A>
+
+<PRE>
+<B>unit</B> Project1Lib_TLB;
+
+<FONT COLOR="#000080"><I>// ************************************************************************ //</I></FONT>
+<FONT COLOR="#000080"><I>// WARNING                                                                  //</I></FONT>
+<FONT COLOR="#000080"><I>// -------                                                                  //</I></FONT>
+<FONT COLOR="#000080"><I>// The types declared in this file were generated from data read from a     //</I></FONT>
+<FONT COLOR="#000080"><I>// Type Library. If this type library is explicitly or indirectly (via      //</I></FONT>
+<FONT COLOR="#000080"><I>// another type library referring to this type library) re-imported, or the //</I></FONT>
+<FONT COLOR="#000080"><I>// 'Refresh' command of the Type Library Editor activated while editing the //</I></FONT>
+<FONT COLOR="#000080"><I>// Type Library, the contents of this file will be regenerated and all      //</I></FONT>
+<FONT COLOR="#000080"><I>// manual modifications will be lost.                                       //</I></FONT>
+<FONT COLOR="#000080"><I>// ************************************************************************ //</I></FONT>
+
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+<FONT COLOR="#000080"><I>// HelpString: Project1Lib Library</I></FONT>
+<FONT COLOR="#000080"><I>// Version:    1.0</I></FONT>
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+
+<B>interface</B>
+
+<B>uses</B> Windows, ActiveX, Classes, Graphics, OleCtrls, StdVCL;
+
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+<FONT COLOR="#000080"><I>// GUIDS declared in the TypeLibrary. Following prefixes are used:      //</I></FONT>
+<FONT COLOR="#000080"><I>//   Type Libraries     : LIBID_xxxx                                    //</I></FONT>
+<FONT COLOR="#000080"><I>//   CoClasses          : CLSID_xxxx                                    //</I></FONT>
+<FONT COLOR="#000080"><I>//   DISPInterfaces     : DIID_xxxx                                     //</I></FONT>
+<FONT COLOR="#000080"><I>//   Non-DISP interfaces: IID_xxxx                                      //</I></FONT>
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+<B>const</B>
+  LIBID_Project1Lib: TGUID = <I>'{89855B41-8EFE-11D0-98D0-444553540000}'</I>;
+  IID_IFirstServer: TGUID = <I>'{89855B42-8EFE-11D0-98D0-444553540000}'</I>;
+  CLASS_FirstServer: TGUID = <I>'{89855B43-8EFE-11D0-98D0-444553540000}'</I>;
+
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+<FONT COLOR="#000080"><I>// Forward declaration of interfaces defined in Type Library            //</I></FONT>
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+<B>type</B>
+  IFirstServer = <B>interface</B>;
+  IFirstServerDisp = <B>dispinterface</B>;
+
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+<FONT COLOR="#000080"><I>// Declaration of CoClasses defined in Type Library                     //</I></FONT>
+<FONT COLOR="#000080"><I>// (NOTE: Here we map each CoClass to it's Default Interface            //</I></FONT>
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+  FirstServer = IFirstServer;
+
+  IFirstServer = <B>interface</B>(IDispatch)
+    [<I>'{89855B42-8EFE-11D0-98D0-444553540000}'</I>]
+    <B>procedure</B> ChangeColor; safecall;
+    <B>function</B> Get_Value: Integer; safecall;
+    <B>procedure</B> Set_Value(Value: Integer); safecall;
+    <B>property</B> Value: Integer <B>read</B> Get_Value <B>write</B> Set_Value;
+  <B>end</B>;
+
+<FONT COLOR="#000080"><I>// Dispinterface declaration for dual interface IFirstServer</I></FONT>
+
+  IFirstServerDisp = <B>dispinterface</B>
+    [<I>'{89855B42-8EFE-11D0-98D0-444553540000}'</I>]
+    <B>procedure</B> ChangeColor; <B>dispid</B> 1;
+    <B>property</B> Value: Integer <B>dispid</B> 2;
+  <B>end</B>;
+
+  CoFirstServer = <B>class</B>
+    <B>class</B> <B>function</B> Create: IFirstServer;
+    <B>class</B> <B>function</B> CreateRemote(<B>const</B> MachineName: <B>string</B>): IFirstServer;
+  <B>end</B>;
+
+<B>implementation</B>
+
+<B>uses</B> ComObj;
+
+<B>class</B> <B>function</B> CoFirstServer.Create: IFirstServer;
+<B>begin</B>
+  Result := CreateComObject(CLASS_FirstServer) <B>as</B> IFirstServer;
+<B>end</B>;
+
+<B>class</B> <B>function</B> CoFirstServer.CreateRemote(<B>const</B> MachineName: <B>string</B>): IFirstServer;
+<B>begin</B>
+  Result := CreateRemoteComObject(MachineName, CLASS_FirstServer) <B>as</B> IFirstServer;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MAINFORM.PAS><H3>MAINFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> MainForm;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  ComCtrls, StdCtrls;
+
+<B>type</B>
+  TServerForm = <B>class</B>(TForm)
+    Label1: TLabel;
+    Edit1: TEdit;
+    UpDown1: TUpDown;
+    BtnColor: TButton;
+    BtnShow: TButton;
+    <B>procedure</B> Edit1Change(Sender: TObject);
+    <B>procedure</B> BtnColorClick(Sender: TObject);
+    <B>procedure</B> BtnShowClick(Sender: TObject);
+  <B>private</B>
+    CurrentValue: Integer;
+  <B>protected</B>
+    <B>procedure</B> SetValue (NewValue: Integer);
+  <B>public</B>
+    <B>property</B> Value: Integer
+      <B>read</B> CurrentValue <B>write</B> SetValue;
+    <B>procedure</B> ChangeColor;
+  <B>end</B>;
+
+<B>var</B>
+  ServerForm: TServerForm;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TServerForm.Edit1Change(Sender: TObject);
+<B>begin</B>
+  CurrentValue := UpDown1.Position;
+<B>end</B>;
+
+<B>procedure</B> TServerForm.SetValue (NewValue: Integer);
+<B>begin</B>
+  <B>if</B> NewValue &lt;&gt; CurrentValue <B>then</B>
+  <B>begin</B>
+    CurrentValue := Value;
+    UpDown1.Position := CurrentValue;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TServerForm.ChangeColor;
+<B>begin</B>
+  Color := RGB (
+    Random (255), Random (255), Random (255));
+<B>end</B>;
+
+<B>procedure</B> TServerForm.BtnColorClick(Sender: TObject);
+<B>begin</B>
+  ChangeColor;
+<B>end</B>;
+
+<B>procedure</B> TServerForm.BtnShowClick(Sender: TObject);
+<B>begin</B>
+  ShowMessage (IntToStr (CurrentValue));
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=DEMOOBJ.PAS><H3>DEMOOBJ.PAS</H3></A>
+
+<PRE>
+<B>unit</B> DemoObj;
+
+<B>interface</B>
+
+<B>uses</B>
+  ComObj, Project1Lib;
+
+<B>type</B>
+  TFirstServer = <B>class</B>(TAutoObject, IFirstServer)
+  <B>protected</B>
+    <B>function</B> Get_Value: Integer; safecall;
+    <B>procedure</B> ChangeColor; safecall;
+    <B>procedure</B> Set_Value(Value: Integer); safecall;
+  <B>end</B>;
+
+<B>implementation</B>
+
+<B>uses</B> ComServ, MainForm;
+
+<B>function</B> TFirstServer.Get_Value: Integer;
+<B>begin</B>
+  Result := ServerForm.Value;
+<B>end</B>;
+
+<B>procedure</B> TFirstServer.ChangeColor;
+<B>begin</B>
+  ServerForm.ChangeColor;
+<B>end</B>;
+
+<B>procedure</B> TFirstServer.Set_Value(Value: Integer);
+<B>begin</B>
+  ServerForm.Value := Value;
+<B>end</B>;
+
+<B>initialization</B>
+  TAutoObjectFactory.Create(ComServer, TFirstServer, Class_FirstServer, ciMultiInstance);
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MAINFORM.DFM><H3>MAINFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> ServerForm: TServerForm
+  Left = 191
+  Top = 108
+  Width = 243
+  Height = 224
+  Caption = <I>'Type Library Demo Server'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Label1: TLabel
+    Left = 24
+    Top = 51
+    Width = 30
+    Height = 13
+    Caption = <I>'&amp;Value:'</I>
+  <B>end</B>
+  <B>object</B> Edit1: TEdit
+    Left = 64
+    Top = 48
+    Width = 81
+    Height = 21
+    TabOrder = 0
+    Text = <I>'5'</I>
+    OnChange = Edit1Change
+  <B>end</B>
+  <B>object</B> UpDown1: TUpDown
+    Left = 145
+    Top = 48
+    Width = 15
+    Height = 21
+    Associate = Edit1
+    Min = 0
+    Position = 5
+    TabOrder = 1
+    Wrap = False
+  <B>end</B>
+  <B>object</B> BtnColor: TButton
+    Left = 64
+    Top = 128
+    Width = 97
+    Height = 25
+    Caption = <I>'&amp;Change Color'</I>
+    TabOrder = 2
+    OnClick = BtnColorClick
+  <B>end</B>
+  <B>object</B> BtnShow: TButton
+    Left = 64
+    Top = 88
+    Width = 97
+    Height = 25
+    Caption = <I>'&amp;Show Value...'</I>
+    TabOrder = 3
+    OnClick = BtnShowClick
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

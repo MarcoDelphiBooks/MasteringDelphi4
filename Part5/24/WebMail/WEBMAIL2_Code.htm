@@ -1,0 +1,125 @@
+<HTML><HEAD>
+<TITLE>Project: WEBMAIL2.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: WEBMAIL2.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#WEBMAIL2.DPR> WEBMAIL2.DPR</A>
+<LI> <A HREF=#WMAILDM.PAS> WMAILDM.PAS</A>
+<LI> <A HREF=#WMAILDM.DFM> WMAILDM.DFM</A>
+</UL>
+<HR>
+<A NAME=WEBMAIL2.DPR><H3>WEBMAIL2.DPR</H3></A>
+
+<PRE>
+<B>program</B> WebMail2;
+
+<FONT COLOR="#000080"><I>{$APPTYPE CONSOLE}</I></FONT>
+
+<B>uses</B>
+  HTTPApp,
+  CGIApp,
+  WMailDm <B>in</B> <I>'WMailDm.pas'</I> <FONT COLOR="#000080"><I>{WebModule1: TWebModule}</I></FONT>;
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TWebModule1, WebModule1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=WMAILDM.PAS><H3>WMAILDM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> WMailDm;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, HTTPApp, Psock, NMsmtp;
+
+<B>type</B>
+  TWebModule1 = <B>class</B>(TWebModule)
+    Mail: TNMSMTP;
+    <B>procedure</B> WebModule1WebActionItem1Action(Sender: TObject;
+      Request: TWebRequest; Response: TWebResponse; <B>var</B> Handled: Boolean);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  WebModule1: TWebModule1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TWebModule1.WebModule1WebActionItem1Action(
+  Sender: TObject; Request: TWebRequest;
+  Response: TWebResponse; <B>var</B> Handled: Boolean);
+<B>var</B>
+  OutString: <B>string</B>;
+<B>begin</B>
+  OutString := Request.ContentFields.Values [<I>'firstname'</I>];
+  OutString := OutString + <I>' '</I> +
+    Request.ContentFields.Values [<I>'lastname'</I>];
+  OutString := OutString + <I>' ['</I> +
+    Request.ContentFields.Values [<I>'email'</I>] + <I>']'</I>;
+
+  <FONT COLOR="#000080"><I>// send email</I></FONT>
+  Mail.PostMessage.FromAddress := OutString;
+  Mail.Connect;
+  Mail.SendMail;
+  Mail.Disconnect;
+
+  Response.Content := Response.Content +
+    <I>'&lt;HTML&gt;&lt;HEAD&gt;&lt;TITLE&gt;Newsletter&lt;/TITLE&gt;&lt;/HEAD&gt;'</I> +
+    <I>'&lt;BODY&gt;&lt;H1&gt;Newsletter&lt;/H1&gt;&lt;H2&gt;Subscription received&lt;/H2&gt;&lt;hr&gt;'</I> +
+    <I>'&lt;H4&gt;You''re registered in our database as &lt;br&gt;'</I> +
+    OutString + <I>'&lt;/h4&gt;'</I> +
+    <I>'&lt;/BODY&gt;&lt;/HTML&gt;'</I>;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=WMAILDM.DFM><H3>WMAILDM.DFM</H3></A>
+
+<PRE>
+<B>object</B> WebModule1: TWebModule1
+  OldCreateOrder = True
+  Actions = &lt;
+    <B>item</B>
+      Default = True
+      Name = <I>'WebActionItem1'</I>
+      OnAction = WebModule1WebActionItem1Action
+    <B>end</B>&gt;
+  Left = 206
+  Top = 254
+  Height = 150
+  Width = 183
+  <B>object</B> Mail: TNMSMTP
+    Host = <I>'AST'</I>
+    Port = 25
+    ReportLevel = 0
+    UserID = <I>'marco'</I>
+    PostMessage.ToAddress.Strings = (
+      <I>'marco@AST'</I>)
+    PostMessage.Body.Strings = (
+      <I>'Subscription'</I>)
+    PostMessage.Subject = <I>'Subscribe'</I>
+    EncodeType = uuMime
+    ClearParams = True
+    SubType = mtPlain
+    Left = 32
+    Top = 24
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

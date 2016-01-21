@@ -1,0 +1,267 @@
+<HTML><HEAD>
+<TITLE>Project: CALC.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: CALC.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#CALC.DPR> CALC.DPR</A>
+<LI> <A HREF=#CALCF.PAS> CALCF.PAS</A>
+<LI> <A HREF=#CALCF.DFM> CALCF.DFM</A>
+</UL>
+<HR>
+<A NAME=CALC.DPR><H3>CALC.DPR</H3></A>
+
+<PRE>
+<B>program</B> Calc;
+
+<B>uses</B>
+  Forms,
+  CalcF <B>in</B> <I>'CalcF.pas'</I> <FONT COLOR="#000080"><I>{CalcForm}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TCalcForm, CalcForm);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=CALCF.PAS><H3>CALCF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> CalcF;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes, Graphics, Controls,
+  StdCtrls, Forms, DBCtrls, DB, DBGrids, DBTables, Grids, ExtCtrls;
+
+<B>type</B>
+  TCalcForm = <B>class</B>(TForm)
+    DBGrid1: TDBGrid;
+    DBNavigator: TDBNavigator;
+    Panel1: TPanel;
+    Panel2: TPanel;
+    DataSource1: TDataSource;
+    Table1: TTable;
+    Table1PopulationDensity: TFloatField;
+    Table1Area: TFloatField;
+    Table1Population: TFloatField;
+    Table1Name: TStringField;
+    Table1Capital: TStringField;
+    Table1Continent: TStringField;
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> Table1CalcFields(DataSet: TDataset);
+    <B>procedure</B> DBGrid1EditButtonClick(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  CalcForm: TCalcForm;
+
+<B>implementation</B>
+
+<B>uses</B> Dialogs;
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TCalcForm.FormCreate(Sender: TObject);
+<B>begin</B>
+  Table1.Open;
+<B>end</B>;
+
+<B>procedure</B> TCalcForm.Table1CalcFields(DataSet: TDataset);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// plain version (very dangerous)</I></FONT>
+<FONT COLOR="#000080"><I>{  Table1PopulationDensity.Value :=
+    Table1Population.Value / Table1Area.Value;}</I></FONT>
+
+  <FONT COLOR="#000080"><I>// version based on exceptions (ok)</I></FONT>
+<FONT COLOR="#000080"><I>{  try
+    Table1PopulationDensity.Value :=
+      Table1Population.Value / Table1Area.Value;
+  except
+    on Exception do
+      Table1PopulationDensity.Value := 0;
+  end;}</I></FONT>
+
+  <FONT COLOR="#000080"><I>// definitive version</I></FONT>
+  <B>if</B> <B>not</B> Table1Area.IsNull <B>and</B>
+      (Table1Area.Value &lt;&gt; 0) <B>then</B>
+    Table1PopulationDensity.Value :=
+      Table1Population.Value / Table1Area.Value
+  <B>else</B>
+      Table1PopulationDensity.Value := 0;
+<B>end</B>;
+
+<B>procedure</B> TCalcForm.DBGrid1EditButtonClick(Sender: TObject);
+<B>begin</B>
+  MessageDlg (Format (
+    <I>'The population density (%.2n)'#13</I> +
+    <I>'is the Population (%.0n)'#13</I> +
+    <I>'devided by the Area (%.0n).'#13#13</I> +
+    <I>'Edit these two fields to change it.'</I>,
+    [Table1PopulationDensity.AsFloat,
+    Table1Population.AsFloat,
+    Table1Area.AsFloat]),
+    mtInformation, [mbOK], 0);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=CALCF.DFM><H3>CALCF.DFM</H3></A>
+
+<PRE>
+<B>object</B> CalcForm: TCalcForm
+  Left = 180
+  Top = 212
+  Width = 556
+  Height = 236
+  ActiveControl = Panel1
+  Caption = <I>'Calculated Field'</I>
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clBlack
+  Font.Height = -11
+  Font.Name = <I>'Arial'</I>
+  Font.Style = []
+  Position = poScreenCenter
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 14
+  <B>object</B> Panel1: TPanel
+    Left = 0
+    Top = 0
+    Width = 548
+    Height = 33
+    Align = alTop
+    TabOrder = 0
+    <B>object</B> Panel2: TPanel
+      Left = 406
+      Top = 1
+      Width = 141
+      Height = 31
+      Align = alRight
+      BevelOuter = bvNone
+      Caption = <I>'Panel2'</I>
+      TabOrder = 0
+      <B>object</B> DBNavigator: TDBNavigator
+        Left = 18
+        Top = 6
+        Width = 116
+        Height = 19
+        DataSource = DataSource1
+        VisibleButtons = [nbFirst, nbPrior, nbNext, nbLast]
+        TabOrder = 0
+      <B>end</B>
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> DBGrid1: TDBGrid
+    Left = 0
+    Top = 33
+    Width = 548
+    Height = 176
+    Align = alClient
+    DataSource = DataSource1
+    TabOrder = 1
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clBlack
+    TitleFont.Height = -11
+    TitleFont.Name = <I>'Arial'</I>
+    TitleFont.Style = []
+    OnEditButtonClick = DBGrid1EditButtonClick
+    Columns = &lt;
+      <B>item</B>
+        Expanded = False
+        FieldName = <I>'Name'</I>
+        Visible = True
+      <B>end</B>
+      <B>item</B>
+        Expanded = False
+        FieldName = <I>'Capital'</I>
+        Visible = True
+      <B>end</B>
+      <B>item</B>
+        DropDownRows = 3
+        Expanded = False
+        FieldName = <I>'Continent'</I>
+        PickList.Strings = (
+          <I>'North America'</I>
+          <I>'South America'</I>)
+        Width = 87
+        Visible = True
+      <B>end</B>
+      <B>item</B>
+        Expanded = False
+        FieldName = <I>'Population'</I>
+        Visible = True
+      <B>end</B>
+      <B>item</B>
+        Expanded = False
+        FieldName = <I>'Area'</I>
+        Visible = True
+      <B>end</B>
+      <B>item</B>
+        ButtonStyle = cbsEllipsis
+        Expanded = False
+        FieldName = <I>'Population Density'</I>
+        ReadOnly = True
+        Visible = True
+      <B>end</B>&gt;
+  <B>end</B>
+  <B>object</B> DataSource1: TDataSource
+    DataSet = Table1
+    Left = 77
+    Top = 65533
+  <B>end</B>
+  <B>object</B> Table1: TTable
+    Active = True
+    OnCalcFields = Table1CalcFields
+    DatabaseName = <I>'DBDEMOS'</I>
+    TableName = <I>'country.db'</I>
+    Left = 10
+    Top = 65533
+    <B>object</B> Table1Name: TStringField
+      DisplayLabel = <I>'Country'</I>
+      DisplayWidth = 11
+      FieldName = <I>'Name'</I>
+      Size = 24
+    <B>end</B>
+    <B>object</B> Table1Capital: TStringField
+      DisplayWidth = 13
+      FieldName = <I>'Capital'</I>
+      Size = 24
+    <B>end</B>
+    <B>object</B> Table1Continent: TStringField
+      FieldName = <I>'Continent'</I>
+      Size = 24
+    <B>end</B>
+    <B>object</B> Table1Population: TFloatField
+      DisplayWidth = 14
+      FieldName = <I>'Population'</I>
+      DisplayFormat = <I>'###,###,###'</I>
+    <B>end</B>
+    <B>object</B> Table1Area: TFloatField
+      DisplayWidth = 13
+      FieldName = <I>'Area'</I>
+      DisplayFormat = <I>'###,###,###'</I>
+    <B>end</B>
+    <B>object</B> Table1PopulationDensity: TFloatField
+      DisplayWidth = 16
+      FieldName = <I>'Population Density'</I>
+      DisplayFormat = <I>'###.##'</I>
+      Precision = 2
+      Calculated = True
+    <B>end</B>
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

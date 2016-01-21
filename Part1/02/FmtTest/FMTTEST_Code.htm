@@ -1,0 +1,294 @@
+<HTML><HEAD>
+<TITLE>Project: FMTTEST.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: FMTTEST.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#FMTTEST.DPR> FMTTEST.DPR</A>
+<LI> <A HREF=#FTMTESTF.PAS> FTMTESTF.PAS</A>
+<LI> <A HREF=#FTMTESTF.DFM> FTMTESTF.DFM</A>
+</UL>
+<HR>
+<A NAME=FMTTEST.DPR><H3>FMTTEST.DPR</H3></A>
+
+<PRE>
+<B>program</B> FmtTest;
+
+<B>uses</B>
+  Forms,
+  FtmTestF <B>in</B> <I>'FtmTestF.pas'</I> <FONT COLOR="#000080"><I>{FormFmtTest}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TFormFmtTest, FormFmtTest);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=FTMTESTF.PAS><H3>FTMTESTF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> FtmTestF;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls, ExtCtrls;
+
+<B>type</B>
+  TFormFmtTest = <B>class</B>(TForm)
+    EditFmtInt: TEdit;
+    EditFmtFloat: TEdit;
+    BtnFloat: TButton;
+    ListBoxInt: TListBox;
+    ListBoxFloat: TListBox;
+    Bevel1: TBevel;
+    Bevel2: TBevel;
+    Label1: TLabel;
+    Label2: TLabel;
+    BtnInt: TButton;
+    Label3: TLabel;
+    Label4: TLabel;
+    Label5: TLabel;
+    EditInt: TEdit;
+    EditFloat: TEdit;
+    Label6: TLabel;
+    BtnPointer: TButton;
+    <B>procedure</B> BtnIntClick(Sender: TObject);
+    <B>procedure</B> BtnFloatClick(Sender: TObject);
+    <B>procedure</B> BtnPointerClick(Sender: TObject);
+    <B>procedure</B> ListBoxIntClick(Sender: TObject);
+    <B>procedure</B> ListBoxFloatClick(Sender: TObject);
+    <B>procedure</B> FormCreate(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  FormFmtTest: TFormFmtTest;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TFormFmtTest.BtnIntClick(Sender: TObject);
+<B>begin</B>
+  ShowMessage (Format (EditFmtInt.Text,
+    [StrToInt (EditInt.Text)]));
+  <FONT COLOR="#000080"><I>// if the item is not there, add it</I></FONT>
+  <B>if</B> ListBoxInt.Items.IndexOf (EditFmtInt.Text) &lt; 0 <B>then</B>
+    ListBoxInt.Items.Add (EditFmtInt.Text);
+<B>end</B>;
+
+<B>procedure</B> TFormFmtTest.BtnFloatClick(Sender: TObject);
+<B>begin</B>
+  ShowMessage (Format (EditFmtFloat.Text,
+    [StrToFloat (EditFloat.Text)]));
+  <FONT COLOR="#000080"><I>// if the item is not there, add it</I></FONT>
+  <B>if</B> ListBoxFloat.Items.IndexOf (EditFmtFloat.Text) &lt; 0 <B>then</B>
+    ListBoxFloat.Items.Add (EditFmtFloat.Text);
+<B>end</B>;
+
+<B>procedure</B> TFormFmtTest.BtnPointerClick(Sender: TObject);
+<B>begin</B>
+  ShowMessage (Format (<I>'Pointer: %p'</I>,
+    [Pointer (StrToInt (EditInt.Text))]));
+<B>end</B>;
+
+<B>procedure</B> TFormFmtTest.ListBoxIntClick(Sender: TObject);
+<B>begin</B>
+  EditFmtInt.Text := ListBoxInt.Items [
+    ListBoxInt.ItemIndex];
+<B>end</B>;
+
+<B>procedure</B> TFormFmtTest.ListBoxFloatClick(Sender: TObject);
+<B>begin</B>
+  EditFmtFloat.Text := ListBoxFloat.Items [
+    ListBoxFloat.ItemIndex];
+<B>end</B>;
+
+<B>procedure</B> TFormFmtTest.FormCreate(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>{the formatting of the initial value of the float
+  edit box should depend on the international settings,
+  for this reason we can use the result of a function
+  which applies those settings}</I></FONT>
+  EditFloat.Text := FloatToStr(1234234.12);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=FTMTESTF.DFM><H3>FTMTESTF.DFM</H3></A>
+
+<PRE>
+<B>object</B> FormFmtTest: TFormFmtTest
+  Left = 193
+  Top = 108
+  Width = 385
+  Height = 346
+  Caption = <I>'Format Test'</I>
+  Font.Charset = ANSI_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Bevel1: TBevel
+    Left = 8
+    Top = 8
+    Width = 177
+    Height = 305
+  <B>end</B>
+  <B>object</B> Bevel2: TBevel
+    Left = 192
+    Top = 8
+    Width = 177
+    Height = 305
+  <B>end</B>
+  <B>object</B> Label1: TLabel
+    Left = 16
+    Top = 16
+    Width = 62
+    Height = 13
+    Caption = <I>'Integer value'</I>
+  <B>end</B>
+  <B>object</B> Label2: TLabel
+    Left = 200
+    Top = 16
+    Width = 92
+    Height = 13
+    Caption = <I>'Floating point value'</I>
+  <B>end</B>
+  <B>object</B> Label3: TLabel
+    Left = 16
+    Top = 107
+    Width = 63
+    Height = 13
+    Caption = <I>'Format string:'</I>
+  <B>end</B>
+  <B>object</B> Label4: TLabel
+    Left = 202
+    Top = 107
+    Width = 63
+    Height = 13
+    Caption = <I>'Format string:'</I>
+  <B>end</B>
+  <B>object</B> Label5: TLabel
+    Left = 16
+    Top = 152
+    Width = 128
+    Height = 13
+    Caption = <I>'Ready-to-use format strings'</I>
+  <B>end</B>
+  <B>object</B> Label6: TLabel
+    Left = 200
+    Top = 152
+    Width = 128
+    Height = 13
+    Caption = <I>'Ready-to-use format strings'</I>
+  <B>end</B>
+  <B>object</B> EditFmtInt: TEdit
+    Left = 16
+    Top = 123
+    Width = 161
+    Height = 21
+    TabOrder = 0
+    Text = <I>'%d'</I>
+  <B>end</B>
+  <B>object</B> EditFmtFloat: TEdit
+    Left = 200
+    Top = 123
+    Width = 161
+    Height = 21
+    TabOrder = 1
+    Text = <I>'%g'</I>
+  <B>end</B>
+  <B>object</B> BtnFloat: TButton
+    Left = 200
+    Top = 72
+    Width = 161
+    Height = 25
+    Caption = <I>'Show'</I>
+    TabOrder = 2
+    OnClick = BtnFloatClick
+  <B>end</B>
+  <B>object</B> ListBoxInt: TListBox
+    Left = 16
+    Top = 168
+    Width = 161
+    Height = 105
+    ItemHeight = 13
+    Items.Strings = (
+      <I>'Weight is %d pounds'</I>
+      <I>'Weight is %10d pounds'</I>
+      <I>'Weight is %-5d pounds'</I>
+      <I>'Hex value: %x'</I>
+      <I>'Hex value: %8x'</I>)
+    TabOrder = 3
+    OnClick = ListBoxIntClick
+  <B>end</B>
+  <B>object</B> ListBoxFloat: TListBox
+    Left = 200
+    Top = 168
+    Width = 161
+    Height = 137
+    ItemHeight = 13
+    Items.Strings = (
+      <I>'Number: %g'</I>
+      <I>'Number: %f'</I>
+      <I>'Number: %e'</I>
+      <I>'Number: %n'</I>
+      <I>'Number: %m'</I>
+      <I>'Cents: %12.2n'</I>
+      <I>'Value: %3.8f '</I>)
+    TabOrder = 4
+    OnClick = ListBoxFloatClick
+  <B>end</B>
+  <B>object</B> BtnInt: TButton
+    Left = 16
+    Top = 72
+    Width = 161
+    Height = 25
+    Caption = <I>'Show'</I>
+    TabOrder = 5
+    OnClick = BtnIntClick
+  <B>end</B>
+  <B>object</B> EditInt: TEdit
+    Left = 16
+    Top = 40
+    Width = 161
+    Height = 21
+    TabOrder = 6
+    Text = <I>'100'</I>
+  <B>end</B>
+  <B>object</B> EditFloat: TEdit
+    Left = 200
+    Top = 40
+    Width = 161
+    Height = 21
+    TabOrder = 7
+  <B>end</B>
+  <B>object</B> BtnPointer: TButton
+    Left = 16
+    Top = 280
+    Width = 161
+    Height = 25
+    Caption = <I>'Show as Pointer (''%p'')'</I>
+          TabOrder = 8
+    OnClick = BtnPointerClick
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

@@ -1,0 +1,168 @@
+<HTML><HEAD>
+<TITLE>Project: MULTI.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: MULTI.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#MULTI.DPR> MULTI.DPR</A>
+<LI> <A HREF=#MULTIREC.PAS> MULTIREC.PAS</A>
+<LI> <A HREF=#MULTIREC.DFM> MULTIREC.DFM</A>
+</UL>
+<HR>
+<A NAME=MULTI.DPR><H3>MULTI.DPR</H3></A>
+
+<PRE>
+<B>program</B> Multi;
+
+<B>uses</B>
+  Forms,
+  MultiRec <B>in</B> <I>'MultiRec.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MULTIREC.PAS><H3>MULTIREC.PAS</H3></A>
+
+<PRE>
+<B>unit</B> MultiRec;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls, Mask, DBCtrls, DBTables, DB, DBCGrids;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    DBCtrlGrid1: TDBCtrlGrid;
+    Table1: TTable;
+    DataSource1: TDataSource;
+    Table1Name: TStringField;
+    Table1Capital: TStringField;
+    Table1Continent: TStringField;
+    Table1Area: TFloatField;
+    Table1Population: TFloatField;
+    DBEdit1: TDBEdit;
+    DBEdit2: TDBEdit;
+    Label1: TLabel;
+    Label2: TLabel;
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MULTIREC.DFM><H3>MULTIREC.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 263
+  Top = 199
+  BorderStyle = bsSingle
+  Caption = <I>'Multi Record Grid'</I>
+  ClientHeight = 208
+  ClientWidth = 330
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> DBCtrlGrid1: TDBCtrlGrid
+    Left = 0
+    Top = 0
+    Width = 332
+    Height = 208
+    ColCount = 2
+    DataSource = DataSource1
+    PanelHeight = 104
+    PanelWidth = 158
+    TabOrder = 0
+    RowCount = 2
+    <B>object</B> Label1: TLabel
+      Left = 8
+      Top = 9
+      Width = 39
+      Height = 13
+      Caption = <I>'Country:'</I>
+    <B>end</B>
+    <B>object</B> Label2: TLabel
+      Left = 8
+      Top = 52
+      Width = 35
+      Height = 13
+      Caption = <I>'Capital:'</I>
+    <B>end</B>
+    <B>object</B> DBEdit1: TDBEdit
+      Left = 8
+      Top = 25
+      Width = 137
+      Height = 21
+      DataField = <I>'Name'</I>
+      DataSource = DataSource1
+      MaxLength = 24
+      TabOrder = 0
+    <B>end</B>
+    <B>object</B> DBEdit2: TDBEdit
+      Left = 8
+      Top = 68
+      Width = 137
+      Height = 21
+      DataField = <I>'Capital'</I>
+      DataSource = DataSource1
+      MaxLength = 24
+      TabOrder = 1
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> Table1: TTable
+    Active = True
+    DatabaseName = <I>'DBDEMOS'</I>
+    TableName = <I>'COUNTRY.DB'</I>
+    Left = 16
+    Top = 152
+    <B>object</B> Table1Name: TStringField
+      FieldName = <I>'Name'</I>
+      Size = 24
+    <B>end</B>
+    <B>object</B> Table1Capital: TStringField
+      FieldName = <I>'Capital'</I>
+      Size = 24
+    <B>end</B>
+    <B>object</B> Table1Continent: TStringField
+      FieldName = <I>'Continent'</I>
+      Size = 24
+    <B>end</B>
+    <B>object</B> Table1Area: TFloatField
+      FieldName = <I>'Area'</I>
+    <B>end</B>
+    <B>object</B> Table1Population: TFloatField
+      FieldName = <I>'Population'</I>
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> DataSource1: TDataSource
+    DataSet = Table1
+    Left = 72
+    Top = 152
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

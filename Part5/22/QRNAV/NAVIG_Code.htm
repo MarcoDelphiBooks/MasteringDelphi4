@@ -1,0 +1,655 @@
+<HTML><HEAD>
+<TITLE>Project: NAVIG.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: NAVIG.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#NAVIG.DPR> NAVIG.DPR</A>
+<LI> <A HREF=#RPTFORM.PAS> RPTFORM.PAS</A>
+<LI> <A HREF=#NAVFORM.PAS> NAVFORM.PAS</A>
+<LI> <A HREF=#RPTFORM.DFM> RPTFORM.DFM</A>
+<LI> <A HREF=#NAVFORM.DFM> NAVFORM.DFM</A>
+</UL>
+<HR>
+<A NAME=NAVIG.DPR><H3>NAVIG.DPR</H3></A>
+
+<PRE>
+<B>program</B> Navig;
+
+<B>uses</B>
+  Forms,
+  RptForm <B>in</B> <I>'RptForm.pas'</I> <FONT COLOR="#000080"><I>{ReportForm}</I></FONT>,
+  NavForm <B>in</B> <I>'NavForm.pas'</I> <FONT COLOR="#000080"><I>{Navigator}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TNavigator, Navigator);
+  Application.CreateForm(TReportForm, ReportForm);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=RPTFORM.PAS><H3>RPTFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> RptForm;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls, ExtCtrls, QuickRpt, Qrctrls;
+
+<B>type</B>
+  TReportForm = <B>class</B>(TForm)
+    QuickRep1: TQuickRep;
+    QRBand3: TQRBand;
+    QRBand2: TQRBand;
+    QRBand1: TQRBand;
+    QRSysData1: TQRSysData;
+    QRSysData2: TQRSysData;
+    QRDBText1: TQRDBText;
+    QRDBText2: TQRDBText;
+    QRDBText3: TQRDBText;
+    QRExpr1: TQRExpr;
+    QRLabel1: TQRLabel;
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  ReportForm: TReportForm;
+
+<B>implementation</B>
+
+<B>uses</B> Navform;
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=NAVFORM.PAS><H3>NAVFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> NavForm;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes, Graphics,
+  Controls, Forms, Dialogs, ExtCtrls, DBCtrls, StdCtrls,
+  Mask, DB, DBTables, Printers;
+
+<B>type</B>
+  TNavigator = <B>class</B>(TForm)
+    PrintButton: TButton;
+    PrintAllButton: TButton;
+    PrintFormButton: TButton;
+    DBNavigator1: TDBNavigator;
+    DBEdit1: TDBEdit;
+    Label1: TLabel;
+    Label2: TLabel;
+    DBEdit2: TDBEdit;
+    DBEdit3: TDBEdit;
+    Label3: TLabel;
+    Table1: TTable;
+    DataSource1: TDataSource;
+    ButtonReport: TButton;
+    Table1Name: TStringField;
+    Table1Capital: TStringField;
+    Table1Continent: TStringField;
+    Table1Population: TFloatField;
+    <B>procedure</B> PrintButtonClick(Sender: TObject);
+    <B>procedure</B> PrintFormButtonClick(Sender: TObject);
+    <B>procedure</B> PrintAllButtonClick(Sender: TObject);
+    <B>procedure</B> ButtonReportClick(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Navigator: TNavigator;
+
+<B>implementation</B>
+
+<B>uses</B> RptForm;
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TNavigator.PrintButtonClick(Sender: TObject);
+<B>var</B>
+  PrintFile: TextFile;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>{assing the printer to a file}</I></FONT>
+  AssignPrn (PrintFile);
+  Rewrite (PrintFile);
+  <B>try</B>
+    <FONT COLOR="#000080"><I>{set the font of the form, and output each element}</I></FONT>
+    Printer.Canvas.Font := Font;
+    Writeln (PrintFile, Label1.Caption,
+      <I>' '</I>, DBEdit1.Text);
+    Writeln (PrintFile, Label2.Caption,
+      <I>' '</I>, DBEdit2.Text);
+    Writeln (PrintFile, Label3.Caption,
+      <I>' '</I>, DBEdit3.Text);
+  <B>finally</B>
+    <FONT COLOR="#000080"><I>{close the printing process}</I></FONT>
+    System.CloseFile (PrintFile);
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TNavigator.PrintFormButtonClick(Sender: TObject);
+<B>begin</B>
+  Print;
+<B>end</B>;
+
+<B>procedure</B> TNavigator.PrintAllButtonClick(Sender: TObject);
+<B>var</B>
+  Bookmark: TBookmark;
+  PrintFile: TextFile;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>{assign the printer to a file}</I></FONT>
+  AssignPrn (PrintFile);
+  Rewrite (PrintFile);
+  <FONT COLOR="#000080"><I>{set the font of the form}</I></FONT>
+  Printer.Canvas.Font := Font;
+  <FONT COLOR="#000080"><I>{store the current position, crating a new bookmark}</I></FONT>
+  Bookmark := Table1.GetBookmark;
+  Table1.DisableControls;
+  <B>try</B>
+    Table1.First;
+    <B>while</B> <B>not</B> Table1.EOF <B>do</B>
+    <B>begin</B>
+      <FONT COLOR="#000080"><I>{output the three fields, and a blank line}</I></FONT>
+      Writeln (PrintFile, <I>'Country: '</I>,
+        Table1.FieldByName (<I>'Name'</I>).AsString);
+      Writeln (PrintFile, <I>'Capital: '</I>,
+        Table1.FieldByName (<I>'Capital'</I>).AsString);
+      Writeln (PrintFile, <I>'Continent: '</I>,
+        Table1.FieldByName (<I>'Continent'</I>).AsString);
+      Writeln (PrintFile);
+      Table1.Next;
+    <B>end</B>;
+  <B>finally</B>
+    <FONT COLOR="#000080"><I>{go back to the bookmark and destroy it}</I></FONT>
+    Table1.GotoBookmark (Bookmark);
+    Table1.FreeBookmark (Bookmark);
+    Table1.EnableControls;
+    System.CloseFile (PrintFile);
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TNavigator.ButtonReportClick(Sender: TObject);
+<B>begin</B>
+  ReportForm.QuickRep1.Preview;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=RPTFORM.DFM><H3>RPTFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> ReportForm: TReportForm
+  Left = 6
+  Top = 133
+  Width = 790
+  Height = 272
+  HorzScrollBar.Range = 1200
+  VertScrollBar.Position = 32
+  VertScrollBar.Range = 2000
+  AutoScroll = False
+  Caption = <I>'ReportForm'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clBlack
+  Font.Height = -13
+  Font.Name = <I>'Arial'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  Scaled = False
+  PixelsPerInch = 96
+  TextHeight = 16
+  <B>object</B> QuickRep1: TQuickRep
+    Left = 0
+    Top = -32
+    Width = 794
+    Height = 1123
+    Frame.Color = clBlack
+    Frame.DrawTop = False
+    Frame.DrawBottom = False
+    Frame.DrawLeft = False
+    Frame.DrawRight = False
+    DataSet = Navigator.Table1
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = <I>'Arial'</I>
+    Font.Style = []
+    Functions.Strings = (
+      <I>'PAGENUMBER'</I>
+      <I>'COLUMNNUMBER'</I>
+      <I>'REPORTTITLE'</I>)
+    Functions.DATA = (
+      <I>'0'</I>
+      <I>'0'</I>
+      <I>''''''</I>)
+    Options = [FirstPageHeader, LastPageFooter]
+    Page.Columns = 1
+    Page.Orientation = poPortrait
+    Page.PaperSize = A4
+    Page.Values = (
+      100
+      2970
+      100
+      2100
+      100
+      100
+      0)
+    PrinterSettings.Copies = 1
+    PrinterSettings.Duplex = False
+    PrinterSettings.FirstPage = 0
+    PrinterSettings.LastPage = 0
+    PrinterSettings.OutputBin = First
+    PrintIfEmpty = True
+    ReportTitle = <I>'Countries Report'</I>
+    SnapToGrid = True
+    Units = MM
+    Zoom = 100
+    <B>object</B> QRBand3: TQRBand
+      Left = 38
+      Top = 159
+      Width = 718
+      Height = 48
+      Frame.Color = clBlack
+      Frame.DrawTop = True
+      Frame.DrawBottom = False
+      Frame.DrawLeft = False
+      Frame.DrawRight = False
+      AlignToBottom = False
+      Color = clWhite
+      ForceNewColumn = False
+      ForceNewPage = False
+      Size.Values = (
+        127
+        1899.70833333333)
+      BandType = rbPageFooter
+      <B>object</B> QRExpr1: TQRExpr
+        Left = 246
+        Top = 16
+        Width = 99
+        Height = 17
+        Frame.Color = clBlack
+        Frame.DrawTop = False
+        Frame.DrawBottom = False
+        Frame.DrawLeft = False
+        Frame.DrawRight = False
+        Size.Values = (
+          44.9791666666667
+          650.875
+          42.3333333333333
+          261.9375)
+        Alignment = taRightJustify
+        AlignToBand = False
+        AutoSize = False
+        AutoStretch = False
+        Color = clWhite
+        Master = QuickRep1
+        ResetAfterPrint = False
+        Transparent = False
+        WordWrap = True
+        Expression = <I>'SUM(Population)'</I>
+        Mask = <I>'###,###,###'</I>
+        FontSize = 10
+      <B>end</B>
+      <B>object</B> QRLabel1: TQRLabel
+        Left = 144
+        Top = 16
+        Width = 98
+        Height = 17
+        Frame.Color = clBlack
+        Frame.DrawTop = False
+        Frame.DrawBottom = False
+        Frame.DrawLeft = False
+        Frame.DrawRight = False
+        Size.Values = (
+          44.9791666666667
+          381
+          42.3333333333333
+          259.291666666667)
+        Alignment = taLeftJustify
+        AlignToBand = False
+        AutoSize = True
+        AutoStretch = False
+        Caption = <I>'Total Population:'</I>
+        Color = clWhite
+        Transparent = False
+        WordWrap = True
+        FontSize = 10
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> QRBand2: TQRBand
+      Left = 38
+      Top = 88
+      Width = 718
+      Height = 71
+      Frame.Color = clBlack
+      Frame.DrawTop = False
+      Frame.DrawBottom = False
+      Frame.DrawLeft = False
+      Frame.DrawRight = False
+      Frame.Width = 0
+      AlignToBottom = False
+      Color = clWhite
+      ForceNewColumn = False
+      ForceNewPage = False
+      Size.Values = (
+        187.854166666667
+        1899.70833333333)
+      BandType = rbDetail
+      <B>object</B> QRDBText1: TQRDBText
+        Left = 34
+        Top = 16
+        Width = 35
+        Height = 17
+        Frame.Color = clBlack
+        Frame.DrawTop = False
+        Frame.DrawBottom = False
+        Frame.DrawLeft = False
+        Frame.DrawRight = False
+        Size.Values = (
+          44.9791666666667
+          89.9583333333333
+          42.3333333333333
+          92.6041666666667)
+        Alignment = taLeftJustify
+        AlignToBand = False
+        AutoSize = True
+        AutoStretch = False
+        Color = clWhite
+        DataSet = Navigator.Table1
+        DataField = <I>'Name'</I>
+        Transparent = False
+        WordWrap = True
+        FontSize = 10
+      <B>end</B>
+      <B>object</B> QRDBText2: TQRDBText
+        Left = 34
+        Top = 40
+        Width = 41
+        Height = 17
+        Frame.Color = clBlack
+        Frame.DrawTop = False
+        Frame.DrawBottom = False
+        Frame.DrawLeft = False
+        Frame.DrawRight = False
+        Size.Values = (
+          44.9791666666667
+          89.9583333333333
+          105.833333333333
+          108.479166666667)
+        Alignment = taLeftJustify
+        AlignToBand = False
+        AutoSize = True
+        AutoStretch = False
+        Color = clWhite
+        DataSet = Navigator.Table1
+        DataField = <I>'Capital'</I>
+        Transparent = False
+        WordWrap = True
+        FontSize = 10
+      <B>end</B>
+      <B>object</B> QRDBText3: TQRDBText
+        Left = 246
+        Top = 16
+        Width = 123
+        Height = 17
+        Frame.Color = clBlack
+        Frame.DrawTop = False
+        Frame.DrawBottom = False
+        Frame.DrawLeft = False
+        Frame.DrawRight = False
+        Size.Values = (
+          44.9791666666667
+          650.875
+          42.3333333333333
+          325.4375)
+        Alignment = taRightJustify
+        AlignToBand = False
+        AutoSize = False
+        AutoStretch = False
+        Color = clWhite
+        DataSet = Navigator.Table1
+        DataField = <I>'Population'</I>
+        Mask = <I>'###,###,###'</I>
+        Transparent = False
+        WordWrap = True
+        FontSize = 10
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> QRBand1: TQRBand
+      Left = 38
+      Top = 38
+      Width = 718
+      Height = 50
+      Frame.Color = clTeal
+      Frame.DrawTop = True
+      Frame.DrawBottom = True
+      Frame.DrawLeft = True
+      Frame.DrawRight = True
+      Frame.Width = 2
+      AlignToBottom = False
+      Color = clWhite
+      ForceNewColumn = False
+      ForceNewPage = False
+      Size.Values = (
+        132.291666666667
+        1899.70833333333)
+      BandType = rbPageHeader
+      <B>object</B> QRSysData1: TQRSysData
+        Left = 32
+        Top = 16
+        Width = 84
+        Height = 17
+        Frame.Color = clBlack
+        Frame.DrawTop = False
+        Frame.DrawBottom = False
+        Frame.DrawLeft = False
+        Frame.DrawRight = False
+        Size.Values = (
+          44.9791666666667
+          84.6666666666667
+          42.3333333333333
+          222.25)
+        Alignment = taLeftJustify
+        AlignToBand = False
+        AutoSize = True
+        Color = clWhite
+        Data = qrsPageNumber
+        Text = <I>'Page: '</I>
+        Transparent = False
+        FontSize = 10
+      <B>end</B>
+      <B>object</B> QRSysData2: TQRSysData
+        Left = 442
+        Top = 16
+        Width = 220
+        Height = 17
+        Frame.Color = clBlack
+        Frame.DrawTop = False
+        Frame.DrawBottom = False
+        Frame.DrawLeft = False
+        Frame.DrawRight = False
+        Size.Values = (
+          44.9791666666667
+          1169.45833333333
+          42.3333333333333
+          582.083333333333)
+        Alignment = taLeftJustify
+        AlignToBand = False
+        AutoSize = True
+        Color = clWhite
+        Data = qrsDateTime
+        Text = <I>'Countries Report, printed  '</I>
+        Transparent = False
+        FontSize = 10
+      <B>end</B>
+    <B>end</B>
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<A NAME=NAVFORM.DFM><H3>NAVFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> Navigator: TNavigator
+  Left = 148
+  Top = 122
+  Width = 366
+  Height = 227
+  Caption = <I>'Navigator'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clBlack
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Label1: TLabel
+    Left = 40
+    Top = 56
+    Width = 39
+    Height = 13
+    Caption = <I>'Country:'</I>
+  <B>end</B>
+  <B>object</B> Label2: TLabel
+    Left = 40
+    Top = 91
+    Width = 35
+    Height = 13
+    Caption = <I>'Capital:'</I>
+  <B>end</B>
+  <B>object</B> Label3: TLabel
+    Left = 40
+    Top = 124
+    Width = 48
+    Height = 13
+    Caption = <I>'Continent:'</I>
+  <B>end</B>
+  <B>object</B> PrintButton: TButton
+    Left = 8
+    Top = 160
+    Width = 81
+    Height = 25
+    Caption = <I>'Print'</I>
+    TabOrder = 0
+    OnClick = PrintButtonClick
+  <B>end</B>
+  <B>object</B> PrintAllButton: TButton
+    Left = 96
+    Top = 160
+    Width = 81
+    Height = 25
+    Caption = <I>'Print All'</I>
+    TabOrder = 1
+    OnClick = PrintAllButtonClick
+  <B>end</B>
+  <B>object</B> PrintFormButton: TButton
+    Left = 184
+    Top = 160
+    Width = 81
+    Height = 25
+    Caption = <I>'Print Form'</I>
+    TabOrder = 2
+    OnClick = PrintFormButtonClick
+  <B>end</B>
+  <B>object</B> DBNavigator1: TDBNavigator
+    Left = 0
+    Top = 0
+    Width = 358
+    Height = 25
+    DataSource = DataSource1
+    VisibleButtons = [nbFirst, nbPrior, nbNext, nbLast, nbInsert, nbEdit, nbPost, nbCancel]
+    Align = alTop
+    Flat = True
+    TabOrder = 3
+  <B>end</B>
+  <B>object</B> DBEdit1: TDBEdit
+    Left = 104
+    Top = 52
+    Width = 169
+    Height = 21
+    DataField = <I>'Name'</I>
+    DataSource = DataSource1
+    TabOrder = 4
+  <B>end</B>
+  <B>object</B> DBEdit2: TDBEdit
+    Left = 104
+    Top = 86
+    Width = 169
+    Height = 21
+    DataField = <I>'Capital'</I>
+    DataSource = DataSource1
+    TabOrder = 5
+  <B>end</B>
+  <B>object</B> DBEdit3: TDBEdit
+    Left = 104
+    Top = 120
+    Width = 169
+    Height = 21
+    DataField = <I>'Continent'</I>
+    DataSource = DataSource1
+    TabOrder = 6
+  <B>end</B>
+  <B>object</B> ButtonReport: TButton
+    Left = 272
+    Top = 160
+    Width = 75
+    Height = 25
+    Caption = <I>'Report...'</I>
+    TabOrder = 7
+    OnClick = ButtonReportClick
+  <B>end</B>
+  <B>object</B> Table1: TTable
+    Active = True
+    DatabaseName = <I>'DBDEMOS'</I>
+    TableName = <I>'COUNTRY.DB'</I>
+    Left = 16
+    Top = 88
+    <B>object</B> Table1Name: TStringField
+      FieldName = <I>'Name'</I>
+      Size = 24
+    <B>end</B>
+    <B>object</B> Table1Capital: TStringField
+      FieldName = <I>'Capital'</I>
+      Size = 24
+    <B>end</B>
+    <B>object</B> Table1Continent: TStringField
+      FieldName = <I>'Continent'</I>
+      Size = 24
+    <B>end</B>
+    <B>object</B> Table1Population: TFloatField
+      FieldName = <I>'Population'</I>
+      DisplayFormat = <I>'###,###,###'</I>
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> DataSource1: TDataSource
+    DataSet = Table1
+    Left = 16
+    Top = 40
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

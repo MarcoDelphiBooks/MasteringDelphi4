@@ -1,0 +1,225 @@
+<HTML><HEAD>
+<TITLE>Project: TODOSHLL.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: TODOSHLL.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#TODOSHLL.DPR> TODOSHLL.DPR</A>
+<LI> <A HREF=#TODOMENU.PAS> TODOMENU.PAS</A>
+</UL>
+<HR>
+<A NAME=TODOSHLL.DPR><H3>TODOSHLL.DPR</H3></A>
+
+<PRE>
+<B>library</B> ToDoShll;
+
+<B>uses</B>
+  ComServ,
+  ToDoMenu <B>in</B> <I>'ToDoMenu.pas'</I>;
+
+<B>exports</B>
+  DllGetClassObject,
+  DllCanUnloadNow,
+  DllRegisterServer,
+  DllUnregisterServer;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=TODOMENU.PAS><H3>TODOMENU.PAS</H3></A>
+
+<PRE>
+<B>unit</B> ToDoMenu;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, ActiveX, ComObj, ShlObj, ShellApi;
+
+<B>type</B>
+  TToDoMenu = <B>class</B>(TComObject, IUnknown, IContextMenu, IShellExtInit)
+  <B>private</B>
+    fFileName: <B>string</B>;
+  <B>protected</B>
+    <FONT COLOR="#000080"><I>{Declare IContextMenu methods here}</I></FONT>
+    <B>function</B> QueryContextMenu(Menu: HMENU; indexMenu, idCmdFirst, idCmdLast,
+      uFlags: UINT): HResult; <B>stdcall</B>;
+    <B>function</B> InvokeCommand(<B>var</B> lpici: TCMInvokeCommandInfo): HResult; <B>stdcall</B>;
+    <B>function</B> GetCommandString(idCmd, uType: UINT; pwReserved: PUINT;
+      pszName: LPSTR; cchMax: UINT): HResult; <B>stdcall</B>;
+    <FONT COLOR="#000080"><I>{Declare IShellExtInit methods here}</I></FONT>
+    <B>function</B> IShellExtInit.Initialize = InitShellExt;
+    <B>function</B> InitShellExt (pidlFolder: PItemIDList; lpdobj: IDataObject;
+      hKeyProgID: HKEY): HResult; <B>stdcall</B>;
+  <B>end</B>;
+
+  TToDoMenuFactory = <B>class</B> (TComObjectFactory)
+  <B>public</B>
+    <B>procedure</B> UpdateRegistry (<B>Register</B>: Boolean); <B>override</B>;
+  <B>end</B>;
+
+<B>const</B>
+  Class_ToDoMenuMenu: TGUID =
+    <I>'{CDF05220-DB84-11D1-B9F1-004845400FAA}'</I>;
+
+<B>implementation</B>
+
+<B>uses</B>
+  ComServ, Messages, SysUtils, Registry;
+
+<FONT COLOR="#000080"><I>// IShellExtInit method</I></FONT>
+<B>function</B> TToDoMenu.InitShellExt(pidlFolder: PItemIDList;
+  lpdobj: IDataObject; hKeyProgID: HKEY): HResult; <B>stdcall</B>;
+<B>var</B>
+  medium: TStgMedium;
+  fe: TFormatEtc;
+<B>begin</B>
+  Result := E_FAIL;
+  <FONT COLOR="#000080"><I>// check if the lpdobj pointer is nil</I></FONT>
+  <B>if</B> Assigned (lpdobj) <B>then</B>
+  <B>begin</B>
+    <B>with</B> fe <B>do</B>
+    <B>begin</B>
+      cfFormat := CF_HDROP;
+      ptd := <B>nil</B>;
+      dwAspect := DVASPECT_CONTENT;
+      lindex := -1;
+      tymed := TYMED_HGLOBAL;
+    <B>end</B>;
+    <FONT COLOR="#000080"><I>// transform the lpdobj data to a storage medium structure</I></FONT>
+    Result := lpdobj.GetData(fe, medium);
+    <B>if</B> <B>not</B> Failed (Result) <B>then</B>
+    <B>begin</B>
+      <FONT COLOR="#000080"><I>// check if only one file is selected</I></FONT>
+      <B>if</B> DragQueryFile (medium.hGlobal, $FFFFFFFF, <B>nil</B>, 0) = 1 <B>then</B>
+      <B>begin</B>
+        SetLength (fFileName, 1000);
+        DragQueryFile (medium.hGlobal, 0, PChar (fFileName), 1000);
+        <FONT COLOR="#000080"><I>// realign string</I></FONT>
+        fFileName := PChar (fFileName);
+        Result := NOERROR;
+      <B>end</B>
+      <B>else</B>
+        Result := E_FAIL;
+    <B>end</B>;
+    ReleaseStgMedium(medium);
+  <B>end</B>;
+<B>end</B>;
+
+<FONT COLOR="#000080"><I>// context menu methods</I></FONT>
+
+<B>function</B> TToDoMenu.QueryContextMenu(Menu: HMENU;
+  indexMenu, idCmdFirst, idCmdLast, uFlags: UINT): HResult;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// add entry only if the program is running</I></FONT>
+  <B>if</B> FindWindow (<I>'TToDoFileForm'</I>, <B>nil</B>) &lt;&gt; 0 <B>then</B>
+  <B>begin</B>
+    <FONT COLOR="#000080"><I>// add a new item to context menu</I></FONT>
+    InsertMenu (Menu, indexMenu,
+      MF_STRING <B>or</B> MF_BYPOSITION, idCmdFirst,
+      <I>'Send to ToDoFile'</I>);
+    <FONT COLOR="#000080"><I>// Return number of menu items added</I></FONT>
+    Result := 1;
+  <B>end</B>
+  <B>else</B>
+    Result := 0;
+<B>end</B>;
+
+<B>function</B> TToDoMenu.InvokeCommand(<B>var</B> lpici: TCMInvokeCommandInfo): HResult;
+<B>var</B>
+  hwnd: THandle;
+  cds: CopyDataStruct;
+<B>begin</B>
+  Result := NOERROR;
+  <FONT COLOR="#000080"><I>// Make sure we are not being called by an application</I></FONT>
+  <B>if</B> HiWord(Integer(lpici.lpVerb)) &lt;&gt; 0 <B>then</B>
+  <B>begin</B>
+    Result := E_FAIL;
+    Exit;
+  <B>end</B>;
+  <FONT COLOR="#000080"><I>// Make sure we aren't being passed an invalid argument number</I></FONT>
+  <B>if</B> LoWord(lpici.lpVerb) &gt; 0 <B>then</B>
+  <B>begin</B>
+    Result := E_INVALIDARG;
+    Exit;
+  <B>end</B>;
+  <FONT COLOR="#000080"><I>// execute the command specified by lpici.lpVerb.</I></FONT>
+  <B>if</B> LoWord(lpici.lpVerb) = 0 <B>then</B>
+  <B>begin</B>
+    <FONT COLOR="#000080"><I>// get the handle of the window</I></FONT>
+    hwnd := FindWindow (<I>'TToDoFileForm'</I>, <B>nil</B>);
+    <B>if</B> hwnd &lt;&gt; 0 <B>then</B>
+    <B>begin</B>
+      <FONT COLOR="#000080"><I>// prepare the data to copy</I></FONT>
+      cds.dwData := 0;
+      cds.cbData := length (fFileName);
+      cds.lpData := PChar (fFileName);
+      <FONT COLOR="#000080"><I>// activate the destination window</I></FONT>
+      SetForegroundWindow (hwnd);
+      <FONT COLOR="#000080"><I>// send the data</I></FONT>
+      SendMessage (hwnd, wm_CopyData,
+        lpici.hWnd, Integer (@cds));
+    <B>end</B>
+    <B>else</B>
+    <B>begin</B>
+      <FONT COLOR="#000080"><I>// the program should never get here</I></FONT>
+      MessageBox(lpici.hWnd,
+        <I>'FilesToDo Program not found'</I>,
+        <I>'Error'</I>,
+        MB_ICONERROR <B>or</B> MB_OK);
+    <B>end</B>;
+  <B>end</B>;
+<B>end</B>;
+
+<B>function</B> TToDoMenu.GetCommandString(idCmd, uType: UINT; pwReserved: PUINT;
+  pszName: LPSTR; cchMax: UINT): HRESULT;
+<B>begin</B>
+  <B>if</B> idCmd = 0 <B>then</B>
+  <B>begin</B>
+    <FONT COLOR="#000080"><I>// return help string for menu item</I></FONT>
+    strCopy (pszName, <I>'Add file to the ToDoFile database'</I>);
+    Result := NOERROR;
+  <B>end</B>
+  <B>else</B>
+    Result := E_INVALIDARG;
+<B>end</B>;
+
+<FONT COLOR="#000080"><I>{ TToDoMenuFactory methods }</I></FONT>
+
+<B>procedure</B> TToDoMenuFactory.UpdateRegistry(<B>Register</B>: Boolean);
+<B>var</B>
+  Reg: TRegistry;
+<B>begin</B>
+  <B>inherited</B> UpdateRegistry (<B>Register</B>);
+
+  Reg := TRegistry.Create;
+  <B>try</B>
+    <FONT COLOR="#000080"><I>// register or remove the menu handler</I></FONT>
+    <B>if</B> <B>Register</B> <B>then</B>
+      Reg.CreateKey (
+        <I>'\HKEY_CLASSES_ROOT\*\ShellEx\ContextMenuHandler\'</I> +
+        GUIDToString (Class_ToDoMenuMenu))
+    <B>else</B>
+      Reg.DeleteKey (
+        <I>'\HKEY_CLASSES_ROOT\*\ShellEx\ContextMenuHandler\'</I> +
+        GUIDToString (Class_ToDoMenuMenu));
+  <B>finally</B>
+    Reg.Free;
+  <B>end</B>;
+<B>end</B>;
+
+<B>initialization</B>
+  TToDoMenuFactory.Create (
+    ComServer, TToDoMenu, Class_ToDoMenuMenu,
+    <I>'ToDoMenu'</I>, <I>'ToDoMenu Shell Extension'</I>,
+    ciMultiInstance, tmApartment);
+<B>end</B>.</PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

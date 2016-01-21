@@ -1,0 +1,521 @@
+<HTML><HEAD>
+<TITLE>Project: TOTAL.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: TOTAL.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#TOTAL.DPR> TOTAL.DPR</A>
+<LI> <A HREF=#TOTALF.PAS> TOTALF.PAS</A>
+<LI> <A HREF=#TOTALF.DFM> TOTALF.DFM</A>
+</UL>
+<HR>
+<A NAME=TOTAL.DPR><H3>TOTAL.DPR</H3></A>
+
+<PRE>
+<B>program</B> Total;
+
+<B>uses</B>
+  Forms,
+  TotalF <B>in</B> <I>'TotalF.pas'</I> <FONT COLOR="#000080"><I>{SearchForm}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TSearchForm, SearchForm);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=TOTALF.PAS><H3>TOTALF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> TotalF;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes, Graphics, Controls,
+  StdCtrls, Forms, DBCtrls, DB, Buttons, DBTables, Mask, ExtCtrls,
+  Dialogs, Spin, DBActns, ActnList;
+
+<B>type</B>
+  TSearchForm = <B>class</B>(TForm)
+    ScrollBox: TScrollBox;
+    Label1: TLabel;
+    EditEmpNo: TDBEdit;
+    Label2: TLabel;
+    EditLastName: TDBEdit;
+    Label3: TLabel;
+    EditFirstName: TDBEdit;
+    Label4: TLabel;
+    EditPhoneExt: TDBEdit;
+    Label5: TLabel;
+    EditHireDate: TDBEdit;
+    Label6: TLabel;
+    EditSalary: TDBEdit;
+    Panel1: TPanel;
+    DataSource1: TDataSource;
+    Panel2: TPanel;
+    Table1: TTable;
+    SpeedButtonFirst: TSpeedButton;
+    SpeedButtonPrior: TSpeedButton;
+    SpeedButtonNext: TSpeedButton;
+    SpeedButtonLast: TSpeedButton;
+    EditName: TEdit;
+    SpeedButtonGoto: TSpeedButton;
+    SpeedButtonGoNear: TSpeedButton;
+    Table1EmpNo: TIntegerField;
+    Table1LastName: TStringField;
+    Table1FirstName: TStringField;
+    Table1PhoneExt: TStringField;
+    Table1HireDate: TDateTimeField;
+    SpinEdit1: TSpinEdit;
+    SpeedButtonIncrease: TSpeedButton;
+    SpeedButtonTotal: TSpeedButton;
+    Table1Salary: TCurrencyField;
+    ActionList1: TActionList;
+    First1: TDataSetFirst;
+    Last1: TDataSetLast;
+    Next1: TDataSetNext;
+    Prior1: TDataSetPrior;
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> SpeedButtonGotoClick(Sender: TObject);
+    <B>procedure</B> SpeedButtonGoNearClick(Sender: TObject);
+    <B>procedure</B> SpeedButtonIncreaseClick(Sender: TObject);
+    <B>procedure</B> SpeedButtonTotalClick(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  SearchForm: TSearchForm;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TSearchForm.FormCreate(Sender: TObject);
+<B>begin</B>
+  Table1.IndexFieldNames := <I>'LastName'</I>;
+  Table1.First;
+<B>end</B>;
+
+<B>procedure</B> TSearchForm.SpeedButtonGotoClick(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// short-hand</I></FONT>
+  <B>if</B> <B>not</B> Table1.FindKey ([EditName.Text]) <B>then</B>
+    MessageDlg (<I>'Name not found'</I>, mtError, [mbOk], 0);
+
+  <FONT COLOR="#000080"><I>// alternative code:</I></FONT>
+  <FONT COLOR="#000080"><I>{Table1.SetKey;
+  Table1.FieldByName('LastName').AsString := EditName.Text;
+  Table1.KeyFieldCount := 1;
+  if not Table1.GotoKey then
+    MessageDlg ('Name not found', mtError, [mbOk], 0);}</I></FONT>
+<B>end</B>;
+
+<B>procedure</B> TSearchForm.SpeedButtonGoNearClick(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// short-hand</I></FONT>
+  Table1.FindNearest ([EditName.Text]);
+
+  <FONT COLOR="#000080"><I>// alternative code:</I></FONT>
+  <FONT COLOR="#000080"><I>{Table1.SetKey;
+  Table1.FieldByName('LastName').AsString := EditName.Text;
+  Table1.GotoNearest;}</I></FONT>
+<B>end</B>;
+
+<B>procedure</B> TSearchForm.SpeedButtonIncreaseClick(Sender: TObject);
+<B>var</B>
+  Bookmark: TBookmark;
+  Total: Real;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>{store the current position, crating a new bookmark}</I></FONT>
+  Bookmark := Table1.GetBookmark;
+  Table1.DisableControls;
+  Total := 0;
+  <FONT COLOR="#000080"><I>{start edit mode}</I></FONT>
+  <B>try</B>
+    Table1.First;
+    <B>while</B> <B>not</B> Table1.EOF <B>do</B>
+    <B>begin</B>
+      Table1.Edit;
+      Table1Salary.Value := Round (Table1Salary.Value *
+        SpinEdit1.Value) / 100;
+      Total := Total + Table1Salary.Value;
+      Table1.Next;
+    <B>end</B>;
+  <B>finally</B>
+    <FONT COLOR="#000080"><I>{go back to the bookmark and destroy it}</I></FONT>
+    Table1.GotoBookmark (Bookmark);
+    Table1.FreeBookmark (Bookmark);
+    Table1.EnableControls;
+  <B>end</B>;
+  MessageDlg (<I>'Sum of new salaries is '</I> +
+    Format (<I>'%m'</I>, [Total]), mtInformation, [mbOk], 0);
+<B>end</B>;
+
+<B>procedure</B> TSearchForm.SpeedButtonTotalClick(Sender: TObject);
+<B>var</B>
+  Bookmark: TBookmark;
+  Total: Real;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>{store the current position, crating a new bookmark}</I></FONT>
+  Bookmark := Table1.GetBookmark;
+  Table1.DisableControls;
+  Total := 0;
+  <B>try</B>
+    Table1.First;
+    <B>while</B> <B>not</B> Table1.EOF <B>do</B>
+    <B>begin</B>
+      Total := Total + Table1Salary.Value;
+      Table1.Next;
+    <B>end</B>;
+  <B>finally</B>
+    <FONT COLOR="#000080"><I>{go back to the bookmark and destroy it}</I></FONT>
+    Table1.GotoBookmark (Bookmark);
+    Table1.FreeBookmark (Bookmark);
+    Table1.EnableControls;
+  <B>end</B>;
+  MessageDlg (<I>'Sum of new salaries is '</I> +
+    Format (<I>'%m'</I>, [Total]), mtInformation, [mbOk], 0);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=TOTALF.DFM><H3>TOTALF.DFM</H3></A>
+
+<PRE>
+<B>object</B> SearchForm: TSearchForm
+  Left = 224
+  Top = 187
+  Width = 491
+  Height = 187
+  ActiveControl = Panel1
+  Caption = <I>'Table Search'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clBlack
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  Position = poScreenCenter
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Panel1: TPanel
+    Left = 0
+    Top = 0
+    Width = 483
+    Height = 41
+    Align = alTop
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clBlack
+    Font.Height = -13
+    Font.Name = <I>'Arial'</I>
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 0
+    <B>object</B> SpeedButtonFirst: TSpeedButton
+      Left = 8
+      Top = 8
+      Width = 40
+      Height = 25
+      Action = First1
+    <B>end</B>
+    <B>object</B> SpeedButtonGoto: TSpeedButton
+      Left = 304
+      Top = 8
+      Width = 25
+      Height = 25
+      Caption = <I>'-&gt;'</I>
+      OnClick = SpeedButtonGotoClick
+    <B>end</B>
+    <B>object</B> SpeedButtonGoNear: TSpeedButton
+      Left = 328
+      Top = 8
+      Width = 25
+      Height = 25
+      Caption = <I>'~&gt;'</I>
+      OnClick = SpeedButtonGoNearClick
+    <B>end</B>
+    <B>object</B> SpeedButtonIncrease: TSpeedButton
+      Left = 368
+      Top = 8
+      Width = 25
+      Height = 25
+      Caption = <I>'%'</I>
+      OnClick = SpeedButtonIncreaseClick
+    <B>end</B>
+    <B>object</B> SpeedButtonTotal: TSpeedButton
+      Left = 448
+      Top = 8
+      Width = 25
+      Height = 25
+      Caption = <I>'$$'</I>
+      OnClick = SpeedButtonTotalClick
+    <B>end</B>
+    <B>object</B> SpeedButtonPrior: TSpeedButton
+      Left = 48
+      Top = 8
+      Width = 40
+      Height = 25
+      Action = Prior1
+    <B>end</B>
+    <B>object</B> SpeedButtonNext: TSpeedButton
+      Left = 88
+      Top = 8
+      Width = 40
+      Height = 25
+      Action = Next1
+    <B>end</B>
+    <B>object</B> SpeedButtonLast: TSpeedButton
+      Left = 128
+      Top = 8
+      Width = 40
+      Height = 25
+      Action = Last1
+    <B>end</B>
+    <B>object</B> EditName: TEdit
+      Left = 183
+      Top = 11
+      Width = 122
+      Height = 21
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBlack
+      Font.Height = -11
+      Font.Name = <I>'MS Sans Serif'</I>
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 0
+      Text = <I>'Williams'</I>
+    <B>end</B>
+    <B>object</B> SpinEdit1: TSpinEdit
+      Left = 392
+      Top = 10
+      Width = 49
+      Height = 22
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBlack
+      Font.Height = -11
+      Font.Name = <I>'MS Sans Serif'</I>
+      Font.Style = []
+      Increment = 5
+      MaxValue = 200
+      MinValue = 50
+      ParentFont = False
+      TabOrder = 1
+      Value = 105
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> Panel2: TPanel
+    Left = 0
+    Top = 41
+    Width = 483
+    Height = 119
+    Align = alClient
+    BevelInner = bvLowered
+    BorderWidth = 4
+    Caption = <I>'Panel2'</I>
+    TabOrder = 1
+    <B>object</B> ScrollBox: TScrollBox
+      Left = 6
+      Top = 6
+      Width = 471
+      Height = 107
+      HorzScrollBar.Margin = 6
+      VertScrollBar.Margin = 6
+      Align = alClient
+      BorderStyle = bsNone
+      TabOrder = 0
+      <B>object</B> Label1: TLabel
+        Left = 230
+        Top = 17
+        Width = 60
+        Height = 13
+        Alignment = taRightJustify
+        AutoSize = False
+        Caption = <I>'&amp;Emp No'</I>
+        FocusControl = EditEmpNo
+      <B>end</B>
+      <B>object</B> Label2: TLabel
+        Left = 14
+        Top = 15
+        Width = 60
+        Height = 13
+        Alignment = taRightJustify
+        AutoSize = False
+        Caption = <I>'&amp;Last Name'</I>
+        FocusControl = EditLastName
+      <B>end</B>
+      <B>object</B> Label3: TLabel
+        Left = 14
+        Top = 36
+        Width = 60
+        Height = 13
+        Alignment = taRightJustify
+        AutoSize = False
+        Caption = <I>'&amp;First Name'</I>
+        FocusControl = EditFirstName
+      <B>end</B>
+      <B>object</B> Label4: TLabel
+        Left = 14
+        Top = 58
+        Width = 60
+        Height = 13
+        Alignment = taRightJustify
+        AutoSize = False
+        Caption = <I>'&amp;Phone Ext'</I>
+        FocusControl = EditPhoneExt
+      <B>end</B>
+      <B>object</B> Label5: TLabel
+        Left = 230
+        Top = 39
+        Width = 60
+        Height = 13
+        Alignment = taRightJustify
+        AutoSize = False
+        Caption = <I>'&amp;Hire Date'</I>
+        FocusControl = EditHireDate
+      <B>end</B>
+      <B>object</B> Label6: TLabel
+        Left = 14
+        Top = 79
+        Width = 60
+        Height = 13
+        Alignment = taRightJustify
+        AutoSize = False
+        Caption = <I>'&amp;Salary'</I>
+        FocusControl = EditSalary
+      <B>end</B>
+      <B>object</B> EditEmpNo: TDBEdit
+        Left = 296
+        Top = 14
+        Width = 57
+        Height = 21
+        DataField = <I>'EmpNo'</I>
+        DataSource = DataSource1
+        TabOrder = 0
+      <B>end</B>
+      <B>object</B> EditLastName: TDBEdit
+        Left = 80
+        Top = 12
+        Width = 97
+        Height = 21
+        DataField = <I>'LastName'</I>
+        DataSource = DataSource1
+        TabOrder = 1
+      <B>end</B>
+      <B>object</B> EditFirstName: TDBEdit
+        Left = 80
+        Top = 33
+        Width = 97
+        Height = 21
+        DataField = <I>'FirstName'</I>
+        DataSource = DataSource1
+        TabOrder = 2
+      <B>end</B>
+      <B>object</B> EditPhoneExt: TDBEdit
+        Left = 80
+        Top = 55
+        Width = 97
+        Height = 21
+        DataField = <I>'PhoneExt'</I>
+        DataSource = DataSource1
+        TabOrder = 3
+      <B>end</B>
+      <B>object</B> EditHireDate: TDBEdit
+        Left = 296
+        Top = 36
+        Width = 57
+        Height = 21
+        DataField = <I>'HireDate'</I>
+        DataSource = DataSource1
+        TabOrder = 4
+      <B>end</B>
+      <B>object</B> EditSalary: TDBEdit
+        Left = 80
+        Top = 76
+        Width = 97
+        Height = 21
+        DataField = <I>'Salary'</I>
+        DataSource = DataSource1
+        TabOrder = 5
+      <B>end</B>
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> DataSource1: TDataSource
+    DataSet = Table1
+    Left = 263
+    Top = 109
+  <B>end</B>
+  <B>object</B> Table1: TTable
+    Active = True
+    DatabaseName = <I>'DBDEMOS'</I>
+    TableName = <I>'employee.db'</I>
+    Left = 316
+    Top = 109
+    <B>object</B> Table1EmpNo: TIntegerField
+      FieldName = <I>'EmpNo'</I>
+    <B>end</B>
+    <B>object</B> Table1LastName: TStringField
+      FieldName = <I>'LastName'</I>
+    <B>end</B>
+    <B>object</B> Table1FirstName: TStringField
+      FieldName = <I>'FirstName'</I>
+      Size = 15
+    <B>end</B>
+    <B>object</B> Table1PhoneExt: TStringField
+      FieldName = <I>'PhoneExt'</I>
+      Size = 4
+    <B>end</B>
+    <B>object</B> Table1HireDate: TDateTimeField
+      FieldName = <I>'HireDate'</I>
+    <B>end</B>
+    <B>object</B> Table1Salary: TCurrencyField
+      FieldName = <I>'Salary'</I>
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> ActionList1: TActionList
+    Left = 366
+    Top = 111
+    <B>object</B> First1: TDataSetFirst
+      Category = <I>'Dataset'</I>
+      Caption = <I>'&amp;First'</I>
+      Hint = <I>'First'</I>
+      ImageIndex = 0
+      DataSource = DataSource1
+    <B>end</B>
+    <B>object</B> Last1: TDataSetLast
+      Category = <I>'Dataset'</I>
+      Caption = <I>'&amp;Last'</I>
+      Hint = <I>'Last'</I>
+      ImageIndex = 3
+      DataSource = DataSource1
+    <B>end</B>
+    <B>object</B> Next1: TDataSetNext
+      Category = <I>'Dataset'</I>
+      Caption = <I>'&amp;Next'</I>
+      Hint = <I>'Next'</I>
+      ImageIndex = 2
+      DataSource = DataSource1
+    <B>end</B>
+    <B>object</B> Prior1: TDataSetPrior
+      Category = <I>'Dataset'</I>
+      Caption = <I>'&amp;Prior'</I>
+      Hint = <I>'Prior'</I>
+      ImageIndex = 1
+      DataSource = DataSource1
+    <B>end</B>
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

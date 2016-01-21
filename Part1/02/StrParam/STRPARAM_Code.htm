@@ -1,0 +1,33 @@
+<HTML><HEAD>
+<TITLE>Project: STRPARAM.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: STRPARAM.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#STRPARAM.DPR> STRPARAM.DPR</A>
+</UL>
+<HR>
+<A NAME=STRPARAM.DPR><H3>STRPARAM.DPR</H3></A>
+
+<PRE>
+<B>program</B> Strparam;
+
+<B>uses</B>
+  Windows;
+
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// show the full string</I></FONT>
+  MessageBox (0, cmdLine, <I>'StrParam Command Line'</I>, MB_OK);
+
+  <FONT COLOR="#000080"><I>// show the first parameter</I></FONT>
+  <B>if</B> ParamCount &gt; 0 <B>then</B>
+    MessageBox (0, PChar (ParamStr (1)), <I>'1st StrParam Parameter'</I>, MB_OK)
+  <B>else</B>
+    MessageBox (0, PChar (<I>'No parameters'</I>), <I>'1st StrParam Parameter'</I>, MB_OK);
+<B>end</B>.</PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

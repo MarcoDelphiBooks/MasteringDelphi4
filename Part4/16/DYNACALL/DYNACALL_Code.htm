@@ -1,0 +1,160 @@
+<HTML><HEAD>
+<TITLE>Project: DYNACALL.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: DYNACALL.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#DYNACALL.DPR> DYNACALL.DPR</A>
+<LI> <A HREF=#DYNAFORM.PAS> DYNAFORM.PAS</A>
+<LI> <A HREF=#DYNAFORM.DFM> DYNAFORM.DFM</A>
+</UL>
+<HR>
+<A NAME=DYNACALL.DPR><H3>DYNACALL.DPR</H3></A>
+
+<PRE>
+<B>program</B> Dynacall;
+
+<B>uses</B>
+  Forms,
+  DynaForm <B>in</B> <I>'DynaForm.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=DYNAFORM.PAS><H3>DYNAFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> DynaForm;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes, Graphics, Controls,
+  Forms, Dialogs, StdCtrls, Spin;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    Button1: TButton;
+    Edit1: TEdit;
+    Label1: TLabel;
+    SpinEdit1: TSpinEdit;
+    Label2: TLabel;
+    <B>procedure</B> Button1Click(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>type</B>
+  TIntFunction = <B>function</B> (I: Integer): Integer; <B>stdcall</B>;
+
+<B>const</B>
+  DllName = <I>'Firstdll.dll'</I>;
+
+<B>procedure</B> TForm1.Button1Click(Sender: TObject);
+<B>var</B>
+  HInst: THandle;
+  FPointer: TFarProc;
+  MyFunct: TIntFunction;
+<B>begin</B>
+  HInst := LoadLibrary (DllName);
+  <B>if</B> HInst &gt; 0 <B>then</B>
+  <B>try</B>
+    FPointer := GetProcAddress (HInst,
+      PChar (Edit1.Text));
+    <B>if</B> FPointer &lt;&gt; <B>nil</B> <B>then</B>
+    <B>begin</B>
+      MyFunct := TIntFunction (FPointer);
+      SpinEdit1.Value := MyFunct (SpinEdit1.Value);
+    <B>end</B>
+    <B>else</B>
+      ShowMessage (Edit1.Text + <I>' DLL function not found'</I>);
+  <B>finally</B>
+    FreeLibrary (HInst);
+  <B>end</B>
+  <B>else</B>
+    ShowMessage (DllName + <I>' library not found'</I>);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=DYNAFORM.DFM><H3>DYNAFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 241
+  Top = 155
+  Width = 368
+  Height = 139
+  Caption = <I>'Dynamic DLL Call'</I>
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clBlack
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Label1: TLabel
+    Left = 25
+    Top = 20
+    Width = 44
+    Height = 13
+    Caption = <I>'&amp;Function:'</I>
+    FocusControl = Edit1
+  <B>end</B>
+  <B>object</B> Label2: TLabel
+    Left = 32
+    Top = 72
+    Width = 27
+    Height = 13
+    Caption = <I>'&amp;Value'</I>
+    FocusControl = SpinEdit1
+  <B>end</B>
+  <B>object</B> Button1: TButton
+    Left = 239
+    Top = 16
+    Width = 89
+    Height = 23
+    Caption = <I>'&amp;Call'</I>
+    TabOrder = 0
+    OnClick = Button1Click
+  <B>end</B>
+  <B>object</B> Edit1: TEdit
+    Left = 80
+    Top = 16
+    Width = 145
+    Height = 21
+    TabOrder = 1
+    Text = <I>'Double'</I>
+  <B>end</B>
+  <B>object</B> SpinEdit1: TSpinEdit
+    Left = 80
+    Top = 68
+    Width = 146
+    Height = 22
+    MaxValue = 0
+    MinValue = 0
+    TabOrder = 2
+    Value = 10
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

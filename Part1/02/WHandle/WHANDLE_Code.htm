@@ -1,0 +1,104 @@
+<HTML><HEAD>
+<TITLE>Project: WHANDLE.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: WHANDLE.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#WHANDLE.DPR> WHANDLE.DPR</A>
+<LI> <A HREF=#WHANDLEF.PAS> WHANDLEF.PAS</A>
+<LI> <A HREF=#WHANDLEF.DFM> WHANDLEF.DFM</A>
+</UL>
+<HR>
+<A NAME=WHANDLE.DPR><H3>WHANDLE.DPR</H3></A>
+
+<PRE>
+<B>program</B> WHandle;
+
+<B>uses</B>
+  Forms,
+  WHandleF <B>in</B> <I>'WHandleF.pas'</I> <FONT COLOR="#000080"><I>{FormWHandle}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TFormWHandle, FormWHandle);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=WHANDLEF.PAS><H3>WHANDLEF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> WHandleF;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls;
+
+<B>type</B>
+  TFormWHandle = <B>class</B>(TForm)
+    BtnCallAPI: TButton;
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> BtnCallAPIClick(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  FormWHandle: TFormWHandle;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TFormWHandle.FormCreate(Sender: TObject);
+<B>begin</B>
+  Caption := Caption + <I>' '</I> + IntToStr (Handle);
+<B>end</B>;
+
+<B>procedure</B> TFormWHandle.BtnCallAPIClick(Sender: TObject);
+<B>begin</B>
+  SetWindowText (Handle, <I>'Hi'</I>);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=WHANDLEF.DFM><H3>WHANDLEF.DFM</H3></A>
+
+<PRE>
+<B>object</B> FormWHandle: TFormWHandle
+  Left = 201
+  Top = 124
+  Width = 259
+  Height = 115
+  Caption = <I>'Window Handle'</I>
+  Font.Charset = ANSI_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> BtnCallAPI: TButton
+    Left = 72
+    Top = 24
+    Width = 81
+    Height = 33
+    Caption = <I>'Call API'</I>
+    TabOrder = 0
+    OnClick = BtnCallAPIClick
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

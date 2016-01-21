@@ -1,0 +1,251 @@
+<HTML><HEAD>
+<TITLE>Project: DRAWDATA.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: DRAWDATA.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#DRAWDATA.DPR> DRAWDATA.DPR</A>
+<LI> <A HREF=#DRAWFORM.PAS> DRAWFORM.PAS</A>
+<LI> <A HREF=#DRAWFORM.DFM> DRAWFORM.DFM</A>
+</UL>
+<HR>
+<A NAME=DRAWDATA.DPR><H3>DRAWDATA.DPR</H3></A>
+
+<PRE>
+<B>program</B> DrawData;
+
+<B>uses</B>
+  Forms,
+  DrawForm <B>in</B> <I>'DrawForm.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=DRAWFORM.PAS><H3>DRAWFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> DrawForm;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  DBTables, DB, Grids, DBGrids, ExtCtrls, StdCtrls, DBCtrls;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    DataSource1: TDataSource;
+    DBGrid1: TDBGrid;
+    Table1: TTable;
+    Table1SpeciesNo: TFloatField;
+    Table1Category: TStringField;
+    Table1Common_Name: TStringField;
+    Table1Lengthcm: TFloatField;
+    Table1Notes: TMemoField;
+    Table1Graphic: TGraphicField;
+    <B>procedure</B> DBGrid1DrawColumnCell(Sender: TObject; <B>const</B> Rect: TRect;
+      DataCol: Integer; Column: TColumn; State: TGridDrawState);
+    <B>procedure</B> FormCreate(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.DBGrid1DrawColumnCell(Sender: TObject; <B>const</B> Rect: TRect;
+  DataCol: Integer; Column: TColumn; State: TGridDrawState);
+<B>var</B>
+  Code: Integer;
+  Bmp: TBitmap;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// erase existing output</I></FONT>
+  DBGrid1.Canvas.FillRect (Rect);
+
+  <B>if</B> Column.Field = Table1Graphic <B>then</B>
+  <B>begin</B>
+    <FONT COLOR="#000080"><I>// draw the image</I></FONT>
+    Bmp := TBitmap.Create;
+    <B>try</B>
+      Bmp.Assign (Table1Graphic);
+      DBGrid1.Canvas.StretchDraw (Rect, Bmp);
+    <B>finally</B>
+      Bmp.Free;
+    <B>end</B>;
+  <B>end</B>
+  <B>else</B>
+  <B>begin</B>
+    <FONT COLOR="#000080"><I>// choose the font color</I></FONT>
+    <B>if</B> (Column.Field = Table1Lengthcm) <B>and</B>
+        (Table1Lengthcm.AsInteger &gt; 100) <B>then</B>
+      DBGrid1.Canvas.Font.Color := clRed
+    <B>else</B> <B>if</B> gdSelected <B>in</B> State <B>then</B>
+      DBGrid1.Canvas.Font.Color := clHighlightText
+    <B>else</B>
+      DBGrid1.Canvas.Font.Color := Column.Font.Color;
+    <FONT COLOR="#000080"><I>// draw the standard text</I></FONT>
+    DBGrid1.Canvas.TextRect (
+      Rect, Rect.Left, Rect.Top,
+      Column.Field.AsString);
+  <B>end</B>;
+
+  <FONT COLOR="#000080"><I>// optionally draw the focus rectangle</I></FONT>
+  <B>if</B> gdFocused <B>in</B> State <B>then</B>
+    DBGrid1.Canvas.DrawFocusRect (Rect);
+<B>end</B>;
+
+<B>procedure</B> TForm1.FormCreate(Sender: TObject);
+<B>begin</B>
+  Table1.Active := True;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=DRAWFORM.DFM><H3>DRAWFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 4
+  Top = 143
+  Width = 790
+  Height = 309
+  Caption = <I>'Draw Data Grid'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> DBGrid1: TDBGrid
+    Left = 0
+    Top = 0
+    Width = 782
+    Height = 282
+    Align = alClient
+    BorderStyle = bsNone
+    DataSource = DataSource1
+    DefaultDrawing = False
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -16
+    Font.Name = <I>'MS Sans Serif'</I>
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 0
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = <I>'MS Sans Serif'</I>
+    TitleFont.Style = []
+    OnDrawColumnCell = DBGrid1DrawColumnCell
+  <B>end</B>
+  <B>object</B> DataSource1: TDataSource
+    DataSet = Table1
+    Left = 24
+    Top = 16
+  <B>end</B>
+  <B>object</B> Table1: TTable
+    DatabaseName = <I>'DBDEMOS'</I>
+    FieldDefs = &lt;
+      <B>item</B>
+        Name = <I>'Species No'</I>
+        DataType = ftFloat
+      <B>end</B>
+      <B>item</B>
+        Name = <I>'Category'</I>
+        DataType = ftString
+        Size = 15
+      <B>end</B>
+      <B>item</B>
+        Name = <I>'Common_Name'</I>
+        DataType = ftString
+        Size = 30
+      <B>end</B>
+      <B>item</B>
+        Name = <I>'Species Name'</I>
+        DataType = ftString
+        Size = 40
+      <B>end</B>
+      <B>item</B>
+        Name = <I>'Length (cm)'</I>
+        DataType = ftFloat
+      <B>end</B>
+      <B>item</B>
+        Name = <I>'Length_In'</I>
+        DataType = ftFloat
+      <B>end</B>
+      <B>item</B>
+        Name = <I>'Notes'</I>
+        DataType = ftMemo
+        Size = 50
+      <B>end</B>
+      <B>item</B>
+        Name = <I>'Graphic'</I>
+        DataType = ftGraphic
+      <B>end</B>&gt;
+    IndexDefs = &lt;
+      <B>item</B>
+        Name = <I>'Table1Index1'</I>
+        Fields = <I>'Species No'</I>
+        Options = [ixPrimary, ixUnique]
+      <B>end</B>&gt;
+    StoreDefs = True
+    TableName = <I>'biolife.db'</I>
+    Left = 24
+    Top = 72
+    <B>object</B> Table1SpeciesNo: TFloatField
+      FieldName = <I>'Species No'</I>
+      Visible = False
+    <B>end</B>
+    <B>object</B> Table1Category: TStringField
+      DisplayWidth = 12
+      FieldName = <I>'Category'</I>
+      Size = 15
+    <B>end</B>
+    <B>object</B> Table1Common_Name: TStringField
+      DisplayWidth = 23
+      FieldName = <I>'Common_Name'</I>
+      Size = 30
+    <B>end</B>
+    <B>object</B> Table1Lengthcm: TFloatField
+      DisplayWidth = 9
+      FieldName = <I>'Length (cm)'</I>
+    <B>end</B>
+    <B>object</B> Table1Notes: TMemoField
+      DisplayWidth = 36
+      FieldName = <I>'Notes'</I>
+      ReadOnly = True
+      BlobType = ftMemo
+      Size = 50
+    <B>end</B>
+    <B>object</B> Table1Graphic: TGraphicField
+      DisplayWidth = 9
+      FieldName = <I>'Graphic'</I>
+      ReadOnly = True
+      BlobType = ftGraphic
+    <B>end</B>
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

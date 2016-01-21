@@ -1,0 +1,270 @@
+<HTML><HEAD>
+<TITLE>Project: LISTSERV.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: LISTSERV.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#LISTSERV.DPR> LISTSERV.DPR</A>
+<LI> <A HREF=#LISTFORM.PAS> LISTFORM.PAS</A>
+<LI> <A HREF=#LISTSERV_TLB.PAS> LISTSERV_TLB.PAS</A>
+<LI> <A HREF=#LISTOBJ.PAS> LISTOBJ.PAS</A>
+<LI> <A HREF=#LISTFORM.DFM> LISTFORM.DFM</A>
+</UL>
+<HR>
+<A NAME=LISTSERV.DPR><H3>LISTSERV.DPR</H3></A>
+
+<PRE>
+<B>program</B> ListServ;
+
+<B>uses</B>
+  Forms,
+  ListForm <B>in</B> <I>'ListForm.pas'</I> <FONT COLOR="#000080"><I>{ListServForm}</I></FONT>,
+  ListServ_TLB <B>in</B> <I>'ListServ_TLB.pas'</I>,
+  ListObj <B>in</B> <I>'ListObj.pas'</I> <FONT COLOR="#000080"><I>{ListServer: CoClass}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.TLB}</I></FONT>
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TListServForm, ListServForm);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=LISTFORM.PAS><H3>LISTFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> ListForm;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls;
+
+<B>type</B>
+  TListServForm = <B>class</B>(TForm)
+    ListBox1: TListBox;
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  ListServForm: TListServForm;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=LISTSERV_TLB.PAS><H3>LISTSERV_TLB.PAS</H3></A>
+
+<PRE>
+<B>unit</B> ListServ_TLB;
+
+<FONT COLOR="#000080"><I>// ************************************************************************ //</I></FONT>
+<FONT COLOR="#000080"><I>// WARNING                                                                  //</I></FONT>
+<FONT COLOR="#000080"><I>// -------                                                                  //</I></FONT>
+<FONT COLOR="#000080"><I>// The types declared in this file were generated from data read from a     //</I></FONT>
+<FONT COLOR="#000080"><I>// Type Library. If this type library is explicitly or indirectly (via      //</I></FONT>
+<FONT COLOR="#000080"><I>// another type library referring to this type library) re-imported, or the //</I></FONT>
+<FONT COLOR="#000080"><I>// 'Refresh' command of the Type Library Editor activated while editing the //</I></FONT>
+<FONT COLOR="#000080"><I>// Type Library, the contents of this file will be regenerated and all      //</I></FONT>
+<FONT COLOR="#000080"><I>// manual modifications will be lost.                                       //</I></FONT>
+<FONT COLOR="#000080"><I>// ************************************************************************ //</I></FONT>
+
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+<FONT COLOR="#000080"><I>// HelpString: Project1 Library</I></FONT>
+<FONT COLOR="#000080"><I>// Version:    1.0</I></FONT>
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+
+<B>interface</B>
+
+<B>uses</B> Windows, ActiveX, Classes, Graphics, OleCtrls, StdVCL;
+
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+<FONT COLOR="#000080"><I>// GUIDS declared in the TypeLibrary. Following prefixes are used:      //</I></FONT>
+<FONT COLOR="#000080"><I>//   Type Libraries     : LIBID_xxxx                                    //</I></FONT>
+<FONT COLOR="#000080"><I>//   CoClasses          : CLSID_xxxx                                    //</I></FONT>
+<FONT COLOR="#000080"><I>//   DISPInterfaces     : DIID_xxxx                                     //</I></FONT>
+<FONT COLOR="#000080"><I>//   Non-DISP interfaces: IID_xxxx                                      //</I></FONT>
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+<B>const</B>
+  LIBID_ListServ: TGUID = <I>'{323C4A83-E400-11D1-B9F1-004845400FAA}'</I>;
+  IID_IListServer: TGUID = <I>'{323C4A84-E400-11D1-B9F1-004845400FAA}'</I>;
+  CLASS_ListServer: TGUID = <I>'{323C4A86-E400-11D1-B9F1-004845400FAA}'</I>;
+
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+<FONT COLOR="#000080"><I>// Forward declaration of interfaces defined in Type Library            //</I></FONT>
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+<B>type</B>
+  IListServer = <B>interface</B>;
+  IListServerDisp = <B>dispinterface</B>;
+
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+<FONT COLOR="#000080"><I>// Declaration of CoClasses defined in Type Library                     //</I></FONT>
+<FONT COLOR="#000080"><I>// (NOTE: Here we map each CoClass to it's Default Interface            //</I></FONT>
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+  ListServer = IListServer;
+
+  IListServer = <B>interface</B>(IDispatch)
+    [<I>'{323C4A84-E400-11D1-B9F1-004845400FAA}'</I>]
+    <B>function</B> Get_Items: IStrings; safecall;
+    <B>procedure</B> Set_Items(<B>const</B> Value: IStrings); safecall;
+    <B>function</B> Get_Font: IFontDisp; safecall;
+    <B>procedure</B> Set_Font(<B>const</B> Value: IFontDisp); safecall;
+    <B>property</B> Items: IStrings <B>read</B> Get_Items <B>write</B> Set_Items;
+    <B>property</B> Font: IFontDisp <B>read</B> Get_Font <B>write</B> Set_Font;
+  <B>end</B>;
+
+<FONT COLOR="#000080"><I>// Dispinterface declaration for dual interface IListServer</I></FONT>
+
+  IListServerDisp = <B>dispinterface</B>
+    [<I>'{323C4A84-E400-11D1-B9F1-004845400FAA}'</I>]
+    <B>property</B> Items: IStrings <B>dispid</B> 1;
+    <B>property</B> Font: IFontDisp <B>dispid</B> 2;
+  <B>end</B>;
+
+  CoListServer = <B>class</B>
+    <B>class</B> <B>function</B> Create: IListServer;
+    <B>class</B> <B>function</B> CreateRemote(<B>const</B> MachineName: <B>string</B>): IListServer;
+  <B>end</B>;
+
+<B>implementation</B>
+
+<B>uses</B> ComObj;
+
+<B>class</B> <B>function</B> CoListServer.Create: IListServer;
+<B>begin</B>
+  Result := CreateComObject(CLASS_ListServer) <B>as</B> IListServer;
+<B>end</B>;
+
+<B>class</B> <B>function</B> CoListServer.CreateRemote(<B>const</B> MachineName: <B>string</B>): IListServer;
+<B>begin</B>
+  Result := CreateRemoteComObject(MachineName, CLASS_ListServer) <B>as</B> IListServer;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=LISTOBJ.PAS><H3>LISTOBJ.PAS</H3></A>
+
+<PRE>
+<B>unit</B> ListObj;
+
+<B>interface</B>
+
+<B>uses</B>
+  ComObj, ActiveX, StdVCL, Classes, Graphics, ListServ_TLB;
+
+<B>type</B>
+  TListServer = <B>class</B>(TAutoObject, IListServer)
+  <B>private</B>
+    fItems: TStrings;
+    fFont: TFont;
+  <B>protected</B>
+    <B>function</B> Get_Font: IFontDisp; safecall;
+    <B>function</B> Get_Items: IStrings; safecall;
+    <B>procedure</B> Set_Font(<B>const</B> Value: IFontDisp); safecall;
+    <B>procedure</B> Set_Items(<B>const</B> Value: IStrings); safecall;
+  <B>public</B>
+    <B>destructor</B> Destroy; <B>override</B>;
+    <B>procedure</B> Initialize; <B>override</B>;
+  <B>end</B>;
+
+<B>implementation</B>
+
+<B>uses</B>
+  ComServ, ListForm, AxCtrls;
+
+<B>procedure</B> TListServer.Initialize;
+<B>begin</B>
+  <B>inherited</B> Initialize;
+  fItems := TStringList.Create;
+  fFont := TFont.Create;
+<B>end</B>;
+
+<B>destructor</B> TListServer.Destroy;
+<B>begin</B>
+  fItems.Free;
+  fFont.Free;
+  <B>inherited</B> Destroy;
+<B>end</B>;
+
+<B>function</B> TListServer.Get_Font: IFontDisp;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// get the form of the form</I></FONT>
+  fFont.Assign (ListServForm.Font);
+  <FONT COLOR="#000080"><I>// convert it</I></FONT>
+  GetOleFont (fFont, Result);
+<B>end</B>;
+
+<B>procedure</B> TListServer.Set_Font(<B>const</B> Value: IFontDisp);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// convert the font passed as parameter</I></FONT>
+  SetOleFont (fFont, Value);
+  <FONT COLOR="#000080"><I>// apply it to the form</I></FONT>
+  ListServForm.Font.Assign (fFont);
+  <FONT COLOR="#000080"><I>// force a refresh of the list box</I></FONT>
+  ListServForm.Listbox1.Invalidate;
+<B>end</B>;
+
+<B>function</B> TListServer.Get_Items: IStrings;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// get the listbox items</I></FONT>
+  fItems.Assign (ListServForm.Listbox1.Items);
+  <FONT COLOR="#000080"><I>// convert and return the strings</I></FONT>
+  GetOleStrings (fItems, Result);
+<B>end</B>;
+
+<B>procedure</B> TListServer.Set_Items(<B>const</B> Value: IStrings);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// convert the strings passed as parameter</I></FONT>
+  SetOleStrings (fItems, Value);
+  <FONT COLOR="#000080"><I>// copy to the listbox items</I></FONT>
+  ListServForm.Listbox1.Items.Assign (fItems);
+<B>end</B>;
+
+<B>initialization</B>
+  TAutoObjectFactory.Create(ComServer, TListServer,
+    Class_ListServer, ciMultiInstance, tmSingle);
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=LISTFORM.DFM><H3>LISTFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> ListServForm: TListServForm
+  Left = 192
+  Top = 107
+  Width = 379
+  Height = 282
+  Caption = <I>'List Server'</I>
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> ListBox1: TListBox
+    Left = 32
+    Top = 16
+    Width = 305
+    Height = 217
+    ItemHeight = 13
+    TabOrder = 0
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

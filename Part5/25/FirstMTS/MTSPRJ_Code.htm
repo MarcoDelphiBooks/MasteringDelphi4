@@ -1,0 +1,208 @@
+<HTML><HEAD>
+<TITLE>Project: MTSPRJ.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: MTSPRJ.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#MTSPRJ.DPR> MTSPRJ.DPR</A>
+<LI> <A HREF=#MTSPRJ_TLB.PAS> MTSPRJ_TLB.PAS</A>
+<LI> <A HREF=#MTSRM.PAS> MTSRM.PAS</A>
+<LI> <A HREF=#MTSRM.DFM> MTSRM.DFM</A>
+</UL>
+<HR>
+<A NAME=MTSPRJ.DPR><H3>MTSPRJ.DPR</H3></A>
+
+<PRE>
+<B>library</B> MtsPrj;
+
+<B>uses</B>
+  ComServ,
+  MtsPrj_TLB <B>in</B> <I>'MtsPrj_TLB.pas'</I>,
+  MtsRm <B>in</B> <I>'MtsRm.pas'</I> <FONT COLOR="#000080"><I>{FirstMTS: TMtsDataModule}</I></FONT> <FONT COLOR="#000080"><I>{FirstMTS: CoClass}</I></FONT>;
+
+<B>exports</B>
+  DllGetClassObject,
+  DllCanUnloadNow,
+  DllRegisterServer,
+  DllUnregisterServer;
+
+<FONT COLOR="#000080"><I>{$R *.TLB}</I></FONT>
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MTSPRJ_TLB.PAS><H3>MTSPRJ_TLB.PAS</H3></A>
+
+<PRE>
+<B>unit</B> MtsPrj_TLB;
+
+<FONT COLOR="#000080"><I>// ************************************************************************ //</I></FONT>
+<FONT COLOR="#000080"><I>// WARNING                                                                  //</I></FONT>
+<FONT COLOR="#000080"><I>// -------                                                                  //</I></FONT>
+<FONT COLOR="#000080"><I>// The types declared in this file were generated from data read from a     //</I></FONT>
+<FONT COLOR="#000080"><I>// Type Library. If this type library is explicitly or indirectly (via      //</I></FONT>
+<FONT COLOR="#000080"><I>// another type library referring to this type library) re-imported, or the //</I></FONT>
+<FONT COLOR="#000080"><I>// 'Refresh' command of the Type Library Editor activated while editing the //</I></FONT>
+<FONT COLOR="#000080"><I>// Type Library, the contents of this file will be regenerated and all      //</I></FONT>
+<FONT COLOR="#000080"><I>// manual modifications will be lost.                                       //</I></FONT>
+<FONT COLOR="#000080"><I>// ************************************************************************ //</I></FONT>
+
+<FONT COLOR="#000080"><I>// PASTLWTR : $Revision:   1.11.1.63  $</I></FONT>
+<FONT COLOR="#000080"><I>// File generated on 7/14/98 5:41:07 PM from Type Library described below.</I></FONT>
+
+<FONT COLOR="#000080"><I>// ************************************************************************ //</I></FONT>
+<FONT COLOR="#000080"><I>// Type Lib: C:\md4code\Part5\25\FirstMTS\MtsPrj.tlb</I></FONT>
+<FONT COLOR="#000080"><I>// IID\LCID: {4A0AD2F5-1B2C-11D2-B9F1-004845400FAA}\0</I></FONT>
+<FONT COLOR="#000080"><I>// Helpfile: </I></FONT>
+<FONT COLOR="#000080"><I>// HelpString: Project1 Library</I></FONT>
+<FONT COLOR="#000080"><I>// Version:    1.0</I></FONT>
+<FONT COLOR="#000080"><I>// ************************************************************************ //</I></FONT>
+
+<B>interface</B>
+
+<B>uses</B> Windows, ActiveX, Classes, Graphics, OleCtrls, StdVCL;
+
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+<FONT COLOR="#000080"><I>// GUIDS declared in the TypeLibrary. Following prefixes are used:      //</I></FONT>
+<FONT COLOR="#000080"><I>//   Type Libraries     : LIBID_xxxx                                    //</I></FONT>
+<FONT COLOR="#000080"><I>//   CoClasses          : CLASS_xxxx                                    //</I></FONT>
+<FONT COLOR="#000080"><I>//   DISPInterfaces     : DIID_xxxx                                     //</I></FONT>
+<FONT COLOR="#000080"><I>//   Non-DISP interfaces: IID_xxxx                                      //</I></FONT>
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+<B>const</B>
+  LIBID_MtsPrj: TGUID = <I>'{4A0AD2F5-1B2C-11D2-B9F1-004845400FAA}'</I>;
+  IID_IFirstMTS: TGUID = <I>'{4A0AD2F6-1B2C-11D2-B9F1-004845400FAA}'</I>;
+  CLASS_FirstMTS: TGUID = <I>'{4A0AD2F8-1B2C-11D2-B9F1-004845400FAA}'</I>;
+<B>type</B>
+
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+<FONT COLOR="#000080"><I>// Forward declaration of interfaces defined in Type Library            //</I></FONT>
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+  IFirstMTS = <B>interface</B>;
+  IFirstMTSDisp = <B>dispinterface</B>;
+
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+<FONT COLOR="#000080"><I>// Declaration of CoClasses defined in Type Library                     //</I></FONT>
+<FONT COLOR="#000080"><I>// (NOTE: Here we map each CoClass to its Default Interface)            //</I></FONT>
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+  FirstMTS = IFirstMTS;
+
+
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+<FONT COLOR="#000080"><I>// Interface: IFirstMTS</I></FONT>
+<FONT COLOR="#000080"><I>// Flags:     (4416) Dual OleAutomation Dispatchable</I></FONT>
+<FONT COLOR="#000080"><I>// GUID:      {4A0AD2F6-1B2C-11D2-B9F1-004845400FAA}</I></FONT>
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+  IFirstMTS = <B>interface</B>(IDataBroker)
+    [<I>'{4A0AD2F6-1B2C-11D2-B9F1-004845400FAA}'</I>]
+    <B>procedure</B> Hello; safecall;
+    <B>function</B> Get_Table1: IProvider; safecall;
+    <B>property</B> Table1: IProvider <B>read</B> Get_Table1;
+  <B>end</B>;
+
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+<FONT COLOR="#000080"><I>// DispIntf:  IFirstMTSDisp</I></FONT>
+<FONT COLOR="#000080"><I>// Flags:     (4416) Dual OleAutomation Dispatchable</I></FONT>
+<FONT COLOR="#000080"><I>// GUID:      {4A0AD2F6-1B2C-11D2-B9F1-004845400FAA}</I></FONT>
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+  IFirstMTSDisp = <B>dispinterface</B>
+    [<I>'{4A0AD2F6-1B2C-11D2-B9F1-004845400FAA}'</I>]
+    <B>procedure</B> Hello; <B>dispid</B> 1;
+    <B>property</B> Table1: IProvider readonly <B>dispid</B> 2;
+    <B>function</B> GetProviderNames: OleVariant; <B>dispid</B> 22929905;
+  <B>end</B>;
+
+  CoFirstMTS = <B>class</B>
+    <B>class</B> <B>function</B> Create: IFirstMTS;
+    <B>class</B> <B>function</B> CreateRemote(<B>const</B> MachineName: <B>string</B>): IFirstMTS;
+  <B>end</B>;
+
+<B>implementation</B>
+
+<B>uses</B> ComObj;
+
+<B>class</B> <B>function</B> CoFirstMTS.Create: IFirstMTS;
+<B>begin</B>
+  Result := CreateComObject(CLASS_FirstMTS) <B>as</B> IFirstMTS;
+<B>end</B>;
+
+<B>class</B> <B>function</B> CoFirstMTS.CreateRemote(<B>const</B> MachineName: <B>string</B>): IFirstMTS;
+<B>begin</B>
+  Result := CreateRemoteComObject(MachineName, CLASS_FirstMTS) <B>as</B> IFirstMTS;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MTSRM.PAS><H3>MTSRM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> MtsRm;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  ComServ, ComObj, VCLCom, StdVcl, BdeProv, BdeMts, DataBkr, DBClient,
+  MtsRdm, Mtx, MtsPrj_TLB, Db, DBTables;
+
+<B>type</B>
+  TFirstMTS = <B>class</B>(TMtsDataModule, IFirstMTS)
+    Table1: TTable;
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>protected</B>
+    <B>procedure</B> Hello; safecall;
+    <B>function</B> Get_Table1: IProvider; safecall;
+  <B>end</B>;
+
+<B>var</B>
+  FirstMTS: TFirstMTS;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TFirstMTS.Hello;
+<B>begin</B>
+  Beep;
+<B>end</B>;
+
+<B>function</B> TFirstMTS.Get_Table1: IProvider;
+<B>begin</B>
+  Result := Table1.Provider;
+<B>end</B>;
+
+<B>initialization</B>
+  TComponentFactory.Create(ComServer, TFirstMTS,
+    Class_FirstMTS, ciMultiInstance, tmApartment);
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MTSRM.DFM><H3>MTSRM.DFM</H3></A>
+
+<PRE>
+<B>object</B> FirstMTS: TFirstMTS
+  OldCreateOrder = False
+  Left = 228
+  Top = 107
+  Height = 162
+  Width = 231
+  <B>object</B> Table1: TTable
+    DatabaseName = <I>'DBDEMOS'</I>
+    TableName = <I>'customer.db'</I>
+    Left = 40
+    Top = 24
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

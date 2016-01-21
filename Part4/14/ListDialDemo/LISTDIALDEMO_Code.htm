@@ -1,0 +1,130 @@
+<HTML><HEAD>
+<TITLE>Project: LISTDIALDEMO.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: LISTDIALDEMO.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#LISTDIALDEMO.DPR> LISTDIALDEMO.DPR</A>
+<LI> <A HREF=#LDDEMOF.PAS> LDDEMOF.PAS</A>
+<LI> <A HREF=#LDDEMOF.DFM> LDDEMOF.DFM</A>
+</UL>
+<HR>
+<A NAME=LISTDIALDEMO.DPR><H3>LISTDIALDEMO.DPR</H3></A>
+
+<PRE>
+<B>program</B> ListDialDemo;
+
+<B>uses</B>
+  Forms,
+  LdDemoF <B>in</B> <I>'LdDemoF.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=LDDEMOF.PAS><H3>LDDEMOF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> LdDemoF;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes, Graphics, Controls,
+  Forms, Dialogs, StdCtrls, Md4ListDial;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    Button1: TButton;
+    Edit1: TEdit;
+    Md4ListDialog1: TMd4ListDialog;
+    <B>procedure</B> Button1Click(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.Button1Click(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// select the text of the edit,</I></FONT>
+  <FONT COLOR="#000080"><I>// if corresponding to one of the strings</I></FONT>
+  Md4ListDialog1.Selected :=
+    Md4ListDialog1.Lines.IndexOf (Edit1.Text);
+  <FONT COLOR="#000080"><I>// run the dialog and get the result  </I></FONT>
+  <B>if</B> Md4ListDialog1.Execute <B>then</B>
+    Edit1.Text := Md4ListDialog1.SelItem;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=LDDEMOF.DFM><H3>LDDEMOF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 251
+  Top = 147
+  Width = 296
+  Height = 146
+  Caption = <I>'List Dialog Test'</I>
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clBlack
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Button1: TButton
+    Left = 104
+    Top = 24
+    Width = 89
+    Height = 33
+    Caption = <I>'Select...'</I>
+    TabOrder = 0
+    OnClick = Button1Click
+  <B>end</B>
+  <B>object</B> Edit1: TEdit
+    Left = 48
+    Top = 72
+    Width = 201
+    Height = 21
+    TabOrder = 1
+    Text = <I>'Edit1'</I>
+  <B>end</B>
+  <B>object</B> Md4ListDialog1: TMd4ListDialog
+    Lines.Strings = (
+      <I>'one'</I>
+      <I>'two'</I>
+      <I>'three'</I>
+      <I>'four'</I>
+      <I>'five'</I>
+      <I>'six'</I>
+      <I>'seven'</I>
+      <I>'eight'</I>
+      <I>'nine'</I>
+      <I>'ten'</I>)
+    Selected = 0
+    Title = <I>'Choose a string'</I>
+    Left = 40
+    Top = 16
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

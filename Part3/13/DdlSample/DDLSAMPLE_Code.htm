@@ -1,0 +1,220 @@
+<HTML><HEAD>
+<TITLE>Project: DDLSAMPLE.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: DDLSAMPLE.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#DDLSAMPLE.DPR> DDLSAMPLE.DPR</A>
+<LI> <A HREF=#DDLFORM.PAS> DDLFORM.PAS</A>
+<LI> <A HREF=#DDLFORM.DFM> DDLFORM.DFM</A>
+</UL>
+<HR>
+<A NAME=DDLSAMPLE.DPR><H3>DDLSAMPLE.DPR</H3></A>
+
+<PRE>
+<B>program</B> DdlSample;
+
+<B>uses</B>
+  Forms,
+  DdlForm <B>in</B> <I>'DdlForm.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=DDLFORM.PAS><H3>DDLFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> DdlForm;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls, ExtCtrls, DBTables, Db;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    Query1: TQuery;
+    Database1: TDatabase;
+    grpCommands: TRadioGroup;
+    Memo1: TMemo;
+    Button1: TButton;
+    Button2: TButton;
+    Label1: TLabel;
+    <B>procedure</B> grpCommandsClick(Sender: TObject);
+    <B>procedure</B> Button2Click(Sender: TObject);
+    <B>procedure</B> Button1Click(Sender: TObject);
+    <B>procedure</B> FormCreate(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>const</B>
+  MaxCmds = 6;
+  Commands: <B>array</B> [0..MaxCmds - 1] <B>of</B> PChar = (
+    <I>'CREATE TABLE Customers ('#13'  CUST_NO INTEGER NOT NULL CONSTRAINT CUST_PK PRIMARY KEY,'#13'  FIRSTNAME VARCHAR(30) NOT NULL,'#13'  LASTNAME VARCHAR(30) NOT NULL,'#13'  ADDRESS VARCHAR(30),'#13'  PHONE_NUMBER VARCHAR(20)'#13');'</I>            ,
+    <I>'ALTER TABLE Customers DROP CONSTRAINT CUST_PK'</I>,
+    <I>'CREATE INDEX CUST_NAME ON CUSTOMERS (NAME);'</I>,
+    <I>'CREATE VIEW FullCustNames (FullName) AS'#13'SELECT (Name || &quot; &quot; || Surname) FROM Customers'</I>  ,
+    <I>'CREATE GENERATOR custno_generator;'</I>,
+    <I>'CREATE TRIGGER SET_CUST_NO FOR CUSTOMERS'#13'BEFORE INSERT POSITION 0 AS'#13'BEGIN'#13'   new.cust_no = gen_id(custno_generator, 1);'#13'END'</I>
+          );
+
+<B>procedure</B> TForm1.grpCommandsClick(Sender: TObject);
+<B>begin</B>
+  Memo1.Lines.SetText(Commands[grpCommands.ItemIndex]);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Button2Click(Sender: TObject);
+<B>begin</B>
+  Close;
+<B>end</B>;
+
+<B>procedure</B> TForm1.Button1Click(Sender: TObject);
+<B>begin</B>
+  Query1.SQL.Assign(Memo1.Lines);
+  <B>try</B>
+    Query1.ExecSQL;
+    ShowMessage(<I>'SQL command executed successfully.'</I>);
+  <B>except</B>
+    <B>raise</B>;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TForm1.FormCreate(Sender: TObject);
+<B>begin</B>
+  grpCommandsClick(<B>nil</B>);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=DDLFORM.DFM><H3>DDLFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 198
+  Top = 144
+  BorderStyle = bsDialog
+  Caption = <I>'SQL''s Data Definition Language Commands sample'</I>
+     ClientHeight = 254
+  ClientWidth = 480
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = False
+  Position = poDesktopCenter
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Label1: TLabel
+    Left = 5
+    Top = 2
+    Width = 472
+    Height = 29
+    AutoSize = False
+    Caption =
+       <I>'WARNING: it''s not safe to allow client applications to execute D'</I>    +
+      <I>'DL commands! Users may seriously corrupt the database.'</I>
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clRed
+    Font.Height = -11
+    Font.Name = <I>'MS Sans Serif'</I>
+    Font.Style = [fsBold]
+    ParentFont = False
+    WordWrap = True
+  <B>end</B>
+  <B>object</B> grpCommands: TRadioGroup
+    Left = 4
+    Top = 33
+    Width = 157
+    Height = 183
+    Caption = <I>'DDL Command'</I>
+    ItemIndex = 0
+    Items.Strings = (
+      <I>'CREATE TABLE'</I>
+      <I>'ALTER TABLE'</I>
+      <I>'CREATE INDEX'</I>
+      <I>'CREATE VIEW'</I>
+      <I>'CREATE GENERATOR'</I>
+      <I>'CREATE TRIGGER'</I>)
+    TabOrder = 0
+    OnClick = grpCommandsClick
+  <B>end</B>
+  <B>object</B> Memo1: TMemo
+    Left = 164
+    Top = 38
+    Width = 313
+    Height = 210
+    TabOrder = 1
+  <B>end</B>
+  <B>object</B> Button1: TButton
+    Left = 4
+    Top = 223
+    Width = 75
+    Height = 25
+    Caption = <I>'&amp;Execute!'</I>
+    TabOrder = 2
+    OnClick = Button1Click
+  <B>end</B>
+  <B>object</B> Button2: TButton
+    Left = 84
+    Top = 223
+    Width = 75
+    Height = 25
+    Caption = <I>'&amp;Close'</I>
+    TabOrder = 3
+    OnClick = Button2Click
+  <B>end</B>
+  <B>object</B> Query1: TQuery
+    DatabaseName = <I>'AppDB'</I>
+    Left = 132
+    Top = 187
+    ParamData = &lt;&gt;
+  <B>end</B>
+  <B>object</B> Database1: TDatabase
+    AliasName = <I>'IBLOCAL'</I>
+    DatabaseName = <I>'AppDB'</I>
+    Params.Strings = (
+      <I>'USER NAME=SYSDBA'</I>
+      <I>'PASSWORD=masterkey'</I>
+      <I>'OPEN MODE=READ/WRITE'</I>
+      <I>'SCHEMA CACHE SIZE=8'</I>
+      <I>'SQLPASSTHRU MODE=SHARED AUTOCOMMIT'</I>
+      <I>'SCHEMA CACHE TIME=-1'</I>
+      <I>'MAX ROWS=-1'</I>
+      <I>'BATCH COUNT=200'</I>
+      <I>'ENABLE SCHEMA CACHE=FALSE'</I>
+      <I>'SCHEMA CACHE DIR='</I>
+      <I>'ENABLE BCD=FALSE'</I>
+      <I>'BLOBS TO CACHE=64'</I>
+      <I>'BLOB SIZE=32'</I>)
+    SessionName = <I>'Default'</I>
+    Left = 104
+    Top = 187
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

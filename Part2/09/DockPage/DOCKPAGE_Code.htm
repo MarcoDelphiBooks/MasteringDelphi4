@@ -1,0 +1,288 @@
+<HTML><HEAD>
+<TITLE>Project: DOCKPAGE.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: DOCKPAGE.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#DOCKPAGE.DPR> DOCKPAGE.DPR</A>
+<LI> <A HREF=#DOCKPF.PAS> DOCKPF.PAS</A>
+<LI> <A HREF=#EDITFORM.PAS> EDITFORM.PAS</A>
+<LI> <A HREF=#CALFORM.PAS> CALFORM.PAS</A>
+<LI> <A HREF=#DOCKPF.DFM> DOCKPF.DFM</A>
+<LI> <A HREF=#EDITFORM.DFM> EDITFORM.DFM</A>
+<LI> <A HREF=#CALFORM.DFM> CALFORM.DFM</A>
+</UL>
+<HR>
+<A NAME=DOCKPAGE.DPR><H3>DOCKPAGE.DPR</H3></A>
+
+<PRE>
+<B>program</B> DockPage;
+
+<B>uses</B>
+  Forms,
+  DockPF <B>in</B> <I>'DockPF.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>,
+  EditForm <B>in</B> <I>'EditForm.pas'</I> <FONT COLOR="#000080"><I>{Form2}</I></FONT>,
+  CalForm <B>in</B> <I>'CalForm.pas'</I> <FONT COLOR="#000080"><I>{Form3}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.CreateForm(TForm2, Form2);
+  Application.CreateForm(TForm3, Form3);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=DOCKPF.PAS><H3>DOCKPF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> DockPF;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  ComCtrls, ExtCtrls, StdCtrls;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    Splitter1: TSplitter;
+    Memo1: TMemo;
+    Panel1: TPanel;
+    ListBox1: TListBox;
+    PageControl1: TPageControl;
+    TabSheet1: TTabSheet;
+    <B>procedure</B> Panel1MouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.Panel1MouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+<B>begin</B>
+  PageControl1.BeginDrag (False, 10);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=EDITFORM.PAS><H3>EDITFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> EditForm;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls;
+
+<B>type</B>
+  TForm2 = <B>class</B>(TForm)
+    Memo1: TMemo;
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form2: TForm2;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=CALFORM.PAS><H3>CALFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> CalForm;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  ComCtrls;
+
+<B>type</B>
+  TForm3 = <B>class</B>(TForm)
+    MonthCalendar1: TMonthCalendar;
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form3: TForm3;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=DOCKPF.DFM><H3>DOCKPF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 287
+  Top = 208
+  Width = 555
+  Height = 411
+  Caption = <I>'Docking Pages'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = False
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Splitter1: TSplitter
+    Left = 267
+    Top = 0
+    Width = 3
+    Height = 384
+    Cursor = crHSplit
+  <B>end</B>
+  <B>object</B> Memo1: TMemo
+    Left = 270
+    Top = 0
+    Width = 277
+    Height = 384
+    Align = alClient
+    Lines.Strings = (
+      <I>'Text...'</I>)
+    TabOrder = 0
+  <B>end</B>
+  <B>object</B> Panel1: TPanel
+    Left = 0
+    Top = 0
+    Width = 267
+    Height = 384
+    Align = alLeft
+    AutoSize = True
+    DockSite = True
+    TabOrder = 1
+    OnMouseDown = Panel1MouseDown
+    <B>object</B> PageControl1: TPageControl
+      Left = 1
+      Top = 1
+      Width = 265
+      Height = 382
+      ActivePage = TabSheet1
+      Align = alClient
+      DockSite = True
+      DragKind = dkDock
+      TabOrder = 0
+      <B>object</B> TabSheet1: TTabSheet
+        Caption = <I>'List'</I>
+        <B>object</B> ListBox1: TListBox
+          Left = 0
+          Top = 0
+          Width = 257
+          Height = 354
+          Align = alClient
+          ItemHeight = 13
+          Items.Strings = (
+            <I>'one'</I>
+            <I>'two'</I>
+            <I>'three'</I>)
+          TabOrder = 0
+        <B>end</B>
+      <B>end</B>
+    <B>end</B>
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<A NAME=EDITFORM.DFM><H3>EDITFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form2: TForm2
+  Left = 192
+  Top = 107
+  Width = 382
+  Height = 247
+  Caption = <I>'Small Editor'</I>
+  Color = clBtnFace
+  DragKind = dkDock
+  DragMode = dmAutomatic
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = False
+  Visible = True
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Memo1: TMemo
+    Left = 0
+    Top = 0
+    Width = 374
+    Height = 220
+    Align = alClient
+    Lines.Strings = (
+      <I>'Memo1'</I>)
+    TabOrder = 0
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<A NAME=CALFORM.DFM><H3>CALFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form3: TForm3
+  Left = 280
+  Top = 139
+  Width = 195
+  Height = 333
+  Caption = <I>'Calendar'</I>
+  Color = clBtnFace
+  DragKind = dkDock
+  DragMode = dmAutomatic
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = False
+  Visible = True
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> MonthCalendar1: TMonthCalendar
+    Left = 0
+    Top = 0
+    Width = 187
+    Height = 306
+    Align = alClient
+    AutoSize = True
+    Date = 35986.3429524306
+    TabOrder = 0
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

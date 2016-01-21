@@ -1,0 +1,745 @@
+<HTML><HEAD>
+<TITLE>Project: XFORM1.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: XFORM1.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#XFORM1.DPR> XFORM1.DPR</A>
+<LI> <A HREF=#XFORM1_TLB.PAS> XFORM1_TLB.PAS</A>
+<LI> <A HREF=#FORMX1.PAS> FORMX1.PAS</A>
+<LI> <A HREF=#FORMX1.DFM> FORMX1.DFM</A>
+</UL>
+<HR>
+<A NAME=XFORM1.DPR><H3>XFORM1.DPR</H3></A>
+
+<PRE>
+<B>library</B> Xform1;
+
+<B>uses</B>
+  ComServ,
+  XFORM1_TLB <B>in</B> <I>'XFORM1_TLB.pas'</I>,
+  FormX1 <B>in</B> <I>'FormX1.pas'</I> <FONT COLOR="#000080"><I>{FormX1: TActiveForm}</I></FONT> <FONT COLOR="#000080"><I>{FormX1: CoClass}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$E ocx}</I></FONT>
+
+<B>exports</B>
+  DllGetClassObject,
+  DllCanUnloadNow,
+  DllRegisterServer,
+  DllUnregisterServer;
+
+<FONT COLOR="#000080"><I>{$R *.TLB}</I></FONT>
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=XFORM1_TLB.PAS><H3>XFORM1_TLB.PAS</H3></A>
+
+<PRE>
+<B>unit</B> XFORM1_TLB;
+
+<FONT COLOR="#000080"><I>// ************************************************************************ //</I></FONT>
+<FONT COLOR="#000080"><I>// WARNING                                                                  //</I></FONT>
+<FONT COLOR="#000080"><I>// -------                                                                  //</I></FONT>
+<FONT COLOR="#000080"><I>// The types declared in this file were generated from data read from a     //</I></FONT>
+<FONT COLOR="#000080"><I>// Type Library. If this type library is explicitly or indirectly (via      //</I></FONT>
+<FONT COLOR="#000080"><I>// another type library referring to this type library) re-imported, or the //</I></FONT>
+<FONT COLOR="#000080"><I>// 'Refresh' command of the Type Library Editor activated while editing the //</I></FONT>
+<FONT COLOR="#000080"><I>// Type Library, the contents of this file will be regenerated and all      //</I></FONT>
+<FONT COLOR="#000080"><I>// manual modifications will be lost.                                       //</I></FONT>
+<FONT COLOR="#000080"><I>// ************************************************************************ //</I></FONT>
+
+<FONT COLOR="#000080"><I>// PASTLWTR : $Revision:   1.11.1.63  $</I></FONT>
+<FONT COLOR="#000080"><I>// File generated on 6/27/98 12:21:09 AM from Type Library described below.</I></FONT>
+
+<FONT COLOR="#000080"><I>// ************************************************************************ //</I></FONT>
+<FONT COLOR="#000080"><I>// Type Lib: C:\md4code\Part5\23\XFORM1\XFORM1.tlb</I></FONT>
+<FONT COLOR="#000080"><I>// IID\LCID: {DB9C325A-0D2A-11D2-B9F1-004845400FAA}\0</I></FONT>
+<FONT COLOR="#000080"><I>// Helpfile: </I></FONT>
+<FONT COLOR="#000080"><I>// HelpString: XFORM1 Library</I></FONT>
+<FONT COLOR="#000080"><I>// Version:    1.0</I></FONT>
+<FONT COLOR="#000080"><I>// ************************************************************************ //</I></FONT>
+
+<B>interface</B>
+
+<B>uses</B> Windows, ActiveX, Classes, Graphics, OleCtrls, StdVCL;
+
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+<FONT COLOR="#000080"><I>// GUIDS declared in the TypeLibrary. Following prefixes are used:      //</I></FONT>
+<FONT COLOR="#000080"><I>//   Type Libraries     : LIBID_xxxx                                    //</I></FONT>
+<FONT COLOR="#000080"><I>//   CoClasses          : CLASS_xxxx                                    //</I></FONT>
+<FONT COLOR="#000080"><I>//   DISPInterfaces     : DIID_xxxx                                     //</I></FONT>
+<FONT COLOR="#000080"><I>//   Non-DISP interfaces: IID_xxxx                                      //</I></FONT>
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+<B>const</B>
+  LIBID_XFORM1: TGUID = <I>'{DB9C325A-0D2A-11D2-B9F1-004845400FAA}'</I>;
+  IID_IFormX1: TGUID = <I>'{DB9C325B-0D2A-11D2-B9F1-004845400FAA}'</I>;
+  DIID_IFormX1Events: TGUID = <I>'{DB9C325D-0D2A-11D2-B9F1-004845400FAA}'</I>;
+  CLASS_FormX1: TGUID = <I>'{DB9C325F-0D2A-11D2-B9F1-004845400FAA}'</I>;
+
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+<FONT COLOR="#000080"><I>// Declaration of Enumerations defined in Type Library                  //</I></FONT>
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+<FONT COLOR="#000080"><I>// TxActiveFormBorderStyle constants</I></FONT>
+<B>type</B>
+  TxActiveFormBorderStyle = TOleEnum;
+<B>const</B>
+  afbNone = $00000000;
+  afbSingle = $00000001;
+  afbSunken = $00000002;
+  afbRaised = $00000003;
+
+<FONT COLOR="#000080"><I>// TxPrintScale constants</I></FONT>
+<B>type</B>
+  TxPrintScale = TOleEnum;
+<B>const</B>
+  poNone = $00000000;
+  poProportional = $00000001;
+  poPrintToFit = $00000002;
+
+<FONT COLOR="#000080"><I>// TxMouseButton constants</I></FONT>
+<B>type</B>
+  TxMouseButton = TOleEnum;
+<B>const</B>
+  mbLeft = $00000000;
+  mbRight = $00000001;
+  mbMiddle = $00000002;
+
+<FONT COLOR="#000080"><I>// TxBiDiMode constants</I></FONT>
+<B>type</B>
+  TxBiDiMode = TOleEnum;
+<B>const</B>
+  bdLeftToRight = $00000000;
+  bdRightToLeft = $00000001;
+  bdRightToLeftNoAlign = $00000002;
+  bdRightToLeftReadingOnly = $00000003;
+
+<B>type</B>
+
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+<FONT COLOR="#000080"><I>// Forward declaration of interfaces defined in Type Library            //</I></FONT>
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+  IFormX1 = <B>interface</B>;
+  IFormX1Disp = <B>dispinterface</B>;
+  IFormX1Events = <B>dispinterface</B>;
+
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+<FONT COLOR="#000080"><I>// Declaration of CoClasses defined in Type Library                     //</I></FONT>
+<FONT COLOR="#000080"><I>// (NOTE: Here we map each CoClass to its Default Interface)            //</I></FONT>
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+  FormX1 = IFormX1;
+
+
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+<FONT COLOR="#000080"><I>// Interface: IFormX1</I></FONT>
+<FONT COLOR="#000080"><I>// Flags:     (4416) Dual OleAutomation Dispatchable</I></FONT>
+<FONT COLOR="#000080"><I>// GUID:      {DB9C325B-0D2A-11D2-B9F1-004845400FAA}</I></FONT>
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+  IFormX1 = <B>interface</B>(IDispatch)
+    [<I>'{DB9C325B-0D2A-11D2-B9F1-004845400FAA}'</I>]
+    <B>function</B> Get_Visible: WordBool; safecall;
+    <B>procedure</B> Set_Visible(Value: WordBool); safecall;
+    <B>function</B> Get_AutoScroll: WordBool; safecall;
+    <B>procedure</B> Set_AutoScroll(Value: WordBool); safecall;
+    <B>function</B> Get_AutoSize: WordBool; safecall;
+    <B>procedure</B> Set_AutoSize(Value: WordBool); safecall;
+    <B>function</B> Get_AxBorderStyle: TxActiveFormBorderStyle; safecall;
+    <B>procedure</B> Set_AxBorderStyle(Value: TxActiveFormBorderStyle); safecall;
+    <B>function</B> Get_Caption: WideString; safecall;
+    <B>procedure</B> Set_Caption(<B>const</B> Value: WideString); safecall;
+    <B>function</B> Get_Color: OLE_COLOR; safecall;
+    <B>procedure</B> Set_Color(Value: OLE_COLOR); safecall;
+    <B>function</B> Get_Font: IFontDisp; safecall;
+    <B>procedure</B> _Set_Font(<B>const</B> Value: IFontDisp); safecall;
+    <B>procedure</B> Set_Font(<B>const</B> Value: IFontDisp); safecall;
+    <B>function</B> Get_KeyPreview: WordBool; safecall;
+    <B>procedure</B> Set_KeyPreview(Value: WordBool); safecall;
+    <B>function</B> Get_PixelsPerInch: Integer; safecall;
+    <B>procedure</B> Set_PixelsPerInch(Value: Integer); safecall;
+    <B>function</B> Get_PrintScale: TxPrintScale; safecall;
+    <B>procedure</B> Set_PrintScale(Value: TxPrintScale); safecall;
+    <B>function</B> Get_Scaled: WordBool; safecall;
+    <B>procedure</B> Set_Scaled(Value: WordBool); safecall;
+    <B>function</B> Get_Active: WordBool; safecall;
+    <B>function</B> Get_DropTarget: WordBool; safecall;
+    <B>procedure</B> Set_DropTarget(Value: WordBool); safecall;
+    <B>function</B> Get_HelpFile: WideString; safecall;
+    <B>procedure</B> Set_HelpFile(<B>const</B> Value: WideString); safecall;
+    <B>function</B> Get_DoubleBuffered: WordBool; safecall;
+    <B>procedure</B> Set_DoubleBuffered(Value: WordBool); safecall;
+    <B>function</B> Get_Enabled: WordBool; safecall;
+    <B>procedure</B> Set_Enabled(Value: WordBool); safecall;
+    <B>function</B> Get_BiDiMode: TxBiDiMode; safecall;
+    <B>procedure</B> Set_BiDiMode(Value: TxBiDiMode); safecall;
+    <B>function</B> Get_Cursor: Smallint; safecall;
+    <B>procedure</B> Set_Cursor(Value: Smallint); safecall;
+    <B>property</B> Visible: WordBool <B>read</B> Get_Visible <B>write</B> Set_Visible;
+    <B>property</B> AutoScroll: WordBool <B>read</B> Get_AutoScroll <B>write</B> Set_AutoScroll;
+    <B>property</B> AutoSize: WordBool <B>read</B> Get_AutoSize <B>write</B> Set_AutoSize;
+    <B>property</B> AxBorderStyle: TxActiveFormBorderStyle <B>read</B> Get_AxBorderStyle <B>write</B> Set_AxBorderStyle;
+    <B>property</B> Caption: WideString <B>read</B> Get_Caption <B>write</B> Set_Caption;
+    <B>property</B> Color: OLE_COLOR <B>read</B> Get_Color <B>write</B> Set_Color;
+    <B>property</B> Font: IFontDisp <B>read</B> Get_Font <B>write</B> _Set_Font;
+    <B>property</B> KeyPreview: WordBool <B>read</B> Get_KeyPreview <B>write</B> Set_KeyPreview;
+    <B>property</B> PixelsPerInch: Integer <B>read</B> Get_PixelsPerInch <B>write</B> Set_PixelsPerInch;
+    <B>property</B> PrintScale: TxPrintScale <B>read</B> Get_PrintScale <B>write</B> Set_PrintScale;
+    <B>property</B> Scaled: WordBool <B>read</B> Get_Scaled <B>write</B> Set_Scaled;
+    <B>property</B> Active: WordBool <B>read</B> Get_Active;
+    <B>property</B> DropTarget: WordBool <B>read</B> Get_DropTarget <B>write</B> Set_DropTarget;
+    <B>property</B> HelpFile: WideString <B>read</B> Get_HelpFile <B>write</B> Set_HelpFile;
+    <B>property</B> DoubleBuffered: WordBool <B>read</B> Get_DoubleBuffered <B>write</B> Set_DoubleBuffered;
+    <B>property</B> Enabled: WordBool <B>read</B> Get_Enabled <B>write</B> Set_Enabled;
+    <B>property</B> BiDiMode: TxBiDiMode <B>read</B> Get_BiDiMode <B>write</B> Set_BiDiMode;
+    <B>property</B> Cursor: Smallint <B>read</B> Get_Cursor <B>write</B> Set_Cursor;
+  <B>end</B>;
+
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+<FONT COLOR="#000080"><I>// DispIntf:  IFormX1Disp</I></FONT>
+<FONT COLOR="#000080"><I>// Flags:     (4416) Dual OleAutomation Dispatchable</I></FONT>
+<FONT COLOR="#000080"><I>// GUID:      {DB9C325B-0D2A-11D2-B9F1-004845400FAA}</I></FONT>
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+  IFormX1Disp = <B>dispinterface</B>
+    [<I>'{DB9C325B-0D2A-11D2-B9F1-004845400FAA}'</I>]
+    <B>property</B> Visible: WordBool <B>dispid</B> 1;
+    <B>property</B> AutoScroll: WordBool <B>dispid</B> 2;
+    <B>property</B> AutoSize: WordBool <B>dispid</B> 3;
+    <B>property</B> AxBorderStyle: TxActiveFormBorderStyle <B>dispid</B> 4;
+    <B>property</B> Caption: WideString <B>dispid</B> -518;
+    <B>property</B> Color: OLE_COLOR <B>dispid</B> -501;
+    <B>property</B> Font: IFontDisp <B>dispid</B> -512;
+    <B>property</B> KeyPreview: WordBool <B>dispid</B> 5;
+    <B>property</B> PixelsPerInch: Integer <B>dispid</B> 6;
+    <B>property</B> PrintScale: TxPrintScale <B>dispid</B> 7;
+    <B>property</B> Scaled: WordBool <B>dispid</B> 8;
+    <B>property</B> Active: WordBool readonly <B>dispid</B> 9;
+    <B>property</B> DropTarget: WordBool <B>dispid</B> 10;
+    <B>property</B> HelpFile: WideString <B>dispid</B> 11;
+    <B>property</B> DoubleBuffered: WordBool <B>dispid</B> 12;
+    <B>property</B> Enabled: WordBool <B>dispid</B> -514;
+    <B>property</B> BiDiMode: TxBiDiMode <B>dispid</B> 13;
+    <B>property</B> Cursor: Smallint <B>dispid</B> 14;
+  <B>end</B>;
+
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+<FONT COLOR="#000080"><I>// DispIntf:  IFormX1Events</I></FONT>
+<FONT COLOR="#000080"><I>// Flags:     (0)</I></FONT>
+<FONT COLOR="#000080"><I>// GUID:      {DB9C325D-0D2A-11D2-B9F1-004845400FAA}</I></FONT>
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+  IFormX1Events = <B>dispinterface</B>
+    [<I>'{DB9C325D-0D2A-11D2-B9F1-004845400FAA}'</I>]
+    <B>procedure</B> OnActivate; <B>dispid</B> 1;
+    <B>procedure</B> OnClick; <B>dispid</B> 2;
+    <B>procedure</B> OnCreate; <B>dispid</B> 3;
+    <B>procedure</B> OnDblClick; <B>dispid</B> 4;
+    <B>procedure</B> OnDestroy; <B>dispid</B> 5;
+    <B>procedure</B> OnDeactivate; <B>dispid</B> 6;
+    <B>procedure</B> OnKeyPress(<B>var</B> Key: Smallint); <B>dispid</B> 10;
+    <B>procedure</B> OnPaint; <B>dispid</B> 15;
+  <B>end</B>;
+
+
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+<FONT COLOR="#000080"><I>// OLE Control Proxy class declaration</I></FONT>
+<FONT COLOR="#000080"><I>// Control Name     : TFormX1</I></FONT>
+<FONT COLOR="#000080"><I>// Help String      : FormX1 Control</I></FONT>
+<FONT COLOR="#000080"><I>// Default Interface: IFormX1</I></FONT>
+<FONT COLOR="#000080"><I>// Def. Intf. DISP? : No</I></FONT>
+<FONT COLOR="#000080"><I>// Event   Interface: IFormX1Events</I></FONT>
+<FONT COLOR="#000080"><I>// TypeFlags        : (34) CanCreate Control</I></FONT>
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+  TFormX1OnKeyPress = <B>procedure</B>(Sender: TObject; <B>var</B> Key: Smallint) <B>of</B> <B>object</B>;
+
+  TFormX1 = <B>class</B>(TOleControl)
+  <B>private</B>
+    FOnActivate: TNotifyEvent;
+    FOnClick: TNotifyEvent;
+    FOnCreate: TNotifyEvent;
+    FOnDblClick: TNotifyEvent;
+    FOnDestroy: TNotifyEvent;
+    FOnDeactivate: TNotifyEvent;
+    FOnKeyPress: TFormX1OnKeyPress;
+    FOnPaint: TNotifyEvent;
+    FIntf: IFormX1;
+    <B>function</B>  GetControlInterface: IFormX1;
+  <B>protected</B>
+    <B>procedure</B> CreateControl;
+    <B>procedure</B> InitControlData; <B>override</B>;
+  <B>public</B>
+    <B>property</B>  ControlInterface: IFormX1 <B>read</B> GetControlInterface;
+    <B>property</B> Visible: WordBool <B>index</B> 1 <B>read</B> GetWordBoolProp <B>write</B> SetWordBoolProp;
+    <B>property</B> Active: WordBool <B>index</B> 9 <B>read</B> GetWordBoolProp;
+    <B>property</B> DropTarget: WordBool <B>index</B> 10 <B>read</B> GetWordBoolProp <B>write</B> SetWordBoolProp;
+    <B>property</B> HelpFile: WideString <B>index</B> 11 <B>read</B> GetWideStringProp <B>write</B> SetWideStringProp;
+    <B>property</B> DoubleBuffered: WordBool <B>index</B> 12 <B>read</B> GetWordBoolProp <B>write</B> SetWordBoolProp;
+    <B>property</B> Enabled: WordBool <B>index</B> -514 <B>read</B> GetWordBoolProp <B>write</B> SetWordBoolProp;
+    <B>property</B> BiDiMode: TOleEnum <B>index</B> 13 <B>read</B> GetTOleEnumProp <B>write</B> SetTOleEnumProp;
+  <B>published</B>
+    <B>property</B> AutoScroll: WordBool <B>index</B> 2 <B>read</B> GetWordBoolProp <B>write</B> SetWordBoolProp <B>stored</B> False;
+    <B>property</B> AutoSize: WordBool <B>index</B> 3 <B>read</B> GetWordBoolProp <B>write</B> SetWordBoolProp <B>stored</B> False;
+    <B>property</B> AxBorderStyle: TOleEnum <B>index</B> 4 <B>read</B> GetTOleEnumProp <B>write</B> SetTOleEnumProp <B>stored</B> False;
+    <B>property</B> Caption: WideString <B>index</B> -518 <B>read</B> GetWideStringProp <B>write</B> SetWideStringProp <B>stored</B> False;
+    <B>property</B> Color: TColor <B>index</B> -501 <B>read</B> GetTColorProp <B>write</B> SetTColorProp <B>stored</B> False;
+    <B>property</B> Font: TFont <B>index</B> -512 <B>read</B> GetTFontProp <B>write</B> SetTFontProp <B>stored</B> False;
+    <B>property</B> KeyPreview: WordBool <B>index</B> 5 <B>read</B> GetWordBoolProp <B>write</B> SetWordBoolProp <B>stored</B> False;
+    <B>property</B> PixelsPerInch: Integer <B>index</B> 6 <B>read</B> GetIntegerProp <B>write</B> SetIntegerProp <B>stored</B> False;
+    <B>property</B> PrintScale: TOleEnum <B>index</B> 7 <B>read</B> GetTOleEnumProp <B>write</B> SetTOleEnumProp <B>stored</B> False;
+    <B>property</B> Scaled: WordBool <B>index</B> 8 <B>read</B> GetWordBoolProp <B>write</B> SetWordBoolProp <B>stored</B> False;
+    <B>property</B> Cursor: Smallint <B>index</B> 14 <B>read</B> GetSmallintProp <B>write</B> SetSmallintProp <B>stored</B> False;
+    <B>property</B> OnActivate: TNotifyEvent <B>read</B> FOnActivate <B>write</B> FOnActivate;
+    <B>property</B> OnClick: TNotifyEvent <B>read</B> FOnClick <B>write</B> FOnClick;
+    <B>property</B> OnCreate: TNotifyEvent <B>read</B> FOnCreate <B>write</B> FOnCreate;
+    <B>property</B> OnDblClick: TNotifyEvent <B>read</B> FOnDblClick <B>write</B> FOnDblClick;
+    <B>property</B> OnDestroy: TNotifyEvent <B>read</B> FOnDestroy <B>write</B> FOnDestroy;
+    <B>property</B> OnDeactivate: TNotifyEvent <B>read</B> FOnDeactivate <B>write</B> FOnDeactivate;
+    <B>property</B> OnKeyPress: TFormX1OnKeyPress <B>read</B> FOnKeyPress <B>write</B> FOnKeyPress;
+    <B>property</B> OnPaint: TNotifyEvent <B>read</B> FOnPaint <B>write</B> FOnPaint;
+  <B>end</B>;
+
+<B>procedure</B> <B>Register</B>;
+
+<B>implementation</B>
+
+<B>uses</B> ComObj;
+
+<B>procedure</B> TFormX1.InitControlData;
+<B>const</B>
+  CEventDispIDs: <B>array</B> [0..7] <B>of</B> DWORD = (
+    $00000001, $00000002, $00000003, $00000004, $00000005, $00000006,
+    $0000000A, $0000000F);
+  CTFontIDs: <B>array</B> [0..0] <B>of</B> DWORD = (
+    $FFFFFE00);
+  CControlData: TControlData = (
+    ClassID: <I>'{DB9C325F-0D2A-11D2-B9F1-004845400FAA}'</I>;
+    EventIID: <I>'{DB9C325D-0D2A-11D2-B9F1-004845400FAA}'</I>;
+    EventCount: 8;
+    EventDispIDs: @CEventDispIDs;
+    LicenseKey: <B>nil</B>;
+    Flags: $0000001D;
+    Version: 300;
+    FontCount: 1;
+    FontIDs: @CTFontIDs);
+<B>begin</B>
+  ControlData := @CControlData;
+<B>end</B>;
+
+<B>procedure</B> TFormX1.CreateControl;
+
+  <B>procedure</B> DoCreate;
+  <B>begin</B>
+    FIntf := IUnknown(OleObject) <B>as</B> IFormX1;
+  <B>end</B>;
+
+<B>begin</B>
+  <B>if</B> FIntf = <B>nil</B> <B>then</B> DoCreate;
+<B>end</B>;
+
+<B>function</B> TFormX1.GetControlInterface: IFormX1;
+<B>begin</B>
+  CreateControl;
+  Result := FIntf;
+<B>end</B>;
+
+<B>procedure</B> <B>Register</B>;
+<B>begin</B>
+  RegisterComponents(<I>'ActiveX'</I>,[TFormX1]);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=FORMX1.PAS><H3>FORMX1.PAS</H3></A>
+
+<PRE>
+<B>unit</B> FormX1;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  ActiveX, AxCtrls, XFORM1_TLB, ExtCtrls;
+
+<B>type</B>
+  TFormX1 = <B>class</B>(TActiveForm, IFormX1)
+    PaintBox1: TPaintBox;
+    <B>procedure</B> FormPaint(Sender: TObject);
+    <B>procedure</B> PaintBox1MouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+    FEvents: IFormX1Events;
+    <B>procedure</B> ActivateEvent(Sender: TObject);
+    <B>procedure</B> ClickEvent(Sender: TObject);
+    <B>procedure</B> CreateEvent(Sender: TObject);
+    <B>procedure</B> DblClickEvent(Sender: TObject);
+    <B>procedure</B> DeactivateEvent(Sender: TObject);
+    <B>procedure</B> DestroyEvent(Sender: TObject);
+    <B>procedure</B> KeyPressEvent(Sender: TObject; <B>var</B> Key: Char);
+    <B>procedure</B> PaintEvent(Sender: TObject);
+  <B>protected</B>
+    <FONT COLOR="#000080"><I>{ Protected declarations }</I></FONT>
+    <B>procedure</B> DefinePropertyPages(DefinePropertyPage: TDefinePropertyPage); <B>override</B>;
+    <B>procedure</B> EventSinkChanged(<B>const</B> EventSink: IUnknown); <B>override</B>;
+    <B>function</B> Get_Active: WordBool; safecall;
+    <B>function</B> Get_AutoScroll: WordBool; safecall;
+    <B>function</B> Get_AutoSize: WordBool; safecall;
+    <B>function</B> Get_AxBorderStyle: TxActiveFormBorderStyle; safecall;
+    <B>function</B> Get_BiDiMode: TxBiDiMode; safecall;
+    <B>function</B> Get_Caption: WideString; safecall;
+    <B>function</B> Get_Color: OLE_COLOR; safecall;
+    <B>function</B> Get_Cursor: Smallint; safecall;
+    <B>function</B> Get_DoubleBuffered: WordBool; safecall;
+    <B>function</B> Get_DropTarget: WordBool; safecall;
+    <B>function</B> Get_Enabled: WordBool; safecall;
+    <B>function</B> Get_Font: IFontDisp; safecall;
+    <B>function</B> Get_HelpFile: WideString; safecall;
+    <B>function</B> Get_KeyPreview: WordBool; safecall;
+    <B>function</B> Get_PixelsPerInch: Integer; safecall;
+    <B>function</B> Get_PrintScale: TxPrintScale; safecall;
+    <B>function</B> Get_Scaled: WordBool; safecall;
+    <B>function</B> Get_Visible: WordBool; safecall;
+    <B>procedure</B> _Set_Font(<B>const</B> Value: IFontDisp); safecall;
+    <B>procedure</B> Set_AutoScroll(Value: WordBool); safecall;
+    <B>procedure</B> Set_AutoSize(Value: WordBool); safecall;
+    <B>procedure</B> Set_AxBorderStyle(Value: TxActiveFormBorderStyle); safecall;
+    <B>procedure</B> Set_BiDiMode(Value: TxBiDiMode); safecall;
+    <B>procedure</B> Set_Caption(<B>const</B> Value: WideString); safecall;
+    <B>procedure</B> Set_Color(Value: OLE_COLOR); safecall;
+    <B>procedure</B> Set_Cursor(Value: Smallint); safecall;
+    <B>procedure</B> Set_DoubleBuffered(Value: WordBool); safecall;
+    <B>procedure</B> Set_DropTarget(Value: WordBool); safecall;
+    <B>procedure</B> Set_Enabled(Value: WordBool); safecall;
+    <B>procedure</B> Set_Font(<B>const</B> Value: IFontDisp); safecall;
+    <B>procedure</B> Set_HelpFile(<B>const</B> Value: WideString); safecall;
+    <B>procedure</B> Set_KeyPreview(Value: WordBool); safecall;
+    <B>procedure</B> Set_PixelsPerInch(Value: Integer); safecall;
+    <B>procedure</B> Set_PrintScale(Value: TxPrintScale); safecall;
+    <B>procedure</B> Set_Scaled(Value: WordBool); safecall;
+    <B>procedure</B> Set_Visible(Value: WordBool); safecall;
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+    <B>procedure</B> Initialize; <B>override</B>;
+  <B>end</B>;
+
+<B>implementation</B>
+
+<B>uses</B> ComObj, ComServ;
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<FONT COLOR="#000080"><I>{ TFormX1 }</I></FONT>
+
+<B>procedure</B> TFormX1.DefinePropertyPages(DefinePropertyPage: TDefinePropertyPage);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>{ Define property pages here.  Property pages are defined by calling
+    DefinePropertyPage with the class id of the page.  For example,
+      DefinePropertyPage(Class_FormX1Page); }</I></FONT>
+<B>end</B>;
+
+<B>procedure</B> TFormX1.EventSinkChanged(<B>const</B> EventSink: IUnknown);
+<B>begin</B>
+  FEvents := EventSink <B>as</B> IFormX1Events;
+<B>end</B>;
+
+<B>procedure</B> TFormX1.Initialize;
+<B>begin</B>
+  <B>inherited</B> Initialize;
+  OnActivate := ActivateEvent;
+  OnClick := ClickEvent;
+  OnCreate := CreateEvent;
+  OnDblClick := DblClickEvent;
+  OnDeactivate := DeactivateEvent;
+  OnDestroy := DestroyEvent;
+  OnKeyPress := KeyPressEvent;
+  OnPaint := PaintEvent;
+<B>end</B>;
+
+<B>function</B> TFormX1.Get_Active: WordBool;
+<B>begin</B>
+  Result := Active;
+<B>end</B>;
+
+<B>function</B> TFormX1.Get_AutoScroll: WordBool;
+<B>begin</B>
+  Result := AutoScroll;
+<B>end</B>;
+
+<B>function</B> TFormX1.Get_AutoSize: WordBool;
+<B>begin</B>
+  Result := AutoSize;
+<B>end</B>;
+
+<B>function</B> TFormX1.Get_AxBorderStyle: TxActiveFormBorderStyle;
+<B>begin</B>
+  Result := Ord(AxBorderStyle);
+<B>end</B>;
+
+<B>function</B> TFormX1.Get_BiDiMode: TxBiDiMode;
+<B>begin</B>
+  Result := Ord(BiDiMode);
+<B>end</B>;
+
+<B>function</B> TFormX1.Get_Caption: WideString;
+<B>begin</B>
+  Result := WideString(Caption);
+<B>end</B>;
+
+<B>function</B> TFormX1.Get_Color: OLE_COLOR;
+<B>begin</B>
+  Result := OLE_COLOR(Color);
+<B>end</B>;
+
+<B>function</B> TFormX1.Get_Cursor: Smallint;
+<B>begin</B>
+  Result := Smallint(Cursor);
+<B>end</B>;
+
+<B>function</B> TFormX1.Get_DoubleBuffered: WordBool;
+<B>begin</B>
+  Result := DoubleBuffered;
+<B>end</B>;
+
+<B>function</B> TFormX1.Get_DropTarget: WordBool;
+<B>begin</B>
+  Result := DropTarget;
+<B>end</B>;
+
+<B>function</B> TFormX1.Get_Enabled: WordBool;
+<B>begin</B>
+  Result := Enabled;
+<B>end</B>;
+
+<B>function</B> TFormX1.Get_Font: IFontDisp;
+<B>begin</B>
+  GetOleFont(Font, Result);
+<B>end</B>;
+
+<B>function</B> TFormX1.Get_HelpFile: WideString;
+<B>begin</B>
+  Result := WideString(HelpFile);
+<B>end</B>;
+
+<B>function</B> TFormX1.Get_KeyPreview: WordBool;
+<B>begin</B>
+  Result := KeyPreview;
+<B>end</B>;
+
+<B>function</B> TFormX1.Get_PixelsPerInch: Integer;
+<B>begin</B>
+  Result := PixelsPerInch;
+<B>end</B>;
+
+<B>function</B> TFormX1.Get_PrintScale: TxPrintScale;
+<B>begin</B>
+  Result := Ord(PrintScale);
+<B>end</B>;
+
+<B>function</B> TFormX1.Get_Scaled: WordBool;
+<B>begin</B>
+  Result := Scaled;
+<B>end</B>;
+
+<B>function</B> TFormX1.Get_Visible: WordBool;
+<B>begin</B>
+  Result := Visible;
+<B>end</B>;
+
+<B>procedure</B> TFormX1._Set_Font(<B>const</B> Value: IFontDisp);
+<B>begin</B>
+  SetOleFont(Font, Value);
+<B>end</B>;
+
+<B>procedure</B> TFormX1.Set_AutoScroll(Value: WordBool);
+<B>begin</B>
+  AutoScroll := Value;
+<B>end</B>;
+
+<B>procedure</B> TFormX1.Set_AutoSize(Value: WordBool);
+<B>begin</B>
+  AutoSize := Value;
+<B>end</B>;
+
+<B>procedure</B> TFormX1.Set_AxBorderStyle(Value: TxActiveFormBorderStyle);
+<B>begin</B>
+  AxBorderStyle := TActiveFormBorderStyle(Value);
+<B>end</B>;
+
+<B>procedure</B> TFormX1.Set_BiDiMode(Value: TxBiDiMode);
+<B>begin</B>
+  BiDiMode := TBiDiMode(Value);
+<B>end</B>;
+
+<B>procedure</B> TFormX1.Set_Caption(<B>const</B> Value: WideString);
+<B>begin</B>
+  Caption := TCaption(Value);
+<B>end</B>;
+
+<B>procedure</B> TFormX1.Set_Color(Value: OLE_COLOR);
+<B>begin</B>
+  Color := TColor(Value);
+<B>end</B>;
+
+<B>procedure</B> TFormX1.Set_Cursor(Value: Smallint);
+<B>begin</B>
+  Cursor := TCursor(Value);
+<B>end</B>;
+
+<B>procedure</B> TFormX1.Set_DoubleBuffered(Value: WordBool);
+<B>begin</B>
+  DoubleBuffered := Value;
+<B>end</B>;
+
+<B>procedure</B> TFormX1.Set_DropTarget(Value: WordBool);
+<B>begin</B>
+  DropTarget := Value;
+<B>end</B>;
+
+<B>procedure</B> TFormX1.Set_Enabled(Value: WordBool);
+<B>begin</B>
+  Enabled := Value;
+<B>end</B>;
+
+<B>procedure</B> TFormX1.Set_Font(<B>const</B> Value: IFontDisp);
+<B>begin</B>
+  SetOleFont(Font, Value);
+<B>end</B>;
+
+<B>procedure</B> TFormX1.Set_HelpFile(<B>const</B> Value: WideString);
+<B>begin</B>
+  HelpFile := <B>String</B>(Value);
+<B>end</B>;
+
+<B>procedure</B> TFormX1.Set_KeyPreview(Value: WordBool);
+<B>begin</B>
+  KeyPreview := Value;
+<B>end</B>;
+
+<B>procedure</B> TFormX1.Set_PixelsPerInch(Value: Integer);
+<B>begin</B>
+  PixelsPerInch := Value;
+<B>end</B>;
+
+<B>procedure</B> TFormX1.Set_PrintScale(Value: TxPrintScale);
+<B>begin</B>
+  PrintScale := TPrintScale(Value);
+<B>end</B>;
+
+<B>procedure</B> TFormX1.Set_Scaled(Value: WordBool);
+<B>begin</B>
+  Scaled := Value;
+<B>end</B>;
+
+<B>procedure</B> TFormX1.Set_Visible(Value: WordBool);
+<B>begin</B>
+  Visible := Value;
+<B>end</B>;
+
+<B>procedure</B> TFormX1.ActivateEvent(Sender: TObject);
+<B>begin</B>
+  <B>if</B> FEvents &lt;&gt; <B>nil</B> <B>then</B> FEvents.OnActivate;
+<B>end</B>;
+
+<B>procedure</B> TFormX1.ClickEvent(Sender: TObject);
+<B>begin</B>
+  <B>if</B> FEvents &lt;&gt; <B>nil</B> <B>then</B> FEvents.OnClick;
+<B>end</B>;
+
+<B>procedure</B> TFormX1.CreateEvent(Sender: TObject);
+<B>begin</B>
+  <B>if</B> FEvents &lt;&gt; <B>nil</B> <B>then</B> FEvents.OnCreate;
+<B>end</B>;
+
+<B>procedure</B> TFormX1.DblClickEvent(Sender: TObject);
+<B>begin</B>
+  <B>if</B> FEvents &lt;&gt; <B>nil</B> <B>then</B> FEvents.OnDblClick;
+<B>end</B>;
+
+<B>procedure</B> TFormX1.DeactivateEvent(Sender: TObject);
+<B>begin</B>
+  <B>if</B> FEvents &lt;&gt; <B>nil</B> <B>then</B> FEvents.OnDeactivate;
+<B>end</B>;
+
+<B>procedure</B> TFormX1.DestroyEvent(Sender: TObject);
+<B>begin</B>
+  <B>if</B> FEvents &lt;&gt; <B>nil</B> <B>then</B> FEvents.OnDestroy;
+<B>end</B>;
+
+<B>procedure</B> TFormX1.KeyPressEvent(Sender: TObject; <B>var</B> Key: Char);
+<B>var</B>
+  TempKey: Smallint;
+<B>begin</B>
+  TempKey := Smallint(Key);
+  <B>if</B> FEvents &lt;&gt; <B>nil</B> <B>then</B> FEvents.OnKeyPress(TempKey);
+  Key := Char(TempKey);
+<B>end</B>;
+
+<B>procedure</B> TFormX1.PaintEvent(Sender: TObject);
+<B>begin</B>
+  Canvas.Brush.Color := clBlue;
+  Canvas.Rectangle (20, 20,
+    ClientWidth - 20, ClientHeight - 20);
+  <B>if</B> FEvents &lt;&gt; <B>nil</B> <B>then</B> FEvents.OnPaint;
+<B>end</B>;
+
+<B>procedure</B> TFormX1.FormPaint(Sender: TObject);
+<B>begin</B>
+  Canvas.Brush.Color := clYellow;
+  Canvas.Ellipse(0, 0, Width, Height);
+<B>end</B>;
+
+<B>procedure</B> TFormX1.PaintBox1MouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+<B>begin</B>
+  PaintBox1.Canvas.Ellipse (X-10, Y-10, X+10, Y+10);
+<B>end</B>;
+
+<B>initialization</B>
+  TActiveFormFactory.Create(
+    ComServer,
+    TActiveFormControl,
+    TFormX1,
+    Class_FormX1,
+    1,
+    <I>''</I>,
+    OLEMISC_SIMPLEFRAME <B>or</B> OLEMISC_ACTSLIKELABEL,
+    tmApartment);
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=FORMX1.DFM><H3>FORMX1.DFM</H3></A>
+
+<PRE>
+<B>object</B> FormX1: TFormX1
+  Left = 192
+  Top = 108
+  Width = 413
+  Height = 278
+  Caption = <I>'FormX1'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = False
+  OnPaint = FormPaint
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> PaintBox1: TPaintBox
+    Left = 56
+    Top = 56
+    Width = 289
+    Height = 129
+    Color = clFuchsia
+    ParentColor = False
+    OnMouseDown = PaintBox1MouseDown
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

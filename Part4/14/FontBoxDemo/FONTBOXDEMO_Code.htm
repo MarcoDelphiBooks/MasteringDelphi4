@@ -1,0 +1,140 @@
+<HTML><HEAD>
+<TITLE>Project: FONTBOXDEMO.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: FONTBOXDEMO.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#FONTBOXDEMO.DPR> FONTBOXDEMO.DPR</A>
+<LI> <A HREF=#FBDEMOFORM.PAS> FBDEMOFORM.PAS</A>
+<LI> <A HREF=#FBDEMOFORM.DFM> FBDEMOFORM.DFM</A>
+</UL>
+<HR>
+<A NAME=FONTBOXDEMO.DPR><H3>FONTBOXDEMO.DPR</H3></A>
+
+<PRE>
+<B>program</B> FontBoxDemo;
+
+<B>uses</B>
+  Forms,
+  FbDemoForm <B>in</B> <I>'FbDemoForm.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=FBDEMOFORM.PAS><H3>FBDEMOFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> FbDemoForm;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls, FontBox, Md4Fontbox;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    Label1: TLabel;
+    Memo1: TMemo;
+    Md4FontCombo1: TMd4FontCombo;
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> Md4FontCombo1Change(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.FormCreate(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// select the item corresponding to the current font</I></FONT>
+  Md4FontCombo1.ItemIndex :=
+    Md4FontCombo1.Items.IndexOf (Memo1.Font.Name);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Md4FontCombo1Change(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// activate the new selection</I></FONT>
+  Memo1.Font.Name := Md4FontCombo1.Text;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=FBDEMOFORM.DFM><H3>FBDEMOFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 207
+  Top = 107
+  Width = 481
+  Height = 296
+  Caption = <I>'FontBox Demo'</I>
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Label1: TLabel
+    Left = 99
+    Top = 11
+    Width = 30
+    Height = 13
+    Caption = <I>'&amp;Font:'</I>
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = <I>'MS Sans Serif'</I>
+    Font.Style = [fsBold]
+    ParentFont = False
+  <B>end</B>
+  <B>object</B> Memo1: TMemo
+    Left = 8
+    Top = 40
+    Width = 457
+    Height = 225
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -19
+    Font.Name = <I>'MS Sans Serif'</I>
+    Font.Style = []
+    Lines.Strings = (
+      <I>'Text of the FontBox Demo program.'</I>
+      <I>'More text.'</I>
+      <I>'More text.'</I>)
+    ParentFont = False
+    ScrollBars = ssVertical
+    TabOrder = 0
+  <B>end</B>
+  <B>object</B> Md4FontCombo1: TMd4FontCombo
+    Left = 136
+    Top = 8
+    Width = 185
+    Height = 21
+    ItemHeight = 13
+    TabOrder = 1
+    OnChange = Md4FontCombo1Change
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

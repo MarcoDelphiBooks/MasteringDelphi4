@@ -1,0 +1,146 @@
+<HTML><HEAD>
+<TITLE>Project: WEBCOUNT.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: WEBCOUNT.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#WEBCOUNT.DPR> WEBCOUNT.DPR</A>
+<LI> <A HREF=#COUNTWM.PAS> COUNTWM.PAS</A>
+<LI> <A HREF=#COUNTWM.DFM> COUNTWM.DFM</A>
+</UL>
+<HR>
+<A NAME=WEBCOUNT.DPR><H3>WEBCOUNT.DPR</H3></A>
+
+<PRE>
+<B>program</B> WebCount;
+
+<FONT COLOR="#000080"><I>{$APPTYPE CONSOLE}</I></FONT>
+
+<B>uses</B>
+  HTTPApp,
+  CGIApp,
+  CountWm <B>in</B> <I>'CountWm.pas'</I> <FONT COLOR="#000080"><I>{WebModule1: TWebModule}</I></FONT>;
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TWebModule1, WebModule1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=COUNTWM.PAS><H3>COUNTWM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> CountWm;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, SysUtils, HTTPApp;
+
+<B>type</B>
+  TWebModule1 = <B>class</B>(TWebModule)
+    <B>procedure</B> WebModule1WebActionItem1Action(Sender: TObject;
+      Request: TWebRequest; Response: TWebResponse; <B>var</B> Handled: Boolean);
+  <B>end</B>;
+
+<B>var</B>
+  WebModule1: TWebModule1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>uses</B>
+  Graphics, Jpeg, ExtCtrls, Classes;
+
+<B>procedure</B> TWebModule1.WebModule1WebActionItem1Action(Sender: TObject;
+  Request: TWebRequest; Response: TWebResponse; <B>var</B> Handled: Boolean);
+<B>var</B>
+  Image: TImage;
+  nHit: Integer;
+  LogFile: Text;
+  LogFileName: <B>string</B>;
+  Jpeg1: TJpegImage;
+  Stream: TMemoryStream;
+<B>begin</B>
+  LogFileName := <I>'WebCont.log'</I>;
+  System.Assign (LogFile, LogFileName);
+  <B>try</B>
+    <FONT COLOR="#000080"><I>// read if the file exists</I></FONT>
+    <B>if</B> FileExists (LogFileName) <B>then</B>
+    <B>begin</B>
+      Reset (LogFile);
+      Readln (LogFile, nHit);
+      Inc (nHit);
+    <B>end</B>
+    <B>else</B>
+      nHit := 0;
+    <FONT COLOR="#000080"><I>// saves the new data</I></FONT>
+    Rewrite (LogFile);
+    Writeln (LogFile, nHit);
+  <B>finally</B>
+    Close (LogFile);
+  <B>end</B>;
+<FONT COLOR="#000080"><I>//  Response.Content := IntToStr (nHit);</I></FONT>
+
+  <FONT COLOR="#000080"><I>// create a bitmap in memory</I></FONT>
+  Image := TImage.Create (<B>nil</B>);
+  <B>try</B>
+    Image.Picture.Bitmap.Width := 120;
+    Image.Picture.Bitmap.Height := 25;
+    <FONT COLOR="#000080"><I>// draw the digits</I></FONT>
+    Image.Canvas.Font.Name := <I>'Arial'</I>;
+    Image.Canvas.Font.Size := 14;
+    Image.Canvas.Font.Color := RGB (255, 127, 0);
+    Image.Canvas.Font.Style := [fsBold];
+    Image.Canvas.TextOut (1, 1, <I>'Hits: '</I> +
+      FormatFloat (<I>'###,###,###'</I>, Int (nHit)));
+    <FONT COLOR="#000080"><I>// convert to JPEG and output</I></FONT>
+    Jpeg1 := TJpegImage.Create;
+    <B>try</B>
+      Jpeg1.CompressionQuality := 50;
+      Jpeg1.Assign(Image.Picture.Bitmap);
+      Stream := TMemoryStream.Create;
+      <B>try</B>
+        Jpeg1.SaveToStream (Stream);
+        Stream.Position := 0;
+        Response.ContentStream := Stream;
+        Response.ContentType := <I>'image/jpeg'</I>;
+        Response.SendResponse;
+      <B>finally</B>
+        Stream.Free;
+      <B>end</B>;
+    <B>finally</B>
+      Jpeg1.Free;
+    <B>end</B>;
+  <B>finally</B>
+    Image.Free;
+  <B>end</B>;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=COUNTWM.DFM><H3>COUNTWM.DFM</H3></A>
+
+<PRE>
+<B>object</B> WebModule1: TWebModule1
+  OldCreateOrder = True
+  Actions = &lt;
+    <B>item</B>
+      Default = True
+      Name = <I>'WebActionItem1'</I>
+      OnAction = WebModule1WebActionItem1Action
+    <B>end</B>&gt;
+  Left = 196
+  Top = 126
+  Height = 150
+  Width = 215
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

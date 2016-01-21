@@ -1,0 +1,296 @@
+<HTML><HEAD>
+<TITLE>Project: SPLASH.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: SPLASH.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#SPLASH.DPR> SPLASH.DPR</A>
+<LI> <A HREF=#MAINSPF.PAS> MAINSPF.PAS</A>
+<LI> <A HREF=#ABOUTF.PAS> ABOUTF.PAS</A>
+<LI> <A HREF=#MAINSPF.DFM> MAINSPF.DFM</A>
+<LI> <A HREF=#ABOUTF.DFM> ABOUTF.DFM</A>
+</UL>
+<HR>
+<A NAME=SPLASH.DPR><H3>SPLASH.DPR</H3></A>
+
+<PRE>
+<B>program</B> Splash;
+
+<B>uses</B>
+  Forms,
+  MainSpF <B>in</B> <I>'MainSpF.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>,
+  AboutF <B>in</B> <I>'AboutF.pas'</I> <FONT COLOR="#000080"><I>{AboutBox}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MAINSPF.PAS><H3>MAINSPF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> MainSpF;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  Menus, StdCtrls;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    ListBox1: TListBox;
+    MainMenu1: TMainMenu;
+    Help1: TMenuItem;
+    About1: TMenuItem;
+    File1: TMenuItem;
+    Exit1: TMenuItem;
+    <B>procedure</B> About1Click(Sender: TObject);
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> Exit1Click(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<B>uses</B> AboutF;
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.About1Click(Sender: TObject);
+<B>begin</B>
+  <B>if</B> <B>not</B> Assigned (AboutBox) <B>then</B>
+    AboutBox := TAboutBox.Create (Application);
+  AboutBox.ShowModal;
+<B>end</B>;
+
+<FONT COLOR="#000080"><I>{function local to the unit}</I></FONT>
+<B>function</B> IsPrime (N: LongInt): Boolean;
+<B>var</B>
+  Test: LongInt;
+<B>begin</B>
+  IsPrime := True;
+  <B>for</B> Test := 2 <B>to</B> N - 1 <B>do</B>
+  <B>begin</B>
+    <B>if</B> (N <B>mod</B> Test) = 0 <B>then</B>
+    <B>begin</B>
+      IsPrime := False;
+      break; <FONT COLOR="#000080"><I>{jump out of the for loop}</I></FONT>
+    <B>end</B>;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TForm1.FormCreate(Sender: TObject);
+<B>var</B>
+  I: Integer;
+  SplashAbout: TAboutBox;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// create and show the splash form</I></FONT>
+  SplashAbout := TAboutBox.Create (Application);
+  SplashAbout.MakeSplash;
+  <FONT COLOR="#000080"><I>// standard code...</I></FONT>
+  <B>for</B> I := 1 <B>to</B> 10000 <B>do</B>
+    <B>if</B> IsPrime (I) <B>then</B>
+      ListBox1.Items.Add (IntToStr (I));
+  <FONT COLOR="#000080"><I>// get rid of the splash form, after a while</I></FONT>
+  SplashAbout.Timer1.Enabled := True;
+<B>end</B>;
+
+<B>procedure</B> TForm1.Exit1Click(Sender: TObject);
+<B>begin</B>
+  Close;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=ABOUTF.PAS><H3>ABOUTF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> AboutF;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls, Buttons, ExtCtrls;
+
+<B>type</B>
+  TAboutBox = <B>class</B>(TForm)
+    Panel1: TPanel;
+    BitBtn1: TBitBtn;
+    Image1: TImage;
+    Label1: TLabel;
+    Timer1: TTimer;
+    <B>procedure</B> Timer1Timer(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <B>procedure</B> MakeSplash;
+  <B>end</B>;
+
+<B>var</B>
+  AboutBox: TAboutBox;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TAboutBox.MakeSplash;
+<B>begin</B>
+  BorderStyle := bsNone;
+  FormStyle := fsStayOnTop;
+  BitBtn1.Visible := False;
+  Panel1.BorderWidth := 3;
+  Show;
+  Update;
+<B>end</B>;
+
+<B>procedure</B> TAboutBox.Timer1Timer(Sender: TObject);
+<B>begin</B>
+  Close;
+  Release;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MAINSPF.DFM><H3>MAINSPF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 75
+  Top = 125
+  Width = 600
+  Height = 371
+  Caption = <I>'Prime Numbers'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  Menu = MainMenu1
+  OldCreateOrder = False
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> ListBox1: TListBox
+    Left = 0
+    Top = 0
+    Width = 592
+    Height = 325
+    Align = alClient
+    Columns = 5
+    ItemHeight = 13
+    TabOrder = 0
+  <B>end</B>
+  <B>object</B> MainMenu1: TMainMenu
+    Left = 56
+    Top = 24
+    <B>object</B> File1: TMenuItem
+      Caption = <I>'&amp;File'</I>
+      <B>object</B> Exit1: TMenuItem
+        Caption = <I>'E&amp;xit'</I>
+        OnClick = Exit1Click
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> Help1: TMenuItem
+      Caption = <I>'&amp;Help'</I>
+      <B>object</B> About1: TMenuItem
+        Caption = <I>'&amp;About...'</I>
+        OnClick = About1Click
+      <B>end</B>
+    <B>end</B>
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<A NAME=ABOUTF.DFM><H3>ABOUTF.DFM</H3></A>
+
+<PRE>
+<B>object</B> AboutBox: TAboutBox
+  Left = 305
+  Top = 112
+  BorderStyle = bsDialog
+  Caption = <I>'AboutBox'</I>
+  ClientHeight = 232
+  ClientWidth = 302
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  Position = poScreenCenter
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Panel1: TPanel
+    Left = 0
+    Top = 0
+    Width = 302
+    Height = 232
+    Align = alClient
+    BevelInner = bvLowered
+    Caption = <I>'Panel1'</I>
+    TabOrder = 0
+    <B>object</B> Image1: TImage
+      Left = 2
+      Top = 2
+      Width = 298
+      Height = 204
+      Align = alClient
+      Picture.Data = <FONT COLOR="#000080"><I>{...skipped...}</I></FONT>
+      Stretch = True
+    <B>end</B>
+    <B>object</B> Label1: TLabel
+      Left = 2
+      Top = 206
+      Width = 298
+      Height = 24
+      Align = alBottom
+      Alignment = taCenter
+      Caption = <I>'This is my program, version 1'</I>
+      Color = clBlack
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clSilver
+      Font.Height = -19
+      Font.Name = <I>'MS Sans Serif'</I>
+      Font.Style = []
+      ParentColor = False
+      ParentFont = False
+    <B>end</B>
+    <B>object</B> BitBtn1: TBitBtn
+      Left = 214
+      Top = 8
+      Width = 75
+      Height = 33
+      TabOrder = 0
+      Kind = bkOK
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> Timer1: TTimer
+    Enabled = False
+    Interval = 3000
+    OnTimer = Timer1Timer
+    Left = 240
+    Top = 56
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

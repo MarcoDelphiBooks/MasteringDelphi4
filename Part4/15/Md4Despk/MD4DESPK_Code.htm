@@ -1,0 +1,302 @@
+<HTML><HEAD>
+<TITLE>Package: MD4DESPK.DPK</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Package: MD4DESPK.DPK</CENTER></H1><BR><BR><HR>
+<H3>Package Structure</H3><UL>
+<LI> <A HREF=#MD4WIZARD.PAS> MD4WIZARD.PAS</A>
+<LI> <A HREF=#MD4PROPEDIT.PAS> MD4PROPEDIT.PAS</A>
+<LI> <A HREF=#MD4ILPEFORM.PAS> MD4ILPEFORM.PAS</A>
+<LI> <A HREF=#MD4COMPEDIT.PAS> MD4COMPEDIT.PAS</A>
+</UL><HR>
+<A NAME=MD4WIZARD.PAS><H3>MD4WIZARD.PAS</H3></A>
+
+<PRE>
+<B>unit</B> Md4Wizard;
+
+<B>interface</B>
+
+<B>uses</B>
+  ExptIntf, Windows;
+
+<B>type</B>
+  TMd4Expert = <B>class</B> (TIExpert)
+  <B>public</B>
+    <B>function</B> GetStyle: TExpertStyle; <B>override</B>;
+    <B>function</B> GetName: <B>string</B>; <B>override</B>;
+    <B>function</B> GetAuthor: <B>string</B>; <B>override</B>;
+    <B>function</B> GetComment: <B>string</B>; <B>override</B>;
+    <B>function</B> GetPage: <B>string</B>; <B>override</B>;
+    <B>function</B> GetGlyph: HICON; <B>override</B>;
+    <B>function</B> GetState: TExpertState; <B>override</B>;
+    <B>function</B> GetIDString: <B>string</B>; <B>override</B>;
+    <B>function</B> GetMenuText: <B>string</B>; <B>override</B>;
+    <B>procedure</B> Execute; <B>override</B>;
+  <B>end</B>;
+
+<B>procedure</B> <B>Register</B>;
+
+<B>implementation</B>
+
+<B>uses</B>
+  Dialogs, ToolIntf, SysUtils;
+
+<B>function</B> TMd4Expert.GetStyle: TExpertStyle;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// show up in the Help menu</I></FONT>
+  Result := esStandard;
+<B>end</B>;
+
+<B>function</B> TMd4Expert.GetName: <B>String</B>;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// official name</I></FONT>
+  Result := <I>'MDWizard'</I>
+<B>end</B>;
+
+<B>function</B> TMd4Expert.GetAuthor: <B>string</B>;
+<B>begin</B>
+  Result := <I>'Marco Cantù'</I>;
+<B>end</B>;
+
+<B>function</B> TMd4Expert.GetComment: <B>String</B>;
+<B>begin</B>
+  Result := <I>'Mastering Delphi Wizard'</I>;
+<B>end</B>;
+
+<B>function</B> TMd4Expert.GetPage: <B>string</B>;
+<B>begin</B>
+  Result := <I>''</I>;
+<B>end</B>;
+
+<B>function</B> TMd4Expert.GetGlyph: HICON;
+<B>begin</B>
+  Result := 0;
+<B>end</B>;
+
+<B>function</B> TMd4Expert.GetState: TExpertState;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// always enabled, never checked</I></FONT>
+  Result := [esEnabled];
+<B>end</B>;
+
+<B>function</B> TMd4Expert.GetIDString: <B>String</B>;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// must be unique</I></FONT>
+  Result := <I>'MarcoCantu.MDWizard'</I>
+<B>end</B>;
+
+<B>function</B> TMd4Expert.GetMenuText: <B>String</B>;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// the text of the menu item</I></FONT>
+  Result := <I>'&amp;Mastering Delphi Wizard...'</I>
+<B>end</B>;
+
+<B>procedure</B> TMd4Expert.Execute;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// the actual code, showing some internal information</I></FONT>
+  MessageDlg (
+    <I>'Mastering Delphi Wizard'#13#13</I> +
+
+    <I>'Current project: '#13</I> +
+    ToolServices.GetProjectName + <I>#13</I> +
+    <I>'(units: '</I> + IntToStr (ToolServices.GetUnitCount) +
+    <I>', forms: '</I> + IntToStr (ToolServices.GetFormCount) + <I>')'#13#13</I> +
+
+    <I>'Current file: '#13</I> +
+    ToolServices.GetCurrentFile + <I>#13#13</I>+
+
+   <I>'Delphi information in the registry is under:'#13</I> +
+    ToolServices.GetBaseRegistryKey,
+    mtInformation, [mbOK], 0);
+<B>end</B>;
+
+<B>procedure</B> <B>Register</B>;
+<B>begin</B>
+  RegisterLibraryExpert (TMd4Expert.Create);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MD4PROPEDIT.PAS><H3>MD4PROPEDIT.PAS</H3></A>
+
+<PRE>
+<B>unit</B> Md4PropEdit;
+
+<B>interface</B>
+
+<B>uses</B>
+  DsgnIntf;
+
+<B>type</B>
+  TMd4IntListProperty = <B>class</B> (TStringProperty)
+  <B>public</B>
+    <B>function</B> GetAttributes: TPropertyAttributes; <B>override</B>;
+    <B>procedure</B> Edit; <B>override</B>;
+  <B>end</B>;
+
+<B>procedure</B> <B>Register</B>;
+
+<B>implementation</B>
+
+<B>uses</B>
+  SysUtils, Md4IlpeForm, Md4TabList, Forms, Controls;
+
+<B>function</B> TMd4IntListProperty.GetAttributes: TPropertyAttributes;
+<B>begin</B>
+  Result := [paDialog, paReadOnly];
+<B>end</B>;
+
+<B>procedure</B> TMd4IntListProperty.Edit;
+<B>var</B>
+  PEForm: TIntListPEForm;
+  Tabs: TMd4TabbedList;
+  I: Integer;
+<B>begin</B>
+  PEForm := TIntListPEForm.Create (Application);
+  <B>try</B>
+    Tabs := GetComponent (0) <B>as</B> TMd4TabbedList;
+    <B>for</B> I := Low (TMd4TabsArray) <B>to</B> High (TMd4TabsArray) <B>do</B>
+      PEForm.Memo1.Lines.Add (IntToStr (Tabs.TabStops [I]));
+    <B>if</B> PEForm.ShowModal = mrOK <B>then</B>
+    <B>begin</B>
+      <B>for</B> I := Low (TMd4TabsArray) <B>to</B> High (TMd4TabsArray) <B>do</B>
+        Tabs.TabStops [I] := StrToIntDef (PEForm.Memo1.Lines [I], 0);
+      Designer.Modified;
+    <B>end</B>;
+  <B>finally</B>
+    PEForm.Free;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> <B>Register</B>;
+<B>begin</B>
+  RegisterPropertyEditor (TypeInfo (<B>string</B>),
+    TMd4TabbedList, <I>'TabsString'</I>, TMd4IntListProperty);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MD4ILPEFORM.PAS><H3>MD4ILPEFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> Md4IlpeForm;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls, Buttons;
+
+<B>type</B>
+  TIntListPEForm = <B>class</B>(TForm)
+    BitBtn1: TBitBtn;
+    BitBtn2: TBitBtn;
+    Memo1: TMemo;
+    BitBtn3: TBitBtn;
+    <B>procedure</B> BitBtn3Click(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<FONT COLOR="#000080"><I>{var
+  IntListPEForm: TIntListPEForm;}</I></FONT>
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TIntListPEForm.BitBtn3Click(Sender: TObject);
+<B>var</B>
+  I: Integer;
+<B>begin</B>
+  <B>for</B> I := 0 <B>to</B> 9 <B>do</B>
+    Memo1.Lines [I] := IntToStr (I * 100);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MD4COMPEDIT.PAS><H3>MD4COMPEDIT.PAS</H3></A>
+
+<PRE>
+<B>unit</B> Md4CompEdit;
+
+<B>interface</B>
+
+<B>uses</B>
+  DsgnIntf;
+
+<B>type</B>
+  TMd4TabListEditor = <B>class</B> (TComponentEditor)
+    <B>function</B> GetVerbCount: Integer; <B>override</B>;
+    <B>function</B> GetVerb(<B>Index</B>: Integer): <B>string</B>; <B>override</B>;
+    <B>procedure</B> ExecuteVerb(<B>Index</B>: Integer); <B>override</B>;
+    <B>procedure</B> Edit; <B>override</B>;
+  <B>end</B>;
+
+<B>procedure</B> <B>Register</B>;
+
+<B>implementation</B>
+
+<B>uses</B>
+  SysUtils, Dialogs, Md4TabList, StdCtrls;
+
+<B>function</B> TMd4TabListEditor.GetVerbCount: Integer;
+<B>begin</B>
+  Result := 3;
+<B>end</B>;
+
+<B>function</B> TMd4TabListEditor.GetVerb (<B>Index</B>: Integer): <B>string</B>;
+<B>begin</B>
+  <B>case</B> <B>Index</B> <B>of</B>
+    0: Result := <I>'Md4TabbedList (©Cantù)'</I>;
+    1: Result := <I>'&amp;About this component...'</I>;
+    2: Result := <I>'&amp;Reset Tabs'</I>;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TMd4TabListEditor.ExecuteVerb (<B>Index</B>: Integer);
+<B>var</B>
+  I: Integer;
+<B>begin</B>
+  <B>case</B> <B>Index</B> <B>of</B>
+    0..1: MessageDlg (
+      <I>'This is a simple component editor'#13</I> +
+      <I>'built by Marco Cantù'#13</I> +
+      <I>'for the book &quot;Mastering Delphi 4&quot;'</I>,
+      mtInformation, [mbOK], 0);
+    2: <B>begin</B>
+      <B>with</B> Component <B>as</B> TMd4TabbedList <B>do</B>
+        <B>for</B> I := Low (TMd4TabsArray) <B>to</B> High (TMd4TabsArray) <B>do</B>
+          TabStops [I] := I * 100;
+      <FONT COLOR="#000080"><I>// data has changed</I></FONT>
+      Designer.Modified;
+    <B>end</B>;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TMd4TabListEditor.Edit;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// produce a beep and show the about box</I></FONT>
+  Beep;
+  ExecuteVerb (0);
+<B>end</B>;
+
+<B>procedure</B> <B>Register</B>;
+<B>begin</B>
+  RegisterComponentEditor (
+    TMd4TabbedList, TMd4TabListEditor);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<HR>
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

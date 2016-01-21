@@ -1,0 +1,139 @@
+<HTML><HEAD>
+<TITLE>Project: REINTR.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: REINTR.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#REINTR.DPR> REINTR.DPR</A>
+<LI> <A HREF=#REINTRF.PAS> REINTRF.PAS</A>
+<LI> <A HREF=#REINTRF.DFM> REINTRF.DFM</A>
+</UL>
+<HR>
+<A NAME=REINTR.DPR><H3>REINTR.DPR</H3></A>
+
+<PRE>
+<B>program</B> Reintr;
+
+<B>uses</B>
+  Forms,
+  ReintrF <B>in</B> <I>'ReintrF.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=REINTRF.PAS><H3>REINTRF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> ReintrF;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls;
+
+<B>type</B>
+  TMyClass = <B>class</B>
+    <B>procedure</B> One; <B>overload</B>; <B>virtual</B>;
+    <B>procedure</B> One (I: Integer); <B>overload</B>;
+  <B>end</B>;
+
+  TMySubClass = <B>class</B> (TMyClass)
+    <B>procedure</B> One; <B>overload</B>; <B>override</B>;
+    <B>procedure</B> One (S: <B>string</B>); <B>reintroduce</B>; <B>overload</B>;
+  <B>end</B>;
+
+  TForm1 = <B>class</B>(TForm)
+    Button1: TButton;
+    <B>procedure</B> Button1Click(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<FONT COLOR="#000080"><I>{ MyClass }</I></FONT>
+
+<B>procedure</B> TMyClass.One;
+<B>begin</B>
+  ShowMessage (<I>'MyClass.One'</I>);
+<B>end</B>;
+
+<B>procedure</B> TMyClass.One(I: Integer);
+<B>begin</B>
+  ShowMessage (<I>'Integer: '</I> + IntToStr (I));
+<B>end</B>;
+
+<FONT COLOR="#000080"><I>{ MySubClass }</I></FONT>
+
+<B>procedure</B> TMySubClass.One;
+<B>begin</B>
+  ShowMessage (<I>'MySubClass.One'</I>);
+<B>end</B>;
+
+<B>procedure</B> TMySubClass.One(S: <B>string</B>);
+<B>begin</B>
+  ShowMessage (<I>'String: '</I> + S);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Button1Click(Sender: TObject);
+<B>var</B>
+  Obj: TMySubClass;
+<B>begin</B>
+  Obj := TMySubClass.Create;
+  Obj.One;
+  Obj.One (10);
+  Obj.ONe (<I>'Hello'</I>);
+  Obj.Free;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=REINTRF.DFM><H3>REINTRF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 192
+  Top = 107
+  Width = 183
+  Height = 166
+  Caption = <I>'Form1'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = False
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Button1: TButton
+    Left = 48
+    Top = 32
+    Width = 75
+    Height = 25
+    Caption = <I>'Reintr'</I>
+    TabOrder = 0
+    OnClick = Button1Click
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

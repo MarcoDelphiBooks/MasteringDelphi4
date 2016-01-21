@@ -1,0 +1,319 @@
+<HTML><HEAD>
+<TITLE>Project: MULTIWIN.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: MULTIWIN.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#MULTIWIN.DPR> MULTIWIN.DPR</A>
+<LI> <A HREF=#MAINFORM.PAS> MAINFORM.PAS</A>
+<LI> <A HREF=#MWFORM2.PAS> MWFORM2.PAS</A>
+<LI> <A HREF=#MWFORM3.PAS> MWFORM3.PAS</A>
+<LI> <A HREF=#MWFORM4.PAS> MWFORM4.PAS</A>
+<LI> <A HREF=#MAINFORM.DFM> MAINFORM.DFM</A>
+<LI> <A HREF=#MWFORM2.DFM> MWFORM2.DFM</A>
+<LI> <A HREF=#MWFORM3.DFM> MWFORM3.DFM</A>
+<LI> <A HREF=#MWFORM4.DFM> MWFORM4.DFM</A>
+</UL>
+<HR>
+<A NAME=MULTIWIN.DPR><H3>MULTIWIN.DPR</H3></A>
+
+<PRE>
+<B>program</B> MultiWin;
+
+<B>uses</B>
+  Forms,
+  MainForm <B>in</B> <I>'MainForm.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>,
+  MWForm2 <B>in</B> <I>'MWForm2.pas'</I> <FONT COLOR="#000080"><I>{Form2}</I></FONT>,
+  MWForm3 <B>in</B> <I>'MWForm3.pas'</I> <FONT COLOR="#000080"><I>{Form3}</I></FONT>,
+  MWForm4 <B>in</B> <I>'MWForm4.pas'</I> <FONT COLOR="#000080"><I>{Form4}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.CreateForm(TForm4, Form4);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MAINFORM.PAS><H3>MAINFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> MainForm;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    btnMultiple: TButton;
+    btnSingle: TButton;
+    btnModal: TButton;
+    <B>procedure</B> btnSingleClick(Sender: TObject);
+    <B>procedure</B> btnMultipleClick(Sender: TObject);
+    <B>procedure</B> btnModalClick(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<B>uses</B>
+  MWForm2, MWForm3, MWForm4;
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.btnSingleClick(Sender: TObject);
+<B>begin</B>
+  <B>if</B> <B>not</B> Assigned (Form2) <B>then</B>
+    Form2 := TForm2.Create (Application);
+  Form2.Show;
+<B>end</B>;
+
+<B>procedure</B> TForm1.btnMultipleClick(Sender: TObject);
+<B>begin</B>
+  <B>with</B> TForm3.Create (Application) <B>do</B>
+    Show;
+<B>end</B>;
+
+<B>procedure</B> TForm1.btnModalClick(Sender: TObject);
+<B>var</B>
+  Modal: TForm4;
+<B>begin</B>
+  Modal := TForm4.Create (Application);
+  <B>try</B>
+    Modal.ShowModal;
+  <B>finally</B>
+    Modal.Free;
+  <B>end</B>;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MWFORM2.PAS><H3>MWFORM2.PAS</H3></A>
+
+<PRE>
+<B>unit</B> MWForm2;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs;
+
+<B>type</B>
+  TForm2 = <B>class</B>(TForm)
+    <B>procedure</B> FormClose(Sender: TObject; <B>var</B> Action: TCloseAction);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form2: TForm2;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm2.FormClose(Sender: TObject; <B>var</B> Action: TCloseAction);
+<B>begin</B>
+  Action := caFree;
+  <FONT COLOR="#000080"><I>// important: set pointer to nil!</I></FONT>
+  Form2 := <B>nil</B>;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MWFORM3.PAS><H3>MWFORM3.PAS</H3></A>
+
+<PRE>
+<B>unit</B> MWForm3;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs;
+
+<B>type</B>
+  TForm3 = <B>class</B>(TForm)
+    <B>procedure</B> FormClose(Sender: TObject; <B>var</B> Action: TCloseAction);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<FONT COLOR="#000080"><I>// removed for extra safety</I></FONT>
+<FONT COLOR="#000080"><I>{var
+  Form3: TForm3;}</I></FONT>
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm3.FormClose(Sender: TObject; <B>var</B> Action: TCloseAction);
+<B>begin</B>
+  Action := caFree;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MWFORM4.PAS><H3>MWFORM4.PAS</H3></A>
+
+<PRE>
+<B>unit</B> MWForm4;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs;
+
+<B>type</B>
+  TForm4 = <B>class</B>(TForm)
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form4: TForm4;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MAINFORM.DFM><H3>MAINFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 192
+  Top = 107
+  Width = 167
+  Height = 181
+  Caption = <I>'MultiWin'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = False
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> btnMultiple: TButton
+    Left = 40
+    Top = 16
+    Width = 75
+    Height = 25
+    Caption = <I>'Multiple'</I>
+    TabOrder = 0
+    OnClick = btnMultipleClick
+  <B>end</B>
+  <B>object</B> btnSingle: TButton
+    Left = 40
+    Top = 96
+    Width = 75
+    Height = 25
+    Caption = <I>'Single'</I>
+    TabOrder = 1
+    OnClick = btnSingleClick
+  <B>end</B>
+  <B>object</B> btnModal: TButton
+    Left = 40
+    Top = 56
+    Width = 75
+    Height = 25
+    Caption = <I>'Modal'</I>
+    TabOrder = 2
+    OnClick = btnModalClick
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<A NAME=MWFORM2.DFM><H3>MWFORM2.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form2: TForm2
+  Left = 389
+  Top = 105
+  Width = 291
+  Height = 180
+  Caption = <I>'Form2'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = False
+  OnClose = FormClose
+  PixelsPerInch = 96
+  TextHeight = 13
+<B>end</B></PRE>
+<HR>
+
+<A NAME=MWFORM3.DFM><H3>MWFORM3.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form3: TForm3
+  Left = 209
+  Top = 259
+  Width = 290
+  Height = 180
+  Caption = <I>'Form3'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = False
+  Position = poDefaultPosOnly
+  OnClose = FormClose
+  PixelsPerInch = 96
+  TextHeight = 13
+<B>end</B></PRE>
+<HR>
+
+<A NAME=MWFORM4.DFM><H3>MWFORM4.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form4: TForm4
+  Left = 342
+  Top = 344
+  Width = 279
+  Height = 203
+  Caption = <I>'Form4'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = False
+  PixelsPerInch = 96
+  TextHeight = 13
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

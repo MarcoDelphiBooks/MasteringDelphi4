@@ -1,0 +1,237 @@
+<HTML><HEAD>
+<TITLE>Project: TODOFILE.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: TODOFILE.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#TODOFILE.DPR> TODOFILE.DPR</A>
+<LI> <A HREF=#TODOFORM.PAS> TODOFORM.PAS</A>
+<LI> <A HREF=#TODOFORM.DFM> TODOFORM.DFM</A>
+</UL>
+<HR>
+<A NAME=TODOFILE.DPR><H3>TODOFILE.DPR</H3></A>
+
+<PRE>
+<B>program</B> ToDoFile;
+
+<B>uses</B>
+  Forms,
+  ToDoForm <B>in</B> <I>'ToDoForm.pas'</I> <FONT COLOR="#000080"><I>{ToDoFileForm}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TToDoFileForm, ToDoFileForm);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=TODOFORM.PAS><H3>TODOFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> ToDoForm;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  Grids, DBGrids, Db, DBTables, StdCtrls, DBCtrls, ExtCtrls;
+
+<B>type</B>
+  TToDoFileForm = <B>class</B>(TForm)
+    Splitter1: TSplitter;
+    Panel1: TPanel;
+    DBNavigator1: TDBNavigator;
+    DBMemo1: TDBMemo;
+    Table1: TTable;
+    DataSource1: TDataSource;
+    DBGrid1: TDBGrid;
+    <B>procedure</B> FormCreate(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <B>procedure</B> DropFiles (<B>var</B> Msg: TWmDropFiles);
+      <B>message</B> wm_DropFiles;
+    <B>procedure</B> CopyData (<B>var</B> Msg: TWmCopyData);
+      <B>message</B> wm_CopyData;
+  <B>end</B>;
+
+<B>var</B>
+  ToDoFileForm: TToDoFileForm;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>uses</B>
+  ShellApi;
+
+<B>procedure</B> TToDoFileForm.FormCreate(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// eventually create the table</I></FONT>
+  <B>if</B> <B>not</B> Table1.Exists <B>then</B>
+    Table1.CreateTable;
+  <FONT COLOR="#000080"><I>// activate the table</I></FONT>
+  Table1.Open;
+  <FONT COLOR="#000080"><I>// accept dragging to the form</I></FONT>
+  DragAcceptFiles (Handle, True);
+<B>end</B>;
+
+<B>procedure</B> TToDoFileForm.DropFiles(<B>var</B> Msg: TWmDropFiles);
+<B>var</B>
+  nFiles, I: Integer;
+  Filename: <B>string</B>;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// get the number of dropped files</I></FONT>
+  nFiles := DragQueryFile (Msg.Drop, $FFFFFFFF, <B>nil</B>, 0);
+  <FONT COLOR="#000080"><I>// for each file</I></FONT>
+  <B>try</B>
+    <B>for</B> I := 0 <B>to</B> nFiles - 1 <B>do</B>
+    <B>begin</B>
+      <FONT COLOR="#000080"><I>// allocate memory</I></FONT>
+      SetLength (Filename, 80);
+      <FONT COLOR="#000080"><I>// read the file name</I></FONT>
+      DragQueryFile (Msg.Drop, I, PChar (Filename), 80);
+      <FONT COLOR="#000080"><I>// normalize file</I></FONT>
+      Filename := PChar (Filename);
+      <FONT COLOR="#000080"><I>// add a new record</I></FONT>
+      Table1.InsertRecord ([Filename, <I>''</I>]);
+    <B>end</B>;
+  <B>finally</B>
+    DragFinish (Msg.Drop);
+  <B>end</B>;
+  <FONT COLOR="#000080"><I>// open the (last) record in edit mode</I></FONT>
+  Table1.Edit;
+  <FONT COLOR="#000080"><I>// move the input focus to the memo</I></FONT>
+  DBMemo1.SetFocus;
+<B>end</B>;
+
+<B>procedure</B> TToDoFileForm.CopyData(<B>var</B> Msg: TWmCopyData);
+<B>var</B>
+  Filename: <B>string</B>;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// restore the window if minimized</I></FONT>
+  <B>if</B> IsIconic (Application.Handle) <B>then</B>
+    Application.Restore;
+
+  <FONT COLOR="#000080"><I>// extract the filename from the data</I></FONT>
+  Filename := PChar (Msg.CopyDataStruct.lpData);
+  <FONT COLOR="#000080"><I>// insert a new record</I></FONT>
+  Table1.Insert;
+  <FONT COLOR="#000080"><I>// set up the file name</I></FONT>
+  Table1.FieldByName (<I>'Filename'</I>).AsString := Filename;
+  <FONT COLOR="#000080"><I>// move the input focus to the memo</I></FONT>
+  DBMemo1.SetFocus;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=TODOFORM.DFM><H3>TODOFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> ToDoFileForm: TToDoFileForm
+  Left = 122
+  Top = 158
+  Width = 607
+  Height = 406
+  Caption = <I>'Files To Do'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Splitter1: TSplitter
+    Left = 225
+    Top = 0
+    Width = 4
+    Height = 379
+    Cursor = crHSplit
+  <B>end</B>
+  <B>object</B> Panel1: TPanel
+    Left = 229
+    Top = 0
+    Width = 370
+    Height = 379
+    Align = alClient
+    BevelOuter = bvNone
+    TabOrder = 0
+    <B>object</B> DBNavigator1: TDBNavigator
+      Left = 0
+      Top = 0
+      Width = 370
+      Height = 25
+      DataSource = DataSource1
+      VisibleButtons = [nbFirst, nbPrior, nbNext, nbLast, nbDelete, nbEdit, nbPost, nbCancel]
+      Align = alTop
+      TabOrder = 0
+    <B>end</B>
+    <B>object</B> DBMemo1: TDBMemo
+      Left = 0
+      Top = 25
+      Width = 370
+      Height = 354
+      Align = alClient
+      DataField = <I>'Notes'</I>
+      DataSource = DataSource1
+      TabOrder = 1
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> DBGrid1: TDBGrid
+    Left = 0
+    Top = 0
+    Width = 225
+    Height = 379
+    Align = alLeft
+    DataSource = DataSource1
+    Options = [dgTitles, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit]
+    TabOrder = 1
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = <I>'MS Sans Serif'</I>
+    TitleFont.Style = []
+    Columns = &lt;
+      <B>item</B>
+        Expanded = False
+        FieldName = <I>'Filename'</I>
+        ReadOnly = True
+        Visible = True
+      <B>end</B>&gt;
+  <B>end</B>
+  <B>object</B> Table1: TTable
+    FieldDefs = &lt;
+      <B>item</B>
+        Name = <I>'Filename'</I>
+        DataType = ftString
+        Size = 80
+      <B>end</B>
+      <B>item</B>
+        Name = <I>'Notes'</I>
+        DataType = ftMemo
+        Size = 1
+      <B>end</B>&gt;
+    StoreDefs = True
+    TableName = <I>'todolist.db'</I>
+    TableType = ttParadox
+    Left = 32
+    Top = 88
+  <B>end</B>
+  <B>object</B> DataSource1: TDataSource
+    DataSet = Table1
+    Left = 32
+    Top = 144
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

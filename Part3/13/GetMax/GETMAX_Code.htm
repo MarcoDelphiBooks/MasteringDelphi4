@@ -1,0 +1,163 @@
+<HTML><HEAD>
+<TITLE>Project: GETMAX.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: GETMAX.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#GETMAX.DPR> GETMAX.DPR</A>
+<LI> <A HREF=#MAXFORM.PAS> MAXFORM.PAS</A>
+<LI> <A HREF=#MAXFORM.DFM> MAXFORM.DFM</A>
+</UL>
+<HR>
+<A NAME=GETMAX.DPR><H3>GETMAX.DPR</H3></A>
+
+<PRE>
+<B>program</B> GetMax;
+
+<B>uses</B>
+  Forms,
+  MaxForm <B>in</B> <I>'MaxForm.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MAXFORM.PAS><H3>MAXFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> MaxForm;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  DBTables, Db, StdCtrls;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    EmpTable: TTable;
+    EmpQuery: TQuery;
+    Database1: TDatabase;
+    BtnTable: TButton;
+    BtnQuery: TButton;
+    <B>procedure</B> BtnTableClick(Sender: TObject);
+    <B>procedure</B> BtnQueryClick(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.BtnTableClick(Sender: TObject);
+<B>var</B>
+  MaxSalary: Double;
+  Tick: Integer;
+<B>begin</B>
+  Tick := GetTickCount;
+  EmpTable.Open;
+  EmpTable.First;
+  MaxSalary := 0;
+  <B>while</B> <B>not</B> EmpTable.Eof <B>do</B>
+  <B>begin</B>
+    <B>if</B> EmpTable.FieldByName (<I>'Salary'</I>).AsCurrency &gt; MaxSalary <B>then</B>
+      MaxSalary := EmpTable.FieldByName (<I>'Salary'</I>).AsCurrency;
+    EmpTable.Next;
+  <B>end</B>;
+  Caption := <I>'Time: '</I> + IntToStr (GetTickCount - Tick);
+  ShowMessage (FloatToStr (MaxSalary));
+<B>end</B>;
+
+<B>procedure</B> TForm1.BtnQueryClick(Sender: TObject);
+<B>var</B>
+  Tick: Integer;
+<B>begin</B>
+  Tick := GetTickCount;
+  EmpQuery.Open;
+  Caption := <I>'Time: '</I> + IntToStr (GetTickCount - Tick);
+    ShowMessage (EmpQuery.Fields[0].AsString);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MAXFORM.DFM><H3>MAXFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 192
+  Top = 107
+  Width = 281
+  Height = 184
+  Caption = <I>'GetMax'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = False
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> BtnTable: TButton
+    Left = 96
+    Top = 32
+    Width = 75
+    Height = 25
+    Caption = <I>'Table Max'</I>
+    TabOrder = 0
+    OnClick = BtnTableClick
+  <B>end</B>
+  <B>object</B> BtnQuery: TButton
+    Left = 96
+    Top = 72
+    Width = 75
+    Height = 25
+    Caption = <I>'Query Max'</I>
+    TabOrder = 1
+    OnClick = BtnQueryClick
+  <B>end</B>
+  <B>object</B> EmpTable: TTable
+    DatabaseName = <I>'IB'</I>
+    TableName = <I>'EMPLOYEE'</I>
+    Left = 56
+    Top = 8
+  <B>end</B>
+  <B>object</B> EmpQuery: TQuery
+    DatabaseName = <I>'IB'</I>
+    SQL.Strings = (
+      <I>'select Max(Salary) from Employee '</I>)
+    Left = 48
+    Top = 96
+    ParamData = &lt;&gt;
+  <B>end</B>
+  <B>object</B> Database1: TDatabase
+    AliasName = <I>'IBLOCAL'</I>
+    Connected = True
+    DatabaseName = <I>'IB'</I>
+    LoginPrompt = False
+    Params.Strings = (
+      <I>'USER NAME=SYSDBA'</I>
+      <I>'PASSWORD=masterkey'</I>)
+    SessionName = <I>'Default'</I>
+    Left = 24
+    Top = 48
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

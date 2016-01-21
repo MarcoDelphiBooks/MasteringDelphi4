@@ -1,0 +1,28 @@
+Borland Developers Conference CD
+@1
+	Borland International
+	US
+Delphi Client/Server
+@1
+	Borland International
+	US
+Delphi Developer's Handbook
+@0
+	Marco and Tim
+	Italy and US
+Delphi Informant
+@2
+	Informant Communications Group
+	US
+Mastering Delphi
+@0
+	Marco Cantù
+	Italy
+The Delphi Magazine
+@2
+	ITEC
+	UK
+Thinking in C++
+@0
+	Bruce Eckel
+	US

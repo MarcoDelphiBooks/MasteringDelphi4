@@ -1,0 +1,339 @@
+<HTML><HEAD>
+<TITLE>Project: CLASSREF.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: CLASSREF.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#CLASSREF.DPR> CLASSREF.DPR</A>
+<LI> <A HREF=#CREFFORM.PAS> CREFFORM.PAS</A>
+<LI> <A HREF=#CREFFORM.DFM> CREFFORM.DFM</A>
+</UL>
+<HR>
+<A NAME=CLASSREF.DPR><H3>CLASSREF.DPR</H3></A>
+
+<PRE>
+<B>program</B> Classref;
+
+<B>uses</B>
+  Forms,
+  CRefForm <B>in</B> <I>'CRefForm.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=CREFFORM.PAS><H3>CREFFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> CRefForm;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes,
+  Graphics, Controls, Forms, Dialogs, StdCtrls,
+  ExtCtrls, Menus;
+
+<B>type</B>
+  CRefType = <B>class</B> <B>of</B> TControl;
+  TForm1 = <B>class</B>(TForm)
+    MainMenu1: TMainMenu;
+    File1: TMenuItem;
+    Exit1: TMenuItem;
+    N1: TMenuItem;
+    SaveAs1: TMenuItem;
+    Open1: TMenuItem;
+    New1: TMenuItem;
+    Help1: TMenuItem;
+    About1: TMenuItem;
+    Panel1: TPanel;
+    RadioRadioButton: TRadioButton;
+    ButtonRadioButton: TRadioButton;
+    EditRadioButton: TRadioButton;
+    OpenDialog1: TOpenDialog;
+    SaveDialog1: TSaveDialog;
+    SaveAs2: TMenuItem;
+    N2: TMenuItem;
+    SaveDialog2: TSaveDialog;
+    <B>procedure</B> RadioButtonRadioClick(Sender: TObject);
+    <B>procedure</B> RadioButtonButtonClick(Sender: TObject);
+    <B>procedure</B> RadioButtonEditClick(Sender: TObject);
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> FormMouseDown(Sender: TObject;
+      Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+    <B>procedure</B> New1Click(Sender: TObject);
+    <B>procedure</B> Open1Click(Sender: TObject);
+    <B>procedure</B> SaveAs1Click(Sender: TObject);
+    <B>procedure</B> About1Click(Sender: TObject);
+    <B>procedure</B> Exit1Click(Sender: TObject);
+    <B>procedure</B> SaveAs2Click(Sender: TObject);
+  <B>private</B>
+    ClassRef: CRefType;
+    Counter: Integer;
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.RadioButtonRadioClick(Sender: TObject);
+<B>begin</B>
+  ClassRef := TRadioButton;
+<B>end</B>;
+
+<B>procedure</B> TForm1.RadioButtonButtonClick(Sender: TObject);
+<B>begin</B>
+  ClassRef := TButton;
+<B>end</B>;
+
+<B>procedure</B> TForm1.RadioButtonEditClick(Sender: TObject);
+<B>begin</B>
+  ClassRef := TEdit;
+<B>end</B>;
+
+<B>procedure</B> TForm1.FormCreate(Sender: TObject);
+<B>begin</B>
+  ClassRef := TRadioButton;
+  Counter := 0;
+<B>end</B>;
+
+<B>procedure</B> TForm1.FormMouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+<B>var</B>
+  MyObj: TControl;
+  MyName: <B>String</B>;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>{create an object using the current class reference}</I></FONT>
+  MyObj := ClassRef.Create (self);
+  MyObj.Visible := False;
+  MyObj.Parent := self;
+  MyObj.Left := X;
+  MyObj.Top := Y;
+  Inc (Counter);
+  <FONT COLOR="#000080"><I>{define the name using the class name, without the
+  initial T, and the number of the Counter}</I></FONT>
+  MyName := ClassRef.ClassName + IntToStr (Counter);
+  Delete (MyName, 1, 1);
+  MyObj.Name := MyName;
+  MyObj.Visible := True;
+<B>end</B>;
+
+<B>procedure</B> TForm1.New1Click(Sender: TObject);
+<B>var</B>
+  I: Integer;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>{delete all existing components, except the panel}</I></FONT>
+  <B>for</B> I := ControlCount - 1 <B>downto</B> 0 <B>do</B>
+    <B>if</B> <B>not</B> (Controls[I] <B>is</B> TPanel) <B>then</B>
+    <B>begin</B>
+      Controls[I].Free;
+      Dec (Counter);
+    <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TForm1.Open1Click(Sender: TObject);
+<B>var</B>
+  S: TFileStream;
+  New: TComponent;
+<B>begin</B>
+  <B>if</B> OpenDialog1.Execute <B>then</B>
+  <B>begin</B>
+    <FONT COLOR="#000080"><I>{remove existing controls}</I></FONT>
+    New1Click (self);
+
+    <FONT COLOR="#000080"><I>{open the stream}</I></FONT>
+    S := TFileStream.Create (OpenDialog1.FileName,
+      fmOpenRead);
+    <B>try</B>
+      <B>while</B> S.Position &lt; S.Size <B>do</B>
+      <B>begin</B>
+        <FONT COLOR="#000080"><I>{read a component and add it to the form}</I></FONT>
+        New := S.ReadComponent (<B>nil</B>);
+        InsertControl (New <B>as</B> TControl);
+        Inc (Counter);
+      <B>end</B>;
+    <B>finally</B>
+      S.Free;
+    <B>end</B>;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TForm1.SaveAs1Click(Sender: TObject);
+<B>var</B>
+  S: TFileStream;
+  I: Integer;
+<B>begin</B>
+  <B>if</B> SaveDialog1.Execute <B>then</B>
+  <B>begin</B>
+    <FONT COLOR="#000080"><I>{open or create the stream file}</I></FONT>
+    S := TFileStream.Create (SaveDialog1.FileName,
+      fmOpenWrite <B>or</B> fmCreate);
+    <B>try</B>
+      <FONT COLOR="#000080"><I>{save each component except the panel}</I></FONT>
+      <B>for</B> I := 0 <B>to</B> ControlCount - 1 <B>do</B>
+        <B>if</B> <B>not</B> (Controls[I] <B>is</B> TPanel) <B>then</B>
+          S.WriteComponent (Controls[I]);
+    <B>finally</B>
+      S.Free;
+    <B>end</B>;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TForm1.About1Click(Sender: TObject);
+<B>begin</B>
+  MessageDlg (<I>'CREF2 Example: Save components to file'</I> +
+    Chr(13) + <I>'From &quot;Mastering Delphi&quot;, by Marco Cantù'</I>,
+    mtInformation, [mbOk], 0);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Exit1Click(Sender: TObject);
+<B>begin</B>
+  Close;
+<B>end</B>;
+
+<FONT COLOR="#000080"><I>{save form file}</I></FONT>
+<B>procedure</B> TForm1.SaveAs2Click(Sender: TObject);
+<B>begin</B>
+  <B>if</B> SaveDialog2.Execute <B>then</B>
+    WriteComponentResFile
+      (SaveDialog2.Filename, self);
+<B>end</B>;
+
+<B>initialization</B>
+  <FONT COLOR="#000080"><I>{register the classes of the components; this code is
+  required by the stream loader}</I></FONT>
+  RegisterClasses ([TRadioButton, TEdit, TButton]);
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=CREFFORM.DFM><H3>CREFFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 105
+  Top = 209
+  Width = 474
+  Height = 382
+  Caption = <I>'Component Builder'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clBlack
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  Menu = MainMenu1
+  OldCreateOrder = True
+  OnCreate = FormCreate
+  OnMouseDown = FormMouseDown
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Panel1: TPanel
+    Left = 0
+    Top = 0
+    Width = 466
+    Height = 33
+    Align = alTop
+    TabOrder = 0
+    <B>object</B> RadioRadioButton: TRadioButton
+      Left = 8
+      Top = 8
+      Width = 105
+      Height = 17
+      Caption = <I>'Radio Button'</I>
+      Checked = True
+      TabOrder = 0
+      TabStop = True
+      OnClick = RadioButtonRadioClick
+    <B>end</B>
+    <B>object</B> ButtonRadioButton: TRadioButton
+      Left = 136
+      Top = 8
+      Width = 61
+      Height = 17
+      Caption = <I>'Button'</I>
+      TabOrder = 1
+      OnClick = RadioButtonButtonClick
+    <B>end</B>
+    <B>object</B> EditRadioButton: TRadioButton
+      Left = 224
+      Top = 8
+      Width = 49
+      Height = 17
+      Caption = <I>'Edit'</I>
+      TabOrder = 2
+      OnClick = RadioButtonEditClick
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> MainMenu1: TMainMenu
+    Left = 408
+    Top = 48
+    <B>object</B> File1: TMenuItem
+      Caption = <I>'&amp;File'</I>
+      <B>object</B> New1: TMenuItem
+        Caption = <I>'&amp;New'</I>
+        OnClick = New1Click
+      <B>end</B>
+      <B>object</B> Open1: TMenuItem
+        Caption = <I>'&amp;Open...'</I>
+        OnClick = Open1Click
+      <B>end</B>
+      <B>object</B> SaveAs1: TMenuItem
+        Caption = <I>'Save &amp;As...'</I>
+        OnClick = SaveAs1Click
+      <B>end</B>
+      <B>object</B> N2: TMenuItem
+        Caption = <I>'-'</I>
+      <B>end</B>
+      <B>object</B> SaveAs2: TMenuItem
+        Caption = <I>'&amp;Save Form File...'</I>
+        OnClick = SaveAs2Click
+      <B>end</B>
+      <B>object</B> N1: TMenuItem
+        Caption = <I>'-'</I>
+      <B>end</B>
+      <B>object</B> Exit1: TMenuItem
+        Caption = <I>'E&amp;xit'</I>
+        OnClick = Exit1Click
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> Help1: TMenuItem
+      Caption = <I>'&amp;Help'</I>
+      <B>object</B> About1: TMenuItem
+        Caption = <I>'&amp;About...'</I>
+        OnClick = About1Click
+      <B>end</B>
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> OpenDialog1: TOpenDialog
+    Filter = <I>'Components file (*cmp)|*.cmp|Any file (*.*)|*.*'</I>
+    Options = [ofPathMustExist, ofFileMustExist]
+    Left = 408
+    Top = 104
+  <B>end</B>
+  <B>object</B> SaveDialog1: TSaveDialog
+    Filter = <I>'Components file (*cmp)|*.cmp|Any file (*.*)|*.*'</I>
+    Options = [ofOverwritePrompt, ofPathMustExist, ofCreatePrompt]
+    Left = 408
+    Top = 152
+  <B>end</B>
+  <B>object</B> SaveDialog2: TSaveDialog
+    DefaultExt = <I>'DFM'</I>
+    Filter = <I>'Delphi Form File (*.dfm)|*.dfm|Any file (*.*)|*.*'</I>
+    Options = [ofOverwritePrompt, ofHideReadOnly, ofPathMustExist]
+    Left = 408
+    Top = 200
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

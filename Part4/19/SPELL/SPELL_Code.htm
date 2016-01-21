@@ -1,0 +1,501 @@
+<HTML><HEAD>
+<TITLE>Project: SPELL.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: SPELL.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#SPELL.DPR> SPELL.DPR</A>
+<LI> <A HREF=#SPELLF.PAS> SPELLF.PAS</A>
+<LI> <A HREF=#SPELLF.DFM> SPELLF.DFM</A>
+</UL>
+<HR>
+<A NAME=SPELL.DPR><H3>SPELL.DPR</H3></A>
+
+<PRE>
+<B>program</B> Spell;
+
+<B>uses</B>
+  Forms,
+  SpellF <B>in</B> <I>'SpellF.pas'</I> <FONT COLOR="#000080"><I>{NotesForm}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TNotesForm, NotesForm);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=SPELLF.PAS><H3>SPELLF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> SpellF;
+
+<B>interface</B>
+
+<B>uses</B> Windows, Classes, Graphics, Forms, Controls,
+  Menus, StdCtrls, Dialogs, SysUtils, OleCtrls, vcspell3;
+
+<B>type</B>
+  TNotesForm = <B>class</B>(TForm)
+    Memo1: TMemo;
+    FontDialog1: TFontDialog;
+    MainMenu1: TMainMenu;
+    File1: TMenuItem;
+    New1: TMenuItem;
+    Open1: TMenuItem;
+    Save1: TMenuItem;
+    Saveas1: TMenuItem;
+    N1: TMenuItem;
+    N2: TMenuItem;
+    Print1: TMenuItem;
+    Printsetup1: TMenuItem;
+    N3: TMenuItem;
+    Exit1: TMenuItem;
+    Edit1: TMenuItem;
+    Copy1: TMenuItem;
+    Cut2: TMenuItem;
+    Paste1: TMenuItem;
+    Text1: TMenuItem;
+    AlignLeft1: TMenuItem;
+    AlignRight1: TMenuItem;
+    Center1: TMenuItem;
+    N4: TMenuItem;
+    WordWrap1: TMenuItem;
+    ReadOnly1: TMenuItem;
+    Options1: TMenuItem;
+    Font1: TMenuItem;
+    BackColor1: TMenuItem;
+    N5: TMenuItem;
+    Countchars1: TMenuItem;
+    Help1: TMenuItem;
+    AboutNotes1: TMenuItem;
+    ColorDialog1: TColorDialog;
+    OpenDialog1: TOpenDialog;
+    SaveDialog1: TSaveDialog;
+    Spelltext1: TMenuItem;
+    VSSpell1: TVSSpell;
+    <B>procedure</B> BackColor1Click(Sender: TObject);
+    <B>procedure</B> Font1Click(Sender: TObject);
+    <B>procedure</B> New1Click(Sender: TObject);
+    <B>procedure</B> Exit1Click(Sender: TObject);
+    <B>procedure</B> AlignLeft1Click(Sender: TObject);
+    <B>procedure</B> AlignRight1Click(Sender: TObject);
+    <B>procedure</B> Center1Click(Sender: TObject);
+    <B>procedure</B> WordWrap1Click(Sender: TObject);
+    <B>procedure</B> ReadOnly1Click(Sender: TObject);
+    <B>procedure</B> Countchars1Click(Sender: TObject);
+    <B>procedure</B> AboutNotes1Click(Sender: TObject);
+    <B>procedure</B> Open1Click(Sender: TObject);
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> Save1Click(Sender: TObject);
+    <B>procedure</B> Saveas1Click(Sender: TObject);
+    <B>procedure</B> FormCloseQuery(Sender: TObject; <B>var</B> CanClose: Boolean);
+    <B>procedure</B> Memo1Change(Sender: TObject);
+    <B>procedure</B> Spelltext1Click(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+    filename: <B>string</B>;
+    modified: bool;
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+    <B>function</B> SaveChanges: Boolean;
+    <B>function</B> Save: Boolean;
+    <B>function</B> SaveAs: Boolean;
+  <B>end</B>;
+
+<B>var</B>
+  NotesForm: TNotesForm;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TNotesForm.BackColor1Click(Sender: TObject);
+<B>begin</B>
+  ColorDialog1.Color := Memo1.Color;
+  <B>if</B> ColorDialog1.Execute <B>then</B>
+    Memo1.Color := ColorDialog1.Color;
+<B>end</B>;
+
+<B>procedure</B> TNotesForm.Font1Click(Sender: TObject);
+<B>begin</B>
+  FontDialog1.Font := Memo1.Font;
+  <B>if</B> FontDialog1.Execute <B>then</B>
+    Memo1.Font := FontDialog1.Font;
+<B>end</B>;
+
+<B>procedure</B> TNotesForm.AlignLeft1Click(Sender: TObject);
+<B>begin</B>
+  Memo1.Alignment := taLeftJustify;
+  AlignLeft1.Checked := True;
+  AlignRight1.Checked := False;
+  Center1.Checked := False;
+<B>end</B>;
+
+<B>procedure</B> TNotesForm.AlignRight1Click(Sender: TObject);
+<B>begin</B>
+  Memo1.Alignment := taRightJustify;
+  AlignLeft1.Checked := False;
+  AlignRight1.Checked := True;
+  Center1.Checked := False;
+<B>end</B>;
+
+<B>procedure</B> TNotesForm.Center1Click(Sender: TObject);
+<B>begin</B>
+  Memo1.Alignment := taCenter;
+  AlignLeft1.Checked := False;
+  AlignRight1.Checked := False;
+  Center1.Checked := True;
+<B>end</B>;
+
+<B>procedure</B> TNotesForm.WordWrap1Click(Sender: TObject);
+<B>begin</B>
+  <B>if</B> Memo1.WordWrap <B>then</B>
+  <B>begin</B>
+    Memo1.WordWrap := False;
+    WordWrap1.Checked := False;
+    Memo1.ScrollBars := ssBoth;
+  <B>end</B>
+  <B>else</B>
+  <B>begin</B>
+    Memo1.WordWrap := True;
+    WordWrap1.Checked := True;
+    Memo1.ScrollBars := ssVertical;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TNotesForm.ReadOnly1Click(Sender: TObject);
+<B>begin</B>
+  Memo1.ReadOnly := <B>not</B> Memo1.ReadOnly;
+  ReadOnly1.Checked := <B>not</B> ReadOnly1.Checked;
+<B>end</B>;
+
+<B>procedure</B> TNotesForm.Countchars1Click(Sender: TObject);
+<B>begin</B>
+  MessageDlg (Format (
+    <I>'The text has %d characters'</I>, [Memo1.GetTextLen]),
+    mtInformation, [mbOK], 0);
+<B>end</B>;
+
+<B>procedure</B> TNotesForm.AboutNotes1Click(Sender: TObject);
+<B>begin</B>
+  MessageDlg (<I>'The Notes program has been written for'</I> + <I>#13</I>
+    + <I>'the book Mastering Delphi by Marco Cantù'</I>,
+    mtInformation, [mbOK], 0);
+<B>end</B>;
+
+<B>procedure</B> TNotesForm.FormCreate(Sender: TObject);
+<B>begin</B>
+  filename := <I>''</I>;
+  modified := False;
+<B>end</B>;
+
+<B>procedure</B> TNotesForm.Memo1Change(Sender: TObject);
+<B>begin</B>
+  modified := True;
+<B>end</B>;
+
+<B>procedure</B> TNotesForm.New1Click(Sender: TObject);
+<B>begin</B>
+  <B>if</B> <B>not</B> modified <B>or</B> SaveChanges <B>then</B>
+  <B>begin</B>
+    Memo1.Text := <I>''</I>;
+    modified := False;
+    filename := <I>''</I>;
+    NotesForm.Caption := <I>'Notes - [Untitled]'</I>;
+  <B>end</B>;
+<B>end</B>;
+
+<B>function</B> TNotesForm.SaveChanges: Boolean;
+<FONT COLOR="#000080"><I>{return value False means you need to skip current operation}</I></FONT>
+<B>var</B>
+  code: Integer;
+<B>begin</B>
+  SaveChanges := True;
+  code := MessageDlg (<I>'The document '</I> + filename +
+    <I>' has changed.'</I> + <I>#13#13</I>+<I>'Do you want to save the changes?'</I>,
+    mtConfirmation, mbYesNoCancel, 0);
+  <B>if</B> (code = IDYES) <B>then</B>
+    SaveChanges := Save;
+  <B>if</B> (code = IDCANCEL) <B>then</B>
+    SaveChanges := False;
+<B>end</B>;
+
+<B>function</B> TNotesForm.Save: Boolean;
+<FONT COLOR="#000080"><I>{return False if the SaveAs operation has been aborted}</I></FONT>
+<B>begin</B>
+  <B>if</B> filename = <I>''</I> <B>then</B>
+    Save := SaveAs
+  <B>else</B>
+  <B>begin</B>
+    modified := False;
+    Memo1.Lines.SaveToFile(filename);
+    Save := True;
+  <B>end</B>;
+<B>end</B>;
+
+<B>function</B> TNotesForm.SaveAs: Boolean;
+<FONT COLOR="#000080"><I>{return False if the dialog box has been 'cancelled'}</I></FONT>
+<B>begin</B>
+  SaveDialog1.FileName := filename;
+  <B>if</B> SaveDialog1.Execute <B>then</B>
+  <B>begin</B>
+    filename := SaveDialog1.FileName;
+    Memo1.Lines.SaveToFile(filename);
+    modified := False;
+    NotesForm.Caption := <I>'Notes - '</I> + filename;
+    SaveAs := True;
+  <B>end</B>
+  <B>else</B>
+    SaveAs := False;
+<B>end</B>;
+
+<B>procedure</B> TNotesForm.Save1Click(Sender: TObject);
+<B>begin</B>
+  <B>if</B> modified <B>then</B>
+    Save;
+<B>end</B>;
+
+<B>procedure</B> TNotesForm.Saveas1Click(Sender: TObject);
+<B>begin</B>
+  SaveAs;
+<B>end</B>;
+
+<B>procedure</B> TNotesForm.Open1Click(Sender: TObject);
+<B>begin</B>
+  <B>if</B> <B>not</B> modified <B>or</B> SaveChanges <B>then</B>
+    <B>if</B> OpenDialog1.Execute <B>then</B>
+    <B>begin</B>
+      filename := OpenDialog1.FileName;
+      Memo1.Lines.LoadFromFile(filename);
+      modified := False;
+      NotesForm.Caption := <I>'Notes - '</I> + filename;
+    <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TNotesForm.FormCloseQuery(Sender: TObject;
+  <B>var</B> CanClose: Boolean);
+<B>begin</B>
+  <B>if</B> modified <B>then</B>
+    <B>if</B> SaveChanges <B>then</B>
+      CanClose := True
+    <B>else</B>
+      CanClose := False
+  <B>else</B>
+    CanClose := True;
+<B>end</B>;
+
+<B>procedure</B> TNotesForm.Exit1Click(Sender: TObject);
+<B>begin</B>
+  NotesForm.Close;
+<B>end</B>;
+
+<B>procedure</B> TNotesForm.Spelltext1Click(Sender: TObject);
+<B>begin</B>
+  VSSpell1.CheckText := Memo1.Text;
+  <B>if</B> VSSpell1.ResultCode = 0 <B>then</B>
+    <FONT COLOR="#000080"><I>// the spelling was properly executed</I></FONT>
+    Memo1.Text := VSSpell1.Text;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=SPELLF.DFM><H3>SPELLF.DFM</H3></A>
+
+<PRE>
+<B>object</B> NotesForm: TNotesForm
+  Left = 203
+  Top = 112
+  Width = 440
+  Height = 257
+  Caption = <I>'Notes - (Untitled)'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clBlack
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  Menu = MainMenu1
+  OldCreateOrder = True
+  OnCloseQuery = FormCloseQuery
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Memo1: TMemo
+    Left = 0
+    Top = 0
+    Width = 432
+    Height = 211
+    Align = alClient
+    BorderStyle = bsNone
+    ScrollBars = ssBoth
+    TabOrder = 0
+    OnChange = Memo1Change
+  <B>end</B>
+  <B>object</B> VSSpell1: TVSSpell
+    Left = 40
+    Top = 64
+    Width = 23
+    Height = 23
+    ControlData = <FONT COLOR="#000080"><I>{
+      00000200010101000000005E7E00000A0001000C616D65726963616E2E767464
+      DC0500000000000000000001C0C0C0000000000C767370656C6C65722E686C70
+      0C767370656C6C65722E686C70696420}</I></FONT>
+  <B>end</B>
+  <B>object</B> FontDialog1: TFontDialog
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = <I>'System'</I>
+    Font.Style = []
+    MinFontSize = 0
+    MaxFontSize = 0
+    Left = 320
+    Top = 8
+  <B>end</B>
+  <B>object</B> MainMenu1: TMainMenu
+    Left = 32
+    Top = 8
+    <B>object</B> File1: TMenuItem
+      Caption = <I>'&amp;File'</I>
+      <B>object</B> New1: TMenuItem
+        Caption = <I>'&amp;New'</I>
+        OnClick = New1Click
+      <B>end</B>
+      <B>object</B> N1: TMenuItem
+        Caption = <I>'-'</I>
+      <B>end</B>
+      <B>object</B> Open1: TMenuItem
+        Caption = <I>'&amp;Open...'</I>
+        OnClick = Open1Click
+      <B>end</B>
+      <B>object</B> Save1: TMenuItem
+        Caption = <I>'&amp;Save'</I>
+        OnClick = Save1Click
+      <B>end</B>
+      <B>object</B> Saveas1: TMenuItem
+        Caption = <I>'Save &amp;as...'</I>
+        OnClick = Saveas1Click
+      <B>end</B>
+      <B>object</B> N2: TMenuItem
+        Caption = <I>'-'</I>
+      <B>end</B>
+      <B>object</B> Print1: TMenuItem
+        Caption = <I>'&amp;Print...'</I>
+        Enabled = False
+      <B>end</B>
+      <B>object</B> Printsetup1: TMenuItem
+        Caption = <I>'P&amp;rint Setup'</I>
+        Enabled = False
+      <B>end</B>
+      <B>object</B> N3: TMenuItem
+        Caption = <I>'-'</I>
+      <B>end</B>
+      <B>object</B> Exit1: TMenuItem
+        Caption = <I>'E&amp;xit'</I>
+        OnClick = Exit1Click
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> Edit1: TMenuItem
+      Caption = <I>'&amp;Edit'</I>
+      <B>object</B> Cut2: TMenuItem
+        Caption = <I>'Cu&amp;t'</I>
+        Enabled = False
+      <B>end</B>
+      <B>object</B> Copy1: TMenuItem
+        Caption = <I>'&amp;Copy'</I>
+        Enabled = False
+      <B>end</B>
+      <B>object</B> Paste1: TMenuItem
+        Caption = <I>'&amp;Paste'</I>
+        Enabled = False
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> Text1: TMenuItem
+      Caption = <I>'&amp;Text'</I>
+      <B>object</B> AlignLeft1: TMenuItem
+        Caption = <I>'Align &amp;Left'</I>
+        Checked = True
+        OnClick = AlignLeft1Click
+      <B>end</B>
+      <B>object</B> AlignRight1: TMenuItem
+        Caption = <I>'Align &amp;Right'</I>
+        OnClick = AlignRight1Click
+      <B>end</B>
+      <B>object</B> Center1: TMenuItem
+        Caption = <I>'&amp;Center'</I>
+        OnClick = Center1Click
+      <B>end</B>
+      <B>object</B> N4: TMenuItem
+        Caption = <I>'-'</I>
+      <B>end</B>
+      <B>object</B> WordWrap1: TMenuItem
+        Caption = <I>'&amp;Word Wrap'</I>
+        OnClick = WordWrap1Click
+      <B>end</B>
+      <B>object</B> ReadOnly1: TMenuItem
+        Caption = <I>'Read &amp;Only'</I>
+        OnClick = ReadOnly1Click
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> Options1: TMenuItem
+      Caption = <I>'&amp;Options'</I>
+      <B>object</B> Font1: TMenuItem
+        Caption = <I>'&amp;Font...'</I>
+        OnClick = Font1Click
+      <B>end</B>
+      <B>object</B> BackColor1: TMenuItem
+        Caption = <I>'Back &amp;Color...'</I>
+        OnClick = BackColor1Click
+      <B>end</B>
+      <B>object</B> N5: TMenuItem
+        Caption = <I>'-'</I>
+      <B>end</B>
+      <B>object</B> Countchars1: TMenuItem
+        Caption = <I>'Count c&amp;hars'</I>
+        OnClick = Countchars1Click
+      <B>end</B>
+      <B>object</B> Spelltext1: TMenuItem
+        Caption = <I>'&amp;Spell text'</I>
+        OnClick = Spelltext1Click
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> Help1: TMenuItem
+      Caption = <I>'&amp;Help'</I>
+      <B>object</B> AboutNotes1: TMenuItem
+        Caption = <I>'&amp;About Notes...'</I>
+        OnClick = AboutNotes1Click
+      <B>end</B>
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> ColorDialog1: TColorDialog
+    Ctl3D = True
+    Left = 104
+    Top = 8
+  <B>end</B>
+  <B>object</B> OpenDialog1: TOpenDialog
+    Filter =
+       <I>'Text Files (*.txt)|*.txt|Pascal files (*.pas)|*.pas|Windows ini '</I> +
+      <I>'files (*.ini)|*.ini|All files (*.*)|*.*'</I>
+    Options = [ofHideReadOnly, ofPathMustExist, ofFileMustExist, ofShareAware]
+    Left = 248
+    Top = 8
+  <B>end</B>
+  <B>object</B> SaveDialog1: TSaveDialog
+    Filter =
+       <I>'Text Files (*.txt)|*.txt|Pascal files (*.pas)|*.pas|Windows ini '</I> +
+      <I>'files (*.ini)|*.ini|All files (*.*)|*.*'</I>
+    Options = [ofOverwritePrompt, ofHideReadOnly, ofPathMustExist]
+    Left = 176
+    Top = 8
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

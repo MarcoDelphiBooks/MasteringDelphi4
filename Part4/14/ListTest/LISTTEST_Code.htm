@@ -1,0 +1,174 @@
+<HTML><HEAD>
+<TITLE>Project: LISTTEST.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: LISTTEST.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#LISTTEST.DPR> LISTTEST.DPR</A>
+<LI> <A HREF=#LISTFORM.PAS> LISTFORM.PAS</A>
+<LI> <A HREF=#LISTFORM.DFM> LISTFORM.DFM</A>
+</UL>
+<HR>
+<A NAME=LISTTEST.DPR><H3>LISTTEST.DPR</H3></A>
+
+<PRE>
+<B>program</B> ListTest;
+
+<B>uses</B>
+  Forms,
+  ListForm <B>in</B> <I>'ListForm.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=LISTFORM.PAS><H3>LISTFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> ListForm;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  ListAct, ActnList, ComCtrls, ToolWin, StdCtrls;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    ListBox1: TListBox;
+    ListBox2: TListBox;
+    ToolBar1: TToolBar;
+    ToolButton1: TToolButton;
+    ToolButton2: TToolButton;
+    ToolButton3: TToolButton;
+    ActionList1: TActionList;
+    ListCopyAction1: TListCopyAction;
+    ListCutAction1: TListCutAction;
+    ListPasteAction1: TListPasteAction;
+    Edit1: TEdit;
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=LISTFORM.DFM><H3>LISTFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 192
+  Top = 107
+  Width = 370
+  Height = 291
+  Caption = <I>'ListTest (Custom Actions)'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = False
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> ListBox1: TListBox
+    Left = 184
+    Top = 40
+    Width = 169
+    Height = 217
+    ItemHeight = 13
+    Items.Strings = (
+      <I>'four'</I>
+      <I>'five'</I>
+      <I>'six'</I>)
+    TabOrder = 0
+  <B>end</B>
+  <B>object</B> ListBox2: TListBox
+    Left = 8
+    Top = 40
+    Width = 169
+    Height = 217
+    ItemHeight = 13
+    Items.Strings = (
+      <I>'one'</I>
+      <I>'two'</I>
+      <I>'three'</I>)
+    TabOrder = 1
+  <B>end</B>
+  <B>object</B> ToolBar1: TToolBar
+    Left = 0
+    Top = 0
+    Width = 362
+    Height = 29
+    BorderWidth = 1
+    ButtonHeight = 19
+    ButtonWidth = 39
+    Caption = <I>'ToolBar1'</I>
+    EdgeBorders = [ebTop, ebBottom]
+    Flat = True
+    List = True
+    ParentShowHint = False
+    ShowCaptions = True
+    ShowHint = True
+    TabOrder = 2
+    Wrapable = False
+    <B>object</B> ToolButton1: TToolButton
+      Left = 0
+      Top = 0
+      Action = ListCutAction1
+    <B>end</B>
+    <B>object</B> ToolButton2: TToolButton
+      Left = 39
+      Top = 0
+      Action = ListCopyAction1
+    <B>end</B>
+    <B>object</B> ToolButton3: TToolButton
+      Left = 78
+      Top = 0
+      Action = ListPasteAction1
+    <B>end</B>
+    <B>object</B> Edit1: TEdit
+      Left = 117
+      Top = 0
+      Width = 121
+      Height = 19
+      TabOrder = 0
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> ActionList1: TActionList
+    Left = 48
+    Top = 72
+    <B>object</B> ListCopyAction1: TListCopyAction
+      Category = <I>'ListBox'</I>
+      Caption = <I>'Copy'</I>
+    <B>end</B>
+    <B>object</B> ListCutAction1: TListCutAction
+      Category = <I>'ListBox'</I>
+      Caption = <I>'Cut'</I>
+    <B>end</B>
+    <B>object</B> ListPasteAction1: TListPasteAction
+      Category = <I>'ListBox'</I>
+      Caption = <I>'Paste'</I>
+    <B>end</B>
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

@@ -1,0 +1,146 @@
+<HTML><HEAD>
+<TITLE>Project: ANCHORS.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: ANCHORS.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#ANCHORS.DPR> ANCHORS.DPR</A>
+<LI> <A HREF=#ANCHFORM.PAS> ANCHFORM.PAS</A>
+<LI> <A HREF=#ANCHFORM.DFM> ANCHFORM.DFM</A>
+</UL>
+<HR>
+<A NAME=ANCHORS.DPR><H3>ANCHORS.DPR</H3></A>
+
+<PRE>
+<B>program</B> Anchors;
+
+<B>uses</B>
+  Forms,
+  AnchForm <B>in</B> <I>'AnchForm.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=ANCHFORM.PAS><H3>ANCHFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> AnchForm;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    BtnClose: TButton;
+    BtnShow: TButton;
+    ListBox1: TListBox;
+    <B>procedure</B> BtnShowClick(Sender: TObject);
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> BtnCloseClick(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.BtnShowClick(Sender: TObject);
+<B>begin</B>
+  ShowMessage (ListBox1.Items [ListBox1.ItemIndex]);
+<B>end</B>;
+
+<B>procedure</B> TForm1.FormCreate(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// select the first item</I></FONT>
+  ListBox1.ItemIndex := 0;
+<B>end</B>;
+
+<B>procedure</B> TForm1.BtnCloseClick(Sender: TObject);
+<B>begin</B>
+  Close;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=ANCHFORM.DFM><H3>ANCHFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 192
+  Top = 107
+  Width = 288
+  Height = 226
+  Caption = <I>'Anchors'</I>
+  Color = clBtnFace
+  Constraints.MinHeight = 150
+  Constraints.MinWidth = 250
+  Font.Charset = ANSI_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -15
+  Font.Name = <I>'Arial'</I>
+  Font.Style = [fsBold]
+  OldCreateOrder = False
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 18
+  <B>object</B> BtnClose: TButton
+    Left = 188
+    Top = 165
+    Width = 75
+    Height = 25
+    Anchors = [akRight, akBottom]
+    Caption = <I>'Close'</I>
+    TabOrder = 0
+    OnClick = BtnCloseClick
+  <B>end</B>
+  <B>object</B> BtnShow: TButton
+    Left = 188
+    Top = 133
+    Width = 75
+    Height = 25
+    Anchors = [akRight, akBottom]
+    Caption = <I>'Show'</I>
+    TabOrder = 1
+    OnClick = BtnShowClick
+  <B>end</B>
+  <B>object</B> ListBox1: TListBox
+    Left = 16
+    Top = 8
+    Width = 154
+    Height = 182
+    Anchors = [akLeft, akTop, akRight, akBottom]
+    ItemHeight = 18
+    Items.Strings = (
+      <I>'one'</I>
+      <I>'two'</I>
+      <I>'three'</I>
+      <I>'four'</I>
+      <I>'five'</I>
+      <I>'six'</I>
+      <I>'seven'</I>
+      <I>'eight'</I>)
+    TabOrder = 2
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

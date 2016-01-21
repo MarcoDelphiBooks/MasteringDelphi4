@@ -1,0 +1,265 @@
+<HTML><HEAD>
+<TITLE>Project: ANIMALS.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: ANIMALS.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#ANIMALS.DPR> ANIMALS.DPR</A>
+<LI> <A HREF=#ANIMF.PAS> ANIMF.PAS</A>
+<LI> <A HREF=#ANIM.PAS> ANIM.PAS</A>
+<LI> <A HREF=#ANIMF.DFM> ANIMF.DFM</A>
+</UL>
+<HR>
+<A NAME=ANIMALS.DPR><H3>ANIMALS.DPR</H3></A>
+
+<PRE>
+<B>program</B> Animals;
+
+<B>uses</B>
+  Forms,
+  AnimF <B>in</B> <I>'AnimF.pas'</I> <FONT COLOR="#000080"><I>{FormAnimals}</I></FONT>,
+  Anim <B>in</B> <I>'ANIM.PAS'</I>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TFormAnimals, FormAnimals);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=ANIMF.PAS><H3>ANIMF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> AnimF;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes, Graphics, Controls,
+  Forms, Dialogs, StdCtrls, Anim;
+
+<B>type</B>
+  TFormAnimals = <B>class</B>(TForm)
+    LabelVoice: TLabel;
+    BtnVoice: TButton;
+    RbtnAnimal: TRadioButton;
+    RbtnDog: TRadioButton;
+    RbtnCat: TRadioButton;
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> FormDestroy(Sender: TObject);
+    <B>procedure</B> BtnVoiceClick(Sender: TObject);
+    <B>procedure</B> RbtnAnimalClick(Sender: TObject);
+    <B>procedure</B> RbtnDogClick(Sender: TObject);
+    <B>procedure</B> RbtnCatClick(Sender: TObject);
+  <B>private</B>
+    MyAnimal: TAnimal;
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  FormAnimals: TFormAnimals;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TFormAnimals.FormCreate(Sender: TObject);
+<B>begin</B>
+  MyAnimal := TDog.Create;
+<B>end</B>;
+
+<B>procedure</B> TFormAnimals.FormDestroy(Sender: TObject);
+<B>begin</B>
+  MyAnimal.Free;
+<B>end</B>;
+
+<B>procedure</B> TFormAnimals.BtnVoiceClick(Sender: TObject);
+<B>begin</B>
+  LabelVoice.Caption := MyAnimal.Voice;
+<B>end</B>;
+
+<B>procedure</B> TFormAnimals.RbtnAnimalClick(Sender: TObject);
+<B>begin</B>
+  MyAnimal.Free;
+  MyAnimal := TAnimal.Create;
+<B>end</B>;
+
+<B>procedure</B> TFormAnimals.RbtnDogClick(Sender: TObject);
+<B>begin</B>
+  MyAnimal.Free;
+  MyAnimal := TDog.Create;
+<B>end</B>;
+
+<B>procedure</B> TFormAnimals.RbtnCatClick(Sender: TObject);
+<B>begin</B>
+  MyAnimal.Free;
+  MyAnimal := TCat.Create;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=ANIM.PAS><H3>ANIM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> Anim;
+
+<B>interface</B>
+
+<B>type</B>
+  TAnimal = <B>class</B>
+  <B>public</B>
+    <B>constructor</B> Create;
+    <B>function</B> GetKind: <B>string</B>;
+    <B>function</B> Voice: <B>string</B>; <B>virtual</B>; <B>abstract</B>;
+  <B>private</B>
+    Kind: <B>string</B>;
+  <B>end</B>;
+
+  TDog = <B>class</B> (TAnimal)
+  <B>public</B>
+    <B>constructor</B> Create;
+    <B>function</B> Voice: <B>string</B>; <B>override</B>;
+    <B>function</B> Eat: <B>string</B>; <B>virtual</B>;
+  <B>end</B>;
+
+  TCat = <B>class</B> (TAnimal)
+  <B>public</B>
+    <B>constructor</B> Create;
+    <B>function</B> Voice: <B>string</B>; <B>override</B>;
+    <B>function</B> Eat: <B>string</B>; <B>virtual</B>;
+  <B>end</B>;
+
+<B>implementation</B>
+
+<B>uses</B>
+  MMSystem;
+
+<B>constructor</B> TAnimal.Create;
+<B>begin</B>
+  Kind := <I>'An animal'</I>;
+<B>end</B>;
+
+<B>function</B> TAnimal.GetKind: <B>string</B>;
+<B>begin</B>
+  GetKind := Kind;
+<B>end</B>;
+
+<B>constructor</B> TDog.Create;
+<B>begin</B>
+  Kind := <I>'A dog'</I>;
+<B>end</B>;
+
+<B>function</B> TDog.Voice: <B>string</B>;
+<B>begin</B>
+  Voice := <I>'Arf Arf'</I>;
+  PlaySound (<I>'dog.wav'</I>, 0, snd_Async);
+<B>end</B>;
+
+<B>function</B> TDog.Eat: <B>string</B>;
+<B>begin</B>
+  Eat := <I>'A bone, please!'</I>;
+<B>end</B>;
+
+<B>constructor</B> TCat.Create;
+<B>begin</B>
+  Kind := <I>'A cat'</I>;
+<B>end</B>;
+
+<B>function</B> TCat.Voice: <B>string</B>;
+<B>begin</B>
+  Voice := <I>'Mieow'</I>;
+  PlaySound (<I>'cat.wav'</I>, 0, snd_Async);
+<B>end</B>;
+
+<B>function</B> TCat.Eat: <B>string</B>;
+<B>begin</B>
+  Eat := <I>'A mouse, please!'</I>;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=ANIMF.DFM><H3>ANIMF.DFM</H3></A>
+
+<PRE>
+<B>object</B> FormAnimals: TFormAnimals
+  Left = 208
+  Top = 106
+  Width = 278
+  Height = 233
+  ActiveControl = BtnVoice
+  Caption = <I>'Animals'</I>
+  Color = clBtnFace
+  Font.Charset = ANSI_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> LabelVoice: TLabel
+    Left = 39
+    Top = 168
+    Width = 201
+    Height = 17
+    Alignment = taCenter
+    AutoSize = False
+    Caption = <I>'Voice'</I>
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clBlack
+    Font.Height = -16
+    Font.Name = <I>'Arial'</I>
+    Font.Style = [fsBold]
+    ParentFont = False
+  <B>end</B>
+  <B>object</B> BtnVoice: TButton
+    Left = 152
+    Top = 56
+    Width = 89
+    Height = 33
+    Caption = <I>'&amp;Voice'</I>
+    TabOrder = 0
+    OnClick = BtnVoiceClick
+  <B>end</B>
+  <B>object</B> RbtnAnimal: TRadioButton
+    Left = 24
+    Top = 40
+    Width = 113
+    Height = 41
+    Caption = <I>'&amp;Animal'</I>
+    TabOrder = 1
+    OnClick = RbtnAnimalClick
+  <B>end</B>
+  <B>object</B> RbtnDog: TRadioButton
+    Left = 24
+    Top = 72
+    Width = 113
+    Height = 41
+    Caption = <I>'&amp;Dog'</I>
+    Checked = True
+    TabOrder = 2
+    TabStop = True
+    OnClick = RbtnDogClick
+  <B>end</B>
+  <B>object</B> RbtnCat: TRadioButton
+    Left = 24
+    Top = 104
+    Width = 113
+    Height = 41
+    Caption = <I>'&amp;Cat'</I>
+    TabOrder = 3
+    OnClick = RbtnCatClick
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

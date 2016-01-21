@@ -1,0 +1,309 @@
+<HTML><HEAD>
+<TITLE>Project: ARROWDEMO.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: ARROWDEMO.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#ARROWDEMO.DPR> ARROWDEMO.DPR</A>
+<LI> <A HREF=#ARROWFORM.PAS> ARROWFORM.PAS</A>
+<LI> <A HREF=#ARROWFORM.DFM> ARROWFORM.DFM</A>
+</UL>
+<HR>
+<A NAME=ARROWDEMO.DPR><H3>ARROWDEMO.DPR</H3></A>
+
+<PRE>
+<B>program</B> ArrowDemo;
+
+<B>uses</B>
+  Forms,
+  ArrowForm <B>in</B> <I>'ArrowForm.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=ARROWFORM.PAS><H3>ARROWFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> ArrowForm;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes, Graphics, Controls,
+  Forms, Dialogs, StdCtrls, Spin, ExtCtrls, ComCtrls, Md4Arrow;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    Bevel1: TBevel;
+    Label1: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
+    PenLabel: TLabel;
+    SpinWidth: TSpinEdit;
+    SpinHeight: TSpinEdit;
+    SpinArrow: TSpinEdit;
+    btnTurn: TButton;
+    cbFilled: TCheckBox;
+    btnBrush: TButton;
+    btnPen: TButton;
+    ColorDialog1: TColorDialog;
+    trackPenWidth: TTrackBar;
+    Arrow: TMd4Arrow;
+    <B>procedure</B> btnTurnClick(Sender: TObject);
+    <B>procedure</B> cbFilledClick(Sender: TObject);
+    <B>procedure</B> btnBrushClick(Sender: TObject);
+    <B>procedure</B> btnPenClick(Sender: TObject);
+    <B>procedure</B> trackPenWidthChange(Sender: TObject);
+    <B>procedure</B> ArrowDoubleClick (Sender: TObject);
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> SpinWidthChange(Sender: TObject);
+    <B>procedure</B> SpinHeightChange(Sender: TObject);
+    <B>procedure</B> SpinArrowChange(Sender: TObject);
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.btnTurnClick(Sender: TObject);
+<B>begin</B>
+  <B>if</B> Arrow.Direction = High (TMd4ArrowDir) <B>then</B>
+    Arrow.Direction := Low (TMd4ArrowDir)
+  <B>else</B>
+    Arrow.Direction := Succ (Arrow.Direction);
+<B>end</B>;
+
+<B>procedure</B> TForm1.cbFilledClick(Sender: TObject);
+<B>begin</B>
+  Arrow.Filled := <B>not</B> Arrow.Filled;
+<B>end</B>;
+
+<B>procedure</B> TForm1.btnBrushClick(Sender: TObject);
+<B>begin</B>
+  ColorDialog1.Color := Arrow.Brush.Color;
+  <B>if</B> ColorDialog1.Execute <B>then</B>
+    Arrow.Brush.Color := ColorDialog1.Color;
+<B>end</B>;
+
+<B>procedure</B> TForm1.btnPenClick(Sender: TObject);
+<B>begin</B>
+  ColorDialog1.Color := Arrow.Pen.Color;
+  <B>if</B> ColorDialog1.Execute <B>then</B>
+    Arrow.Pen.Color := ColorDialog1.Color;
+<B>end</B>;
+
+<B>procedure</B> TForm1.trackPenWidthChange(Sender: TObject);
+<B>begin</B>
+  PenLabel.Caption := <I>'Pen Width: '</I> +
+    IntToStr (trackPenWidth.Position);
+  Arrow.Pen.Width := trackPenWidth.Position;
+<B>end</B>;
+
+<B>procedure</B> TForm1.ArrowDoubleClick (Sender: TObject);
+<B>begin</B>
+  ShowMessage (<I>'You have double clicked '</I> +
+    <I>'on the point of the arrow'</I>);
+<B>end</B>;
+
+<B>procedure</B> TForm1.FormCreate(Sender: TObject);
+<B>begin</B>
+  SpinWidth.Value := Arrow.Width;
+  SpinHeight.Value := Arrow.Height;
+  SpinArrow.Value := Arrow.ArrowHeight;
+  cbFilled.Checked := Arrow.Filled;
+  trackPenWidth.Position := Arrow.Pen.Width;
+  PenLabel.Caption := <I>'Pen Width: '</I> +
+    IntToStr (trackPenWidth.Position);
+<B>end</B>;
+
+<B>procedure</B> TForm1.SpinWidthChange(Sender: TObject);
+<B>begin</B>
+  Arrow.Width := SpinWidth.Value;
+<B>end</B>;
+
+<B>procedure</B> TForm1.SpinHeightChange(Sender: TObject);
+<B>begin</B>
+  Arrow.Height := SpinHeight.Value;
+<B>end</B>;
+
+<B>procedure</B> TForm1.SpinArrowChange(Sender: TObject);
+<B>begin</B>
+  Arrow.ArrowHeight := SpinArrow.Value;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=ARROWFORM.DFM><H3>ARROWFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 202
+  Top = 109
+  Width = 428
+  Height = 323
+  Caption = <I>'Arrow Test'</I>
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clBlack
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Bevel1: TBevel
+    Left = 8
+    Top = 8
+    Width = 225
+    Height = 97
+  <B>end</B>
+  <B>object</B> Label1: TLabel
+    Left = 24
+    Top = 33
+    Width = 28
+    Height = 13
+    Caption = <I>'Width'</I>
+  <B>end</B>
+  <B>object</B> Label2: TLabel
+    Left = 24
+    Top = 68
+    Width = 31
+    Height = 13
+    Caption = <I>'Height'</I>
+  <B>end</B>
+  <B>object</B> Label3: TLabel
+    Left = 128
+    Top = 49
+    Width = 27
+    Height = 13
+    Caption = <I>'Arrow'</I>
+  <B>end</B>
+  <B>object</B> PenLabel: TLabel
+    Left = 256
+    Top = 90
+    Width = 62
+    Height = 13
+    Caption = <I>'Pen Width: 1'</I>
+  <B>end</B>
+  <B>object</B> Arrow: TMd4Arrow
+    Left = 88
+    Top = 152
+    Width = 249
+    Height = 97
+    Direction = adLeft
+    ArrowHeight = 30
+    Pen.Width = 2
+    OnArrowDblClick = ArrowDoubleClick
+  <B>end</B>
+  <B>object</B> SpinWidth: TSpinEdit
+    Left = 64
+    Top = 28
+    Width = 49
+    Height = 22
+    Increment = 5
+    MaxValue = 0
+    MinValue = 0
+    TabOrder = 0
+    Value = 20
+    OnChange = SpinWidthChange
+  <B>end</B>
+  <B>object</B> SpinHeight: TSpinEdit
+    Left = 64
+    Top = 63
+    Width = 49
+    Height = 22
+    Increment = 5
+    MaxValue = 0
+    MinValue = 0
+    TabOrder = 1
+    Value = 30
+    OnChange = SpinHeightChange
+  <B>end</B>
+  <B>object</B> SpinArrow: TSpinEdit
+    Left = 168
+    Top = 44
+    Width = 49
+    Height = 22
+    Increment = 5
+    MaxValue = 0
+    MinValue = 0
+    TabOrder = 2
+    Value = 15
+    OnChange = SpinArrowChange
+  <B>end</B>
+  <B>object</B> btnTurn: TButton
+    Left = 248
+    Top = 9
+    Width = 65
+    Height = 24
+    Caption = <I>'Turn'</I>
+    TabOrder = 3
+    OnClick = btnTurnClick
+  <B>end</B>
+  <B>object</B> cbFilled: TCheckBox
+    Left = 256
+    Top = 41
+    Width = 49
+    Height = 25
+    Caption = <I>'Filled'</I>
+    TabOrder = 4
+    OnClick = cbFilledClick
+  <B>end</B>
+  <B>object</B> btnBrush: TButton
+    Left = 328
+    Top = 8
+    Width = 81
+    Height = 25
+    Caption = <I>'Brush Color...'</I>
+    TabOrder = 5
+    OnClick = btnBrushClick
+  <B>end</B>
+  <B>object</B> btnPen: TButton
+    Left = 328
+    Top = 40
+    Width = 81
+    Height = 25
+    Caption = <I>'Pen Color...'</I>
+    TabOrder = 6
+    OnClick = btnPenClick
+  <B>end</B>
+  <B>object</B> trackPenWidth: TTrackBar
+    Left = 328
+    Top = 80
+    Width = 81
+    Height = 33
+    Max = 8
+    Min = 1
+    Orientation = trHorizontal
+    Frequency = 1
+    Position = 1
+    SelEnd = 0
+    SelStart = 0
+    TabOrder = 7
+    TabStop = False
+    ThumbLength = 20
+    TickMarks = tmBottomRight
+    TickStyle = tsAuto
+    OnChange = trackPenWidthChange
+  <B>end</B>
+  <B>object</B> ColorDialog1: TColorDialog
+    Ctl3D = True
+    Left = 24
+    Top = 112
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

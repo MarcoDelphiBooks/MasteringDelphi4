@@ -1,0 +1,433 @@
+<HTML><HEAD>
+<TITLE>Project: HTMLPROD.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: HTMLPROD.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#HTMLPROD.DPR> HTMLPROD.DPR</A>
+<LI> <A HREF=#DBHFORM.PAS> DBHFORM.PAS</A>
+<LI> <A HREF=#DBHFORM.DFM> DBHFORM.DFM</A>
+</UL>
+<HR>
+<A NAME=HTMLPROD.DPR><H3>HTMLPROD.DPR</H3></A>
+
+<PRE>
+<B>program</B> HtmlProd;
+
+<B>uses</B>
+  Forms,
+  DBHForm <B>in</B> <I>'DBHForm.pas'</I> <FONT COLOR="#000080"><I>{FormProd}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TFormProd, FormProd);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=DBHFORM.PAS><H3>DBHFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> DBHForm;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes, Graphics,
+  Controls, Forms, DBCtrls, StdCtrls, DBTables,
+  ExtCtrls, Mask, Db, Dialogs, HTTPApp, DSProd, DBWeb;
+
+<B>type</B>
+  TFormProd = <B>class</B>(TForm)
+    BtnPrintAll: TButton;
+    DBEdit3: TDBEdit;
+    Label3: TLabel;
+    Label2: TLabel;
+    DBEdit2: TDBEdit;
+    DBEdit1: TDBEdit;
+    Label1: TLabel;
+    DBNavigator1: TDBNavigator;
+    Table1: TTable;
+    DataSource1: TDataSource;
+    SaveDialog1: TSaveDialog;
+    Memo1: TMemo;
+    Label4: TLabel;
+    BtnSave: TButton;
+    CheckStart: TCheckBox;
+    BtnLine: TButton;
+    PageProducer1: TPageProducer;
+    DataSetPageProducer1: TDataSetPageProducer;
+    Table1Name: TStringField;
+    Table1Capital: TStringField;
+    Table1Continent: TStringField;
+    Table1Area: TFloatField;
+    Table1Population: TFloatField;
+    BtnDemo: TButton;
+    DataSetTableProducer1: TDataSetTableProducer;
+    <B>procedure</B> BtnPrintAllClick(Sender: TObject);
+    <B>procedure</B> BtnSaveClick(Sender: TObject);
+    <B>procedure</B> BtnLineClick(Sender: TObject);
+    <B>procedure</B> DataSetPageProducer1HTMLTag(Sender: TObject; Tag: TTag;
+      <B>const</B> TagString: <B>String</B>; TagParams: TStrings;
+      <B>var</B> ReplaceText: <B>String</B>);
+    <B>procedure</B> PageProducer1HTMLTag(Sender: TObject; Tag: TTag;
+      <B>const</B> TagString: <B>String</B>; TagParams: TStrings;
+      <B>var</B> ReplaceText: <B>String</B>);
+    <B>procedure</B> BtnDemoClick(Sender: TObject);
+    <B>procedure</B> DataSetTableProducer1FormatCell(Sender: TObject; CellRow,
+      CellColumn: Integer; <B>var</B> BgColor: THTMLBgColor;
+      <B>var</B> Align: THTMLAlign; <B>var</B> VAlign: THTMLVAlign; <B>var</B> CustomAttrs,
+      CellData: <B>String</B>);
+  <B>end</B>;
+
+<B>var</B>
+  FormProd: TFormProd;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>uses</B>
+  ShellAPI;
+
+<B>procedure</B> TFormProd.BtnPrintAllClick(Sender: TObject);
+<B>begin</B>
+  Table1.First;
+  Memo1.Clear;
+  Memo1.Text := DataSetTableProducer1.Content;
+  BtnSave.Enabled := True;
+<B>end</B>;
+
+<B>procedure</B> TFormProd.BtnSaveClick(Sender: TObject);
+<B>begin</B>
+  <B>if</B> SaveDialog1.Execute <B>then</B>
+  <B>begin</B>
+    Memo1.Lines.SaveToFile (SaveDialog1.FileName);
+    <B>if</B> CheckStart.Checked <B>then</B>
+      ShellExecute (Handle, <I>'open'</I>,
+        PChar (SaveDialog1.FileName),
+        <I>''</I>, <I>''</I>, sw_ShowNormal);
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TFormProd.BtnLineClick(Sender: TObject);
+<B>begin</B>
+  Memo1.Clear;
+  Memo1.Text := DataSetPageProducer1.Content;
+  BtnSave.Enabled := True;
+<B>end</B>;
+
+<B>procedure</B> TFormProd.DataSetPageProducer1HTMLTag(Sender: TObject; Tag: TTag;
+  <B>const</B> TagString: <B>String</B>; TagParams: TStrings; <B>var</B> ReplaceText: <B>String</B>);
+<B>begin</B>
+  <B>if</B> TagString = <I>'program'</I> <B>then</B>
+    ReplaceText := ExtractFilename (Forms.Application.Exename)
+  <B>else</B> <B>if</B> TagString = <I>'date'</I> <B>then</B>
+    ReplaceText := DateToStr (Date);
+<B>end</B>;
+
+<B>procedure</B> TFormProd.PageProducer1HTMLTag(Sender: TObject; Tag: TTag;
+  <B>const</B> TagString: <B>String</B>; TagParams: TStrings; <B>var</B> ReplaceText: <B>String</B>);
+<B>var</B>
+  nDays: Integer;
+<B>begin</B>
+  <B>if</B> TagString = <I>'date'</I> <B>then</B>
+    ReplaceText := DateToStr (Now)
+  <B>else</B> <B>if</B> TagString = <I>'appname'</I> <B>then</B>
+    ReplaceText := ExtractFilename (Forms.Application.Exename)
+  <B>else</B> <B>if</B> TagString = <I>'expiration'</I> <B>then</B>
+  <B>begin</B>
+    nDays := StrToIntDef (TagParams.Values[<I>'days'</I>], 0);
+    <B>if</B> nDays &lt;&gt; 0 <B>then</B>
+      ReplaceText := DateToStr (Now + nDays)
+    <B>else</B>
+      ReplaceText := <I>'&lt;I&gt;{expiration tag error}&lt;/I&gt;'</I>;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TFormProd.BtnDemoClick(Sender: TObject);
+<B>begin</B>
+  Memo1.Clear;
+  Memo1.Text := PageProducer1.Content;
+  BtnSave.Enabled := True;
+<B>end</B>;
+
+<B>procedure</B> TFormProd.DataSetTableProducer1FormatCell(Sender: TObject;
+  CellRow, CellColumn: Integer; <B>var</B> BgColor: THTMLBgColor;
+  <B>var</B> Align: THTMLAlign; <B>var</B> VAlign: THTMLVAlign; <B>var</B> CustomAttrs,
+  CellData: <B>String</B>);
+<B>begin</B>
+  <B>if</B> ((CellColumn = 3) <B>and</B> (Length (CellData) &gt; 8)) <B>or</B>
+      ((CellColumn = 4) <B>and</B> (Length (CellData) &gt; 9)) <B>then</B>
+    CellData := <I>'&lt;b&gt;'</I> + CellData + <I>'&lt;/b&gt;'</I>;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=DBHFORM.DFM><H3>DBHFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> FormProd: TFormProd
+  Left = 190
+  Top = 108
+  Width = 427
+  Height = 380
+  Caption = <I>'HtmlProc'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clBlack
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Label3: TLabel
+    Left = 40
+    Top = 124
+    Width = 48
+    Height = 13
+    Caption = <I>'Continent:'</I>
+  <B>end</B>
+  <B>object</B> Label2: TLabel
+    Left = 40
+    Top = 91
+    Width = 35
+    Height = 13
+    Caption = <I>'Capital:'</I>
+  <B>end</B>
+  <B>object</B> Label1: TLabel
+    Left = 40
+    Top = 56
+    Width = 39
+    Height = 13
+    Caption = <I>'Country:'</I>
+  <B>end</B>
+  <B>object</B> Label4: TLabel
+    Left = 16
+    Top = 160
+    Width = 71
+    Height = 13
+    Caption = <I>'HTML Preview'</I>
+  <B>end</B>
+  <B>object</B> BtnPrintAll: TButton
+    Left = 296
+    Top = 90
+    Width = 89
+    Height = 25
+    Caption = <I>'&amp;Print Table'</I>
+    TabOrder = 0
+    OnClick = BtnPrintAllClick
+  <B>end</B>
+  <B>object</B> DBEdit3: TDBEdit
+    Left = 104
+    Top = 120
+    Width = 169
+    Height = 21
+    DataField = <I>'Continent'</I>
+    DataSource = DataSource1
+    TabOrder = 1
+  <B>end</B>
+  <B>object</B> DBEdit2: TDBEdit
+    Left = 104
+    Top = 86
+    Width = 169
+    Height = 21
+    DataField = <I>'Capital'</I>
+    DataSource = DataSource1
+    TabOrder = 2
+  <B>end</B>
+  <B>object</B> DBEdit1: TDBEdit
+    Left = 104
+    Top = 52
+    Width = 169
+    Height = 21
+    DataField = <I>'Name'</I>
+    DataSource = DataSource1
+    TabOrder = 3
+  <B>end</B>
+  <B>object</B> DBNavigator1: TDBNavigator
+    Left = 0
+    Top = 0
+    Width = 419
+    Height = 25
+    DataSource = DataSource1
+    VisibleButtons = [nbFirst, nbPrior, nbNext, nbLast, nbInsert, nbEdit, nbPost, nbCancel]
+    Align = alTop
+    Flat = True
+    TabOrder = 4
+  <B>end</B>
+  <B>object</B> Memo1: TMemo
+    Left = 16
+    Top = 176
+    Width = 385
+    Height = 161
+    Anchors = [akLeft, akTop, akRight, akBottom]
+    ScrollBars = ssVertical
+    TabOrder = 5
+  <B>end</B>
+  <B>object</B> BtnSave: TButton
+    Left = 296
+    Top = 122
+    Width = 89
+    Height = 25
+    Caption = <I>'&amp;Save HTML'</I>
+    Enabled = False
+    TabOrder = 6
+    OnClick = BtnSaveClick
+  <B>end</B>
+  <B>object</B> CheckStart: TCheckBox
+    Left = 296
+    Top = 150
+    Width = 89
+    Height = 17
+    Caption = <I>'Start &amp;Browser'</I>
+    Checked = True
+    State = cbChecked
+    TabOrder = 7
+  <B>end</B>
+  <B>object</B> BtnLine: TButton
+    Left = 296
+    Top = 60
+    Width = 89
+    Height = 25
+    Caption = <I>'Print &amp;Line'</I>
+    TabOrder = 8
+    OnClick = BtnLineClick
+  <B>end</B>
+  <B>object</B> BtnDemo: TButton
+    Left = 296
+    Top = 32
+    Width = 89
+    Height = 25
+    Caption = <I>'Demo &amp;Page'</I>
+    TabOrder = 9
+    OnClick = BtnDemoClick
+  <B>end</B>
+  <B>object</B> Table1: TTable
+    Active = True
+    DatabaseName = <I>'DBDEMOS'</I>
+    TableName = <I>'COUNTRY.DB'</I>
+    Left = 16
+    Top = 48
+    <B>object</B> Table1Name: TStringField
+      FieldName = <I>'Name'</I>
+      Size = 24
+    <B>end</B>
+    <B>object</B> Table1Capital: TStringField
+      FieldName = <I>'Capital'</I>
+      Size = 24
+    <B>end</B>
+    <B>object</B> Table1Continent: TStringField
+      CustomConstraint = <I>'X = ''South America'' OR X = ''North America'''</I>
+                ConstraintErrorMessage = <I>'Country is not in the American Continent'</I>
+      DefaultExpression = <I>'''South America'''</I>
+        FieldName = <I>'Continent'</I>
+      Size = 24
+    <B>end</B>
+    <B>object</B> Table1Area: TFloatField
+      FieldName = <I>'Area'</I>
+      DisplayFormat = <I>'###,###,###'</I>
+    <B>end</B>
+    <B>object</B> Table1Population: TFloatField
+      FieldName = <I>'Population'</I>
+      DisplayFormat = <I>'###,###,###'</I>
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> DataSource1: TDataSource
+    DataSet = Table1
+    Left = 16
+    Top = 96
+  <B>end</B>
+  <B>object</B> SaveDialog1: TSaveDialog
+    DefaultExt = <I>'HTM'</I>
+    Filter = <I>'HTML file (*.htm)|*.htm|Any file (*.*)|*.*'</I>
+    Options = [ofOverwritePrompt, ofPathMustExist, ofCreatePrompt]
+    Left = 16
+  <B>end</B>
+  <B>object</B> PageProducer1: TPageProducer
+    HTMLDoc.Strings = (
+      <I>'&lt;HTML&gt;&lt;HEAD&gt;'</I>
+      <I>'&lt;TITLE&gt;Producer Demo&lt;/TITLE&gt;'</I>
+      <I>'&lt;/HEAD&gt;&lt;BODY&gt;'</I>
+      <I>''</I>
+      <I>'&lt;H1&gt;Producer Demo&lt;/H1&gt;'</I>
+      <I>''</I>
+      <I>'This is a demo of the page produced by the &lt;b&gt;&lt;#appname&gt;&lt;/b&gt;'</I>
+      <I>'application on &lt;b&gt;&lt;#date&gt;&lt;/b&gt;.&lt;p&gt;'</I>
+      <I>'&lt;hr&gt;'</I>
+      <I>'The prices in this catalog are valid until &lt;b&gt;'</I>
+      <I>'&lt;#expiration days=21&gt;&lt;/b&gt;.&lt;p&gt;'</I>
+      <I>'&lt;/BODY&gt;&lt;/HTML&gt;'</I>)
+    OnHTMLTag = PageProducer1HTMLTag
+    Left = 64
+    Top = 192
+  <B>end</B>
+  <B>object</B> DataSetPageProducer1: TDataSetPageProducer
+    HTMLDoc.Strings = (
+      <I>'&lt;HTML&gt;&lt;HEAD&gt;'</I>
+      <I>'&lt;TITLE&gt;Data for &lt;#name&gt;&lt;/TITLE&gt;'</I>
+      <I>'&lt;/HEAD&gt;&lt;BODY&gt;'</I>
+      <I>'&lt;H1&gt;&lt;CENTER&gt;Data for &lt;#name&gt;&lt;/CENTER&gt;&lt;/H1&gt;'</I>
+      <I>'Capital: &lt;#capital&gt;&lt;p&gt;'</I>
+      <I>'Continent: &lt;#continent&gt;&lt;p&gt;'</I>
+      <I>'Area: &lt;#area&gt;&lt;p&gt;'</I>
+      <I>'Population: &lt;#population&gt;&lt;p&gt;'</I>
+      <I>'&lt;HR&gt;'</I>
+      <I>'Last updated on &lt;#date&gt;&lt;br&gt;'</I>
+      <I>'HTML file produced by the program &lt;#program&gt;'</I>
+      <I>'&lt;/BODY&gt;&lt;/HTML&gt;'</I>)
+    OnHTMLTag = DataSetPageProducer1HTMLTag
+    DataSet = Table1
+    Left = 64
+    Top = 240
+  <B>end</B>
+  <B>object</B> DataSetTableProducer1: TDataSetTableProducer
+    Caption = <I>'&lt;h2&gt;American Countries&lt;/h2&gt;'</I>
+    Columns = &lt;
+      <B>item</B>
+        BgColor = <I>'Silver'</I>
+        FieldName = <I>'Name'</I>
+        Title.Align = haLeft
+        Title.BgColor = <I>'Silver'</I>
+        Title.Caption = <I>'Country'</I>
+      <B>end</B>
+      <B>item</B>
+        FieldName = <I>'Capital'</I>
+      <B>end</B>
+      <B>item</B>
+        FieldName = <I>'Continent'</I>
+      <B>end</B>
+      <B>item</B>
+        Align = haRight
+        FieldName = <I>'Area'</I>
+      <B>end</B>
+      <B>item</B>
+        Align = haRight
+        FieldName = <I>'Population'</I>
+      <B>end</B>&gt;
+    Footer.Strings = (
+      <I>'&lt;hr&gt;&lt;i&gt;Produced by EmplProd&lt;/i&gt;'</I>
+      <I>'&lt;/body&gt;&lt;/html&gt;'</I>)
+    Header.Strings = (
+      <I>'&lt;html&gt;&lt;head&gt;'</I>
+      <I>'&lt;title&gt;DataSetTableProducer Demo&lt;/title&gt;'</I>
+      <I>'&lt;/head&gt;&lt;body&gt;'</I>
+      <I>'&lt;h1&gt;&lt;center&gt;DataSetTableProducer Demo&lt;/center&gt;&lt;/h1&gt;'</I>)
+    MaxRows = -1
+    DataSet = Table1
+    TableAttributes.Border = 1
+    TableAttributes.CellPadding = 5
+    OnFormatCell = DataSetTableProducer1FormatCell
+    Left = 64
+    Top = 288
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

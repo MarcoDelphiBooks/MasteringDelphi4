@@ -1,0 +1,63 @@
+<HTML><HEAD>
+<TITLE>Project: CGIVARS.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: CGIVARS.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#CGIVARS.DPR> CGIVARS.DPR</A>
+</UL>
+<HR>
+<A NAME=CGIVARS.DPR><H3>CGIVARS.DPR</H3></A>
+
+<PRE>
+<B>program</B> CgiVars;
+
+<FONT COLOR="#000080"><I>{$APPTYPE CONSOLE}</I></FONT>
+
+<B>uses</B>
+  Windows;
+
+<B>const</B>
+  VarList: <B>array</B> [1..17] <B>of</B> <B>string</B> [30] =
+    (<I>'SERVER_NAME'</I>, <I>'SERVER_PROTOCOL'</I>,
+    <I>'SERVER_PORT'</I>, <I>'SERVER_SOFTWARE'</I>,
+    <I>'GATEWAY_INTERFACE'</I>, <I>'REQUEST_METHOD'</I>,
+    <I>'PATH_TRANSLATED'</I>, <I>'HTTP_REFERER'</I>,
+    <I>'SCRIPT_NAME'</I>, <I>'PATH_INFO'</I>,
+    <I>'QUERY_STRING'</I>, <I>'HTTP_ACCEPT'</I>,
+    <I>'REMOTE_HOST'</I>, <I>'REMOTE_USER'</I>,
+    <I>'REMOTE_ADDR'</I>, <I>'REMOTE_IDENT'</I>,
+    <I>'HTTP_USER_AGENT'</I>);
+
+<B>var</B>
+  I: Integer;
+  ReqVar: <B>string</B>;
+  VarValue: <B>array</B> [0..200] <B>of</B> Char;
+
+<B>begin</B>
+  writeln(<I>'Content type: text/html'</I>);
+  writeln;
+  writeln(<I>'&lt;HTML&gt;&lt;HEAD&gt;'</I>);
+  writeln(<I>'&lt;TITLE&gt;CGI Variables&lt;/TITLE&gt;'</I>);
+  writeln(<I>'&lt;/HEAD&gt;&lt;BODY&gt;'</I>);
+  writeln(<I>'&lt;H1&gt;CGI Variables&lt;/H1&gt;'</I>);
+  writeln(<I>'&lt;HR&gt;&lt;PRE&gt;'</I>);
+
+  <FONT COLOR="#000080"><I>// show the variables listed in the array</I></FONT>
+  <B>for</B> I := Low (VarList) <B>to</B> High (VarList) <B>do</B>
+  <B>begin</B>
+    ReqVar := VarList[I];
+    <B>if</B> (GetEnvironmentVariable (PChar(ReqVar),
+        VarValue, 200) &gt; 0) <B>then</B>
+    <B>else</B>
+      VarValue := <I>''</I>;
+    writeln (VarList[I] + <I>' = '</I> + VarValue);
+  <B>end</B>;
+  writeln(<I>'&lt;/PRE&gt;&lt;/BODY&gt;&lt;/HTML&gt;'</I>);
+<B>end</B>.</PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

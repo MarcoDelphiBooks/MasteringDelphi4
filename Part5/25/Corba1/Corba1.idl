@@ -1,0 +1,16 @@
+#include "StdVCL.idl"
+
+module Project1
+{
+  
+  interface IFirstCorba: IDataBroker
+  {
+    IProvider Get_Table1();
+  };
+  
+  interface FirstCorbaFactory
+  {
+    IFirstCorba CreateInstance(in string InstanceName);
+  };
+
+}; 

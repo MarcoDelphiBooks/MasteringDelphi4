@@ -1,0 +1,184 @@
+<HTML><HEAD>
+<TITLE>Project: SERVER1.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: SERVER1.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#SERVER1.DPR> SERVER1.DPR</A>
+<LI> <A HREF=#SERVERFORM.PAS> SERVERFORM.PAS</A>
+<LI> <A HREF=#SERVERFORM.DFM> SERVERFORM.DFM</A>
+</UL>
+<HR>
+<A NAME=SERVER1.DPR><H3>SERVER1.DPR</H3></A>
+
+<PRE>
+<B>program</B> Server1;
+
+<B>uses</B>
+  Forms,
+  ServerForm <B>in</B> <I>'ServerForm.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=SERVERFORM.PAS><H3>SERVERFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> ServerForm;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  ScktComp, StdCtrls;
+
+<B>const</B>
+  wm_RefreshClients = wm_User;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    ServerSocket1: TServerSocket;
+    lbMsg: TListBox;
+    lbClients: TListBox;
+    Label1: TLabel;
+    Label2: TLabel;
+    lbLog: TListBox;
+    <B>procedure</B> ServerSocket1ClientConnect(Sender: TObject;
+      Socket: TCustomWinSocket);
+    <B>procedure</B> ServerSocket1ClientDisconnect(Sender: TObject;
+      Socket: TCustomWinSocket);
+    <B>procedure</B> ServerSocket1ClientRead(Sender: TObject;
+      Socket: TCustomWinSocket);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <B>procedure</B> RefreshClients (<B>var</B> Msg: TMessage);
+      <B>message</B> wm_RefreshClients;
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.ServerSocket1ClientConnect(Sender: TObject;
+  Socket: TCustomWinSocket);
+<B>begin</B>
+  lbLog.Items.Add (<I>'Connected: '</I> +
+    Socket.RemoteHost + <I>' ('</I> +
+    Socket.RemoteAddress + <I>')'</I> );
+  PostMessage (Handle, wm_RefreshClients, 0, 0);
+<B>end</B>;
+
+<B>procedure</B> TForm1.ServerSocket1ClientDisconnect(Sender: TObject;
+  Socket: TCustomWinSocket);
+<B>begin</B>
+  lbLog.Items.Add (<I>'Disconnected: '</I> +
+    Socket.RemoteHost + <I>' ('</I> +
+    Socket.RemoteAddress + <I>')'</I> );
+  PostMessage (Handle, wm_RefreshClients, 0, 0);
+<B>end</B>;
+
+<B>procedure</B> TForm1.RefreshClients;
+<B>var</B>
+  I: Integer;
+<B>begin</B>
+  lbClients.Clear;
+  <B>for</B> I := 0 <B>to</B> ServerSocket1.Socket.ActiveConnections - 1 <B>do</B>
+    <B>with</B> ServerSocket1.Socket.Connections [I] <B>do</B>
+      lbClients.Items.Add (
+        RemoteAddress + <I>' ('</I> + RemoteHost + <I>')'</I>);
+<B>end</B>;
+
+<B>procedure</B> TForm1.ServerSocket1ClientRead(Sender: TObject;
+  Socket: TCustomWinSocket);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// read from the client</I></FONT>
+  lbMsg.Items.Add (Socket.RemoteHost + <I>': '</I> +
+    Socket.ReceiveText);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=SERVERFORM.DFM><H3>SERVERFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 192
+  Top = 107
+  Width = 518
+  Height = 353
+  Caption = <I>'Server'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Label1: TLabel
+    Left = 16
+    Top = 8
+    Width = 31
+    Height = 13
+    Caption = <I>'Clients'</I>
+  <B>end</B>
+  <B>object</B> Label2: TLabel
+    Left = 192
+    Top = 8
+    Width = 48
+    Height = 13
+    Caption = <I>'Messages'</I>
+  <B>end</B>
+  <B>object</B> lbMsg: TListBox
+    Left = 192
+    Top = 24
+    Width = 305
+    Height = 217
+    ItemHeight = 13
+    TabOrder = 0
+  <B>end</B>
+  <B>object</B> lbClients: TListBox
+    Left = 16
+    Top = 24
+    Width = 161
+    Height = 217
+    ItemHeight = 13
+    TabOrder = 1
+  <B>end</B>
+  <B>object</B> lbLog: TListBox
+    Left = 16
+    Top = 248
+    Width = 481
+    Height = 73
+    ItemHeight = 13
+    TabOrder = 2
+  <B>end</B>
+  <B>object</B> ServerSocket1: TServerSocket
+    Active = True
+    Port = 50
+    ServerType = stNonBlocking
+    OnClientConnect = ServerSocket1ClientConnect
+    OnClientDisconnect = ServerSocket1ClientDisconnect
+    OnClientRead = ServerSocket1ClientRead
+    Left = 72
+    Top = 40
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

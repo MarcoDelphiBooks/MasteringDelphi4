@@ -1,0 +1,140 @@
+<HTML><HEAD>
+<TITLE>Project: BREAKP.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: BREAKP.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#BREAKP.DPR> BREAKP.DPR</A>
+<LI> <A HREF=#BREAKPF.PAS> BREAKPF.PAS</A>
+<LI> <A HREF=#BREAKPF.DFM> BREAKPF.DFM</A>
+</UL>
+<HR>
+<A NAME=BREAKP.DPR><H3>BREAKP.DPR</H3></A>
+
+<PRE>
+<B>program</B> Breakp;
+
+<B>uses</B>
+  Forms,
+  BreakpF <B>in</B> <I>'BreakpF.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=BREAKPF.PAS><H3>BREAKPF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> BreakpF;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes, Graphics, Controls,
+  Forms, Dialogs, StdCtrls;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    Button1: TButton;
+    <B>procedure</B> FormPaint(Sender: TObject);
+    <B>procedure</B> Button1Click(Sender: TObject);
+    <B>procedure</B> FormResize(Sender: TObject);
+  <B>private</B>
+    X1, Y1, X2, Y2: Integer;
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.FormPaint(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>{set a breakpoint on the next line}</I></FONT>
+  Canvas.MoveTo (X1, Y1);
+  Canvas.LineTo (X2, Y1);
+  Canvas.LineTo (X2, Y2);
+  Canvas.LineTo (X1, Y2);
+  Canvas.LineTo (X1, Y1);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Button1Click(Sender: TObject);
+<B>var</B>
+  Limit: Integer;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>{set a breakpoint on the next line}</I></FONT>
+  X1 := X1 + 5;
+  Y1 := Y1 + 5;
+  X2 := X2 - 5;
+  Y2 := Y2 - 5;
+  <FONT COLOR="#000080"><I>{dummy code: try setting a brakpoint on next line}</I></FONT>
+  Limit := 3;
+  Limit := X1;
+  <FONT COLOR="#000080"><I>{is the line over the button?}</I></FONT>
+  <B>if</B> X1 &gt;= Button1.Left <B>then</B>
+  <B>begin</B>
+    Button1.Enabled := False;
+    X1 := Button1.Left;
+  <B>end</B>;
+  <B>if</B> Y1 &gt;= Button1.Top <B>then</B>
+  <B>begin</B>
+    Button1.Enabled := False;
+    Y1 := Button1.Top;
+  <B>end</B>;
+  Invalidate;
+<B>end</B>;
+
+<B>procedure</B> TForm1.FormResize(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>{set a breakpoint on the next line}</I></FONT>
+  Button1.Enabled := True;
+  X1 := 10;
+  Y1 := 10;
+  X2 := ClientWidth - 10;
+  Y2 := ClientHeight - 10;
+  Invalidate;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=BREAKPF.DFM><H3>BREAKPF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 57
+  Top = 178
+  Width = 297
+  Height = 211
+  Caption = <I>'Breakpoints Test'</I>
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clBlack
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OnPaint = FormPaint
+  OnResize = FormResize
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Button1: TButton
+    Left = 100
+    Top = 75
+    Width = 89
+    Height = 33
+    Caption = <I>'Push me'</I>
+    TabOrder = 0
+    OnClick = Button1Click
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

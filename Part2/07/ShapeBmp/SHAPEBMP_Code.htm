@@ -1,0 +1,386 @@
+<HTML><HEAD>
+<TITLE>Project: SHAPEBMP.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: SHAPEBMP.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#SHAPEBMP.DPR> SHAPEBMP.DPR</A>
+<LI> <A HREF=#SHAPESF.PAS> SHAPESF.PAS</A>
+<LI> <A HREF=#SHAPESF.DFM> SHAPESF.DFM</A>
+</UL>
+<HR>
+<A NAME=SHAPEBMP.DPR><H3>SHAPEBMP.DPR</H3></A>
+
+<PRE>
+<B>program</B> ShapeBmp;
+
+<B>uses</B>
+  Forms,
+  ShapesF <B>in</B> <I>'ShapesF.pas'</I> <FONT COLOR="#000080"><I>{ShapesForm}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TShapesForm, ShapesForm);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=SHAPESF.PAS><H3>SHAPESF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> ShapesF;
+
+<B>interface</B>
+
+<B>uses</B> Windows, Classes, Graphics, Forms, Controls, Menus,
+  Dialogs, ExtCtrls, SysUtils;
+
+<B>type</B>
+  TShapesForm = <B>class</B>(TForm)
+    MainMenu1: TMainMenu;
+    ColorDialog1: TColorDialog;
+    File1: TMenuItem;
+    New1: TMenuItem;
+    N1: TMenuItem;
+    Exit1: TMenuItem;
+    Colors1: TMenuItem;
+    PenColor1: TMenuItem;
+    BrushColor1: TMenuItem;
+    Size1: TMenuItem;
+    IncreasePenSize1: TMenuItem;
+    DecreasePenSize1: TMenuItem;
+    Help1: TMenuItem;
+    AboutShapes1: TMenuItem;
+    Image1: TImage;
+    Saveas1: TMenuItem;
+    SaveDialog1: TSaveDialog;
+    Load1: TMenuItem;
+    OpenDialog1: TOpenDialog;
+    <B>procedure</B> PenColor1Click(Sender: TObject);
+    <B>procedure</B> BrushColor1Click(Sender: TObject);
+    <B>procedure</B> IncreasePenSize1Click(Sender: TObject);
+    <B>procedure</B> DecreasePenSize1Click(Sender: TObject);
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> AboutShapes1Click(Sender: TObject);
+    <B>procedure</B> Exit1Click(Sender: TObject);
+    <B>procedure</B> New1Click(Sender: TObject);
+    <B>procedure</B> Image1MouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    <B>procedure</B> Image1MouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    <B>procedure</B> Saveas1Click(Sender: TObject);
+    <B>procedure</B> Load1Click(Sender: TObject);
+    <B>procedure</B> FormCloseQuery(Sender: TObject; <B>var</B> CanClose: Boolean);
+    <B>procedure</B> Image1MouseUp(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+  <B>private</B>
+    fChanged: Boolean;
+    fDragging: Boolean;
+    fRect: TRect;
+  <B>end</B>;
+
+<B>var</B>
+  ShapesForm: TShapesForm;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>function</B> NormalizeRect (ARect: TRect): TRect;
+<B>var</B>
+  tmp: Integer;
+<B>begin</B>
+  <B>if</B> ARect.Bottom &lt; ARect.Top <B>then</B>
+  <B>begin</B>
+    tmp := ARect.Bottom;
+    ARect.Bottom := ARect.Top;
+    ARect.Top := tmp;
+  <B>end</B>;
+  <B>if</B> ARect.Right &lt; ARect.Left <B>then</B>
+  <B>begin</B>
+    tmp := ARect.Right;
+    ARect.Right := ARect.Left;
+    ARect.Left := tmp;
+  <B>end</B>;
+  Result := ARect;
+<B>end</B>;
+
+<B>procedure</B> TShapesForm.PenColor1Click(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// select a new color for the pen</I></FONT>
+  ColorDialog1.Color := Image1.Canvas.Pen.Color;
+  <B>if</B> ColorDialog1.Execute <B>then</B>
+    Image1.Canvas.Pen.Color := ColorDialog1.Color;
+<B>end</B>;
+
+<B>procedure</B> TShapesForm.BrushColor1Click(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// select a new color for the brush</I></FONT>
+  ColorDialog1.Color := Image1.Canvas.Brush.Color;
+  <B>if</B> ColorDialog1.Execute <B>then</B>
+    Image1.Canvas.Brush.Color := ColorDialog1.Color;
+<B>end</B>;
+
+<B>procedure</B> TShapesForm.IncreasePenSize1Click(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// increase the size of the pen</I></FONT>
+  Image1.Canvas.Pen.Width := Image1.Canvas.Pen.Width + 2;
+  DecreasePenSize1.Enabled := True;
+<B>end</B>;
+
+<B>procedure</B> TShapesForm.DecreasePenSize1Click(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>{decrease the size of the pen,
+  avoiding letting it go below zero}</I></FONT>
+  Image1.Canvas.Pen.Width := Image1.Canvas.Pen.Width - 2;
+  <B>if</B> Image1.Canvas.Pen.Width &lt; 3 <B>then</B>
+    DecreasePenSize1.Enabled := False;
+<B>end</B>;
+
+<B>procedure</B> TShapesForm.FormCreate(Sender: TObject);
+<B>begin</B>
+  fChanged := False;
+<B>end</B>;
+
+<B>procedure</B> TShapesForm.AboutShapes1Click(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// show a message box</I></FONT>
+  MessageDlg (<I>'ShapeBmp application'#13</I> +
+    <I>'from &quot;Mastering Delphi&quot; by Marco Cantù'</I>,
+    mtInformation, [mbOK], 0);
+<B>end</B>;
+
+<B>procedure</B> TShapesForm.Exit1Click(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>{close the form and the application}</I></FONT>
+  Close;
+<B>end</B>;
+
+<B>procedure</B> TShapesForm.New1Click(Sender: TObject);
+<B>var</B>
+  Area: TRect;
+  OldColor: TColor;
+<B>begin</B>
+  <B>if</B> <B>not</B> fChanged <B>or</B> (MessageDlg (<I>'Are you sure you want to delete the current image?'</I>,
+    mtConfirmation, [mbYes, mbNo], 0) = idYes) <B>then</B>
+  <B>begin</B>
+    <FONT COLOR="#000080"><I>{repaint the surface, covering the whole area,
+    and resetting the old brush}</I></FONT>
+    Area := Rect (0, 0, Image1.Picture.Width,
+      Image1.Picture.Height);
+    OldColor := Image1.Canvas.Brush.Color;
+    Image1.Canvas.Brush.Color := clWhite;
+    Image1.Canvas.FillRect (Area);
+    Image1.Canvas.Brush.Color := OldColor;
+    fChanged := False;
+  <B>end</B>
+<B>end</B>;
+
+<B>procedure</B> TShapesForm.Image1MouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+<B>begin</B>
+  <B>if</B> Button = mbLeft <B>then</B>
+  <B>begin</B>
+    <FONT COLOR="#000080"><I>// start dragging</I></FONT>
+    fDragging := True;
+    SetCapture (Handle);
+    fRect.Left := X;
+    fRect.Top := Y;
+    fRect.BottomRight := fRect.TopLeft;
+    Canvas.DrawFocusRect (fRect);
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TShapesForm.Image1MouseMove(Sender: TObject;
+  Shift: TShiftState; X, Y: Integer);
+<B>var</B>
+  ARect: TRect;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// display the position of the mouse in the caption</I></FONT>
+  Caption := Format (<I>'ShapeBmp (x=%d, y=%d)'</I>, [X, Y]);
+  <B>if</B> fDragging <B>then</B>
+  <B>begin</B>
+    <FONT COLOR="#000080"><I>// remove and redraw the dragging rectangle</I></FONT>
+    ARect := NormalizeRect (fRect);
+    Canvas.DrawFocusRect (ARect);
+    fRect.Right := X;
+    fRect.Bottom := Y;
+    ARect := NormalizeRect (fRect);
+    Canvas.DrawFocusRect (ARect);
+  <B>end</B>
+  <B>else</B>
+    <B>if</B> ssShift <B>in</B> Shift <B>then</B>
+      <FONT COLOR="#000080"><I>// mark point in red</I></FONT>
+      Image1.Canvas.Pixels [X, Y] := clRed;
+<B>end</B>;
+
+<B>procedure</B> TShapesForm.Saveas1Click(Sender: TObject);
+<B>begin</B>
+  <B>if</B> SaveDialog1.Execute <B>then</B>
+  <B>begin</B>
+    Image1.Picture.SaveToFile (SaveDialog1.Filename);
+    fChanged := False;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TShapesForm.Load1Click(Sender: TObject);
+<B>var</B>
+  PenCol, BrushCol: TColor;
+  PenSize: Integer;
+<B>begin</B>
+  <B>if</B> <B>not</B> fChanged <B>or</B> (MessageDlg (<I>'Are you sure you want to delete the current image?'</I>,
+      mtConfirmation, [mbYes, mbNo], 0) = idYes) <B>then</B>
+    <B>if</B> OpenDialog1.Execute <B>then</B>
+    <B>begin</B>
+      PenCol := Image1.Canvas.Pen.Color;
+      BrushCol := Image1.Canvas.Brush.Color;
+      PenSize := Image1.Canvas.Pen.Width;
+      Image1.Picture.LoadFromFile (OpenDialog1.Filename);
+      Image1.Canvas.Pen.Color := PenCol;
+      Image1.Canvas.Brush.Color := BrushCol;
+      Image1.Canvas.Pen.Width := PenSize;
+      fChanged := False;
+    <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TShapesForm.FormCloseQuery(Sender: TObject;
+  <B>var</B> CanClose: Boolean);
+<B>begin</B>
+  <B>if</B> <B>not</B> fChanged <B>or</B> (MessageDlg (<I>'Are you sure you want to delete the current image?'</I>,
+      mtConfirmation, [mbYes, mbNo], 0) = idYes) <B>then</B>
+    CanClose := True
+  <B>else</B>
+    CanClose := False;
+<B>end</B>;
+
+<B>procedure</B> TShapesForm.Image1MouseUp(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+<B>begin</B>
+  <B>if</B> fDragging <B>then</B>
+  <B>begin</B>
+    ReleaseCapture;
+    fDragging := False;
+    Image1.Canvas.Rectangle (fRect.Left, fRect.Top,
+      fRect.Right, fRect.Bottom);
+  <B>end</B>;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=SHAPESF.DFM><H3>SHAPESF.DFM</H3></A>
+
+<PRE>
+<B>object</B> ShapesForm: TShapesForm
+  Left = 125
+  Top = 132
+  Width = 490
+  Height = 343
+  Caption = <I>'Shapes'</I>
+  Color = clWhite
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -13
+  Font.Name = <I>'System'</I>
+  Font.Style = []
+  Menu = MainMenu1
+  OldCreateOrder = True
+  Position = poDefaultPosOnly
+  OnCloseQuery = FormCloseQuery
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 16
+  <B>object</B> Image1: TImage
+    Left = 0
+    Top = 0
+    Width = 482
+    Height = 297
+    Align = alClient
+    OnMouseDown = Image1MouseDown
+    OnMouseMove = Image1MouseMove
+    OnMouseUp = Image1MouseUp
+  <B>end</B>
+  <B>object</B> MainMenu1: TMainMenu
+    Left = 8
+    Top = 8
+    <B>object</B> File1: TMenuItem
+      Caption = <I>'&amp;File'</I>
+      <B>object</B> New1: TMenuItem
+        Caption = <I>'&amp;New'</I>
+        OnClick = New1Click
+      <B>end</B>
+      <B>object</B> Load1: TMenuItem
+        Caption = <I>'&amp;Load...'</I>
+        OnClick = Load1Click
+      <B>end</B>
+      <B>object</B> Saveas1: TMenuItem
+        Caption = <I>'Save &amp;as...'</I>
+        OnClick = Saveas1Click
+      <B>end</B>
+      <B>object</B> N1: TMenuItem
+        Caption = <I>'-'</I>
+      <B>end</B>
+      <B>object</B> Exit1: TMenuItem
+        Caption = <I>'&amp;Exit'</I>
+        OnClick = Exit1Click
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> Colors1: TMenuItem
+      Caption = <I>'&amp;Colors'</I>
+      <B>object</B> PenColor1: TMenuItem
+        Caption = <I>'&amp;Pen Color...'</I>
+        OnClick = PenColor1Click
+      <B>end</B>
+      <B>object</B> BrushColor1: TMenuItem
+        Caption = <I>'&amp;Brush Color...'</I>
+        OnClick = BrushColor1Click
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> Size1: TMenuItem
+      Caption = <I>'&amp;Size'</I>
+      <B>object</B> IncreasePenSize1: TMenuItem
+        Caption = <I>'&amp;Increase Pen Size'</I>
+        OnClick = IncreasePenSize1Click
+      <B>end</B>
+      <B>object</B> DecreasePenSize1: TMenuItem
+        Caption = <I>'&amp;Decrease Pen Size'</I>
+        Enabled = False
+        OnClick = DecreasePenSize1Click
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> Help1: TMenuItem
+      Caption = <I>'&amp;Help'</I>
+      <B>object</B> AboutShapes1: TMenuItem
+        Caption = <I>'&amp;About Shapes...'</I>
+        OnClick = AboutShapes1Click
+      <B>end</B>
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> ColorDialog1: TColorDialog
+    Ctl3D = True
+    Left = 48
+    Top = 8
+  <B>end</B>
+  <B>object</B> SaveDialog1: TSaveDialog
+    DefaultExt = <I>'BMP'</I>
+    FileName = <I>'shapes.bmp'</I>
+    Filter = <I>'Bitmap file (*.bmp)|*.bmp'</I>
+    Options = [ofOverwritePrompt, ofHideReadOnly, ofPathMustExist, ofFileMustExist]
+    Left = 88
+    Top = 8
+  <B>end</B>
+  <B>object</B> OpenDialog1: TOpenDialog
+    DefaultExt = <I>'BMP'</I>
+    Filter = <I>'Bitmap files (*.bmp)|*.bmp'</I>
+    Options = [ofHideReadOnly, ofPathMustExist, ofFileMustExist, ofShareAware]
+    Left = 128
+    Top = 8
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

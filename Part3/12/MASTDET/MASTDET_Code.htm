@@ -1,0 +1,370 @@
+<HTML><HEAD>
+<TITLE>Project: MASTDET.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: MASTDET.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#MASTDET.DPR> MASTDET.DPR</A>
+<LI> <A HREF=#MASTDETF.PAS> MASTDETF.PAS</A>
+<LI> <A HREF=#MASTDETF.DFM> MASTDETF.DFM</A>
+</UL>
+<HR>
+<A NAME=MASTDET.DPR><H3>MASTDET.DPR</H3></A>
+
+<PRE>
+<B>program</B> Mastdet;
+
+<B>uses</B>
+  Forms,
+  MastdetF <B>in</B> <I>'MastdetF.pas'</I> <FONT COLOR="#000080"><I>{Form2}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TForm2, Form2);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MASTDETF.PAS><H3>MASTDETF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> MastdetF;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes, Graphics, Controls,
+  StdCtrls, Forms, DBCtrls, DB, DBGrids, DBTables, Grids, Mask, ExtCtrls;
+
+<B>type</B>
+  TForm2 = <B>class</B>(TForm)
+    ScrollBox: TScrollBox;
+    Label1: TLabel;
+    EditCompany: TDBEdit;
+    Label2: TLabel;
+    EditAddr: TDBEdit;
+    Label3: TLabel;
+    EditAddr2: TDBEdit;
+    Label4: TLabel;
+    EditCity: TDBEdit;
+    Label5: TLabel;
+    EditState: TDBEdit;
+    Label6: TLabel;
+    EditZip: TDBEdit;
+    Label7: TLabel;
+    EditCountry: TDBEdit;
+    Label8: TLabel;
+    EditPhone: TDBEdit;
+    Label9: TLabel;
+    EditFAX: TDBEdit;
+    DBGrid1: TDBGrid;
+    DBNavigator: TDBNavigator;
+    Panel1: TPanel;
+    DataSource1: TDataSource;
+    Panel2: TPanel;
+    Panel3: TPanel;
+    Table1: TTable;
+    Table2: TTable;
+    DataSource2: TDataSource;
+    <B>procedure</B> FormCreate(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form2: TForm2;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm2.FormCreate(Sender: TObject);
+<B>begin</B>
+  Table1.Open;
+  Table2.Open;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MASTDETF.DFM><H3>MASTDETF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form2: TForm2
+  Left = 154
+  Top = 96
+  Width = 581
+  Height = 335
+  ActiveControl = Panel1
+  Caption = <I>'Master Detail'</I>
+  Font.Color = clBlack
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  Position = poScreenCenter
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Panel1: TPanel
+    Left = 0
+    Top = 0
+    Width = 573
+    Height = 41
+    Align = alTop
+    TabOrder = 0
+    <B>object</B> DBNavigator: TDBNavigator
+      Left = 8
+      Top = 8
+      Width = 240
+      Height = 25
+      DataSource = DataSource1
+      Flat = False
+      Ctl3D = False
+      ParentCtl3D = False
+      TabOrder = 0
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> Panel2: TPanel
+    Left = 0
+    Top = 41
+    Width = 573
+    Height = 112
+    Align = alTop
+    BevelInner = bvLowered
+    BorderWidth = 4
+    Caption = <I>'Panel2'</I>
+    TabOrder = 1
+    <B>object</B> ScrollBox: TScrollBox
+      Left = 6
+      Top = 6
+      Width = 561
+      Height = 100
+      HorzScrollBar.Margin = 6
+      VertScrollBar.Margin = 6
+      Align = alClient
+      BorderStyle = bsNone
+      TabOrder = 0
+      <B>object</B> Label1: TLabel
+        Left = 6
+        Top = 6
+        Width = 44
+        Height = 13
+        Caption = <I>'Company'</I>
+        FocusControl = EditCompany
+      <B>end</B>
+      <B>object</B> Label2: TLabel
+        Left = 162
+        Top = 6
+        Width = 28
+        Height = 13
+        Caption = <I>'Addr1'</I>
+        FocusControl = EditAddr
+      <B>end</B>
+      <B>object</B> Label3: TLabel
+        Left = 318
+        Top = 6
+        Width = 28
+        Height = 13
+        Caption = <I>'Addr2'</I>
+        FocusControl = EditAddr2
+      <B>end</B>
+      <B>object</B> Label4: TLabel
+        Left = 474
+        Top = 6
+        Width = 17
+        Height = 13
+        Caption = <I>'City'</I>
+        FocusControl = EditCity
+      <B>end</B>
+      <B>object</B> Label5: TLabel
+        Left = 6
+        Top = 50
+        Width = 25
+        Height = 13
+        Caption = <I>'State'</I>
+        FocusControl = EditState
+      <B>end</B>
+      <B>object</B> Label6: TLabel
+        Left = 112
+        Top = 50
+        Width = 15
+        Height = 13
+        Caption = <I>'Zip'</I>
+        FocusControl = EditZip
+      <B>end</B>
+      <B>object</B> Label7: TLabel
+        Left = 168
+        Top = 50
+        Width = 36
+        Height = 13
+        Caption = <I>'Country'</I>
+        FocusControl = EditCountry
+      <B>end</B>
+      <B>object</B> Label8: TLabel
+        Left = 318
+        Top = 50
+        Width = 31
+        Height = 13
+        Caption = <I>'Phone'</I>
+        FocusControl = EditPhone
+      <B>end</B>
+      <B>object</B> Label9: TLabel
+        Left = 439
+        Top = 50
+        Width = 20
+        Height = 13
+        Caption = <I>'FAX'</I>
+        FocusControl = EditFAX
+      <B>end</B>
+      <B>object</B> EditCompany: TDBEdit
+        Left = 6
+        Top = 21
+        Width = 150
+        Height = 21
+        DataField = <I>'Company'</I>
+        DataSource = DataSource1
+        MaxLength = 0
+        TabOrder = 0
+      <B>end</B>
+      <B>object</B> EditAddr: TDBEdit
+        Left = 162
+        Top = 21
+        Width = 150
+        Height = 21
+        DataField = <I>'Addr1'</I>
+        DataSource = DataSource1
+        MaxLength = 0
+        TabOrder = 1
+      <B>end</B>
+      <B>object</B> EditAddr2: TDBEdit
+        Left = 318
+        Top = 21
+        Width = 150
+        Height = 21
+        DataField = <I>'Addr2'</I>
+        DataSource = DataSource1
+        MaxLength = 0
+        TabOrder = 2
+      <B>end</B>
+      <B>object</B> EditCity: TDBEdit
+        Left = 474
+        Top = 21
+        Width = 75
+        Height = 21
+        DataField = <I>'City'</I>
+        DataSource = DataSource1
+        MaxLength = 0
+        TabOrder = 3
+      <B>end</B>
+      <B>object</B> EditState: TDBEdit
+        Left = 6
+        Top = 65
+        Width = 100
+        Height = 21
+        DataField = <I>'State'</I>
+        DataSource = DataSource1
+        MaxLength = 0
+        TabOrder = 4
+      <B>end</B>
+      <B>object</B> EditZip: TDBEdit
+        Left = 112
+        Top = 65
+        Width = 50
+        Height = 21
+        DataField = <I>'Zip'</I>
+        DataSource = DataSource1
+        MaxLength = 0
+        TabOrder = 5
+      <B>end</B>
+      <B>object</B> EditCountry: TDBEdit
+        Left = 168
+        Top = 65
+        Width = 145
+        Height = 21
+        DataField = <I>'Country'</I>
+        DataSource = DataSource1
+        MaxLength = 0
+        TabOrder = 6
+      <B>end</B>
+      <B>object</B> EditPhone: TDBEdit
+        Left = 318
+        Top = 65
+        Width = 115
+        Height = 21
+        DataField = <I>'Phone'</I>
+        DataSource = DataSource1
+        MaxLength = 0
+        TabOrder = 7
+      <B>end</B>
+      <B>object</B> EditFAX: TDBEdit
+        Left = 439
+        Top = 65
+        Width = 114
+        Height = 21
+        DataField = <I>'FAX'</I>
+        DataSource = DataSource1
+        MaxLength = 0
+        TabOrder = 8
+      <B>end</B>
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> Panel3: TPanel
+    Left = 0
+    Top = 153
+    Width = 573
+    Height = 155
+    Align = alClient
+    BevelInner = bvLowered
+    BorderWidth = 4
+    Caption = <I>'Panel3'</I>
+    TabOrder = 2
+    <B>object</B> DBGrid1: TDBGrid
+      Left = 6
+      Top = 6
+      Width = 561
+      Height = 143
+      Align = alClient
+      BorderStyle = bsNone
+      DataSource = DataSource2
+      TabOrder = 0
+      TitleFont.Color = clBlack
+      TitleFont.Height = -11
+      TitleFont.Name = <I>'MS Sans Serif'</I>
+      TitleFont.Style = []
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> DataSource1: TDataSource
+    DataSet = Table1
+    Left = 311
+    Top = 5
+  <B>end</B>
+  <B>object</B> DataSource2: TDataSource
+    DataSet = Table2
+    Left = 429
+    Top = 5
+  <B>end</B>
+  <B>object</B> Table1: TTable
+    DatabaseName = <I>'DBDEMOS'</I>
+    TableName = <I>'customer.db'</I>
+    Left = 260
+    Top = 5
+  <B>end</B>
+  <B>object</B> Table2: TTable
+    DatabaseName = <I>'DBDEMOS'</I>
+    IndexFieldNames = <I>'CustNo'</I>
+    MasterFields = <I>'CustNo'</I>
+    MasterSource = DataSource1
+    TableName = <I>'orders.db'</I>
+    Left = 378
+    Top = 5
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

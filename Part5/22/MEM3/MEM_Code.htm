@@ -1,0 +1,330 @@
+<HTML><HEAD>
+<TITLE>Project: MEM.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: MEM.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#MEM.DPR> MEM.DPR</A>
+<LI> <A HREF=#RUNFIRST.PAS> RUNFIRST.PAS</A>
+<LI> <A HREF=#RESFORM.PAS> RESFORM.PAS</A>
+<LI> <A HREF=#RESFORM.DFM> RESFORM.DFM</A>
+</UL>
+<HR>
+<A NAME=MEM.DPR><H3>MEM.DPR</H3></A>
+
+<PRE>
+<B>program</B> Mem;
+
+<B>uses</B>
+  RunFirst <B>in</B> <I>'RunFirst.pas'</I>,
+  Forms, Windows,
+  Resform <B>in</B> <I>'RESFORM.PAS'</I> <FONT COLOR="#000080"><I>{MemForm}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.ShowMainForm := False;
+  IsLibrary := False;
+  Application.CreateForm(TMemForm, MemForm);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=RUNFIRST.PAS><H3>RUNFIRST.PAS</H3></A>
+
+<PRE>
+<B>unit</B> RunFirst;
+
+<B>interface</B>
+
+<B>implementation</B>
+
+<B>initialization</B>
+  IsLibrary := True;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=RESFORM.PAS><H3>RESFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> Resform;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes, Graphics,
+  Controls, Forms, Dialogs, ExtCtrls, Gauges,
+  StdCtrls, Menus, ShellAPI;
+
+<B>const</B>
+  wm_IconMessage = wm_User;
+
+<B>type</B>
+  TMemForm = <B>class</B>(TForm)
+    RamGauge: TGauge;
+    VirtualGauge: TGauge;
+    Label1: TLabel;
+    Label2: TLabel;
+    Timer1: TTimer;
+    PopupMenu1: TPopupMenu;
+    Details1: TMenuItem;
+    About1: TMenuItem;
+    N1: TMenuItem;
+    Close1: TMenuItem;
+    <B>procedure</B> Timer1Timer(Sender: TObject);
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> FormDestroy(Sender: TObject);
+    <B>procedure</B> Details1Click(Sender: TObject);
+    <B>procedure</B> About1Click(Sender: TObject);
+    <B>procedure</B> Close1Click(Sender: TObject);
+    <B>procedure</B> FormClose(Sender: TObject; <B>var</B> Action: TCloseAction);
+  <B>public</B>
+    <B>procedure</B> IconTray (<B>var</B> Msg: TMessage);
+      <B>message</B> wm_IconMessage;
+  <B>private</B>
+    nid: TNotifyIconData;
+  <B>end</B>;
+
+<B>var</B>
+  MemForm: TMemForm;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+<FONT COLOR="#000080"><I>{$R RYG.RES}</I></FONT>
+
+<B>function</B> FmtMem (N: Integer): <B>string</B>;
+<B>begin</B>
+  <B>if</B> N &gt; 1024*1024 <B>then</B>
+    FmtMem := Format (<I>'%.1f MB'</I>, [n / (1024*1024)])
+  <B>else</B>
+    FmtMem := Format (<I>'%.1f KB'</I>, [n / 1024])
+<B>end</B>;
+
+<B>procedure</B> TMemForm.Timer1Timer(Sender: TObject);
+<B>var</B>
+  MemInfo : TMemoryStatus;
+<B>begin</B>
+  MemInfo.dwLength := Sizeof (MemInfo);
+  GlobalMemoryStatus (MemInfo);
+  RamGauge.Progress := MemInfo.dwAvailPhys <B>div</B>
+    (MemInfo.dwTotalPhys <B>div</B> 100);
+  VirtualGauge.Progress := MemInfo.dwAvailPageFile <B>div</B>
+    (MemInfo.dwTotalPageFile <B>div</B> 100);
+
+  Caption := Format (<I>'Memory: = %d - %d'</I>,
+    [RamGauge.Progress, VirtualGauge.Progress]);
+
+  Label1.Caption := Format (<I>'RAM:'#13'%s'#13'(%s)'</I>    ,
+    [FmtMem (MemInfo.dwAvailPhys),
+    FmtMem (MemInfo.dwTotalPhys)]);
+  Label2.Caption := Format (<I>'Swap:'#13'%s'#13'(%s)'</I>    ,
+    [FmtMem (MemInfo.dwAvailPageFile),
+    FmtMem (MemInfo.dwTotalPageFile)]);
+
+  <FONT COLOR="#000080"><I>// set icon color</I></FONT>
+  <B>if</B> RamGauge.Progress &gt; 5 <B>then</B>
+    Icon.Handle :=
+      LoadIcon (HInstance, <I>'GREEN'</I>)
+  <B>else</B> <B>if</B> VirtualGauge.Progress &gt; 20 <B>then</B>
+    Icon.Handle :=
+      LoadIcon (HInstance, <I>'YELLOW'</I>)
+  <B>else</B>
+    Icon.Handle :=
+      LoadIcon (HInstance, <I>'RED'</I>);
+
+  <FONT COLOR="#000080"><I>// update the NotifyIcon structure</I></FONT>
+  nid.hIcon := Icon.Handle;
+  strcopy (nid.szTip, PChar(Caption));
+  nid.uFlags := nif_Icon <B>or</B> nif_Tip;
+  Shell_NotifyIcon (NIM_MODIFY, @nid);
+<B>end</B>;
+
+<B>procedure</B> TMemForm.IconTray (<B>var</B> Msg: TMessage);
+<B>var</B>
+  Pt: TPoint;
+<B>begin</B>
+  <B>if</B> Msg.lParam = wm_rbuttondown <B>then</B>
+  <B>begin</B>
+    GetCursorPos (Pt);
+<FONT COLOR="#000080"><I>//    SetForegroundWindow (Handle);</I></FONT>
+    PopupMenu1.Popup (Pt.x, Pt.y);
+  <B>end</B>;
+  <B>if</B> Msg.lParam = wm_lbuttondblclk <B>then</B>
+    Details1Click (self);
+<B>end</B>;
+
+<B>procedure</B> TMemForm.FormCreate(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// load the initial icon</I></FONT>
+  Icon.Handle :=
+    LoadIcon (HInstance, <I>'GREEN'</I>);
+
+  <FONT COLOR="#000080"><I>// fill the NotifyIcon data structure</I></FONT>
+  nid.cbSize := sizeof (nid);
+  nid.wnd := Handle;
+  nid.uID := 1; <FONT COLOR="#000080"><I>// icon ID</I></FONT>
+  nid.uCallBAckMessage := wm_IconMessage;
+  nid.hIcon := Icon.Handle;
+  nid.szTip := <I>'Free memory'</I>;
+  nid.uFlags := nif_Message <B>or</B>
+    nif_Icon <B>or</B> nif_Tip;
+  Shell_NotifyIcon (NIM_ADD, @nid);
+
+  <FONT COLOR="#000080"><I>// update the output ASAP</I></FONT>
+  Timer1Timer (self);
+<B>end</B>;
+
+<B>procedure</B> TMemForm.FormDestroy(Sender: TObject);
+<B>begin</B>
+  nid.uFlags := 0;
+  Shell_NotifyIcon (NIM_DELETE, @nid);
+<B>end</B>;
+
+<B>procedure</B> TMemForm.Details1Click(Sender: TObject);
+<B>begin</B>
+  ShowWindow (Handle, sw_ShowNormal);
+  SetForegroundWindow (Handle);
+  Show; <FONT COLOR="#000080"><I>// enables the creation of window controls</I></FONT>
+<B>end</B>;
+
+<B>procedure</B> TMemForm.About1Click(Sender: TObject);
+<B>begin</B>
+  MessageDlg (<I>'Windows Memory Meter'#13</I> +
+    <I>'Copyright Marco Cantù 1996'</I>,
+    mtInformation, [mbOk], 0);
+<B>end</B>;
+
+<B>procedure</B> TMemForm.Close1Click(Sender: TObject);
+<B>begin</B>
+  Application.Terminate;
+<B>end</B>;
+
+<B>procedure</B> TMemForm.FormClose(Sender: TObject; <B>var</B> Action: TCloseAction);
+<B>begin</B>
+  Action := caNone;
+  ShowWindow (Handle, sw_Hide);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=RESFORM.DFM><H3>RESFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> MemForm: TMemForm
+  Left = 205
+  Top = 108
+  ActiveControl = VirtualGauge
+  BorderIcons = [biSystemMenu, biMinimize]
+  BorderStyle = bsSingle
+  Caption = <I>'Memory'</I>
+  ClientHeight = 148
+  ClientWidth = 205
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clBlack
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  OnClose = FormClose
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Label1: TLabel
+    Left = 8
+    Top = 88
+    Width = 89
+    Height = 57
+    Alignment = taCenter
+    AutoSize = False
+    Caption = <I>'RAM'</I>
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -15
+    Font.Name = <I>'Arial'</I>
+    Font.Style = [fsBold]
+    ParentFont = False
+  <B>end</B>
+  <B>object</B> Label2: TLabel
+    Left = 104
+    Top = 88
+    Width = 89
+    Height = 57
+    Alignment = taCenter
+    AutoSize = False
+    Caption = <I>'Swap'</I>
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -15
+    Font.Name = <I>'Arial'</I>
+    Font.Style = [fsBold]
+    ParentFont = False
+  <B>end</B>
+  <B>object</B> RamGauge: TGauge
+    Left = 16
+    Top = 8
+    Width = 73
+    Height = 73
+    BackColor = clYellow
+    BorderStyle = bsNone
+    ForeColor = clLime
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clBlack
+    Font.Height = -15
+    Font.Name = <I>'Arial'</I>
+    Font.Style = [fsBold]
+    Kind = gkPie
+    ParentFont = False
+    Progress = 0
+  <B>end</B>
+  <B>object</B> VirtualGauge: TGauge
+    Left = 112
+    Top = 8
+    Width = 73
+    Height = 73
+    BackColor = clRed
+    BorderStyle = bsNone
+    ForeColor = clLime
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clBlack
+    Font.Height = -15
+    Font.Name = <I>'Arial'</I>
+    Font.Style = [fsBold]
+    Kind = gkPie
+    ParentFont = False
+    Progress = 0
+  <B>end</B>
+  <B>object</B> Timer1: TTimer
+    OnTimer = Timer1Timer
+  <B>end</B>
+  <B>object</B> PopupMenu1: TPopupMenu
+    AutoPopup = False
+    Left = 128
+    Top = 8
+    <B>object</B> Details1: TMenuItem
+      Caption = <I>'Details...'</I>
+      Default = True
+      OnClick = Details1Click
+    <B>end</B>
+    <B>object</B> Close1: TMenuItem
+      Caption = <I>'Close'</I>
+      OnClick = Close1Click
+    <B>end</B>
+    <B>object</B> N1: TMenuItem
+      Caption = <I>'-'</I>
+    <B>end</B>
+    <B>object</B> About1: TMenuItem
+      Caption = <I>'About...'</I>
+      OnClick = About1Click
+    <B>end</B>
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

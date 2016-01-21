@@ -1,0 +1,61 @@
+<HTML><HEAD>
+<TITLE>Project: ISAPIDEM.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: ISAPIDEM.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#ISAPIDEM.DPR> ISAPIDEM.DPR</A>
+</UL>
+<HR>
+<A NAME=ISAPIDEM.DPR><H3>ISAPIDEM.DPR</H3></A>
+
+<PRE>
+<B>library</B> IsapiDem;
+
+<B>uses</B>
+  SysUtils, Classes, Windows, Isapi2;
+
+<B>function</B> GetExtensionVersion (
+  <B>var</B> Ver: THSE_VERSION_INFO): BOOL; <B>stdcall</B>;
+<B>begin</B>
+  <B>with</B> Ver <B>do</B>
+  <B>begin</B>
+    dwExtensionVersion := $00010000;
+    StrCopy (lpszExtensionDesc, <I>'First DDH Isapi Demo'</I>);
+  <B>end</B>;
+  Result := True;
+<B>end</B>;
+
+<B>function</B> HttpExtensionProc (
+  <B>var</B> ECB: TEXTENSION_CONTROL_BLOCK): DWORD; <B>stdcall</B>;
+<B>var</B>
+  OutStr: <B>string</B>;
+  StrLength: Cardinal;
+<B>begin</B>
+  <B>with</B> ECB <B>do</B>
+  <B>begin</B>
+    OutStr :=
+      <I>'&lt;HTML&gt;&lt;HEAD&gt;&lt;TITLE&gt;First Isapi Demo&lt;/TITLE&gt;&lt;/HEAD&gt;&lt;BODY&gt;'</I> +
+      <I>'&lt;H2&gt;&lt;CENTER&gt;First Isapi Demo&lt;/CENTER&gt;&lt;/H2&gt;'</I> +
+      <I>'Hello Mastering Delphi Readers...&lt;p&gt;&lt;hr&gt;'</I> +
+      <I>'&lt;b&gt;Activated by '</I> + PChar (@lpszPathInfo[1]) + <I>'&lt;/b&gt;&lt;p&gt;'</I> +
+      <I>'&lt;i&gt;From IsapiDLL on '</I> + DateToStr (Now) +
+      <I>' at '</I> + TimeToStr (Now) + <I>'&lt;/i&gt;'</I> +
+      <I>'&lt;/body&gt;&lt;/html&gt;'</I>;
+    StrLength := Length (OutStr);
+    WriteClient(ConnID, PChar (OutStr), StrLength, 0);
+  <B>end</B>;
+  Result := HSE_STATUS_SUCCESS;
+<B>end</B>;
+
+<B>exports</B>
+  GetExtensionVersion,
+  HttpExtensionProc;
+
+<B>end</B>.</PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

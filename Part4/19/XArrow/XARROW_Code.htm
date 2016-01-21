@@ -1,0 +1,867 @@
+<HTML><HEAD>
+<TITLE>Project: XARROW.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: XARROW.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#XARROW.DPR> XARROW.DPR</A>
+<LI> <A HREF=#XARROW_TLB.PAS> XARROW_TLB.PAS</A>
+<LI> <A HREF=#XARROWIMPL.PAS> XARROWIMPL.PAS</A>
+<LI> <A HREF=#XAPPAGE.PAS> XAPPAGE.PAS</A>
+<LI> <A HREF=#XAPPAGE.DFM> XAPPAGE.DFM</A>
+</UL>
+<HR>
+<A NAME=XARROW.DPR><H3>XARROW.DPR</H3></A>
+
+<PRE>
+<B>library</B> XArrow;
+
+<B>uses</B>
+  ComServ,
+  XArrow_TLB <B>in</B> <I>'XArrow_TLB.pas'</I>,
+  XArrowImpl <B>in</B> <I>'XArrowImpl.pas'</I> <FONT COLOR="#000080"><I>{Md4WArrowX: CoClass}</I></FONT>,
+  XAPPage <B>in</B> <I>'Xappage.pas'</I> <FONT COLOR="#000080"><I>{PropertyPage1: TPropertyPage}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$E ocx}</I></FONT>
+
+<B>exports</B>
+  DllGetClassObject,
+  DllCanUnloadNow,
+  DllRegisterServer,
+  DllUnregisterServer;
+
+<FONT COLOR="#000080"><I>{$R *.TLB}</I></FONT>
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=XARROW_TLB.PAS><H3>XARROW_TLB.PAS</H3></A>
+
+<PRE>
+<B>unit</B> XArrow_TLB;
+
+<FONT COLOR="#000080"><I>// ************************************************************************ //</I></FONT>
+<FONT COLOR="#000080"><I>// WARNING                                                                  //</I></FONT>
+<FONT COLOR="#000080"><I>// -------                                                                  //</I></FONT>
+<FONT COLOR="#000080"><I>// The types declared in this file were generated from data read from a     //</I></FONT>
+<FONT COLOR="#000080"><I>// Type Library. If this type library is explicitly or indirectly (via      //</I></FONT>
+<FONT COLOR="#000080"><I>// another type library referring to this type library) re-imported, or the //</I></FONT>
+<FONT COLOR="#000080"><I>// 'Refresh' command of the Type Library Editor activated while editing the //</I></FONT>
+<FONT COLOR="#000080"><I>// Type Library, the contents of this file will be regenerated and all      //</I></FONT>
+<FONT COLOR="#000080"><I>// manual modifications will be lost.                                       //</I></FONT>
+<FONT COLOR="#000080"><I>// ************************************************************************ //</I></FONT>
+
+<FONT COLOR="#000080"><I>// PASTLWTR : $Revision:   1.11.1.63  $</I></FONT>
+<FONT COLOR="#000080"><I>// File generated on 6/23/98 7:03:47 PM from Type Library described below.</I></FONT>
+
+<FONT COLOR="#000080"><I>// ************************************************************************ //</I></FONT>
+<FONT COLOR="#000080"><I>// Type Lib: C:\md4code\Part4\19\XArrow\XArrow.tlb</I></FONT>
+<FONT COLOR="#000080"><I>// IID\LCID: {5551EB00-0AC6-11D2-B9F1-004845400FAA}\0</I></FONT>
+<FONT COLOR="#000080"><I>// Helpfile: </I></FONT>
+<FONT COLOR="#000080"><I>// HelpString: XArrow Library</I></FONT>
+<FONT COLOR="#000080"><I>// Version:    1.0</I></FONT>
+<FONT COLOR="#000080"><I>// ************************************************************************ //</I></FONT>
+
+<B>interface</B>
+
+<B>uses</B> Windows, ActiveX, Classes, Graphics, OleCtrls, StdVCL;
+
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+<FONT COLOR="#000080"><I>// GUIDS declared in the TypeLibrary. Following prefixes are used:      //</I></FONT>
+<FONT COLOR="#000080"><I>//   Type Libraries     : LIBID_xxxx                                    //</I></FONT>
+<FONT COLOR="#000080"><I>//   CoClasses          : CLASS_xxxx                                    //</I></FONT>
+<FONT COLOR="#000080"><I>//   DISPInterfaces     : DIID_xxxx                                     //</I></FONT>
+<FONT COLOR="#000080"><I>//   Non-DISP interfaces: IID_xxxx                                      //</I></FONT>
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+<B>const</B>
+  LIBID_XArrow: TGUID = <I>'{5551EB00-0AC6-11D2-B9F1-004845400FAA}'</I>;
+  IID_IMd4WArrowX: TGUID = <I>'{5551EB23-0AC6-11D2-B9F1-004845400FAA}'</I>;
+  DIID_IMd4WArrowXEvents: TGUID = <I>'{5551EB25-0AC6-11D2-B9F1-004845400FAA}'</I>;
+  CLASS_Md4WArrowX: TGUID = <I>'{5551EB27-0AC6-11D2-B9F1-004845400FAA}'</I>;
+
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+<FONT COLOR="#000080"><I>// Declaration of Enumerations defined in Type Library                  //</I></FONT>
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+<FONT COLOR="#000080"><I>// TxMd4WArrowDir constants</I></FONT>
+<B>type</B>
+  TxMd4WArrowDir = TOleEnum;
+<B>const</B>
+  adUp = $00000000;
+  adLeft = $00000001;
+  adDown = $00000002;
+  adRight = $00000003;
+
+<FONT COLOR="#000080"><I>// TxMouseButton constants</I></FONT>
+<B>type</B>
+  TxMouseButton = TOleEnum;
+<B>const</B>
+  mbLeft = $00000000;
+  mbRight = $00000001;
+  mbMiddle = $00000002;
+
+<FONT COLOR="#000080"><I>// TxAlignment constants</I></FONT>
+<B>type</B>
+  TxAlignment = TOleEnum;
+<B>const</B>
+  taLeftJustify = $00000000;
+  taRightJustify = $00000001;
+  taCenter = $00000002;
+
+<FONT COLOR="#000080"><I>// TxBiDiMode constants</I></FONT>
+<B>type</B>
+  TxBiDiMode = TOleEnum;
+<B>const</B>
+  bdLeftToRight = $00000000;
+  bdRightToLeft = $00000001;
+  bdRightToLeftNoAlign = $00000002;
+  bdRightToLeftReadingOnly = $00000003;
+
+<B>type</B>
+
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+<FONT COLOR="#000080"><I>// Forward declaration of interfaces defined in Type Library            //</I></FONT>
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+  IMd4WArrowX = <B>interface</B>;
+  IMd4WArrowXDisp = <B>dispinterface</B>;
+  IMd4WArrowXEvents = <B>dispinterface</B>;
+
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+<FONT COLOR="#000080"><I>// Declaration of CoClasses defined in Type Library                     //</I></FONT>
+<FONT COLOR="#000080"><I>// (NOTE: Here we map each CoClass to its Default Interface)            //</I></FONT>
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+  Md4WArrowX = IMd4WArrowX;
+
+
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+<FONT COLOR="#000080"><I>// Interface: IMd4WArrowX</I></FONT>
+<FONT COLOR="#000080"><I>// Flags:     (4416) Dual OleAutomation Dispatchable</I></FONT>
+<FONT COLOR="#000080"><I>// GUID:      {5551EB23-0AC6-11D2-B9F1-004845400FAA}</I></FONT>
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+  IMd4WArrowX = <B>interface</B>(IDispatch)
+    [<I>'{5551EB23-0AC6-11D2-B9F1-004845400FAA}'</I>]
+    <B>function</B> Get_Direction: TxMd4WArrowDir; safecall;
+    <B>procedure</B> Set_Direction(Value: TxMd4WArrowDir); safecall;
+    <B>function</B> Get_ArrowHeight: Integer; safecall;
+    <B>procedure</B> Set_ArrowHeight(Value: Integer); safecall;
+    <B>function</B> Get_Filled: WordBool; safecall;
+    <B>procedure</B> Set_Filled(Value: WordBool); safecall;
+    <B>function</B> Get_DoubleBuffered: WordBool; safecall;
+    <B>procedure</B> Set_DoubleBuffered(Value: WordBool); safecall;
+    <B>procedure</B> FlipChildren(AllLevels: WordBool); safecall;
+    <B>function</B> DrawTextBiDiModeFlags(Flags: Integer): Integer; safecall;
+    <B>function</B> DrawTextBiDiModeFlagsReadingOnly: Integer; safecall;
+    <B>function</B> Get_Enabled: WordBool; safecall;
+    <B>procedure</B> Set_Enabled(Value: WordBool); safecall;
+    <B>function</B> GetControlsAlignment: TxAlignment; safecall;
+    <B>procedure</B> InitiateAction; safecall;
+    <B>function</B> IsRightToLeft: WordBool; safecall;
+    <B>function</B> UseRightToLeftAlignment: WordBool; safecall;
+    <B>function</B> UseRightToLeftReading: WordBool; safecall;
+    <B>function</B> UseRightToLeftScrollBar: WordBool; safecall;
+    <B>function</B> Get_BiDiMode: TxBiDiMode; safecall;
+    <B>procedure</B> Set_BiDiMode(Value: TxBiDiMode); safecall;
+    <B>function</B> Get_Visible: WordBool; safecall;
+    <B>procedure</B> Set_Visible(Value: WordBool); safecall;
+    <B>function</B> Get_Cursor: Smallint; safecall;
+    <B>procedure</B> Set_Cursor(Value: Smallint); safecall;
+    <B>function</B> ClassNameIs(<B>const</B> Name: WideString): WordBool; safecall;
+    <B>function</B> Get_FillColor: Integer; safecall;
+    <B>procedure</B> Set_FillColor(Value: Integer); safecall;
+    <B>function</B> Get_PenColor: Integer; safecall;
+    <B>procedure</B> Set_PenColor(Value: Integer); safecall;
+    <B>property</B> Direction: TxMd4WArrowDir <B>read</B> Get_Direction <B>write</B> Set_Direction;
+    <B>property</B> ArrowHeight: Integer <B>read</B> Get_ArrowHeight <B>write</B> Set_ArrowHeight;
+    <B>property</B> Filled: WordBool <B>read</B> Get_Filled <B>write</B> Set_Filled;
+    <B>property</B> DoubleBuffered: WordBool <B>read</B> Get_DoubleBuffered <B>write</B> Set_DoubleBuffered;
+    <B>property</B> Enabled: WordBool <B>read</B> Get_Enabled <B>write</B> Set_Enabled;
+    <B>property</B> BiDiMode: TxBiDiMode <B>read</B> Get_BiDiMode <B>write</B> Set_BiDiMode;
+    <B>property</B> Visible: WordBool <B>read</B> Get_Visible <B>write</B> Set_Visible;
+    <B>property</B> Cursor: Smallint <B>read</B> Get_Cursor <B>write</B> Set_Cursor;
+    <B>property</B> FillColor: Integer <B>read</B> Get_FillColor <B>write</B> Set_FillColor;
+    <B>property</B> PenColor: Integer <B>read</B> Get_PenColor <B>write</B> Set_PenColor;
+  <B>end</B>;
+
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+<FONT COLOR="#000080"><I>// DispIntf:  IMd4WArrowXDisp</I></FONT>
+<FONT COLOR="#000080"><I>// Flags:     (4416) Dual OleAutomation Dispatchable</I></FONT>
+<FONT COLOR="#000080"><I>// GUID:      {5551EB23-0AC6-11D2-B9F1-004845400FAA}</I></FONT>
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+  IMd4WArrowXDisp = <B>dispinterface</B>
+    [<I>'{5551EB23-0AC6-11D2-B9F1-004845400FAA}'</I>]
+    <B>property</B> Direction: TxMd4WArrowDir <B>dispid</B> 1;
+    <B>property</B> ArrowHeight: Integer <B>dispid</B> 2;
+    <B>property</B> Filled: WordBool <B>dispid</B> 3;
+    <B>property</B> DoubleBuffered: WordBool <B>dispid</B> 6;
+    <B>procedure</B> FlipChildren(AllLevels: WordBool); <B>dispid</B> 7;
+    <B>function</B> DrawTextBiDiModeFlags(Flags: Integer): Integer; <B>dispid</B> 10;
+    <B>function</B> DrawTextBiDiModeFlagsReadingOnly: Integer; <B>dispid</B> 11;
+    <B>property</B> Enabled: WordBool <B>dispid</B> -514;
+    <B>function</B> GetControlsAlignment: TxAlignment; <B>dispid</B> 12;
+    <B>procedure</B> InitiateAction; <B>dispid</B> 14;
+    <B>function</B> IsRightToLeft: WordBool; <B>dispid</B> 15;
+    <B>function</B> UseRightToLeftAlignment: WordBool; <B>dispid</B> 20;
+    <B>function</B> UseRightToLeftReading: WordBool; <B>dispid</B> 21;
+    <B>function</B> UseRightToLeftScrollBar: WordBool; <B>dispid</B> 22;
+    <B>property</B> BiDiMode: TxBiDiMode <B>dispid</B> 23;
+    <B>property</B> Visible: WordBool <B>dispid</B> 24;
+    <B>property</B> Cursor: Smallint <B>dispid</B> 25;
+    <B>function</B> ClassNameIs(<B>const</B> Name: WideString): WordBool; <B>dispid</B> 29;
+    <B>property</B> FillColor: Integer <B>dispid</B> 4;
+    <B>property</B> PenColor: Integer <B>dispid</B> 5;
+  <B>end</B>;
+
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+<FONT COLOR="#000080"><I>// DispIntf:  IMd4WArrowXEvents</I></FONT>
+<FONT COLOR="#000080"><I>// Flags:     (4096) Dispatchable</I></FONT>
+<FONT COLOR="#000080"><I>// GUID:      {5551EB25-0AC6-11D2-B9F1-004845400FAA}</I></FONT>
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+  IMd4WArrowXEvents = <B>dispinterface</B>
+    [<I>'{5551EB25-0AC6-11D2-B9F1-004845400FAA}'</I>]
+    <B>procedure</B> OnClick; <B>dispid</B> 1;
+    <B>procedure</B> OnArrowDblClick; <B>dispid</B> 8;
+  <B>end</B>;
+
+
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+<FONT COLOR="#000080"><I>// OLE Control Proxy class declaration</I></FONT>
+<FONT COLOR="#000080"><I>// Control Name     : TMd4WArrowX</I></FONT>
+<FONT COLOR="#000080"><I>// Help String      : Md4WArrowX Control</I></FONT>
+<FONT COLOR="#000080"><I>// Default Interface: IMd4WArrowX</I></FONT>
+<FONT COLOR="#000080"><I>// Def. Intf. DISP? : No</I></FONT>
+<FONT COLOR="#000080"><I>// Event   Interface: IMd4WArrowXEvents</I></FONT>
+<FONT COLOR="#000080"><I>// TypeFlags        : (38) CanCreate Licensed Control</I></FONT>
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+  TMd4WArrowX = <B>class</B>(TOleControl)
+  <B>private</B>
+    FOnClick: TNotifyEvent;
+    FOnArrowDblClick: TNotifyEvent;
+    FIntf: IMd4WArrowX;
+    <B>function</B>  GetControlInterface: IMd4WArrowX;
+  <B>protected</B>
+    <B>procedure</B> CreateControl;
+    <B>procedure</B> InitControlData; <B>override</B>;
+  <B>public</B>
+    <B>procedure</B> FlipChildren(AllLevels: WordBool);
+    <B>function</B> DrawTextBiDiModeFlags(Flags: Integer; out Value: Integer): Integer;
+    <B>function</B> DrawTextBiDiModeFlagsReadingOnly(out Value: Integer): Integer;
+    <B>function</B> GetControlsAlignment(out Value: TxAlignment): TxAlignment;
+    <B>procedure</B> InitiateAction;
+    <B>function</B> IsRightToLeft(out Value: WordBool): WordBool;
+    <B>function</B> UseRightToLeftAlignment(out Value: WordBool): WordBool;
+    <B>function</B> UseRightToLeftReading(out Value: WordBool): WordBool;
+    <B>function</B> UseRightToLeftScrollBar(out Value: WordBool): WordBool;
+    <B>function</B> ClassNameIs(<B>const</B> Name: WideString; out Value: WordBool): WordBool;
+    <B>property</B>  ControlInterface: IMd4WArrowX <B>read</B> GetControlInterface;
+    <B>property</B> DoubleBuffered: WordBool <B>index</B> 6 <B>read</B> GetWordBoolProp <B>write</B> SetWordBoolProp;
+    <B>property</B> Enabled: WordBool <B>index</B> -514 <B>read</B> GetWordBoolProp <B>write</B> SetWordBoolProp;
+    <B>property</B> BiDiMode: TOleEnum <B>index</B> 23 <B>read</B> GetTOleEnumProp <B>write</B> SetTOleEnumProp;
+    <B>property</B> Visible: WordBool <B>index</B> 24 <B>read</B> GetWordBoolProp <B>write</B> SetWordBoolProp;
+  <B>published</B>
+    <B>property</B>  TabStop;
+    <B>property</B>  Align;
+    <B>property</B>  DragCursor;
+    <B>property</B>  DragMode;
+    <B>property</B>  ParentShowHint;
+    <B>property</B>  PopupMenu;
+    <B>property</B>  ShowHint;
+    <B>property</B>  TabOrder;
+    <B>property</B>  OnDragDrop;
+    <B>property</B>  OnDragOver;
+    <B>property</B>  OnEndDrag;
+    <B>property</B>  OnEnter;
+    <B>property</B>  OnExit;
+    <B>property</B>  OnStartDrag;
+    <B>property</B> Direction: TOleEnum <B>index</B> 1 <B>read</B> GetTOleEnumProp <B>write</B> SetTOleEnumProp <B>stored</B> False;
+    <B>property</B> ArrowHeight: Integer <B>index</B> 2 <B>read</B> GetIntegerProp <B>write</B> SetIntegerProp <B>stored</B> False;
+    <B>property</B> Filled: WordBool <B>index</B> 3 <B>read</B> GetWordBoolProp <B>write</B> SetWordBoolProp <B>stored</B> False;
+    <B>property</B> Cursor: Smallint <B>index</B> 25 <B>read</B> GetSmallintProp <B>write</B> SetSmallintProp <B>stored</B> False;
+    <B>property</B> FillColor: Integer <B>index</B> 4 <B>read</B> GetIntegerProp <B>write</B> SetIntegerProp <B>stored</B> False;
+    <B>property</B> PenColor: Integer <B>index</B> 5 <B>read</B> GetIntegerProp <B>write</B> SetIntegerProp <B>stored</B> False;
+    <B>property</B> OnClick: TNotifyEvent <B>read</B> FOnClick <B>write</B> FOnClick;
+    <B>property</B> OnArrowDblClick: TNotifyEvent <B>read</B> FOnArrowDblClick <B>write</B> FOnArrowDblClick;
+  <B>end</B>;
+
+<B>procedure</B> <B>Register</B>;
+
+<B>implementation</B>
+
+<B>uses</B> ComObj;
+
+<B>procedure</B> TMd4WArrowX.InitControlData;
+<B>const</B>
+  CEventDispIDs: <B>array</B> [0..1] <B>of</B> DWORD = (
+    $00000001, $00000008);
+  CLicenseKey: <B>array</B>[0..38] <B>of</B> Word = ( $007B, $0035, $0035, $0035, $0031, $0045, $0042, $0032, $0045, $002D, $0030
+    , $0041, $0043, $0036, $002D, $0031, $0031, $0044, $0032, $002D, $0042
+    , $0039, $0046, $0031, $002D, $0030, $0030, $0034, $0038, $0034, $0035
+    , $0034, $0030, $0030, $0046, $0041, $0041, $007D, $0000);
+  CControlData: TControlData = (
+    ClassID: <I>'{5551EB27-0AC6-11D2-B9F1-004845400FAA}'</I>;
+    EventIID: <I>'{5551EB25-0AC6-11D2-B9F1-004845400FAA}'</I>;
+    EventCount: 2;
+    EventDispIDs: @CEventDispIDs;
+    LicenseKey: @CLicenseKey;
+    Flags: $00000008;
+    Version: 300);
+<B>begin</B>
+  ControlData := @CControlData;
+<B>end</B>;
+
+<B>procedure</B> TMd4WArrowX.CreateControl;
+
+  <B>procedure</B> DoCreate;
+  <B>begin</B>
+    FIntf := IUnknown(OleObject) <B>as</B> IMd4WArrowX;
+  <B>end</B>;
+
+<B>begin</B>
+  <B>if</B> FIntf = <B>nil</B> <B>then</B> DoCreate;
+<B>end</B>;
+
+<B>function</B> TMd4WArrowX.GetControlInterface: IMd4WArrowX;
+<B>begin</B>
+  CreateControl;
+  Result := FIntf;
+<B>end</B>;
+
+<B>procedure</B> TMd4WArrowX.FlipChildren(AllLevels: WordBool);
+<B>begin</B>
+  ControlInterface.FlipChildren(AllLevels);
+<B>end</B>;
+
+<B>function</B> TMd4WArrowX.DrawTextBiDiModeFlags(Flags: Integer; out Value: Integer): Integer;
+<B>begin</B>
+  Result := ControlInterface.DrawTextBiDiModeFlags(Flags);
+<B>end</B>;
+
+<B>function</B> TMd4WArrowX.DrawTextBiDiModeFlagsReadingOnly(out Value: Integer): Integer;
+<B>begin</B>
+  Result := ControlInterface.DrawTextBiDiModeFlagsReadingOnly;
+<B>end</B>;
+
+<B>function</B> TMd4WArrowX.GetControlsAlignment(out Value: TxAlignment): TxAlignment;
+<B>begin</B>
+  Result := ControlInterface.GetControlsAlignment;
+<B>end</B>;
+
+<B>procedure</B> TMd4WArrowX.InitiateAction;
+<B>begin</B>
+  ControlInterface.InitiateAction;
+<B>end</B>;
+
+<B>function</B> TMd4WArrowX.IsRightToLeft(out Value: WordBool): WordBool;
+<B>begin</B>
+  Result := ControlInterface.IsRightToLeft;
+<B>end</B>;
+
+<B>function</B> TMd4WArrowX.UseRightToLeftAlignment(out Value: WordBool): WordBool;
+<B>begin</B>
+  Result := ControlInterface.UseRightToLeftAlignment;
+<B>end</B>;
+
+<B>function</B> TMd4WArrowX.UseRightToLeftReading(out Value: WordBool): WordBool;
+<B>begin</B>
+  Result := ControlInterface.UseRightToLeftReading;
+<B>end</B>;
+
+<B>function</B> TMd4WArrowX.UseRightToLeftScrollBar(out Value: WordBool): WordBool;
+<B>begin</B>
+  Result := ControlInterface.UseRightToLeftScrollBar;
+<B>end</B>;
+
+<B>function</B> TMd4WArrowX.ClassNameIs(<B>const</B> Name: WideString; out Value: WordBool): WordBool;
+<B>begin</B>
+  Result := ControlInterface.ClassNameIs(Name);
+<B>end</B>;
+
+<B>procedure</B> <B>Register</B>;
+<B>begin</B>
+  RegisterComponents(<I>'ActiveX'</I>,[TMd4WArrowX]);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=XARROWIMPL.PAS><H3>XARROWIMPL.PAS</H3></A>
+
+<PRE>
+<B>unit</B> XArrowImpl;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, ActiveX, Classes, Controls, Graphics, Menus, Forms, StdCtrls,
+  ComServ, StdVCL, AXCtrls, XArrow_TLB, Md4WArrow;
+
+<B>type</B>
+  TMd4WArrowX = <B>class</B>(TActiveXControl, IMd4WArrowX)
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+    FDelphiControl: TMd4WArrow;
+    FEvents: IMd4WArrowXEvents;
+    <B>procedure</B> ArrowDblClickEvent(Sender: TObject);
+    <B>procedure</B> ClickEvent(Sender: TObject);
+  <B>protected</B>
+    <FONT COLOR="#000080"><I>{ Protected declarations }</I></FONT>
+    <B>procedure</B> DefinePropertyPages(DefinePropertyPage: TDefinePropertyPage); <B>override</B>;
+    <B>procedure</B> EventSinkChanged(<B>const</B> EventSink: IUnknown); <B>override</B>;
+    <B>procedure</B> InitializeControl; <B>override</B>;
+    <B>function</B> ClassNameIs(<B>const</B> Name: WideString): WordBool; safecall;
+    <B>function</B> DrawTextBiDiModeFlags(Flags: Integer): Integer; safecall;
+    <B>function</B> DrawTextBiDiModeFlagsReadingOnly: Integer; safecall;
+    <B>function</B> Get_ArrowHeight: Integer; safecall;
+    <B>function</B> Get_BiDiMode: TxBiDiMode; safecall;
+    <B>function</B> Get_Cursor: Smallint; safecall;
+    <B>function</B> Get_Direction: TxMd4WArrowDir; safecall;
+    <B>function</B> Get_DoubleBuffered: WordBool; safecall;
+    <B>function</B> Get_Enabled: WordBool; safecall;
+    <B>function</B> Get_Filled: WordBool; safecall;
+    <B>function</B> Get_Visible: WordBool; safecall;
+    <B>function</B> GetControlsAlignment: TxAlignment; safecall;
+    <B>function</B> IsRightToLeft: WordBool; safecall;
+    <B>function</B> UseRightToLeftAlignment: WordBool; safecall;
+    <B>function</B> UseRightToLeftReading: WordBool; safecall;
+    <B>function</B> UseRightToLeftScrollBar: WordBool; safecall;
+    <B>procedure</B> FlipChildren(AllLevels: WordBool); safecall;
+    <B>procedure</B> InitiateAction; safecall;
+    <B>procedure</B> Set_ArrowHeight(Value: Integer); safecall;
+    <B>procedure</B> Set_BiDiMode(Value: TxBiDiMode); safecall;
+    <B>procedure</B> Set_Cursor(Value: Smallint); safecall;
+    <B>procedure</B> Set_Direction(Value: TxMd4WArrowDir); safecall;
+    <B>procedure</B> Set_DoubleBuffered(Value: WordBool); safecall;
+    <B>procedure</B> Set_Enabled(Value: WordBool); safecall;
+    <B>procedure</B> Set_Filled(Value: WordBool); safecall;
+    <B>procedure</B> Set_Visible(Value: WordBool); safecall;
+    <B>function</B> Get_FillColor: Integer; safecall;
+    <B>procedure</B> Set_FillColor(Value: Integer); safecall;
+    <B>function</B> Get_PenColor: Integer; safecall;
+    <B>procedure</B> Set_PenColor(Value: Integer); safecall;
+  <B>end</B>;
+
+<B>implementation</B>
+
+<B>uses</B>
+  ComObj, XAPPage;
+
+<FONT COLOR="#000080"><I>{ TMd4WArrowX }</I></FONT>
+
+<B>procedure</B> TMd4WArrowX.DefinePropertyPages(DefinePropertyPage: TDefinePropertyPage);
+<B>begin</B>
+  DefinePropertyPage(Class_PropertyPage1);
+<B>end</B>;
+
+<B>procedure</B> TMd4WArrowX.EventSinkChanged(<B>const</B> EventSink: IUnknown);
+<B>begin</B>
+  FEvents := EventSink <B>as</B> IMd4WArrowXEvents;
+<B>end</B>;
+
+<B>procedure</B> TMd4WArrowX.InitializeControl;
+<B>begin</B>
+  FDelphiControl := Control <B>as</B> TMd4WArrow;
+  FDelphiControl.OnArrowDblClick := ArrowDblClickEvent;
+  FDelphiControl.OnClick := ClickEvent;
+<B>end</B>;
+
+<B>function</B> TMd4WArrowX.ClassNameIs(<B>const</B> Name: WideString): WordBool;
+<B>begin</B>
+  Result := FDelphiControl.ClassNameIs(Name);
+<B>end</B>;
+
+<B>function</B> TMd4WArrowX.DrawTextBiDiModeFlags(Flags: Integer): Integer;
+<B>begin</B>
+  Result := FDelphiControl.DrawTextBiDiModeFlags(Flags);
+<B>end</B>;
+
+<B>function</B> TMd4WArrowX.DrawTextBiDiModeFlagsReadingOnly: Integer;
+<B>begin</B>
+  Result := FDelphiControl.DrawTextBiDiModeFlagsReadingOnly;
+<B>end</B>;
+
+<B>function</B> TMd4WArrowX.Get_ArrowHeight: Integer;
+<B>begin</B>
+  Result := FDelphiControl.ArrowHeight;
+<B>end</B>;
+
+<B>function</B> TMd4WArrowX.Get_BiDiMode: TxBiDiMode;
+<B>begin</B>
+  Result := Ord(FDelphiControl.BiDiMode);
+<B>end</B>;
+
+<B>function</B> TMd4WArrowX.Get_Cursor: Smallint;
+<B>begin</B>
+  Result := Smallint(FDelphiControl.Cursor);
+<B>end</B>;
+
+<B>function</B> TMd4WArrowX.Get_Direction: TxMd4WArrowDir;
+<B>begin</B>
+  Result := Ord(FDelphiControl.Direction);
+<B>end</B>;
+
+<B>function</B> TMd4WArrowX.Get_DoubleBuffered: WordBool;
+<B>begin</B>
+  Result := FDelphiControl.DoubleBuffered;
+<B>end</B>;
+
+<B>function</B> TMd4WArrowX.Get_Enabled: WordBool;
+<B>begin</B>
+  Result := FDelphiControl.Enabled;
+<B>end</B>;
+
+<B>function</B> TMd4WArrowX.Get_Filled: WordBool;
+<B>begin</B>
+  Result := FDelphiControl.Filled;
+<B>end</B>;
+
+<B>function</B> TMd4WArrowX.Get_Visible: WordBool;
+<B>begin</B>
+  Result := FDelphiControl.Visible;
+<B>end</B>;
+
+<B>function</B> TMd4WArrowX.GetControlsAlignment: TxAlignment;
+<B>begin</B>
+ Result := TxAlignment(FDelphiControl.GetControlsAlignment);
+<B>end</B>;
+
+<B>function</B> TMd4WArrowX.IsRightToLeft: WordBool;
+<B>begin</B>
+  Result := FDelphiControl.IsRightToLeft;
+<B>end</B>;
+
+<B>function</B> TMd4WArrowX.UseRightToLeftAlignment: WordBool;
+<B>begin</B>
+  Result := FDelphiControl.UseRightToLeftAlignment;
+<B>end</B>;
+
+<B>function</B> TMd4WArrowX.UseRightToLeftReading: WordBool;
+<B>begin</B>
+  Result := FDelphiControl.UseRightToLeftReading;
+<B>end</B>;
+
+<B>function</B> TMd4WArrowX.UseRightToLeftScrollBar: WordBool;
+<B>begin</B>
+  Result := FDelphiControl.UseRightToLeftScrollBar;
+<B>end</B>;
+
+<B>procedure</B> TMd4WArrowX.FlipChildren(AllLevels: WordBool);
+<B>begin</B>
+  FDelphiControl.FlipChildren(AllLevels);
+<B>end</B>;
+
+<B>procedure</B> TMd4WArrowX.InitiateAction;
+<B>begin</B>
+  FDelphiControl.InitiateAction;
+<B>end</B>;
+
+<B>procedure</B> TMd4WArrowX.Set_ArrowHeight(Value: Integer);
+<B>begin</B>
+  FDelphiControl.ArrowHeight := Value;
+<B>end</B>;
+
+<B>procedure</B> TMd4WArrowX.Set_BiDiMode(Value: TxBiDiMode);
+<B>begin</B>
+  FDelphiControl.BiDiMode := TBiDiMode(Value);
+<B>end</B>;
+
+<B>procedure</B> TMd4WArrowX.Set_Cursor(Value: Smallint);
+<B>begin</B>
+  FDelphiControl.Cursor := TCursor(Value);
+<B>end</B>;
+
+<B>procedure</B> TMd4WArrowX.Set_Direction(Value: TxMd4WArrowDir);
+<B>begin</B>
+  FDelphiControl.Direction := TMd4WArrowDir(Value);
+<B>end</B>;
+
+<B>procedure</B> TMd4WArrowX.Set_DoubleBuffered(Value: WordBool);
+<B>begin</B>
+  FDelphiControl.DoubleBuffered := Value;
+<B>end</B>;
+
+<B>procedure</B> TMd4WArrowX.Set_Enabled(Value: WordBool);
+<B>begin</B>
+  FDelphiControl.Enabled := Value;
+<B>end</B>;
+
+<B>procedure</B> TMd4WArrowX.Set_Filled(Value: WordBool);
+<B>begin</B>
+  FDelphiControl.Filled := Value;
+<B>end</B>;
+
+<B>procedure</B> TMd4WArrowX.Set_Visible(Value: WordBool);
+<B>begin</B>
+  FDelphiControl.Visible := Value;
+<B>end</B>;
+
+<B>procedure</B> TMd4WArrowX.ArrowDblClickEvent(Sender: TObject);
+<B>begin</B>
+  <B>if</B> FEvents &lt;&gt; <B>nil</B> <B>then</B> FEvents.OnArrowDblClick;
+<B>end</B>;
+
+<B>procedure</B> TMd4WArrowX.ClickEvent(Sender: TObject);
+<B>begin</B>
+  <B>if</B> FEvents &lt;&gt; <B>nil</B> <B>then</B> FEvents.OnClick;
+<B>end</B>;
+
+<B>function</B> TMd4WArrowX.Get_FillColor: Integer;
+<B>begin</B>
+  Result := ColorToRGB (FDelphiControl.Brush.Color);
+<B>end</B>;
+
+<B>procedure</B> TMd4WArrowX.Set_FillColor(Value: Integer);
+<B>begin</B>
+  FDelphiControl.Brush.Color := Value;
+<B>end</B>;
+
+<B>function</B> TMd4WArrowX.Get_PenColor: Integer;
+<B>begin</B>
+  Result := ColorToRGB (FDelphiControl.Pen.Color);
+<B>end</B>;
+
+<B>procedure</B> TMd4WArrowX.Set_PenColor(Value: Integer);
+<B>begin</B>
+  FDelphiControl.Pen.Color := Value;
+<B>end</B>;
+
+<B>initialization</B>
+  TActiveXControlFactory.Create(
+    ComServer,
+    TMd4WArrowX,
+    TMd4WArrow,
+    Class_Md4WArrowX,
+    4,
+    <I>'{5551EB2E-0AC6-11D2-B9F1-004845400FAA}'</I>,
+    0,
+    tmApartment);
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=XAPPAGE.PAS><H3>XAPPAGE.PAS</H3></A>
+
+<PRE>
+<B>unit</B> XAPPage;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes, Graphics, Controls, StdCtrls,
+  ExtCtrls, Forms, ComServ, ComObj, StdVcl, AxCtrls, ColorGrd, ComCtrls,
+  Dialogs;
+
+<B>type</B>
+  TPropertyPage1 = <B>class</B>(TPropertyPage)
+    ComboDir: TComboBox;
+    Label1: TLabel;
+    Label2: TLabel;
+    EditHeight: TEdit;
+    UpDownHeight: TUpDown;
+    Label3: TLabel;
+    ShapePen: TShape;
+    ShapePoint: TShape;
+    Label4: TLabel;
+    ButtonPen: TButton;
+    ButtonPoint: TButton;
+    ColorDialog1: TColorDialog;
+    CheckFilled: TCheckBox;
+    <B>procedure</B> ButtonPenClick(Sender: TObject);
+    <B>procedure</B> ButtonPointClick(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <B>procedure</B> UpdatePropertyPage; <B>override</B>;
+    <B>procedure</B> UpdateObject; <B>override</B>;
+  <B>end</B>;
+
+<B>const</B>
+  Class_PropertyPage1: TGUID = <I>'{CDA51561-914A-11D0-98D0-444553540000}'</I>;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TPropertyPage1.UpdatePropertyPage;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>{ Update your controls from OleObject }</I></FONT>
+  ComboDir.ItemIndex := OleObject.Direction;
+  CheckFilled.Checked := OleObject.Filled;
+  EditHeight.Text := IntToStr (OleObject.ArrowHeight);
+  ShapePen.Brush.Color := OleObject.PenColor;
+  ShapePoint.Brush.Color := OleObject.FillColor;
+<B>end</B>;
+
+<B>procedure</B> TPropertyPage1.UpdateObject;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>{ Update OleObject from your controls }</I></FONT>
+  OleObject.Direction := ComboDir.ItemIndex;
+  OleObject.Filled := CheckFilled.Checked;
+  OleObject.ArrowHeight := UpDownHeight.Position;
+  OleObject.PenColor := ColorToRGB (ShapePen.Brush.Color);
+  OleObject.FillColor := ColorToRGB (ShapePoint.Brush.Color);
+<B>end</B>;
+
+<B>procedure</B> TPropertyPage1.ButtonPenClick(Sender: TObject);
+<B>begin</B>
+  <B>with</B> ColorDialog1 <B>do</B>
+  <B>begin</B>
+    Color := ShapePen.Brush.Color;
+    <B>if</B> Execute <B>then</B>
+    <B>begin</B>
+      ShapePen.Brush.Color := Color;
+      Modified; <FONT COLOR="#000080"><I>// enable Apply button!</I></FONT>
+    <B>end</B>;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TPropertyPage1.ButtonPointClick(Sender: TObject);
+<B>begin</B>
+  <B>with</B> ColorDialog1 <B>do</B>
+  <B>begin</B>
+    Color := ShapePoint.Brush.Color;
+    <B>if</B> Execute <B>then</B>
+    <B>begin</B>
+      ShapePoint.Brush.Color := Color;
+      Modified; <FONT COLOR="#000080"><I>// enable Apply button!</I></FONT>
+    <B>end</B>;
+  <B>end</B>;
+<B>end</B>;
+
+<B>initialization</B>
+  TActiveXPropertyPageFactory.Create(
+    ComServer,
+    TPropertyPage1,
+    Class_PropertyPage1);
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=XAPPAGE.DFM><H3>XAPPAGE.DFM</H3></A>
+
+<PRE>
+<B>object</B> PropertyPage1: TPropertyPage1
+  Left = 297
+  Top = 166
+  Width = 300
+  Height = 199
+  Caption = <I>'XArrow properties'</I>
+  Color = clBtnFace
+  Font.Charset = ANSI_CHARSET
+  Font.Color = clBlack
+  Font.Height = -13
+  Font.Name = <I>'Arial'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  PixelsPerInch = 96
+  TextHeight = 16
+  <B>object</B> Label1: TLabel
+    Left = 24
+    Top = 16
+    Width = 55
+    Height = 16
+    Caption = <I>'Direction:'</I>
+  <B>end</B>
+  <B>object</B> Label2: TLabel
+    Left = 109
+    Top = 48
+    Width = 78
+    Height = 16
+    Caption = <I>'Arrow Height:'</I>
+  <B>end</B>
+  <B>object</B> Label3: TLabel
+    Left = 24
+    Top = 96
+    Width = 59
+    Height = 16
+    Caption = <I>'Pen color:'</I>
+  <B>end</B>
+  <B>object</B> ShapePen: TShape
+    Left = 152
+    Top = 88
+    Width = 33
+    Height = 33
+  <B>end</B>
+  <B>object</B> ShapePoint: TShape
+    Left = 152
+    Top = 128
+    Width = 33
+    Height = 33
+  <B>end</B>
+  <B>object</B> Label4: TLabel
+    Left = 24
+    Top = 136
+    Width = 101
+    Height = 16
+    Caption = <I>'Arrow point color:'</I>
+  <B>end</B>
+  <B>object</B> ComboDir: TComboBox
+    Left = 88
+    Top = 13
+    Width = 167
+    Height = 24
+    Style = csDropDownList
+    ItemHeight = 16
+    Items.Strings = (
+      <I>'adUp (0)'</I>
+      <I>'adDown (1)'</I>
+      <I>'adLeft (2)'</I>
+      <I>'adRight (3)'</I>)
+    TabOrder = 0
+  <B>end</B>
+  <B>object</B> EditHeight: TEdit
+    Left = 194
+    Top = 45
+    Width = 46
+    Height = 24
+    ReadOnly = True
+    TabOrder = 1
+    Text = <I>'10'</I>
+  <B>end</B>
+  <B>object</B> UpDownHeight: TUpDown
+    Left = 240
+    Top = 45
+    Width = 15
+    Height = 24
+    Associate = EditHeight
+    Min = 0
+    Position = 10
+    TabOrder = 2
+    Wrap = False
+  <B>end</B>
+  <B>object</B> ButtonPen: TButton
+    Left = 192
+    Top = 92
+    Width = 64
+    Height = 25
+    Caption = <I>'New...'</I>
+    TabOrder = 3
+    OnClick = ButtonPenClick
+  <B>end</B>
+  <B>object</B> ButtonPoint: TButton
+    Left = 192
+    Top = 131
+    Width = 66
+    Height = 25
+    Caption = <I>'New...'</I>
+    TabOrder = 4
+    OnClick = ButtonPointClick
+  <B>end</B>
+  <B>object</B> CheckFilled: TCheckBox
+    Left = 24
+    Top = 48
+    Width = 65
+    Height = 17
+    Caption = <I>'Filled'</I>
+    TabOrder = 5
+  <B>end</B>
+  <B>object</B> ColorDialog1: TColorDialog
+    Ctl3D = True
+    Left = 96
+    Top = 72
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

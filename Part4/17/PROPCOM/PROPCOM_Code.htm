@@ -1,0 +1,124 @@
+<HTML><HEAD>
+<TITLE>Project: PROPCOM.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: PROPCOM.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#PROPCOM.DPR> PROPCOM.DPR</A>
+<LI> <A HREF=#NUMINTF.PAS> NUMINTF.PAS</A>
+<LI> <A HREF=#NUMSERV.PAS> NUMSERV.PAS</A>
+</UL>
+<HR>
+<A NAME=PROPCOM.DPR><H3>PROPCOM.DPR</H3></A>
+
+<PRE>
+<B>library</B> PropCom;
+
+<B>uses</B>
+  ComServ,
+  NumIntf <B>in</B> <I>'NumIntf.pas'</I>,
+  NumServ <B>in</B> <I>'NumServ.pas'</I>;
+
+<B>exports</B>
+  DllGetClassObject,
+  DllCanUnloadNow,
+  DllRegisterServer,
+  DllUnregisterServer;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+  <B>end</B>.</PRE>
+<HR>
+
+<A NAME=NUMINTF.PAS><H3>NUMINTF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> NumIntf;
+
+<B>interface</B>
+
+<B>type</B>
+  INumberProp = <B>interface</B>
+    [<I>'{B36C5800-8E59-11D0-98D0-444553540000}'</I>]
+    <B>function</B> GetValue: Integer; <B>stdcall</B>;
+    <B>procedure</B> SetValue (New: Integer); <B>stdcall</B>;
+    <B>procedure</B> Increase; <B>stdcall</B>;
+    <B>property</B> Value: Integer
+      <B>read</B> GetValue <B>write</B> SetValue;
+  <B>end</B>;
+
+<B>implementation</B>
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=NUMSERV.PAS><H3>NUMSERV.PAS</H3></A>
+
+<PRE>
+<B>unit</B> NumServ;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, ActiveX, ComObj, NumIntf;
+
+<B>type</B>
+  TNumServer = <B>class</B>(TComObject, IUnknown, INumberProp)
+  <B>private</B>
+    fValue: Integer;
+  <B>public</B>
+    <B>function</B> GetValue: Integer; <B>virtual</B>; <B>stdcall</B>;
+    <B>procedure</B> SetValue (New: Integer); <B>virtual</B>; <B>stdcall</B>;
+    <B>procedure</B> Increase; <B>virtual</B>; <B>stdcall</B>;
+    <B>procedure</B> Initialize; <B>override</B>;
+    <B>destructor</B> Destroy; <B>override</B>;
+  <B>end</B>;
+
+<B>const</B>
+  Class_NumPropServer: TGUID =
+    <I>'{B165F7A1-DDF9-11D1-B9F1-004845400FAA}'</I>;
+
+<B>implementation</B>
+
+<B>uses</B> ComServ;
+
+<FONT COLOR="#000080"><I>{ TNumServer }</I></FONT>
+
+<B>destructor</B> TNumServer.Destroy;
+<B>begin</B>
+  <B>inherited</B>;
+  MessageBox (0, <I>'Object Destroyed'</I>,
+    <I>'TDLLNumber'</I>, mb_OK); <FONT COLOR="#000080"><I>// API call</I></FONT>
+<B>end</B>;
+
+<B>function</B> TNumServer.GetValue: Integer;
+<B>begin</B>
+  Result := fValue;
+<B>end</B>;
+
+<B>procedure</B> TNumServer.Increase;
+<B>begin</B>
+  Inc (fValue);
+<B>end</B>;
+
+<B>procedure</B> TNumServer.Initialize;
+<B>begin</B>
+  <B>inherited</B>;
+  fValue := 10;
+<B>end</B>;
+
+<B>procedure</B> TNumServer.SetValue(New: Integer);
+<B>begin</B>
+  fValue := New;
+<B>end</B>;
+
+<B>initialization</B>
+  TComObjectFactory.Create(ComServer, TNumServer, Class_NumPropServer,
+    <I>'NumPropServer'</I>, <I>'Num Prop Server (Prop Com)'</I>, ciMultiInstance, tmSingle);
+<B>end</B>.</PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

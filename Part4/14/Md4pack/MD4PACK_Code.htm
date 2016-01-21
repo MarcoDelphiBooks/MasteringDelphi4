@@ -1,0 +1,788 @@
+<HTML><HEAD>
+<TITLE>Package: MD4PACK.DPK</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Package: MD4PACK.DPK</CENTER></H1><BR><BR><HR>
+<H3>Package Structure</H3><UL>
+<LI> <A HREF=#LISTACT.PAS> LISTACT.PAS</A>
+<LI> <A HREF=#MD4ACTIVEBTN.PAS> MD4ACTIVEBTN.PAS</A>
+<LI> <A HREF=#MD4TABLIST.PAS> MD4TABLIST.PAS</A>
+<LI> <A HREF=#MD4ARROW.PAS> MD4ARROW.PAS</A>
+<LI> <A HREF=#MD4LISTDIAL.PAS> MD4LISTDIAL.PAS</A>
+<LI> <A HREF=#MD4CLOCK.PAS> MD4CLOCK.PAS</A>
+<LI> <A HREF=#MD4FONTBOX.PAS> MD4FONTBOX.PAS</A>
+</UL><HR>
+<A NAME=LISTACT.PAS><H3>LISTACT.PAS</H3></A>
+
+<PRE>
+<B>unit</B> ListAct;
+
+<B>interface</B>
+
+<B>uses</B>
+  ActnList, Classes, StdCtrls;
+
+<B>type</B>
+  TListAction = <B>class</B> (TAction)
+  <B>public</B>
+    <B>function</B> HandlesTarget (Target: TObject): Boolean; <B>override</B>;
+    <B>procedure</B> UpdateTarget (Target: TObject); <B>override</B>;
+  <B>end</B>;
+
+  TListCutAction = <B>class</B> (TListAction)
+  <B>public</B>
+    <B>procedure</B> ExecuteTarget(Target: TObject); <B>override</B>;
+  <B>end</B>;
+
+  TListCopyAction = <B>class</B> (TListAction)
+  <B>public</B>
+    <B>procedure</B> ExecuteTarget(Target: TObject); <B>override</B>;
+  <B>end</B>;
+
+  TListPasteAction = <B>class</B> (TListAction)
+  <B>public</B>
+    <B>procedure</B> UpdateTarget (Target: TObject); <B>override</B>;
+    <B>procedure</B> ExecuteTarget (Target: TObject); <B>override</B>;
+  <B>end</B>;
+
+<B>procedure</B> <B>Register</B>;
+
+<B>implementation</B>
+
+<B>uses</B>
+  Windows, Clipbrd;
+
+<B>function</B> TListAction.HandlesTarget (Target: TObject): Boolean;
+<B>begin</B>
+  Result := (Target <B>is</B> TListBox) <B>and</B>
+    TListBox(Target).Focused;
+<B>end</B>;
+
+<B>procedure</B> TListAction.UpdateTarget(Target: TObject);
+<B>begin</B>
+  Enabled := ((Target <B>as</B> TListBox).Items.Count &gt; 0) <B>and</B>
+    ((Target <B>as</B> TListBox).ItemIndex &gt;= 0);
+<B>end</B>;
+
+<B>procedure</B> TListCopyAction.ExecuteTarget(Target: TObject);
+<B>begin</B>
+  <B>with</B> Target <B>as</B> TListBox <B>do</B>
+    Clipboard.AsText := Items [ItemIndex];
+<B>end</B>;
+
+<B>procedure</B> TListCutAction.ExecuteTarget(Target: TObject);
+<B>begin</B>
+  <B>with</B> Target <B>as</B> TListBox <B>do</B>
+  <B>begin</B>
+    Clipboard.AsText := Items [ItemIndex];
+    Items.Delete (ItemIndex);
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TListPasteAction.ExecuteTarget(Target: TObject);
+<B>begin</B>
+  (Target <B>as</B> TListBox).Items.Add (Clipboard.AsText);
+<B>end</B>;
+
+<B>procedure</B> TListPasteAction.UpdateTarget(Target: TObject);
+<B>begin</B>
+  Enabled := Clipboard.HasFormat (CF_TEXT);
+<B>end</B>;
+
+<B>procedure</B> <B>Register</B>;
+<B>begin</B>
+  RegisterActions (<I>'ListBox'</I>,
+    [TListCutAction, TListCopyAction, TListPasteAction],
+    <B>nil</B>);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MD4ACTIVEBTN.PAS><H3>MD4ACTIVEBTN.PAS</H3></A>
+
+<PRE>
+<B>unit</B> Md4ActiveBtn;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls;
+
+<B>type</B>
+  TMd4ActiveButton = <B>class</B>(TButton)
+  <B>protected</B>
+    <B>procedure</B> MouseEnter (<B>var</B> Msg: TMessage);
+      <B>message</B> cm_mouseEnter;
+    <B>procedure</B> MouseLeave (<B>var</B> Msg: TMessage);
+      <B>message</B> cm_mouseLeave;
+  <B>end</B>;
+
+<B>procedure</B> <B>Register</B>;
+
+<B>implementation</B>
+
+<B>procedure</B> <B>Register</B>;
+<B>begin</B>
+  RegisterComponents(<I>'Md4'</I>, [TMd4ActiveButton]);
+<B>end</B>;
+
+<FONT COLOR="#000080"><I>{ TMd4ActiveButton }</I></FONT>
+
+<B>procedure</B> TMd4ActiveButton.MouseEnter(<B>var</B> Msg: TMessage);
+<B>begin</B>
+  Font.Style := Font.Style + [fsBold];
+<B>end</B>;
+
+<B>procedure</B> TMd4ActiveButton.MouseLeave(<B>var</B> Msg: TMessage);
+<B>begin</B>
+  Font.Style := Font.Style - [fsBold];
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MD4TABLIST.PAS><H3>MD4TABLIST.PAS</H3></A>
+
+<PRE>
+<B>unit</B> Md4TabList;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes, Graphics,
+  Controls, Forms, Dialogs, StdCtrls;
+
+<B>type</B>
+  TMd4TabsArray = <B>array</B> [0..9] <B>of</B> Integer;
+
+  TMd4TabbedList = <B>class</B>(TListBox)
+  <B>private</B>
+    FTabStops: TMd4TabsArray;
+    <B>function</B> GetTabStops (<B>Index</B>: Integer): Integer;
+    <B>procedure</B> SetTabStops (<B>Index</B>, Value: Integer);
+    <B>function</B> GetTabsString: <B>string</B>;
+    <B>procedure</B> SetTabsString (Value: <B>string</B>);
+  <B>protected</B>
+    <B>procedure</B> UpdateTabStops;
+  <B>public</B>
+    <B>procedure</B> CreateParams (
+      <B>var</B> Params: TCreateParams); <B>override</B>;
+    <B>procedure</B> CreateWnd; <B>override</B>;
+    <B>property</B> TabStops [<B>Index</B>: Integer]: Integer
+      <B>read</B> GetTabStops <B>write</B> SetTabStops;
+  <B>published</B>
+    <B>property</B> TabsString: <B>string</B>
+      <B>read</B> GetTabsString <B>write</B> SetTabsString;
+  <B>end</B>;
+
+<B>procedure</B> <B>Register</B>;
+
+<B>implementation</B>
+
+<B>procedure</B> TMd4TabbedList.CreateParams (<B>var</B> Params: TCreateParams);
+<B>begin</B>
+  <B>inherited</B> CreateParams (Params);
+  Params.Style := Params.Style <B>or</B> lbs_UseTabStops;
+<B>end</B>;
+
+<B>procedure</B> TMd4TabbedList.CreateWnd;
+<B>var</B>
+  I: Integer;
+<B>begin</B>
+  <B>inherited</B> CreateWnd;
+  <B>for</B> I := Low (FTabStops) <B>to</B> High (FTabStops) <B>do</B>
+    FTabStops [I] := I * 100;
+  UpdateTabStops;
+<B>end</B>;
+
+<B>procedure</B> TMd4TabbedList.SetTabStops (<B>Index</B>, Value: Integer);
+<B>begin</B>
+  <B>if</B> FTabStops [<B>Index</B>] &lt;&gt; Value <B>then</B>
+  <B>begin</B>
+    FTabStops [<B>Index</B>] := Value;
+    UpdateTabStops;
+    Invalidate;
+  <B>end</B>;
+<B>end</B>;
+
+<B>function</B> TMd4TabbedList.GetTabStops (<B>Index</B>: Integer): Integer;
+<B>begin</B>
+  Result := FTabStops [<B>Index</B>];
+<B>end</B>;
+
+<B>procedure</B> TMd4TabbedList.UpdateTabStops;
+<B>var</B>
+  I: Integer;
+  HUnits: Integer;
+  ConvertedTabs: TMd4TabsArray;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>{determine the horizontal dialog box units
+  used by the list box, which depend on
+  its current font}</I></FONT>
+  Canvas.Font := Font;
+  HUnits := Canvas.TextWidth (
+    <I>'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'</I>)
+    <B>div</B> 52;
+
+  <FONT COLOR="#000080"><I>{convert the array of tab values}</I></FONT>
+  <B>for</B> I := Low (ConvertedTabs) <B>to</B> High (ConvertedTabs) <B>do</B>
+    ConvertedTabs [I] := FTabStops [I] * 4 <B>div</B> HUnits;
+
+  <FONT COLOR="#000080"><I>{activate the tabs stops in the list box,
+  sending a Windows list box message}</I></FONT>
+  SendMessage (Handle, lb_SetTabStops,
+    1 + High (ConvertedTabs) - Low (ConvertedTabs),
+    LongInt (@ConvertedTabs));
+<B>end</B>;
+
+<B>function</B> TMd4TabbedList.GetTabsString: <B>string</B>;
+<B>var</B>
+  Text: <B>string</B>;
+  I: Integer;
+<B>begin</B>
+  Text := <I>''</I>;
+  <B>for</B> I := Low (FTabStops) <B>to</B> High (FTabStops) <B>do</B>
+    Text := Text + IntToStr (FTabStops [I]) + <I>';'</I>;
+  Result := Text;
+<B>end</B>;
+
+<B>procedure</B> TMd4TabbedList.SetTabsString (Value: <B>string</B>);
+<B>var</B>
+  Text: <B>string</B>;
+  I, Len : Integer;
+<B>begin</B>
+  Text := Value;
+  <B>for</B> I := Low (FTabStops) <B>to</B> High (FTabStops) <B>do</B>
+  <B>begin</B>
+    Len := Pos (Text, <I>';'</I>);
+    FTabStops [I] := StrToIntDef (
+      Copy (Text, 1, Len), 0);
+    Delete (Text, 1, Len);
+  <B>end</B>;
+  UpdateTabStops;
+  Invalidate;
+<B>end</B>;
+
+<B>procedure</B> <B>Register</B>;
+<B>begin</B>
+  RegisterComponents(<I>'Md4'</I>, [TMd4TabbedList]);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MD4ARROW.PAS><H3>MD4ARROW.PAS</H3></A>
+
+<PRE>
+<B>unit</B> Md4Arrow;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes,
+  Graphics, Controls, Forms, Dialogs;
+
+<B>type</B>
+  TMd4ArrowDir = (adUp, adLeft, adDown, adRight);
+
+  TMd4Arrow = <B>class</B> (TGraphicControl)
+  <B>private</B>
+    fDirection: TMd4ArrowDir;
+    fArrowHeight: Integer;
+    fFilled: Boolean;
+    fPen: TPen;
+    fBrush: TBrush;
+    fArrowDblClick: TNotifyEvent;
+    fArrowPoints: <B>array</B> [0..3] <B>of</B> TPoint;
+    <B>procedure</B> ComputePoints;
+    <B>procedure</B> SetDirection (Value: TMd4ArrowDir);
+    <B>procedure</B> SetArrowHeight (Value: Integer);
+    <B>procedure</B> SetFilled (Value: Boolean);
+    <B>procedure</B> SetPen (Value: TPen);
+    <B>procedure</B> SetBrush (Value: TBrush);
+    <B>procedure</B> RepaintRequest (Sender: TObject);
+    <B>procedure</B> WMLButtonDblClk (<B>var</B> Msg: TWMLButtonDblClk);
+      <B>message</B> wm_LButtonDblClk;
+  <B>protected</B>
+    <B>procedure</B> Paint; <B>override</B>;
+    <B>procedure</B> ArrowDblClick; <B>dynamic</B>;
+  <B>public</B>
+    <B>constructor</B> Create (AOwner: TComponent); <B>override</B>;
+    <B>destructor</B> Destroy; <B>override</B>;
+    <B>procedure</B> SetBounds (ALeft, ATop, AWidth, AHeight: Integer); <B>override</B>;
+  <B>published</B>
+    <B>property</B> Width <B>default</B> 50;
+    <B>property</B> Height <B>default</B> 20;
+    <B>property</B> Direction: TMd4ArrowDir
+      <B>read</B> fDirection <B>write</B> SetDirection <B>default</B> adRight;
+    <B>property</B> ArrowHeight: Integer
+      <B>read</B> fArrowHeight <B>write</B> SetArrowHeight <B>default</B> 10;
+    <B>property</B> Filled: Boolean
+      <B>read</B> fFilled <B>write</B> SetFilled <B>default</B> False;
+    <B>property</B> Pen: TPen
+      <B>read</B> fPen <B>write</B> SetPen;
+    <B>property</B> Brush: TBrush
+      <B>read</B> fBrush <B>write</B> SetBrush;
+    <B>property</B> OnClick;
+    <B>property</B> OnDragDrop;
+    <B>property</B> OnDragOver;
+    <B>property</B> OnEndDrag;
+    <B>property</B> OnMouseDown;
+    <B>property</B> OnMouseMove;
+    <B>property</B> OnMouseUp;
+    <B>property</B> OnArrowDblClick: TNotifyEvent
+      <B>read</B> fArrowDblClick <B>write</B> fArrowDblClick;
+  <B>end</B>;
+
+<B>procedure</B> <B>Register</B>;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{R ARROW4.DCR}</I></FONT>
+
+<B>constructor</B> TMd4Arrow.Create (AOwner: TComponent);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// call the parent constructor</I></FONT>
+  <B>inherited</B> Create (AOwner);
+
+  <FONT COLOR="#000080"><I>// set the default values</I></FONT>
+  fDirection := adRight;
+  Width := 50;
+  Height := 20;
+  fArrowHeight := 10;
+  fFilled := False;
+
+  <FONT COLOR="#000080"><I>// create the pen and the brush</I></FONT>
+  fPen := TPen.Create;
+  fBrush := TBrush.Create;
+
+  <FONT COLOR="#000080"><I>// set a handler for the OnChange event</I></FONT>
+  fPen.OnChange := RepaintRequest;
+  fBrush.OnChange := RepaintRequest;
+<B>end</B>;
+
+<B>destructor</B> TMd4Arrow.Destroy;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// delete the two objects</I></FONT>
+  fPen.Free;
+  fBrush.Free;
+  <FONT COLOR="#000080"><I>// call the parent destructor</I></FONT>
+  <B>inherited</B> Destroy;
+<B>end</B>;
+
+<B>procedure</B> TMd4Arrow.SetDirection (Value: TMd4ArrowDir);
+<B>begin</B>
+  <B>if</B> fDirection &lt;&gt; Value <B>then</B>
+  <B>begin</B>
+    fDirection := Value;
+    ComputePoints;
+    Invalidate;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TMd4Arrow.SetArrowHeight (Value: Integer);
+<B>begin</B>
+  <B>if</B> fArrowHeight &lt;&gt; Value <B>then</B>
+  <B>begin</B>
+    fArrowHeight := Value;
+    ComputePoints;
+    Invalidate;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TMd4Arrow.SetFilled (Value: Boolean);
+<B>begin</B>
+  <B>if</B> fFilled &lt;&gt; Value <B>then</B>
+  <B>begin</B>
+    fFilled := Value;
+    Invalidate;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TMd4Arrow.SetPen (Value: TPen);
+<B>begin</B>
+  fPen.Assign(Value);
+  Invalidate;
+<B>end</B>;
+
+<B>procedure</B> TMd4Arrow.SetBrush (Value: TBrush);
+<B>begin</B>
+  fBrush.Assign(Value);
+  Invalidate;
+<B>end</B>;
+
+<B>procedure</B> TMd4Arrow.RepaintRequest (Sender: TObject);
+<B>begin</B>
+  Invalidate;
+<B>end</B>;
+
+<B>procedure</B> TMd4Arrow.Paint;
+<B>var</B>
+  XCenter, YCenter: Integer;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// compute the center</I></FONT>
+  YCenter := (Height - 1) <B>div</B> 2;
+  XCenter := (Width - 1) <B>div</B> 2;
+
+  <FONT COLOR="#000080"><I>// use the current pen and brush</I></FONT>
+  Canvas.Pen := fPen;
+  Canvas.Brush := fBrush;
+
+  <FONT COLOR="#000080"><I>// draw the arrow line</I></FONT>
+  <B>case</B> fDirection <B>of</B>
+    adUp: <B>begin</B>
+      Canvas.MoveTo (XCenter, Height-1);
+      Canvas.LineTo (XCenter, fArrowHeight);
+    <B>end</B>;
+    adDown: <B>begin</B>
+      Canvas.MoveTo (XCenter, 0);
+      Canvas.LineTo (XCenter, Height - 1 - fArrowHeight);
+    <B>end</B>;
+    adLeft: <B>begin</B>
+      Canvas.MoveTo (Width - 1, YCenter);
+      Canvas.LineTo (fArrowHeight, YCenter);
+    <B>end</B>;
+    adRight: <B>begin</B>
+      Canvas.MoveTo (0, YCenter);
+      Canvas.LineTo (Width - 1 - fArrowHeight, YCenter);
+    <B>end</B>;
+  <B>end</B>;
+
+  <FONT COLOR="#000080"><I>// draw the arrow head, eventually filling it</I></FONT>
+  <B>if</B> fFilled <B>then</B>
+    Canvas.Polygon (fArrowPoints)
+  <B>else</B>
+    Canvas.PolyLine (fArrowPoints);
+<B>end</B>;
+
+<B>procedure</B> TMd4Arrow.ArrowDblClick;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// call the handler, if available</I></FONT>
+  <B>if</B> Assigned (fArrowDblClick) <B>then</B>
+    fArrowDblClick (self);
+<B>end</B>;
+
+<B>procedure</B> <B>Register</B>;
+<B>begin</B>
+  RegisterComponents(<I>'Md4'</I>, [TMd4Arrow]);
+<B>end</B>;
+
+<B>procedure</B> TMd4Arrow.ComputePoints;
+<B>var</B>
+  XCenter, YCenter: Integer;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// compute the points of the arrow head</I></FONT>
+  YCenter := (Height - 1) <B>div</B> 2;
+  XCenter := (Width - 1) <B>div</B> 2;
+
+  <FONT COLOR="#000080"><I>// set the points depending on the direction</I></FONT>
+  <B>case</B> fDirection <B>of</B>
+    adUp: <B>begin</B>
+      fArrowPoints [0] := Point (0, fArrowHeight);
+      fArrowPoints [1] := Point (XCenter, 0);
+      fArrowPoints [2] := Point (Width-1, fArrowHeight);
+      fArrowPoints [3] := Point (0, fArrowHeight);
+    <B>end</B>;
+    adDown: <B>begin</B>
+      fArrowPoints [0] := Point (XCenter, Height - 1);
+      fArrowPoints [1] := Point (0, Height - 1 - fArrowHeight);
+      fArrowPoints [2] := Point (Width - 1, Height - 1 - fArrowHeight);
+      fArrowPoints [3] := Point (XCenter, Height - 1);
+    <B>end</B>;
+    adLeft: <B>begin</B>
+      fArrowPoints [0] := Point (fArrowHeight, Height - 1);
+      fArrowPoints [1] := Point (0, YCenter);
+      fArrowPoints [2] := Point (fArrowHeight, 0);
+      fArrowPoints [3] := Point (fArrowHeight, Height - 1);
+    <B>end</B>;
+    adRight: <B>begin</B>
+      fArrowPoints [0] := Point (Width - 1 - fArrowHeight, Height - 1);
+      fArrowPoints [1] := Point (Width - 1 - fArrowHeight, 0);
+      fArrowPoints [2] := Point (Width - 1, YCenter);
+      fArrowPoints [3] := Point (Width - 1 - fArrowHeight, Height - 1);
+    <B>end</B>;
+  <B>end</B>; <FONT COLOR="#000080"><I>// case</I></FONT>
+<B>end</B>;
+
+<B>procedure</B> TMd4Arrow.SetBounds(ALeft, ATop, AWidth, AHeight: Integer);
+<B>begin</B>
+  <B>inherited</B> SetBounds (ALeft, ATop, AWidth, AHeight);
+  ComputePoints;
+<B>end</B>;
+
+<B>procedure</B> TMd4Arrow.WMLButtonDblClk(<B>var</B> Msg: TWMLButtonDblClk);
+<B>var</B>
+  HRegion: HRgn;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// perform default handling</I></FONT>
+  <B>inherited</B>;
+
+  <FONT COLOR="#000080"><I>// compute the arrow head region</I></FONT>
+  HRegion := CreatePolygonRgn (
+    fArrowPoints, 3, WINDING);
+  <B>try</B>
+    <FONT COLOR="#000080"><I>// check whether the click took place in the region</I></FONT>
+    <B>if</B> PtInRegion (HRegion, Msg.XPos, Msg.YPos) <B>then</B>
+      ArrowDblClick;
+  <B>finally</B>
+    DeleteObject (HRegion);
+  <B>end</B>;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MD4LISTDIAL.PAS><H3>MD4LISTDIAL.PAS</H3></A>
+
+<PRE>
+<B>unit</B> Md4ListDial;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes,
+  Graphics, Controls, Forms, Dialogs, StdCtrls,
+  Buttons;
+
+<B>type</B>
+  TMd4ListDialog = <B>class</B> (TComponent)
+  <B>private</B>
+    FLines: TStrings;
+    FSelected: Integer;
+    FTitle: <B>string</B>;
+    <B>function</B> GetSelItem: <B>string</B>;
+    <B>procedure</B> SetLines (Value: TStrings);
+    <B>function</B> GetLines: TStrings;
+  <B>public</B>
+    <B>constructor</B> Create(AOwner: TComponent); <B>override</B>;
+    <B>destructor</B> Destroy; <B>override</B>;
+    <B>function</B> Execute: Boolean;
+    <B>property</B> SelItem: <B>string</B>
+      <B>read</B> GetSelItem;
+  <B>published</B>
+    <B>property</B> Lines: TStrings
+      <B>read</B> GetLines <B>write</B> SetLines;
+    <B>property</B> Selected: Integer
+      <B>read</B> FSelected <B>write</B> FSelected;
+    <B>property</B> Title: <B>string</B>
+      <B>read</B> FTitle <B>write</B> FTitle;
+  <B>end</B>;
+
+<B>type</B>
+  TMd4ListBoxForm = <B>class</B>(TForm)
+    ListBox1: TListBox;
+    BitBtn1: TBitBtn;
+    BitBtn2: TBitBtn;
+    Button1: TButton;
+    <B>procedure</B> ListBox1DblClick(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> <B>Register</B>;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>// component methods</I></FONT>
+
+<B>constructor</B> TMd4ListDialog.Create(AOwner: TComponent);
+<B>begin</B>
+  <B>inherited</B> Create (AOwner);
+  FLines := TStringList.Create;
+  FTitle := <I>'Choose a string'</I>;
+<B>end</B>;
+
+<B>destructor</B> TMd4ListDialog.Destroy;
+<B>begin</B>
+  FLines.Free;
+  <B>inherited</B> Destroy;
+<B>end</B>;
+
+<B>function</B> TMd4ListDialog.GetSelItem: <B>string</B>;
+<B>begin</B>
+  <B>if</B> (Selected &gt;= 0) <B>and</B> (Selected &lt; FLines.Count) <B>then</B>
+    Result := FLines [Selected]
+  <B>else</B>
+    Result := <I>''</I>;
+<B>end</B>;
+
+<B>function</B> TMd4ListDialog.GetLines: TStrings;
+<B>begin</B>
+  Result := FLines;
+<B>end</B>;
+
+<B>procedure</B> TMd4ListDialog.SetLines (Value: TStrings);
+<B>begin</B>
+  FLines.Assign (Value);
+<B>end</B>;
+
+<B>function</B> TMd4ListDialog.Execute: Boolean;
+<B>var</B>
+  ListBoxForm: TMd4ListBoxForm;
+<B>begin</B>
+  <B>if</B> FLines.Count = 0 <B>then</B>
+    <B>raise</B> EStringListError.Create (<I>'No items in the list'</I>);
+  ListBoxForm := TMd4ListBoxForm.Create (self);
+  <B>try</B>
+    ListBoxForm.ListBox1.Items := FLines;
+    ListBoxForm.ListBox1.ItemIndex := FSelected;
+    ListBoxForm.Caption := FTitle;
+    <B>if</B> ListBoxForm.ShowModal = mrOk <B>then</B>
+    <B>begin</B>
+      Result := True;
+      Selected := ListBoxForm.ListBox1.ItemIndex;
+    <B>end</B>
+    <B>else</B>
+      Result := False;
+  <B>finally</B>
+    ListBoxForm.Free;
+  <B>end</B>;
+<B>end</B>;
+
+<FONT COLOR="#000080"><I>// form methods</I></FONT>
+
+<B>procedure</B> TMd4ListBoxForm.ListBox1DblClick(Sender: TObject);
+<B>begin</B>
+  ModalResult := mrOk;
+<B>end</B>;
+
+<B>procedure</B> <B>Register</B>;
+<B>begin</B>
+  RegisterComponents(<I>'Md4'</I>, [TMd4ListDialog]);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MD4CLOCK.PAS><H3>MD4CLOCK.PAS</H3></A>
+
+<PRE>
+<B>unit</B> Md4Clock;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes, Graphics,
+  Controls, StdCtrls, ExtCtrls;
+
+<B>type</B>
+  TMd4Clock = <B>class</B> (TCustomLabel)
+  <B>private</B>
+    FTimer: TTimer;
+    <B>function</B> GetActive: Boolean;
+    <B>procedure</B> SetActive (Value: Boolean);
+  <B>protected</B>
+    <B>procedure</B> UpdateClock (Sender: TObject);
+  <B>public</B>
+    <B>constructor</B> Create (AOwner: TComponent); <B>override</B>;
+  <B>published</B>
+    <B>property</B> Align;
+    <B>property</B> Alignment;
+    <B>property</B> Color;
+    <B>property</B> Font;
+    <B>property</B> ParentColor;
+    <B>property</B> ParentFont;
+    <B>property</B> ParentShowHint;
+    <B>property</B> PopupMenu;
+    <B>property</B> ShowHint;
+    <B>property</B> Transparent;
+    <B>property</B> Visible;
+    <B>property</B> Active: Boolean
+      <B>read</B> GetActive <B>write</B> SetActive;
+  <B>end</B>;
+
+<B>procedure</B> <B>Register</B>;
+
+<B>implementation</B>
+
+<B>constructor</B> TMd4Clock.Create (AOwner: TComponent);
+<B>begin</B>
+  <B>inherited</B> Create (AOwner);
+  <FONT COLOR="#000080"><I>// create the internal timer object</I></FONT>
+  FTimer := TTimer.Create (self);
+  FTimer.OnTimer := UpdateClock;
+  FTimer.Enabled := True;
+<B>end</B>;
+
+<B>procedure</B> TMd4Clock.UpdateClock (Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// set the current time as caption</I></FONT>
+  Caption := TimeToStr (Time);
+<B>end</B>;
+
+<B>function</B> TMd4Clock.GetActive: Boolean;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// get the status of the timer</I></FONT>
+  Result := FTimer.Enabled;
+<B>end</B>;
+
+<B>procedure</B> TMd4Clock.SetActive (Value: Boolean);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// change the status of the timer</I></FONT>
+  FTimer.Enabled := Value;
+<B>end</B>;
+
+<B>procedure</B> <B>Register</B>;
+<B>begin</B>
+  RegisterComponents(<I>'Md4'</I>, [TMd4Clock]);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MD4FONTBOX.PAS><H3>MD4FONTBOX.PAS</H3></A>
+
+<PRE>
+<B>unit</B> Md4Fontbox;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls;
+
+<B>type</B>
+  TMd4FontCombo = <B>class</B>(TComboBox)
+  <B>public</B>
+    <B>constructor</B> Create (AOwner: TComponent); <B>override</B>;
+    <B>procedure</B> CreateWnd; <B>override</B>;
+  <B>published</B>
+    <B>property</B> Style <B>default</B> csDropDownList;
+    <B>property</B> Items <B>stored</B> False;
+  <B>end</B>;
+
+<B>procedure</B> <B>Register</B>;
+
+<B>implementation</B>
+
+<B>constructor</B> TMd4FontCombo.Create (AOwner: TComponent);
+<B>begin</B>
+  <B>inherited</B> Create (AOwner);
+  Style := csDropDownList;
+<B>end</B>;
+
+<B>procedure</B> TMd4FontCombo.CreateWnd;
+<B>begin</B>
+  <B>inherited</B> CreateWnd;
+  Items.Assign (Screen.Fonts);
+<B>end</B>;
+
+<B>procedure</B> <B>Register</B>;
+<B>begin</B>
+  RegisterComponents(<I>'Md4'</I>, [TMd4FontCombo]);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<HR>
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

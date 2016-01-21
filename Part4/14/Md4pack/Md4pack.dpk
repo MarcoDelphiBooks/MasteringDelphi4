@@ -1,0 +1,44 @@
+package Md4Pack;
+
+{$R *.RES}
+{$R 'Md4Clock.dcr'}
+{$R 'Md4ListDial.dcr'}
+{$R 'Md4Arrow.dcr'}
+{$R 'Md4TabList.dcr'}
+{$ALIGN ON}
+{$ASSERTIONS OFF}
+{$BOOLEVAL OFF}
+{$DEBUGINFO ON}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS ON}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION ON}
+{$OVERFLOWCHECKS ON}
+{$RANGECHECKS ON}
+{$REFERENCEINFO OFF}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES OFF}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST ON}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $00400000}
+{$DESCRIPTION 'Mastering Delphi 4 Package'}
+{$IMPLICITBUILD ON}
+
+requires
+  vcl40;
+
+contains
+  Md4Fontbox in 'Md4Fontbox.pas',
+  Md4Clock in 'Md4Clock.pas',
+  Md4ListDial in 'Md4ListDial.pas' {Md4ListBoxForm},
+  Md4Arrow in 'Md4Arrow.pas',
+  Md4TabList in 'Md4TabList.pas',
+  Md4ActiveBtn in 'Md4ActiveBtn.pas',
+  ListAct in 'ListAct.pas';
+
+end.

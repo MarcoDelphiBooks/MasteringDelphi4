@@ -1,0 +1,194 @@
+<HTML><HEAD>
+<TITLE>Project: MDCLIENT.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: MDCLIENT.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#MDCLIENT.DPR> MDCLIENT.DPR</A>
+<LI> <A HREF=#MDCFORM.PAS> MDCFORM.PAS</A>
+<LI> <A HREF=#MDCFORM.DFM> MDCFORM.DFM</A>
+</UL>
+<HR>
+<A NAME=MDCLIENT.DPR><H3>MDCLIENT.DPR</H3></A>
+
+<PRE>
+<B>program</B> MdClient;
+
+<B>uses</B>
+  Forms,
+  MdcForm <B>in</B> <I>'MdcForm.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MDCFORM.PAS><H3>MDCFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> MdcForm;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  ExtCtrls, Grids, DBGrids, Db, DBClient, StdCtrls, MConnect, MidasCon;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    ClientDataSet1: TClientDataSet;
+    ClientDataSet2: TClientDataSet;
+    Panel1: TPanel;
+    DBGrid1: TDBGrid;
+    Splitter1: TSplitter;
+    DBGrid2: TDBGrid;
+    DataSource1: TDataSource;
+    DataSource2: TDataSource;
+    Button1: TButton;
+    DCOMConnection1: TDCOMConnection;
+    <B>procedure</B> Button1Click(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.Button1Click(Sender: TObject);
+<B>var</B>
+  Customers, Orders: Variant;
+<B>begin</B>
+  DCOMConnection1.Connected := True;
+  DCOMConnection1.AppServer.GetBoth (
+    Customers, Orders);
+  ClientDataSet1.Data := Customers;
+  ClientDataSet2.Data := Orders;
+  ClientDataSet1.Open;
+  ClientDataSet2.Open;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MDCFORM.DFM><H3>MDCFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 217
+  Top = 125
+  Width = 502
+  Height = 337
+  Caption = <I>'Master-Detail Client'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Splitter1: TSplitter
+    Left = 0
+    Top = 161
+    Width = 494
+    Height = 3
+    Cursor = crVSplit
+    Align = alTop
+  <B>end</B>
+  <B>object</B> Panel1: TPanel
+    Left = 0
+    Top = 0
+    Width = 494
+    Height = 41
+    Align = alTop
+    TabOrder = 0
+    <B>object</B> Button1: TButton
+      Left = 16
+      Top = 8
+      Width = 75
+      Height = 25
+      Caption = <I>'Get Both'</I>
+      TabOrder = 0
+      OnClick = Button1Click
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> DBGrid1: TDBGrid
+    Left = 0
+    Top = 41
+    Width = 494
+    Height = 120
+    Align = alTop
+    DataSource = DataSource1
+    TabOrder = 1
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = <I>'MS Sans Serif'</I>
+    TitleFont.Style = []
+  <B>end</B>
+  <B>object</B> DBGrid2: TDBGrid
+    Left = 0
+    Top = 164
+    Width = 494
+    Height = 146
+    Align = alClient
+    DataSource = DataSource2
+    TabOrder = 2
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = <I>'MS Sans Serif'</I>
+    TitleFont.Style = []
+  <B>end</B>
+  <B>object</B> ClientDataSet1: TClientDataSet
+    Aggregates = &lt;&gt;
+    Params = &lt;&gt;
+    Left = 32
+    Top = 40
+  <B>end</B>
+  <B>object</B> ClientDataSet2: TClientDataSet
+    Aggregates = &lt;&gt;
+    IndexFieldNames = <I>'CustNo'</I>
+    FetchOnDemand = False
+    MasterFields = <I>'CustNo'</I>
+    MasterSource = DataSource1
+    PacketRecords = 0
+    Params = &lt;&gt;
+    Left = 32
+    Top = 88
+  <B>end</B>
+  <B>object</B> DataSource1: TDataSource
+    DataSet = ClientDataSet1
+    Left = 104
+    Top = 40
+  <B>end</B>
+  <B>object</B> DataSource2: TDataSource
+    DataSet = ClientDataSet2
+    Left = 104
+    Top = 88
+  <B>end</B>
+  <B>object</B> DCOMConnection1: TDCOMConnection
+    Connected = True
+    ServerGUID = <I>'{C5DDE906-2214-11D1-98D0-444553540000}'</I>
+    ServerName = <I>'MdServer.MdDataModule'</I>
+    Left = 168
+    Top = 40
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

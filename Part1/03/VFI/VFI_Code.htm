@@ -1,0 +1,224 @@
+<HTML><HEAD>
+<TITLE>Project: VFI.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: VFI.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#VFI.DPR> VFI.DPR</A>
+<LI> <A HREF=#UNIT1.PAS> UNIT1.PAS</A>
+<LI> <A HREF=#UNIT2.PAS> UNIT2.PAS</A>
+<LI> <A HREF=#UNIT1.DFM> UNIT1.DFM</A>
+<LI> <A HREF=#UNIT2.DFM> UNIT2.DFM</A>
+</UL>
+<HR>
+<A NAME=VFI.DPR><H3>VFI.DPR</H3></A>
+
+<PRE>
+<B>program</B> Vfi;
+
+<B>uses</B>
+  Forms,
+  Unit1 <B>in</B> <I>'Unit1.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>,
+  Unit2 <B>in</B> <I>'Unit2.pas'</I> <FONT COLOR="#000080"><I>{Form2}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TForm1, Form1);
+  Application.CreateForm(TForm2, Form2);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=UNIT1.PAS><H3>UNIT1.PAS</H3></A>
+
+<PRE>
+<B>unit</B> Unit1;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    Button1: TButton;
+    Button2: TButton;
+    Button3: TButton;
+    Button4: TButton;
+    <B>procedure</B> Button1Click(Sender: TObject);
+    <B>procedure</B> Button2Click(Sender: TObject);
+    <B>procedure</B> Button3Click(Sender: TObject);
+    <B>procedure</B> Button4Click(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<B>uses</B> Unit2;
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.Button1Click(Sender: TObject);
+<B>begin</B>
+  Form2.Show;
+<B>end</B>;
+
+<B>procedure</B> TForm1.Button2Click(Sender: TObject);
+<B>begin</B>
+  Beep;
+<B>end</B>;
+
+<B>procedure</B> TForm1.Button3Click(Sender: TObject);
+<B>begin</B>
+  Beep;
+<B>end</B>;
+
+<B>procedure</B> TForm1.Button4Click(Sender: TObject);
+<B>begin</B>
+  ShowMessage (<I>'Hi'</I>);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=UNIT2.PAS><H3>UNIT2.PAS</H3></A>
+
+<PRE>
+<B>unit</B> Unit2;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  Unit1, StdCtrls;
+
+<B>type</B>
+  TForm2 = <B>class</B>(TForm1)
+    <B>procedure</B> Button2Click(Sender: TObject);
+    <B>procedure</B> Button3Click(Sender: TObject);
+    <B>procedure</B> Button4Click(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form2: TForm2;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm2.Button2Click(Sender: TObject);
+<B>begin</B>
+  <B>inherited</B>;
+  ShowMessage (<I>'Hi'</I>);
+<B>end</B>;
+
+<B>procedure</B> TForm2.Button3Click(Sender: TObject);
+<B>begin</B>
+  ShowMessage (<I>'Hi'</I>);
+<B>end</B>;
+
+<B>procedure</B> TForm2.Button4Click(Sender: TObject);
+<B>begin</B>
+  <B>inherited</B> Button3Click (Sender);
+  <B>inherited</B>;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=UNIT1.DFM><H3>UNIT1.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 224
+  Top = 142
+  Width = 359
+  Height = 71
+  Caption = <I>'Form1'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Button1: TButton
+    Left = 8
+    Top = 8
+    Width = 75
+    Height = 25
+    Caption = <I>'Show...'</I>
+    TabOrder = 0
+    OnClick = Button1Click
+  <B>end</B>
+  <B>object</B> Button2: TButton
+    Left = 88
+    Top = 8
+    Width = 75
+    Height = 25
+    Caption = <I>'Beep'</I>
+    TabOrder = 1
+    OnClick = Button2Click
+  <B>end</B>
+  <B>object</B> Button3: TButton
+    Left = 168
+    Top = 8
+    Width = 75
+    Height = 25
+    Caption = <I>'Beep'</I>
+    TabOrder = 2
+    OnClick = Button3Click
+  <B>end</B>
+  <B>object</B> Button4: TButton
+    Left = 248
+    Top = 8
+    Width = 75
+    Height = 25
+    Caption = <I>'Hi...'</I>
+    TabOrder = 3
+    OnClick = Button4Click
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<A NAME=UNIT2.DFM><H3>UNIT2.DFM</H3></A>
+
+<PRE>
+<B>inherited</B> Form2: TForm2
+  Top = 273
+  Caption = <I>'Form2 (Inherited from Form1)'</I>
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>inherited</B> Button1: TButton
+    Visible = False
+  <B>end</B>
+  <B>inherited</B> Button2: TButton
+    Caption = <I>'Beep...'</I>
+  <B>end</B>
+  <B>inherited</B> Button3: TButton
+    Caption = <I>'No Beep...'</I>
+  <B>end</B>
+  <B>inherited</B> Button4: TButton
+    Caption = <I>'Hi (Beep)...'</I>
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

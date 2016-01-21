@@ -1,0 +1,193 @@
+<HTML><HEAD>
+<TITLE>Project: WORDTEST.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: WORDTEST.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#WORDTEST.DPR> WORDTEST.DPR</A>
+<LI> <A HREF=#WTFORM.PAS> WTFORM.PAS</A>
+<LI> <A HREF=#WTFORM.DFM> WTFORM.DFM</A>
+</UL>
+<HR>
+<A NAME=WORDTEST.DPR><H3>WORDTEST.DPR</H3></A>
+
+<PRE>
+<B>program</B> WordTest;
+
+<B>uses</B>
+  Forms,
+  WTForm <B>in</B> <I>'WTForm.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=WTFORM.PAS><H3>WTFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> WTForm;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    Button1: TButton;
+    Button2: TButton;
+    Button3: TButton;
+    SaveDialog1: TSaveDialog;
+    <B>procedure</B> Button1Click(Sender: TObject);
+    <B>procedure</B> Button2Click(Sender: TObject);
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> Button3Click(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>uses</B>
+  ComObj, ActiveX;
+
+<B>var</B>
+  OldWord, NewWord: Variant;
+
+<B>function</B> GetOrCreateObject (<B>const</B> ClassName: <B>string</B>): IDispatch;
+<B>var</B>
+  ClassID: TGUID;
+  Unknown: IUnknown;
+<B>begin</B>
+  ClassID := ProgIDToClassID (ClassName);
+  <B>if</B> Succeeded (GetActiveObject (ClassID, <B>nil</B>, Unknown)) <B>then</B>
+    OleCheck (Unknown.QueryInterface (IDispatch, Result))
+  <B>else</B>
+    Result := CreateOleObject (ClassName);
+<B>end</B>;
+
+<B>procedure</B> TForm1.FormCreate(Sender: TObject);
+<B>begin</B>
+<FONT COLOR="#000080"><I>{  try
+    OldWord := GetActiveOleObject ('Word.Basic');
+  except
+    OldWord := CreateOleObject ('Word.Basic');
+  end;}</I></FONT>
+  OldWord := GetOrCreateObject (<I>'Word.Basic'</I>);
+  NewWord := GetOrCreateObject (<I>'Word.Application'</I>);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Button1Click(Sender: TObject);
+<B>begin</B>
+  OldWord.FileNew;
+  OldWord.AppShow;
+  OldWord.Insert (<I>'Mastering Delphi by Marco Cantù'</I>);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Button2Click(Sender: TObject);
+<B>begin</B>
+  OldWord.FileNew;
+  OldWord.AppShow;
+  OldWord.Isnert (<I>'Mastering Delphi by Marco Cantù'</I>);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Button3Click(Sender: TObject);
+<B>var</B>
+  Document, Range: Variant;
+<B>begin</B>
+  NewWord.Visible := True;
+  NewWord.Documents.Add;
+  <FONT COLOR="#000080"><I>// insert text</I></FONT>
+  NewWord.Documents.Item(1).Range.
+    Text := <I>'Mastering Delphi by Marco Cantù'</I>;
+  <FONT COLOR="#000080"><I>// get document and add paragraph</I></FONT>
+  Document := NewWord.Documents.Item(1);
+  Document.Paragraphs.Add;
+  Document.Paragraphs.Add;
+  <FONT COLOR="#000080"><I>// select the third paragraph in a 'range'</I></FONT>
+  Range := Document.Paragraphs.Item(3).Range;
+  Range.Text := <I>'Hello, Delphians'</I>;
+  Range.Bold := 1;
+  Range.Font.Size := 30;
+  <FONT COLOR="#000080"><I>// save the resulting file</I></FONT>
+  <B>if</B> SaveDialog1.Execute <B>then</B>
+    Document.SaveAs (WideString (SaveDialog1.Filename), 0);
+    <FONT COLOR="#000080"><I>{Document.SaveAs (
+      FileName := WideString (SaveDialog1.Filename),
+      FileFormat := 0, // word native format
+      SaveNativePictureFormat := 1); // true}</I></FONT>
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=WTFORM.DFM><H3>WTFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 198
+  Top = 113
+  Width = 336
+  Height = 162
+  Caption = <I>'Word Test'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Button1: TButton
+    Left = 72
+    Top = 16
+    Width = 153
+    Height = 25
+    Caption = <I>'Send Text to Word.Basic'</I>
+    TabOrder = 0
+    OnClick = Button1Click
+  <B>end</B>
+  <B>object</B> Button2: TButton
+    Left = 72
+    Top = 48
+    Width = 153
+    Height = 25
+    Caption = <I>'Error (Isnert)'</I>
+    TabOrder = 1
+    OnClick = Button2Click
+  <B>end</B>
+  <B>object</B> Button3: TButton
+    Left = 72
+    Top = 80
+    Width = 153
+    Height = 25
+    Caption = <I>'Send Text to Word.Application'</I>
+    TabOrder = 2
+    OnClick = Button3Click
+  <B>end</B>
+  <B>object</B> SaveDialog1: TSaveDialog
+    Left = 32
+    Top = 24
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

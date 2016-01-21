@@ -1,0 +1,124 @@
+<HTML><HEAD>
+<TITLE>Project: SIDETEXT.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: SIDETEXT.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#SIDETEXT.DPR> SIDETEXT.DPR</A>
+<LI> <A HREF=#SIDETXTF.PAS> SIDETXTF.PAS</A>
+<LI> <A HREF=#SIDETXTF.DFM> SIDETXTF.DFM</A>
+</UL>
+<HR>
+<A NAME=SIDETEXT.DPR><H3>SIDETEXT.DPR</H3></A>
+
+<PRE>
+<B>program</B> SideText;
+
+<B>uses</B>
+  Forms,
+  SideTxtF <B>in</B> <I>'SideTxtF.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=SIDETXTF.PAS><H3>SIDETXTF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> SideTxtF;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    Label1: TLabel;
+    <B>procedure</B> FormPaint(Sender: TObject);
+    <B>procedure</B> FormCreate(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.FormPaint(Sender: TObject);
+<B>begin</B>
+  Canvas.TextOut (200, 200, <I>'Hello'</I>);
+<B>end</B>;
+
+<B>procedure</B> TForm1.FormCreate(Sender: TObject);
+<B>var</B>
+  ALogFont: TLogFont;
+  hFont: THandle;
+<B>begin</B>
+  ALogFont.lfHeight := Font.Height;
+  ALogFont.lfWidth := 0;
+  ALogFont.lfEscapement := -450;
+  ALogFont.lfOrientation := -450;
+  ALogFont.lfWeight := fw_DemiBold;
+  ALogFont.lfItalic := 0; <FONT COLOR="#000080"><I>// false</I></FONT>
+  ALogFont.lfUnderline := 0; <FONT COLOR="#000080"><I>// false</I></FONT>
+  ALogFont.lfStrikeOut := 0; <FONT COLOR="#000080"><I>// false</I></FONT>
+  ALogFont.lfCharSet := Ansi_CharSet;
+  ALogFont.lfOutPrecision := Out_Default_Precis;
+  ALogFont.lfClipPrecision := Clip_Default_Precis;
+  ALogFont.lfQuality := Default_Quality;
+  ALogFont.lfPitchAndFamily := Default_Pitch;
+  StrCopy (ALogFont.lfFaceName, PChar (Font.Name));
+  hFont := CreateFontIndirect (ALogFont);
+  Font.Handle := hFont;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=SIDETXTF.DFM><H3>SIDETXTF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 229
+  Top = 107
+  Width = 645
+  Height = 383
+  Caption = <I>'Form1'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -27
+  Font.Name = <I>'Arial'</I>
+  Font.Style = []
+  OldCreateOrder = False
+  OnCreate = FormCreate
+  OnPaint = FormPaint
+  PixelsPerInch = 96
+  TextHeight = 32
+  <B>object</B> Label1: TLabel
+    Left = 40
+    Top = 24
+    Width = 289
+    Height = 137
+    AutoSize = False
+    Caption = <I>'Label1'</I>
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

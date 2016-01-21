@@ -1,0 +1,522 @@
+<HTML><HEAD>
+<TITLE>Project: COMMDLG.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: COMMDLG.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#COMMDLG.DPR> COMMDLG.DPR</A>
+<LI> <A HREF=#CDLGTEST.PAS> CDLGTEST.PAS</A>
+<LI> <A HREF=#CDLGTEST.DFM> CDLGTEST.DFM</A>
+</UL>
+<HR>
+<A NAME=COMMDLG.DPR><H3>COMMDLG.DPR</H3></A>
+
+<PRE>
+<B>program</B> Commdlg;
+
+<B>uses</B>
+  Forms,
+  Cdlgtest <B>in</B> <I>'CDLGTEST.PAS'</I> <FONT COLOR="#000080"><I>{CommDlgForm}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TCommDlgForm, CommDlgForm);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=CDLGTEST.PAS><H3>CDLGTEST.PAS</H3></A>
+
+<PRE>
+<B>unit</B> Cdlgtest;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Classes, Graphics, Forms, Controls,
+  Menus, StdCtrls, Dialogs;
+
+<B>type</B>
+  TCommDlgForm = <B>class</B>(TForm)
+    OpenDialog1: TOpenDialog;
+    SaveDialog1: TSaveDialog;
+    FontDialog1: TFontDialog;
+    ColorDialog1: TColorDialog;
+    MainMenu1: TMainMenu;
+    Memo1: TMemo;
+    Open1: TMenuItem;
+    TextFiles1: TMenuItem;
+    Anynewfile1: TMenuItem;
+    MultipleSelection1: TMenuItem;
+    Save1: TMenuItem;
+    TextFile1: TMenuItem;
+    AnyFile1: TMenuItem;
+    Font1: TMenuItem;
+    OnlyTrueType1: TMenuItem;
+    NoEffects1: TMenuItem;
+    NoStyle1: TMenuItem;
+    Apply1: TMenuItem;
+    Color1: TMenuItem;
+    Standard1: TMenuItem;
+    FullOpen1: TMenuItem;
+    NoFullOpen1: TMenuItem;
+    Help1: TMenuItem;
+    AboutCommonDialogsTest1: TMenuItem;
+    PrinterSetupDialog1: TPrinterSetupDialog;
+    FindDialog1: TFindDialog;
+    ReplaceDialog1: TReplaceDialog;
+    Print1: TMenuItem;
+    Print2: TMenuItem;
+    PrinterSetup1: TMenuItem;
+    Search1: TMenuItem;
+    Search2: TMenuItem;
+    Replace1: TMenuItem;
+    PrintDialog1: TPrintDialog;
+    <B>procedure</B> TextFiles1Click(Sender: TObject);
+    <B>procedure</B> Anynewfile1Click(Sender: TObject);
+    <B>procedure</B> MultipleSelection1Click(Sender: TObject);
+    <B>procedure</B> TextFile1Click(Sender: TObject);
+    <B>procedure</B> AnyFile1Click(Sender: TObject);
+    <B>procedure</B> OnlyTrueType1Click(Sender: TObject);
+    <B>procedure</B> NoEffects1Click(Sender: TObject);
+    <B>procedure</B> NoStyle1Click(Sender: TObject);
+    <B>procedure</B> Apply1Click(Sender: TObject);
+    <B>procedure</B> Standard1Click(Sender: TObject);
+    <B>procedure</B> FullOpen1Click(Sender: TObject);
+    <B>procedure</B> NoFullOpen1Click(Sender: TObject);
+    <B>procedure</B> AboutCommonDialogsTest1Click(Sender: TObject);
+    <B>procedure</B> Print2Click(Sender: TObject);
+    <B>procedure</B> PrinterSetup1Click(Sender: TObject);
+    <B>procedure</B> Search2Click(Sender: TObject);
+    <B>procedure</B> Replace1Click(Sender: TObject);
+    <B>procedure</B> FindDialog1Find(Sender: TObject);
+    <B>procedure</B> ReplaceDialog1Replace(Sender: TObject);
+    <B>procedure</B> ReplaceDialog1Find(Sender: TObject);
+    <B>procedure</B> FontDialogApply(Sender: TObject; Wnd: HWND);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  CommDlgForm: TCommDlgForm;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TCommDlgForm.TextFiles1Click(Sender: TObject);
+<B>begin</B>
+  <B>with</B> OpenDialog1 <B>do</B>
+  <B>begin</B>
+    Filter := <I>'Text File (*.txt)|*.txt'</I>;
+    DefaultExt := <I>'txt'</I>;
+    Filename := <I>''</I>;
+    Options := [ofHideReadOnly, ofFileMustExist,
+      ofPathMustExist];
+    <B>if</B> Execute <B>then</B>
+      <B>if</B> ofExtensionDifferent <B>in</B> Options <B>then</B>
+        MessageDlg (<I>'Not a file with the .TXT extension'</I>,
+          mtError, [mbOK], 0)
+      <B>else</B>
+        Memo1.Lines.LoadFromFile (FileName);
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TCommDlgForm.Anynewfile1Click(Sender: TObject);
+<B>begin</B>
+  <B>with</B> OpenDialog1 <B>do</B>
+  <B>begin</B>
+    Filter := <I>'Any File (*.*)|*.*'</I>;
+    FileName := <I>''</I>;
+    Options := [];
+    <B>if</B> Execute <B>then</B>
+      Memo1.Lines.LoadFromFile (FileName);
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TCommDlgForm.MultipleSelection1Click(Sender: TObject);
+<B>var</B>
+  i: Integer;
+<B>begin</B>
+  <B>with</B> OpenDialog1 <B>do</B>
+  <B>begin</B>
+    Filter := <I>'Text File (*.txt)|*.txt|Any File (*.*)|*.*'</I>;
+    Filename := <I>''</I>;
+    Options := [ofAllowMultiSelect, ofPathMustExist, ofCreatePrompt];
+    <B>if</B> Execute <B>then</B>
+      <B>for</B> i := 0 <B>to</B> Files.Count - 1 <B>do</B>
+        <B>if</B> MessageDlg (<I>'Open file '</I> + Files.Strings [i] + <I>'?'</I>,
+            mtConfirmation, [mbYes, mbNo], 0) = IDYES <B>then</B>
+          Memo1.Lines.LoadFromFile (Files.Strings [i]);
+    <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TCommDlgForm.TextFile1Click(Sender: TObject);
+<B>begin</B>
+  <B>with</B> SaveDialog1 <B>do</B>
+  <B>begin</B>
+    Filter := <I>'Text File (*.txt)|*.txt'</I>;
+    DefaultExt := <I>'txt'</I>;
+    Filename := <I>''</I>;
+    Options := [ofHideReadOnly, ofPathMustExist];
+    <B>if</B> Execute <B>then</B>
+      <B>if</B> ofExtensionDifferent <B>in</B> Options <B>then</B>
+        MessageDlg (<I>'Not a txt extension'</I>, mtError, [mbOK], 0)
+      <B>else</B>
+        Memo1.Lines.SaveToFile (FileName);
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TCommDlgForm.AnyFile1Click(Sender: TObject);
+<B>begin</B>
+  <B>with</B> SaveDialog1 <B>do</B>
+  <B>begin</B>
+    Filter := <I>'Any File (*.*)|*.*'</I>;
+    Filename := <I>''</I>;
+    Options := [ofPathMustExist];
+    <B>if</B> Execute <B>then</B>
+      Memo1.Lines.SaveToFile (FileName);
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TCommDlgForm.OnlyTrueType1Click(Sender: TObject);
+<B>begin</B>
+  <B>with</B> FontDialog1 <B>do</B>
+  <B>begin</B>
+    Options := [fdEffects, fdTrueTypeOnly, fdForceFontExist];
+    <B>if</B> Execute <B>then</B>
+      Memo1.Font := Font;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TCommDlgForm.NoEffects1Click(Sender: TObject);
+<B>begin</B>
+  <B>with</B> FontDialog1 <B>do</B>
+  <B>begin</B>
+    Options := [fdForceFontExist];
+    <B>if</B> Execute <B>then</B>
+      Memo1.Font := Font;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TCommDlgForm.NoStyle1Click(Sender: TObject);
+<B>begin</B>
+  <B>with</B> FontDialog1 <B>do</B>
+  <B>begin</B>
+    Options := [fdEffects, fdNoOEMFonts, fdNoStyleSel,
+        fdNoSizeSel, fdForceFontExist];
+    <B>if</B> Execute <B>then</B>
+      Memo1.Font := Font;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TCommDlgForm.Apply1Click(Sender: TObject);
+<B>begin</B>
+  <B>with</B> FontDialog1 <B>do</B>
+  <B>begin</B>
+    OnApply := FontDialogApply;
+    Options := [fdEffects, fdForceFontExist];
+    Execute;
+    OnApply := <B>nil</B>;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TCommDlgForm.Standard1Click(Sender: TObject);
+<B>begin</B>
+  <B>with</B> ColorDialog1 <B>do</B>
+  <B>begin</B>
+    Options := [];
+    <B>if</B> Execute <B>then</B>
+      Memo1.Color := Color;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TCommDlgForm.FullOpen1Click(Sender: TObject);
+<B>begin</B>
+  <B>with</B> ColorDialog1 <B>do</B>
+  <B>begin</B>
+    Options := [cdFullOpen];
+    <B>if</B> Execute <B>then</B>
+      Memo1.Color := Color;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TCommDlgForm.NoFullOpen1Click(Sender: TObject);
+<B>begin</B>
+  <B>with</B> ColorDialog1 <B>do</B>
+  <B>begin</B>
+    Options := [cdPreventFullOpen];
+    <B>if</B> Execute <B>then</B>
+      Memo1.Color := Color;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TCommDlgForm.AboutCommonDialogsTest1Click(Sender: TObject);
+<B>begin</B>
+  MessageDlg (<I>'The ''Common Dialogs Test'' application has been written'</I> +
+    Chr(13) + <I>'for the book &quot;Mastering Delphi&quot; by Marco Cantù'</I>,
+    mtInformation, [mbOk], 0);
+<B>end</B>;
+
+<B>procedure</B> TCommDlgForm.Print2Click(Sender: TObject);
+<B>begin</B>
+  PrintDialog1.Execute;
+<B>end</B>;
+
+<B>procedure</B> TCommDlgForm.PrinterSetup1Click(Sender: TObject);
+<B>begin</B>
+  PrinterSetupDialog1.Execute;
+<B>end</B>;
+
+<B>procedure</B> TCommDlgForm.Search2Click(Sender: TObject);
+<B>begin</B>
+  FindDialog1.Execute;
+<B>end</B>;
+
+<B>procedure</B> TCommDlgForm.Replace1Click(Sender: TObject);
+<B>begin</B>
+  ReplaceDialog1.Execute;
+<B>end</B>;
+
+<B>procedure</B> TCommDlgForm.FindDialog1Find(Sender: TObject);
+<B>var</B>
+  FoundPos, InitPos: Integer;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>{search in the text after the current selection}</I></FONT>
+  InitPos := Memo1.SelStart + Memo1.SelLength;
+  FoundPos := Pos (FindDialog1.FindText,
+    Copy (Memo1.Text, InitPos + 1,
+      Length (Memo1.Text) - InitPos));
+  <B>if</B> FoundPos &gt; 0 <B>then</B>
+  <B>begin</B>
+    <FONT COLOR="#000080"><I>{activate the component, and select the text}</I></FONT>
+    Memo1.SetFocus;
+    Memo1.SelStart := InitPos + FoundPos - 1;
+    Memo1.SelLength := Length(FindDialog1.FindText);
+  <B>end</B>
+  <B>else</B>
+  <B>begin</B>
+    MessageDlg (<I>'Text not found'</I>, mtInformation, [mbOK], 0);
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TCommDlgForm.ReplaceDialog1Replace(Sender: TObject);
+<B>var</B>
+  FoundPos, InitPos: Integer;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>{search in the text after the current selection}</I></FONT>
+  InitPos := Memo1.SelStart + Memo1.SelLength;
+  FoundPos := Pos (ReplaceDialog1.FindText,
+    Copy (Memo1.Text, InitPos + 1,
+      Length (Memo1.Text) - InitPos));
+  <B>if</B> FoundPos &gt; 0 <B>then</B>
+  <B>begin</B>
+    <FONT COLOR="#000080"><I>{activate the component, and select the text}</I></FONT>
+    Memo1.SetFocus;
+    Memo1.SelStart := InitPos + FoundPos - 1;
+    Memo1.SelLength := Length (ReplaceDialog1.FindText);
+    Memo1.SelText := ReplaceDialog1.ReplaceText;
+  <B>end</B>
+  <B>else</B>
+  <B>begin</B>
+    MessageDlg (<I>'Text not found'</I>, mtInformation, [mbOK], 0);
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TCommDlgForm.ReplaceDialog1Find(Sender: TObject);
+<B>begin</B>
+  FindDialog1.FindText := ReplaceDialog1.FindText;
+  FindDialog1Find (ReplaceDialog1);
+<B>end</B>;
+
+<B>procedure</B> TCommDlgForm.FontDialogApply(Sender: TObject; Wnd: HWND);
+<B>begin</B>
+  Memo1.Font := FontDialog1.Font;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=CDLGTEST.DFM><H3>CDLGTEST.DFM</H3></A>
+
+<PRE>
+<B>object</B> CommDlgForm: TCommDlgForm
+  Left = 119
+  Top = 153
+  Width = 532
+  Height = 355
+  Caption = <I>'Common Dialogs Test'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clBlack
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  Menu = MainMenu1
+  OldCreateOrder = True
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Memo1: TMemo
+    Left = 0
+    Top = 0
+    Width = 524
+    Height = 309
+    Align = alClient
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clBlack
+    Font.Height = -13
+    Font.Name = <I>'Times New Roman'</I>
+    Font.Style = []
+    ParentFont = False
+    ScrollBars = ssBoth
+    TabOrder = 0
+  <B>end</B>
+  <B>object</B> OpenDialog1: TOpenDialog
+    Left = 96
+    Top = 16
+  <B>end</B>
+  <B>object</B> SaveDialog1: TSaveDialog
+    Left = 96
+    Top = 64
+  <B>end</B>
+  <B>object</B> FontDialog1: TFontDialog
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = <I>'System'</I>
+    Font.Style = []
+    MinFontSize = 0
+    MaxFontSize = 0
+    Left = 168
+    Top = 16
+  <B>end</B>
+  <B>object</B> ColorDialog1: TColorDialog
+    Ctl3D = True
+    Left = 312
+    Top = 16
+  <B>end</B>
+  <B>object</B> MainMenu1: TMainMenu
+    Left = 32
+    Top = 16
+    <B>object</B> Open1: TMenuItem
+      Caption = <I>'&amp;Open'</I>
+      <B>object</B> TextFiles1: TMenuItem
+        Caption = <I>'Existing &amp;Text Files...'</I>
+        OnClick = TextFiles1Click
+      <B>end</B>
+      <B>object</B> Anynewfile1: TMenuItem
+        Caption = <I>'&amp;Any file...'</I>
+        OnClick = Anynewfile1Click
+      <B>end</B>
+      <B>object</B> MultipleSelection1: TMenuItem
+        Caption = <I>'&amp;Multiple Selection...'</I>
+        OnClick = MultipleSelection1Click
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> Save1: TMenuItem
+      Caption = <I>'&amp;Save'</I>
+      <B>object</B> TextFile1: TMenuItem
+        Caption = <I>'&amp;Text File...'</I>
+        OnClick = TextFile1Click
+      <B>end</B>
+      <B>object</B> AnyFile1: TMenuItem
+        Caption = <I>'&amp;Any File...'</I>
+        OnClick = AnyFile1Click
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> Font1: TMenuItem
+      Caption = <I>'&amp;Font'</I>
+      <B>object</B> OnlyTrueType1: TMenuItem
+        Caption = <I>'Only &amp;TrueType...'</I>
+        OnClick = OnlyTrueType1Click
+      <B>end</B>
+      <B>object</B> NoEffects1: TMenuItem
+        Caption = <I>'No &amp;Effects...'</I>
+        OnClick = NoEffects1Click
+      <B>end</B>
+      <B>object</B> NoStyle1: TMenuItem
+        Caption = <I>'No &amp;Style...'</I>
+        OnClick = NoStyle1Click
+      <B>end</B>
+      <B>object</B> Apply1: TMenuItem
+        Caption = <I>'&amp;Apply...'</I>
+        OnClick = Apply1Click
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> Color1: TMenuItem
+      Caption = <I>'&amp;Color'</I>
+      <B>object</B> Standard1: TMenuItem
+        Caption = <I>'&amp;Standard...'</I>
+        OnClick = Standard1Click
+      <B>end</B>
+      <B>object</B> FullOpen1: TMenuItem
+        Caption = <I>'&amp;Full Open...'</I>
+        OnClick = FullOpen1Click
+      <B>end</B>
+      <B>object</B> NoFullOpen1: TMenuItem
+        Caption = <I>'&amp;No Full Open...'</I>
+        OnClick = NoFullOpen1Click
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> Print1: TMenuItem
+      Caption = <I>'&amp;Print'</I>
+      <B>object</B> Print2: TMenuItem
+        Caption = <I>'&amp;Print...'</I>
+        OnClick = Print2Click
+      <B>end</B>
+      <B>object</B> PrinterSetup1: TMenuItem
+        Caption = <I>'Printer &amp;Setup...'</I>
+        OnClick = PrinterSetup1Click
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> Search1: TMenuItem
+      Caption = <I>'&amp;Search'</I>
+      <B>object</B> Search2: TMenuItem
+        Caption = <I>'&amp;Search...'</I>
+        OnClick = Search2Click
+      <B>end</B>
+      <B>object</B> Replace1: TMenuItem
+        Caption = <I>'&amp;Replace...'</I>
+        OnClick = Replace1Click
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> Help1: TMenuItem
+      Caption = <I>'&amp;Help'</I>
+      <B>object</B> AboutCommonDialogsTest1: TMenuItem
+        Caption = <I>'About Common Dialogs Test...'</I>
+        OnClick = AboutCommonDialogsTest1Click
+      <B>end</B>
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> PrinterSetupDialog1: TPrinterSetupDialog
+    Left = 248
+    Top = 64
+  <B>end</B>
+  <B>object</B> FindDialog1: TFindDialog
+    Options = [frDown, frMatchCase, frDisableMatchCase, frDisableUpDown, frDisableWholeWord]
+    OnFind = FindDialog1Find
+    Left = 376
+    Top = 16
+  <B>end</B>
+  <B>object</B> ReplaceDialog1: TReplaceDialog
+    Options = [frDown, frMatchCase, frDisableMatchCase, frDisableWholeWord]
+    OnFind = ReplaceDialog1Find
+    OnReplace = ReplaceDialog1Replace
+    Left = 376
+    Top = 64
+  <B>end</B>
+  <B>object</B> PrintDialog1: TPrintDialog
+    Options = [poPrintToFile, poPageNums, poSelection, poWarning]
+    Left = 248
+    Top = 16
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

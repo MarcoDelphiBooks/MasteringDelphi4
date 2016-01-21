@@ -1,0 +1,108 @@
+<HTML><HEAD>
+<TITLE>Project: SCROLL2.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: SCROLL2.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#SCROLL2.DPR> SCROLL2.DPR</A>
+<LI> <A HREF=#SCROLLF.PAS> SCROLLF.PAS</A>
+<LI> <A HREF=#SCROLLF.DFM> SCROLLF.DFM</A>
+</UL>
+<HR>
+<A NAME=SCROLL2.DPR><H3>SCROLL2.DPR</H3></A>
+
+<PRE>
+<B>program</B> Scroll2;
+
+<B>uses</B>
+  Forms,
+  ScrollF <B>in</B> <I>'ScrollF.pas'</I> <FONT COLOR="#000080"><I>{Form2}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TForm2, Form2);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=SCROLLF.PAS><H3>SCROLLF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> ScrollF;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs;
+
+<B>type</B>
+  TForm2 = <B>class</B>(TForm)
+    <B>procedure</B> FormPaint(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form2: TForm2;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm2.FormPaint(Sender: TObject);
+<B>var</B>
+  X1, Y1: Integer;
+<B>begin</B>
+  X1 := HorzScrollBar.Position;
+  Y1 := VertScrollBar.Position;
+  <FONT COLOR="#000080"><I>{draw a yellow line}</I></FONT>
+  Canvas.Pen.Width := 30;
+  Canvas.Pen.Color := clYellow;
+  Canvas.MoveTo (30-X1, 30-Y1);
+  Canvas.LineTo (1970-X1, 1970-Y1);
+
+  <FONT COLOR="#000080"><I>{draw a blue line}</I></FONT>
+  Canvas.Pen.Color := clNavy;
+  Canvas.MoveTo (30-X1, 1970-Y1);
+  Canvas.LineTo (1970-X1, 30-Y1);
+
+  <FONT COLOR="#000080"><I>{draw a fuchsia square}</I></FONT>
+  Canvas.Pen.Color := clFuchsia;
+  Canvas.Brush.Style := bsClear;
+  Canvas.Rectangle (500-X1, 500-Y1,
+     1500-X1, 1500-Y1);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=SCROLLF.DFM><H3>SCROLLF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form2: TForm2
+  Left = 156
+  Top = 112
+  Width = 496
+  Height = 379
+  HorzScrollBar.Range = 2000
+  VertScrollBar.Range = 2000
+  AutoScroll = False
+  Caption = <I>'Scroll2'</I>
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OnPaint = FormPaint
+  PixelsPerInch = 96
+  TextHeight = 13
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

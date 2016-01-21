@@ -1,0 +1,134 @@
+<HTML><HEAD>
+<TITLE>Project: SQLBUILDER.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: SQLBUILDER.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#SQLBUILDER.DPR> SQLBUILDER.DPR</A>
+<LI> <A HREF=#MAIN.PAS> MAIN.PAS</A>
+<LI> <A HREF=#MAIN.DFM> MAIN.DFM</A>
+</UL>
+<HR>
+<A NAME=SQLBUILDER.DPR><H3>SQLBUILDER.DPR</H3></A>
+
+<PRE>
+<B>program</B> sqlbuilder;
+
+<B>uses</B>
+  Forms,
+  main <B>in</B> <I>'main.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MAIN.PAS><H3>MAIN.PAS</H3></A>
+
+<PRE>
+<B>unit</B> main;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  Grids, DBGrids, Db, DBTables;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    Query1: TQuery;
+    DataSource1: TDataSource;
+    DBGrid1: TDBGrid;
+    <B>procedure</B> FormCreate(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.FormCreate(Sender: TObject);
+<B>begin</B>
+  Query1.Open;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MAIN.DFM><H3>MAIN.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 191
+  Top = 110
+  Width = 542
+  Height = 373
+  Caption = <I>'SQL Builder Sample'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = False
+  Position = poDesktopCenter
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> DBGrid1: TDBGrid
+    Left = 0
+    Top = 0
+    Width = 534
+    Height = 346
+    Align = alClient
+    Ctl3D = True
+    DataSource = DataSource1
+    ParentCtl3D = False
+    TabOrder = 0
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = <I>'MS Sans Serif'</I>
+    TitleFont.Style = []
+  <B>end</B>
+  <B>object</B> Query1: TQuery
+    DatabaseName = <I>'IBLocal'</I>
+    SQL.Strings = (
+
+              <I>'SELECT Employee.FIRST_NAME, Employee.LAST_NAME, Department.DEPAR'</I> +
+        <I>'TMENT, Job.JOB_TITLE, Employee.SALARY'</I>
+      <I>'FROM EMPLOYEE Employee'</I>
+      <I>'   INNER JOIN DEPARTMENT Department'</I>
+      <I>'   ON  (Department.DEPT_NO = Employee.DEPT_NO)  '</I>
+      <I>'   INNER JOIN JOB Job'</I>
+      <I>'   ON  (Job.JOB_CODE = Employee.JOB_CODE)  '</I>
+      <I>'   AND  (Job.JOB_GRADE = Employee.JOB_GRADE)  '</I>
+      <I>'   AND  (Job.JOB_COUNTRY = Employee.JOB_COUNTRY)  '</I>
+      <I>'WHERE  Employee.SALARY &gt;= 100000 '</I>
+      <I>'ORDER BY Department.DEPARTMENT'</I>)
+    Left = 4
+    Top = 4
+    ParamData = &lt;&gt;
+  <B>end</B>
+  <B>object</B> DataSource1: TDataSource
+    DataSet = Query1
+    Left = 36
+    Top = 4
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

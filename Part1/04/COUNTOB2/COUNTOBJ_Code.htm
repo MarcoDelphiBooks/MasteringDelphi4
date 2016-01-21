@@ -1,0 +1,183 @@
+<HTML><HEAD>
+<TITLE>Project: COUNTOBJ.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: COUNTOBJ.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#COUNTOBJ.DPR> COUNTOBJ.DPR</A>
+<LI> <A HREF=#COUNTF.PAS> COUNTF.PAS</A>
+<LI> <A HREF=#COUNTF.DFM> COUNTF.DFM</A>
+</UL>
+<HR>
+<A NAME=COUNTOBJ.DPR><H3>COUNTOBJ.DPR</H3></A>
+
+<PRE>
+<B>program</B> CountObj;
+
+<B>uses</B>
+  Forms,
+  CountF <B>in</B> <I>'CountF.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=COUNTF.PAS><H3>COUNTF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> CountF;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls, ExtCtrls, Menus;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    Timer1: TTimer;
+    <B>procedure</B> FormMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+    <B>procedure</B> Timer1Timer(Sender: TObject);
+    <B>procedure</B> FormDestroy(Sender: TObject);
+    <B>procedure</B> ButtonKeyPress(Sender: TObject; <B>var</B> Key: Char);
+  <B>private</B>
+    ToDestroy: TButton;
+  <B>end</B>;
+
+  TCountButton = <B>class</B> (TButton)
+    <B>constructor</B> Create (AOwner: TComponent); <B>override</B>;
+    <B>destructor</B> Destroy; <B>override</B>;
+    <B>class</B> <B>function</B> GetTotal: Integer;
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>var</B>
+  TotBtns: Integer = 0;
+
+<B>constructor</B> TCountButton.Create (AOwner: TComponent);
+<B>begin</B>
+  <B>inherited</B>;
+  Inc (TotBtns);
+<B>end</B>;
+
+<B>destructor</B> TCountButton.Destroy;
+<B>begin</B>
+  Dec (TotBtns);
+  <B>inherited</B> Destroy;
+<B>end</B>;
+
+<B>class</B> <B>function</B> TCountButton.GetTotal: Integer;
+<B>begin</B>
+  Result := TotBtns;
+<B>end</B>;
+
+<B>procedure</B> TForm1.FormMouseDown(
+  Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+<B>begin</B>
+  <B>with</B> TCountButton.Create (self) <B>do</B>
+  <B>begin</B>
+    Parent := self;
+    Left := X;
+    Top := Y;
+    Width := Width + 60;
+    Caption := Format (<I>'%d Button at %d, %d'</I>,
+      [GetTotal, X, Y]);
+    <FONT COLOR="#000080"><I>// set the event handler</I></FONT>
+    OnKeyPress := ButtonKeyPress;
+    <FONT COLOR="#000080"><I>// grab the input focus</I></FONT>
+    SetFocus;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TForm1.Timer1Timer(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// if there is an object to destroy</I></FONT>
+  <B>if</B> Assigned (ToDestroy) <B>then</B>
+  <B>begin</B>
+    <FONT COLOR="#000080"><I>// moves the input focus to the next control</I></FONT>
+    SelectNext (ToDestroy, True, true);
+    <FONT COLOR="#000080"><I>// destroy the object</I></FONT>
+    ToDestroy.Free;
+    <FONT COLOR="#000080"><I>// no more objects to destroy</I></FONT>
+    ToDestroy := <B>nil</B>;
+  <B>end</B>;
+  <FONT COLOR="#000080"><I>// update the form caption</I></FONT>
+  Caption := Format (<I>'CountObj: %d custom buttons'</I>,
+    [TCountButton.GetTotal]);
+<B>end</B>;
+
+<B>procedure</B> TForm1.FormDestroy(Sender: TObject);
+<B>begin</B>
+<FONT COLOR="#000080"><I>{  MessageBox (0, PChar (Format (
+    'There are %d CountButton objects',
+    [TCountButton.GetTotal])),
+    'CountObj', mb_OK);}</I></FONT>
+<B>end</B>;
+
+<B>procedure</B> TForm1.ButtonKeyPress(Sender: TObject;
+  <B>var</B> Key: Char);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// if user pressed backspace</I></FONT>
+  <B>if</B> Key = <I>#8</I> <B>then</B>
+    <FONT COLOR="#000080"><I>// set this as the object to destroy</I></FONT>
+    ToDestroy := Sender <B>as</B> TButton;
+<B>end</B>;
+
+<B>initialization</B>
+<FONT COLOR="#000080"><I>{  MessageBox (0, PChar (Format (
+    'There are %d CountButton objects',
+    [TCountButton.GetTotal])),
+    'CountObj', mb_OK);}</I></FONT>
+<B>finalization</B>
+<FONT COLOR="#000080"><I>{  MessageBox (0, PChar (Format (
+    'There are %d CountButton objects',
+    [TCountButton.GetTotal])),
+    'CountObj', mb_OK);}</I></FONT>
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=COUNTF.DFM><H3>COUNTF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 204
+  Top = 106
+  Width = 394
+  Height = 296
+  Caption = <I>'CountObj'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  OnDestroy = FormDestroy
+  OnMouseDown = FormMouseDown
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Timer1: TTimer
+    Interval = 500
+    OnTimer = Timer1Timer
+    Left = 8
+    Top = 8
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

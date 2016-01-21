@@ -1,0 +1,103 @@
+<HTML><HEAD>
+<TITLE>Project: ONECOPY.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: ONECOPY.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#ONECOPY.DPR> ONECOPY.DPR</A>
+<LI> <A HREF=#ONEF.PAS> ONEF.PAS</A>
+<LI> <A HREF=#ONEF.DFM> ONEF.DFM</A>
+</UL>
+<HR>
+<A NAME=ONECOPY.DPR><H3>ONECOPY.DPR</H3></A>
+
+<PRE>
+<B>program</B> OneCopy;
+
+<B>uses</B>
+  Forms, Windows,
+  OneF <B>in</B> <I>'OneF.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>var</B>
+  hMutex: THandle;
+
+<B>begin</B>
+  HMutex := CreateMutex (<B>nil</B>, False, <I>'OneCopyMutex'</I>);
+  <B>if</B> WaitForSingleObject (hMutex, 0) &lt;&gt; wait_TimeOut <B>then</B>
+  <B>begin</B>
+    Application.Initialize;
+    Application.CreateForm(TForm1, Form1);
+    Application.Run;
+  <B>end</B>;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=ONEF.PAS><H3>ONEF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> OneF;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    Label1: TLabel;
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=ONEF.DFM><H3>ONEF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 241
+  Top = 125
+  Width = 250
+  Height = 108
+  Caption = <I>'OneCopy'</I>
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Label1: TLabel
+    Left = 7
+    Top = 8
+    Width = 218
+    Height = 54
+    Alignment = taCenter
+    Caption = <I>'Run a second copy of this application'</I>
+    Font.Color = clWindowText
+    Font.Height = -24
+    Font.Name = <I>'Arial'</I>
+    Font.Style = []
+    ParentFont = False
+    WordWrap = True
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

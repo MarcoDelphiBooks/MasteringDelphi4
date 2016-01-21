@@ -1,0 +1,225 @@
+<HTML><HEAD>
+<TITLE>Project: DRAGLIST.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: DRAGLIST.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#DRAGLIST.DPR> DRAGLIST.DPR</A>
+<LI> <A HREF=#DRAGF.PAS> DRAGF.PAS</A>
+<LI> <A HREF=#DRAGF.DFM> DRAGF.DFM</A>
+</UL>
+<HR>
+<A NAME=DRAGLIST.DPR><H3>DRAGLIST.DPR</H3></A>
+
+<PRE>
+<B>program</B> DragList;
+
+<B>uses</B>
+  Forms,
+  DragF <B>in</B> <I>'DragF.pas'</I> <FONT COLOR="#000080"><I>{DragForm}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TDragForm, DragForm);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=DRAGF.PAS><H3>DRAGF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> DragF;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  Grids, StdCtrls, CheckLst, ExtCtrls;
+
+<B>type</B>
+  TDragForm = <B>class</B>(TForm)
+    ListBox1: TListBox;
+    CheckListBox1: TCheckListBox;
+    Label1: TLabel;
+    Edit1: TEdit;
+    <B>procedure</B> ListDragOver(Sender, Source: TObject; X, Y: Integer;
+      State: TDragState; <B>var</B> Accept: Boolean);
+    <B>procedure</B> ListBox1DragDrop(Sender, Source: TObject; X, Y: Integer);
+    <B>procedure</B> CheckListBox1DragDrop(Sender, Source: TObject; X,
+      Y: Integer);
+    <B>procedure</B> Edit1MouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <B>function</B> AddNotDup (List: TCustomListBox; Text: <B>string</B>): Boolean;
+  <B>end</B>;
+
+<B>var</B>
+  DragForm: TDragForm;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TDragForm.ListDragOver(Sender, Source: TObject; X, Y: Integer;
+  State: TDragState; <B>var</B> Accept: Boolean);
+<B>begin</B>
+  Accept := True;
+  <FONT COLOR="#000080"><I>// if the source is the edit and the items</I></FONT>
+  <FONT COLOR="#000080"><I>// is already in the destiantion list, reject it</I></FONT>
+  <B>if</B> (Source = Edit1) <B>and</B>
+    ((Sender <B>as</B> TCustomListBox).Items.IndexOf (Edit1.Text) &gt;= 0) <B>then</B>
+    Accept := False;
+<B>end</B>;
+
+<B>procedure</B> TDragForm.ListBox1DragDrop(Sender, Source: TObject; X, Y: Integer);
+<B>var</B>
+  I: Integer;
+<B>begin</B>
+  <B>if</B> Source = Edit1 <B>then</B>
+    <FONT COLOR="#000080"><I>// copy the text of the edit box</I></FONT>
+    ListBox1.Items.Add (Edit1.Text)
+  <B>else</B> <B>if</B> Source = CheckListBox1 <B>then</B>
+  <B>begin</B>
+    <FONT COLOR="#000080"><I>// copy all the selected items (unless duplicate)</I></FONT>
+    <FONT COLOR="#000080"><I>// and delete them (using reverse order!)</I></FONT>
+    <B>for</B> I := CheckListBox1.Items.Count - 1 <B>downto</B> 0 <B>do</B>
+      <B>if</B> CheckListBox1.Checked [I] <B>then</B>
+      <B>begin</B>
+        <B>if</B> AddNotDup (ListBox1, CheckListBox1.Items [I]) <B>then</B>
+          CheckListBox1.Items.Delete (I);
+      <B>end</B>;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TDragForm.CheckListBox1DragDrop(Sender, Source: TObject; X,
+  Y: Integer);
+<B>var</B>
+  nItem: Integer;
+<B>begin</B>
+  <B>if</B> Source = Edit1 <B>then</B>
+    <FONT COLOR="#000080"><I>// copy the text of the edit box</I></FONT>
+    CheckListBox1.Items.Add (Edit1.Text)
+  <B>else</B> <B>if</B> Source = ListBox1 <B>then</B>
+  <B>begin</B>
+    <FONT COLOR="#000080"><I>// copy if not duplicate</I></FONT>
+    nItem := ListBox1.ItemIndex;
+    <B>if</B> AddNotDup (CheckListBox1, ListBox1.Items [nItem]) <B>then</B>
+      <FONT COLOR="#000080"><I>// remove source item</I></FONT>
+      ListBox1.Items.Delete (nItem);
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TDragForm.Edit1MouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+<B>begin</B>
+  Edit1.BeginDrag (False, 10);
+<B>end</B>;
+
+<B>function</B> TDragForm.AddNotDup (List: TCustomListBox; Text: <B>string</B>): Boolean;
+<B>begin</B>
+   <FONT COLOR="#000080"><I>// return if the string was not already in the list</I></FONT>
+  Result := List.Items.IndexOf (Text) &lt; 0;
+  <B>if</B> Result <B>then</B>
+    List.Items.Add (Text);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=DRAGF.DFM><H3>DRAGF.DFM</H3></A>
+
+<PRE>
+<B>object</B> DragForm: TDragForm
+  Left = 195
+  Top = 107
+  Width = 355
+  Height = 296
+  Caption = <I>'DragList'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = False
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Label1: TLabel
+    Left = 16
+    Top = 16
+    Width = 25
+    Height = 13
+    Caption = <I>'&amp;New:'</I>
+    FocusControl = Edit1
+  <B>end</B>
+  <B>object</B> ListBox1: TListBox
+    Left = 8
+    Top = 56
+    Width = 161
+    Height = 201
+    DragMode = dmAutomatic
+    ItemHeight = 13
+    Items.Strings = (
+      <I>'Austria'</I>
+      <I>'Belgium'</I>
+      <I>'Britain'</I>
+      <I>'Denmark'</I>
+      <I>'France'</I>
+      <I>'Germany'</I>
+      <I>'Greece'</I>
+      <I>'Holland'</I>
+      <I>'Ireland'</I>
+      <I>'Italy'</I>
+      <I>'Norway'</I>
+      <I>'Portugal'</I>
+      <I>'Spain'</I>
+      <I>'Sweden'</I>)
+    Sorted = True
+    TabOrder = 0
+    OnDragDrop = ListBox1DragDrop
+    OnDragOver = ListDragOver
+  <B>end</B>
+  <B>object</B> CheckListBox1: TCheckListBox
+    Left = 176
+    Top = 56
+    Width = 161
+    Height = 201
+    DragMode = dmAutomatic
+    ItemHeight = 13
+    Items.Strings = (
+      <I>'China'</I>
+      <I>'India'</I>
+      <I>'Indonesia'</I>
+      <I>'Iran'</I>
+      <I>'Iraq'</I>
+      <I>'Japan'</I>
+      <I>'Malaysia'</I>
+      <I>'Pakistan'</I>
+      <I>'Russia'</I>
+      <I>'Singapore'</I>
+      <I>'South Korea'</I>
+      <I>'Vietnam'</I>)
+    Sorted = True
+    TabOrder = 1
+    OnDragDrop = CheckListBox1DragDrop
+    OnDragOver = ListDragOver
+  <B>end</B>
+  <B>object</B> Edit1: TEdit
+    Left = 48
+    Top = 14
+    Width = 121
+    Height = 21
+    TabOrder = 2
+    OnMouseDown = Edit1MouseDown
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

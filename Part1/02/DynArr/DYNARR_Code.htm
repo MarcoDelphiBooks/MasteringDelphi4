@@ -1,0 +1,193 @@
+<HTML><HEAD>
+<TITLE>Project: DYNARR.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: DYNARR.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#DYNARR.DPR> DYNARR.DPR</A>
+<LI> <A HREF=#DYNARRF.PAS> DYNARRF.PAS</A>
+<LI> <A HREF=#DYNARRF.DFM> DYNARRF.DFM</A>
+</UL>
+<HR>
+<A NAME=DYNARR.DPR><H3>DYNARR.DPR</H3></A>
+
+<PRE>
+<B>program</B> DynArr;
+
+<B>uses</B>
+  Forms,
+  DynArrF <B>in</B> <I>'DynArrF.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=DYNARRF.PAS><H3>DYNARRF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> DynArrF;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    btnFill: TButton;
+    btnAlias: TButton;
+    btnSet: TButton;
+    btnGrow: TButton;
+    btnGet: TButton;
+    <B>procedure</B> btnFillClick(Sender: TObject);
+    <B>procedure</B> btnAliasClick(Sender: TObject);
+    <B>procedure</B> btnSetClick(Sender: TObject);
+    <B>procedure</B> btnGrowClick(Sender: TObject);
+    <B>procedure</B> btnGetClick(Sender: TObject);
+    <B>procedure</B> FormCreate(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>var</B>
+  Array1, Array2: <B>array</B> <B>of</B> Integer;
+
+<B>procedure</B> TForm1.btnFillClick(Sender: TObject);
+<B>var</B>
+  I: Integer;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// fill</I></FONT>
+  <B>for</B> I := Low (Array1) <B>to</B> High (Array1) <B>do</B>
+    Array1 [I] := I;
+<B>end</B>;
+
+<B>procedure</B> TForm1.btnSetClick(Sender: TObject);
+<B>begin</B>
+  Array1 [99] := 100;
+<B>end</B>;
+
+<B>procedure</B> TForm1.btnGrowClick(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// grow keeping existing values</I></FONT>
+  SetLength (Array1, 200);
+<B>end</B>;
+
+<B>procedure</B> TForm1.btnGetClick(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// extract</I></FONT>
+  Caption := IntToStr (Array1 [99]);
+<B>end</B>;
+
+<B>procedure</B> TForm1.btnAliasClick(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// alias</I></FONT>
+  Array2 := Array1;
+  <FONT COLOR="#000080"><I>// change one (both change)</I></FONT>
+  Array2 [99] := 1000;
+  <FONT COLOR="#000080"><I>// show the other</I></FONT>
+  Caption := IntToStr (Array1 [99]);
+
+  <B>if</B> Array1 = Array2 <B>then</B>
+    Beep;
+
+  <FONT COLOR="#000080"><I>// truncate first array</I></FONT>
+  Array1 := Copy (Array2, 0, 10);
+<B>end</B>;
+
+<B>procedure</B> TForm1.FormCreate(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// allocate</I></FONT>
+  SetLength (Array1, 100);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=DYNARRF.DFM><H3>DYNARRF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 197
+  Top = 108
+  Width = 203
+  Height = 166
+  ActiveControl = btnFill
+  BorderWidth = 1
+  Caption = <I>'DynArr'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> btnFill: TButton
+    Left = 16
+    Top = 24
+    Width = 75
+    Height = 25
+    Caption = <I>'&amp;Fill'</I>
+    TabOrder = 0
+    OnClick = btnFillClick
+  <B>end</B>
+  <B>object</B> btnAlias: TButton
+    Left = 16
+    Top = 104
+    Width = 161
+    Height = 25
+    Caption = <I>'&amp;Create alias and truncate'</I>
+    TabOrder = 1
+    OnClick = btnAliasClick
+  <B>end</B>
+  <B>object</B> btnSet: TButton
+    Left = 104
+    Top = 24
+    Width = 75
+    Height = 25
+    Caption = <I>'&amp;Set value'</I>
+    TabOrder = 2
+    OnClick = btnSetClick
+  <B>end</B>
+  <B>object</B> btnGrow: TButton
+    Left = 16
+    Top = 56
+    Width = 75
+    Height = 25
+    Caption = <I>'&amp;Grow'</I>
+    TabOrder = 3
+    OnClick = btnGrowClick
+  <B>end</B>
+  <B>object</B> btnGet: TButton
+    Left = 104
+    Top = 56
+    Width = 75
+    Height = 25
+    Caption = <I>'Get &amp;value'</I>
+    TabOrder = 4
+    OnClick = btnGetClick
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

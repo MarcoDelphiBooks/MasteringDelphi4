@@ -1,0 +1,200 @@
+<HTML><HEAD>
+<TITLE>Project: CALLCPP.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: CALLCPP.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#CALLCPP.DPR> CALLCPP.DPR</A>
+<LI> <A HREF=#CALLCPPF.PAS> CALLCPPF.PAS</A>
+<LI> <A HREF=#CALLCPPF.DFM> CALLCPPF.DFM</A>
+</UL>
+<HR>
+<A NAME=CALLCPP.DPR><H3>CALLCPP.DPR</H3></A>
+
+<PRE>
+<B>program</B> Callcpp;
+
+<B>uses</B>
+  Forms,
+  CallCppF <B>in</B> <I>'CallCppF.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=CALLCPPF.PAS><H3>CALLCPPF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> CallCppF;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes, Graphics, Controls,
+  Forms, Dialogs, StdCtrls, Spin, ExtCtrls;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    BtnDouble: TButton;
+    SpinEdit1: TSpinEdit;
+    Label1: TLabel;
+    BtnTriple: TButton;
+    Label2: TLabel;
+    SpinEdit2: TSpinEdit;
+    BtnAdd: TButton;
+    Label3: TLabel;
+    Edit1: TEdit;
+    Bevel1: TBevel;
+    <B>procedure</B> BtnDoubleClick(Sender: TObject);
+    <B>procedure</B> BtnTripleClick(Sender: TObject);
+    <B>procedure</B> BtnAddClick(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<FONT COLOR="#000080"><I>{definition of the functions of the DLL}</I></FONT>
+<B>function</B> Add (A, B: Integer): Integer;
+  <B>stdcall</B>; <B>external</B> <I>'CPPDLL.DLL'</I> name <I>'@Add$qqsii'</I>;
+<B>function</B> Double (N: Integer): Integer;
+  <B>stdcall</B>; <B>external</B> <I>'CPPDLL.DLL'</I> name <I>'Double'</I>;
+<B>function</B> Triple (N: Integer): Integer;
+  <B>stdcall</B>; <B>external</B> <I>'CPPDLL.DLL'</I>;
+
+<B>procedure</B> TForm1.BtnDoubleClick(Sender: TObject);
+<B>begin</B>
+  SpinEdit1.Value := Double (SpinEdit1.Value);
+<B>end</B>;
+
+<B>procedure</B> TForm1.BtnTripleClick(Sender: TObject);
+<B>begin</B>
+  SpinEdit2.Value := Triple (SpinEdit2.Value);
+<B>end</B>;
+
+<B>procedure</B> TForm1.BtnAddClick(Sender: TObject);
+<B>begin</B>
+  Edit1.Text := IntToStr (Add (
+    SpinEdit1.Value, SpinEdit2.Value));
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=CALLCPPF.DFM><H3>CALLCPPF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 205
+  Top = 166
+  Width = 371
+  Height = 190
+  Caption = <I>'Call C++ DLL'</I>
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clBlack
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Label1: TLabel
+    Left = 176
+    Top = 24
+    Width = 30
+    Height = 13
+    Caption = <I>'Value:'</I>
+  <B>end</B>
+  <B>object</B> Label2: TLabel
+    Left = 176
+    Top = 64
+    Width = 30
+    Height = 13
+    Caption = <I>'Value:'</I>
+  <B>end</B>
+  <B>object</B> Label3: TLabel
+    Left = 176
+    Top = 120
+    Width = 27
+    Height = 13
+    Caption = <I>'Total:'</I>
+  <B>end</B>
+  <B>object</B> Bevel1: TBevel
+    Left = 168
+    Top = 96
+    Width = 161
+    Height = 9
+    Shape = bsTopLine
+  <B>end</B>
+  <B>object</B> BtnDouble: TButton
+    Left = 40
+    Top = 16
+    Width = 89
+    Height = 33
+    Caption = <I>'Double'</I>
+    TabOrder = 0
+    OnClick = BtnDoubleClick
+  <B>end</B>
+  <B>object</B> SpinEdit1: TSpinEdit
+    Left = 232
+    Top = 20
+    Width = 81
+    Height = 22
+    MaxValue = 0
+    MinValue = 0
+    TabOrder = 1
+    Value = 10
+  <B>end</B>
+  <B>object</B> BtnTriple: TButton
+    Left = 40
+    Top = 56
+    Width = 89
+    Height = 33
+    Caption = <I>'Triple'</I>
+    TabOrder = 2
+    OnClick = BtnTripleClick
+  <B>end</B>
+  <B>object</B> SpinEdit2: TSpinEdit
+    Left = 232
+    Top = 60
+    Width = 81
+    Height = 22
+    MaxValue = 0
+    MinValue = 0
+    TabOrder = 3
+    Value = 10
+  <B>end</B>
+  <B>object</B> BtnAdd: TButton
+    Left = 40
+    Top = 112
+    Width = 89
+    Height = 33
+    Caption = <I>'Add'</I>
+    TabOrder = 4
+    OnClick = BtnAddClick
+  <B>end</B>
+  <B>object</B> Edit1: TEdit
+    Left = 232
+    Top = 116
+    Width = 79
+    Height = 21
+    ReadOnly = True
+    TabOrder = 5
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

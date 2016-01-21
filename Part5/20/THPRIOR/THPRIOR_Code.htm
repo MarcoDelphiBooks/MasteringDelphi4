@@ -1,0 +1,291 @@
+<HTML><HEAD>
+<TITLE>Project: THPRIOR.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: THPRIOR.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#THPRIOR.DPR> THPRIOR.DPR</A>
+<LI> <A HREF=#MAINFORM.PAS> MAINFORM.PAS</A>
+<LI> <A HREF=#PAINTTH.PAS> PAINTTH.PAS</A>
+<LI> <A HREF=#MAINFORM.DFM> MAINFORM.DFM</A>
+</UL>
+<HR>
+<A NAME=THPRIOR.DPR><H3>THPRIOR.DPR</H3></A>
+
+<PRE>
+<B>program</B> ThPrior;
+
+<B>uses</B>
+  Forms,
+  MainForm <B>in</B> <I>'MainForm.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>,
+  paintth <B>in</B> <I>'paintth.pas'</I>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MAINFORM.PAS><H3>MAINFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> MainForm;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls, ExtCtrls, Paintth, ComCtrls;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    CheckBox1: TCheckBox;
+    CheckBox2: TCheckBox;
+    CheckBox3: TCheckBox;
+    CheckBox4: TCheckBox;
+    TrackBar1: TTrackBar;
+    TrackBar2: TTrackBar;
+    TrackBar3: TTrackBar;
+    TrackBar4: TTrackBar;
+    <B>procedure</B> CheckBox1Click(Sender: TObject);
+    <B>procedure</B> TrackBar1Change(Sender: TObject);
+    <B>procedure</B> FormCreate(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+    PT: <B>array</B> [1..4] <B>of</B> TPainterThread;
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.CheckBox1Click(Sender: TObject);
+<B>begin</B>
+  <B>if</B> (Sender <B>as</B> TCheckbox).Checked <B>then</B>
+    PT [(Sender <B>as</B> TCheckbox).Tag].Resume
+  <B>else</B>
+    PT [(Sender <B>as</B> TCheckbox).Tag].Suspend;
+<B>end</B>;
+
+<B>procedure</B> TForm1.TrackBar1Change(Sender: TObject);
+<B>begin</B>
+  PT [(Sender <B>as</B> TTrackBar).Tag].Priority :=
+    TThreadPriority ((Sender <B>as</B> TTrackBar).Position);
+<B>end</B>;
+
+<B>procedure</B> TForm1.FormCreate(Sender: TObject);
+<B>begin</B>
+  PT [1] := TPainterThread.Create (clRed);
+  PT [2] := TPainterThread.Create (clBlue);
+  PT [3] := TPainterThread.Create (clGreen);
+  PT [4] := TPainterThread.Create (ClBlack);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=PAINTTH.PAS><H3>PAINTTH.PAS</H3></A>
+
+<PRE>
+<B>unit</B> paintth;
+
+<B>interface</B>
+
+<B>uses</B>
+  Classes, Graphics, Windows;
+
+<B>type</B>
+  TPainterThread = <B>class</B>(TThread)
+  <B>private</B>
+    Color: Integer;
+  <B>protected</B>
+    <B>procedure</B> Execute; <B>override</B>;
+  <B>public</B>
+    <B>constructor</B> Create (Col: TColor);
+  <B>end</B>;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{ TPainterThread }</I></FONT>
+
+<B>uses</B>
+  MainForm;
+
+<B>constructor</B> TPainterThread.Create(Col: TColor);
+<B>begin</B>
+  Color:= Col;
+  <B>inherited</B> Create (True);
+<B>end</B>;
+
+<B>procedure</B> TPainterThread.Execute;
+<B>var</B>
+  X, Y, X1: Integer;
+<B>begin</B>
+  X := 0;
+  Y := 0;
+  <B>repeat</B>
+    <FONT COLOR="#000080"><I>// scan the lines...</I></FONT>
+    X1 := X + 1;
+    X := X1 <B>mod</B> 250;
+    Y := Y + X1 <B>div</B> 250;
+    Y := Y <B>mod</B> Form1.ClientHeight;
+    Form1.Canvas.Lock;
+    <B>try</B>
+      Form1.Canvas.Pixels [X, Y] := Color;
+    <B>finally</B>
+      Form1.Canvas.UnLock;
+    <B>end</B>;
+  <B>until</B> Terminated;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MAINFORM.DFM><H3>MAINFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 307
+  Top = 113
+  Width = 452
+  Height = 278
+  Caption = <I>'Thread Priorities'</I>
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> CheckBox1: TCheckBox
+    Tag = 1
+    Left = 272
+    Top = 56
+    Width = 65
+    Height = 17
+    Caption = <I>'Red'</I>
+    TabOrder = 0
+    OnClick = CheckBox1Click
+  <B>end</B>
+  <B>object</B> CheckBox2: TCheckBox
+    Tag = 2
+    Left = 272
+    Top = 96
+    Width = 65
+    Height = 17
+    Caption = <I>'Blue'</I>
+    TabOrder = 1
+    OnClick = CheckBox1Click
+  <B>end</B>
+  <B>object</B> CheckBox3: TCheckBox
+    Tag = 3
+    Left = 272
+    Top = 136
+    Width = 65
+    Height = 17
+    Caption = <I>'Green'</I>
+    TabOrder = 2
+    OnClick = CheckBox1Click
+  <B>end</B>
+  <B>object</B> CheckBox4: TCheckBox
+    Tag = 4
+    Left = 272
+    Top = 176
+    Width = 65
+    Height = 17
+    Caption = <I>'Black'</I>
+    TabOrder = 3
+    OnClick = CheckBox1Click
+  <B>end</B>
+  <B>object</B> TrackBar1: TTrackBar
+    Tag = 1
+    Left = 336
+    Top = 56
+    Width = 100
+    Height = 25
+    Max = 4
+    Min = 1
+    Orientation = trHorizontal
+    PageSize = 1
+    Frequency = 1
+    Position = 3
+    SelEnd = 0
+    SelStart = 0
+    TabOrder = 4
+    TabStop = False
+    TickMarks = tmBottomRight
+    TickStyle = tsAuto
+    OnChange = TrackBar1Change
+  <B>end</B>
+  <B>object</B> TrackBar2: TTrackBar
+    Tag = 2
+    Left = 336
+    Top = 96
+    Width = 100
+    Height = 25
+    Max = 4
+    Min = 1
+    Orientation = trHorizontal
+    PageSize = 1
+    Frequency = 1
+    Position = 3
+    SelEnd = 0
+    SelStart = 0
+    TabOrder = 5
+    TabStop = False
+    TickMarks = tmBottomRight
+    TickStyle = tsAuto
+    OnChange = TrackBar1Change
+  <B>end</B>
+  <B>object</B> TrackBar3: TTrackBar
+    Tag = 3
+    Left = 336
+    Top = 136
+    Width = 100
+    Height = 25
+    Max = 4
+    Min = 1
+    Orientation = trHorizontal
+    PageSize = 1
+    Frequency = 1
+    Position = 3
+    SelEnd = 0
+    SelStart = 0
+    TabOrder = 6
+    TabStop = False
+    TickMarks = tmBottomRight
+    TickStyle = tsAuto
+    OnChange = TrackBar1Change
+  <B>end</B>
+  <B>object</B> TrackBar4: TTrackBar
+    Tag = 4
+    Left = 336
+    Top = 176
+    Width = 100
+    Height = 25
+    Max = 4
+    Min = 1
+    Orientation = trHorizontal
+    PageSize = 1
+    Frequency = 1
+    Position = 3
+    SelEnd = 0
+    SelStart = 0
+    TabOrder = 7
+    TabStop = False
+    TickMarks = tmBottomRight
+    TickStyle = tsAuto
+    OnChange = TrackBar1Change
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

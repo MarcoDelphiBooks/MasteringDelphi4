@@ -1,0 +1,353 @@
+<HTML><HEAD>
+<TITLE>Project: ANIMCTRL.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: ANIMCTRL.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#ANIMCTRL.DPR> ANIMCTRL.DPR</A>
+<LI> <A HREF=#ANIMF.PAS> ANIMF.PAS</A>
+<LI> <A HREF=#ANIMF.DFM> ANIMF.DFM</A>
+</UL>
+<HR>
+<A NAME=ANIMCTRL.DPR><H3>ANIMCTRL.DPR</H3></A>
+
+<PRE>
+<B>program</B> AnimCtrl;
+
+<B>uses</B>
+  Forms,
+  AnimF <B>in</B> <I>'AnimF.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=ANIMF.PAS><H3>ANIMF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> AnimF;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  ComCtrls, StdCtrls, ExtCtrls, Spin;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    Animate1: TAnimate;
+    Panel1: TPanel;
+    ListBox1: TListBox;
+    OpenDialog1: TOpenDialog;
+    BtnStart: TButton;
+    BtnStop: TButton;
+    BtnOnce: TButton;
+    BtnTrice: TButton;
+    BtnFragment: TButton;
+    SpinEdit1: TSpinEdit;
+    SpinEdit2: TSpinEdit;
+    Label1: TLabel;
+    Label2: TLabel;
+    BtnGoto: TButton;
+    SpinEdit3: TSpinEdit;
+    BtnReverse: TButton;
+    Bevel1: TBevel;
+    Bevel2: TBevel;
+    LblFrames: TLabel;
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> ListBox1Click(Sender: TObject);
+    <B>procedure</B> BtnStartClick(Sender: TObject);
+    <B>procedure</B> BtnStopClick(Sender: TObject);
+    <B>procedure</B> BtnOnceClick(Sender: TObject);
+    <B>procedure</B> BtnTriceClick(Sender: TObject);
+    <B>procedure</B> BtnFragmentClick(Sender: TObject);
+    <B>procedure</B> BtnGotoClick(Sender: TObject);
+    <B>procedure</B> BtnReverseClick(Sender: TObject);
+    <B>procedure</B> Animate1Open(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.FormCreate(Sender: TObject);
+<B>begin</B>
+  ListBox1.ItemIndex := 1;
+  LblFrames.Caption := <I>'Frames '</I> +
+    IntToStr (Animate1.FrameCount);
+<B>end</B>;
+
+<B>procedure</B> TForm1.ListBox1Click(Sender: TObject);
+<B>begin</B>
+  Animate1.CommonAVI := TCommonAVI (ListBox1.ItemIndex);
+  <B>if</B> (ListBox1.ItemIndex = 0) <B>and</B>
+      OpenDialog1.Execute <B>then</B>
+    Animate1.FileName := OpenDialog1.FileName
+<B>end</B>;
+
+<B>procedure</B> TForm1.BtnStartClick(Sender: TObject);
+<B>begin</B>
+  Animate1.Active := True;
+<B>end</B>;
+
+<B>procedure</B> TForm1.BtnStopClick(Sender: TObject);
+<B>begin</B>
+  Animate1.Stop;
+<B>end</B>;
+
+<B>procedure</B> TForm1.BtnOnceClick(Sender: TObject);
+<B>begin</B>
+  Animate1.Play (0, Animate1.FrameCount, 1);
+<B>end</B>;
+
+<B>procedure</B> TForm1.BtnTriceClick(Sender: TObject);
+<B>begin</B>
+  Animate1.Play (0, Animate1.FrameCount, 3);
+<B>end</B>;
+
+<B>procedure</B> TForm1.BtnFragmentClick(Sender: TObject);
+<B>begin</B>
+  Animate1.Play (SpinEdit1.Value,
+    SpinEdit2.Value, -1);
+<B>end</B>;
+
+<B>procedure</B> TForm1.BtnGotoClick(Sender: TObject);
+<B>begin</B>
+  Animate1.Seek (SpinEdit3.Value);
+<B>end</B>;
+
+<B>procedure</B> TForm1.BtnReverseClick(Sender: TObject);
+<B>var</B>
+  Init: TDateTime;
+  I: Integer;
+<B>begin</B>
+  <B>for</B> I := Animate1.FrameCount <B>downto</B> 1 <B>do</B>
+  <B>begin</B>
+    Animate1.Seek (I);
+    <FONT COLOR="#000080"><I>// wait 30 milliseconds</I></FONT>
+    Init := Now;
+    <B>while</B> Now &lt; Init + EncodeTime (0, 0, 0, 30) <B>do</B>
+      Application.ProcessMessages;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TForm1.Animate1Open(Sender: TObject);
+<B>begin</B>
+  LblFrames.Caption := <I>'Frames '</I> +
+    IntToStr (Animate1.FrameCount);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=ANIMF.DFM><H3>ANIMF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 128
+  Top = 152
+  Width = 459
+  Height = 359
+  Caption = <I>'AnimCtrl Demo'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Animate1: TAnimate
+    Left = 129
+    Top = 101
+    Width = 322
+    Height = 231
+    Active = False
+    AutoSize = False
+    Align = alClient
+    CommonAVI = aviFindFolder
+    StopFrame = 29
+    OnOpen = Animate1Open
+  <B>end</B>
+  <B>object</B> Panel1: TPanel
+    Left = 0
+    Top = 0
+    Width = 451
+    Height = 101
+    Align = alTop
+    TabOrder = 1
+    <B>object</B> Bevel2: TBevel
+      Left = 320
+      Top = 8
+      Width = 121
+      Height = 87
+    <B>end</B>
+    <B>object</B> Bevel1: TBevel
+      Left = 184
+      Top = 8
+      Width = 129
+      Height = 88
+    <B>end</B>
+    <B>object</B> Label1: TLabel
+      Left = 201
+      Top = 50
+      Width = 26
+      Height = 13
+      Caption = <I>'From:'</I>
+    <B>end</B>
+    <B>object</B> Label2: TLabel
+      Left = 213
+      Top = 73
+      Width = 16
+      Height = 13
+      Caption = <I>'To:'</I>
+    <B>end</B>
+    <B>object</B> LblFrames: TLabel
+      Left = 97
+      Top = 79
+      Width = 37
+      Height = 13
+      Caption = <I>'Frames:'</I>
+    <B>end</B>
+    <B>object</B> BtnStart: TButton
+      Left = 8
+      Top = 8
+      Width = 75
+      Height = 25
+      Caption = <I>'&amp;Start'</I>
+      TabOrder = 0
+      OnClick = BtnStartClick
+    <B>end</B>
+    <B>object</B> BtnStop: TButton
+      Left = 96
+      Top = 8
+      Width = 75
+      Height = 25
+      Caption = <I>'St&amp;op'</I>
+      TabOrder = 1
+      OnClick = BtnStopClick
+    <B>end</B>
+    <B>object</B> BtnOnce: TButton
+      Left = 8
+      Top = 40
+      Width = 75
+      Height = 25
+      Caption = <I>'&amp;Play Once'</I>
+      TabOrder = 2
+      OnClick = BtnOnceClick
+    <B>end</B>
+    <B>object</B> BtnTrice: TButton
+      Left = 96
+      Top = 40
+      Width = 75
+      Height = 25
+      Caption = <I>'&amp;Three Times'</I>
+      TabOrder = 3
+      OnClick = BtnTriceClick
+    <B>end</B>
+    <B>object</B> BtnFragment: TButton
+      Left = 208
+      Top = 14
+      Width = 75
+      Height = 25
+      Caption = <I>'&amp;Fragment'</I>
+      TabOrder = 4
+      OnClick = BtnFragmentClick
+    <B>end</B>
+    <B>object</B> SpinEdit1: TSpinEdit
+      Left = 232
+      Top = 45
+      Width = 65
+      Height = 22
+      MaxValue = 0
+      MinValue = 0
+      TabOrder = 5
+      Value = 3
+    <B>end</B>
+    <B>object</B> SpinEdit2: TSpinEdit
+      Left = 232
+      Top = 69
+      Width = 65
+      Height = 22
+      MaxValue = 0
+      MinValue = 0
+      TabOrder = 6
+      Value = 6
+    <B>end</B>
+    <B>object</B> BtnGoto: TButton
+      Left = 344
+      Top = 16
+      Width = 75
+      Height = 25
+      Caption = <I>'&amp;Goto Frame'</I>
+      TabOrder = 7
+      OnClick = BtnGotoClick
+    <B>end</B>
+    <B>object</B> SpinEdit3: TSpinEdit
+      Left = 344
+      Top = 56
+      Width = 73
+      Height = 22
+      MaxValue = 0
+      MinValue = 0
+      TabOrder = 8
+      Value = 0
+    <B>end</B>
+    <B>object</B> BtnReverse: TButton
+      Left = 8
+      Top = 72
+      Width = 75
+      Height = 25
+      Caption = <I>'&amp;Reverse'</I>
+      TabOrder = 9
+      OnClick = BtnReverseClick
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> ListBox1: TListBox
+    Left = 0
+    Top = 101
+    Width = 129
+    Height = 231
+    Align = alLeft
+    ItemHeight = 13
+    Items.Strings = (
+      <I>'[Use an AVI file]'</I>
+      <I>'Find Folder'</I>
+      <I>'Find File'</I>
+      <I>'Find Computer'</I>
+      <I>'Copy Files'</I>
+      <I>'Copy File'</I>
+      <I>'Recycle File'</I>
+      <I>'Empty Recycle'</I>
+      <I>'Delete File'</I>)
+    TabOrder = 2
+    OnClick = ListBox1Click
+  <B>end</B>
+  <B>object</B> OpenDialog1: TOpenDialog
+    DefaultExt = <I>'avi'</I>
+    Filter = <I>'AVI file (*.avi)|*.avi'</I>
+    Options = [ofPathMustExist, ofFileMustExist]
+    Left = 144
+    Top = 112
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

@@ -1,0 +1,151 @@
+<HTML><HEAD>
+<TITLE>Project: USEICONS.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: USEICONS.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#USEICONS.DPR> USEICONS.DPR</A>
+<LI> <A HREF=#USEICONF.PAS> USEICONF.PAS</A>
+<LI> <A HREF=#USEICONF.DFM> USEICONF.DFM</A>
+</UL>
+<HR>
+<A NAME=USEICONS.DPR><H3>USEICONS.DPR</H3></A>
+
+<PRE>
+<B>program</B> Useicons;
+
+<B>uses</B>
+  Forms,
+  UseIconF <B>in</B> <I>'UseIconF.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=USEICONF.PAS><H3>USEICONF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> UseIconF;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes, Graphics, Controls,
+  Forms, Dialogs, StdCtrls, ExtCtrls;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    Image1: TImage;
+    LoadButton: TButton;
+    Edit1: TEdit;
+    Bevel1: TBevel;
+    Label1: TLabel;
+    <B>procedure</B> LoadButtonClick(Sender: TObject);
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> FormDestroy(Sender: TObject);
+  <B>private</B>
+    HInst: THandle;
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.LoadButtonClick(Sender: TObject);
+<B>var</B>
+  HIcon: THandle;
+<B>begin</B>
+  HIcon := LoadIcon (HInst, PChar(Edit1.Text));
+  <B>if</B> HIcon = 0 <B>then</B>
+    ShowMessage (<I>'Icon not found'</I>)
+  <B>else</B>
+    Image1.Picture.Icon.Handle := HIcon;
+<B>end</B>;
+
+<B>procedure</B> TForm1.FormCreate(Sender: TObject);
+<B>begin</B>
+  HInst := LoadLibrary (<I>'Iconsdll.dll'</I>);
+  <B>if</B> HInst = 0 <B>then</B>
+  <B>begin</B>
+    LoadButton.Enabled := False;
+    ShowMessage (<I>'Icons DLL not found'</I>);
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TForm1.FormDestroy(Sender: TObject);
+<B>begin</B>
+  FreeLibrary (HInst);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=USEICONF.DFM><H3>USEICONF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 238
+  Top = 185
+  Width = 299
+  Height = 162
+  Caption = <I>'Use Icons'</I>
+  Font.Color = clBlack
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Bevel1: TBevel
+    Left = 113
+    Top = 64
+    Width = 64
+    Height = 57
+  <B>end</B>
+  <B>object</B> Image1: TImage
+    Left = 121
+    Top = 72
+    Width = 48
+    Height = 41
+  <B>end</B>
+  <B>object</B> Label1: TLabel
+    Left = 16
+    Top = 28
+    Width = 53
+    Height = 13
+    Caption = <I>'Icon name:'</I>
+  <B>end</B>
+  <B>object</B> LoadButton: TButton
+    Left = 200
+    Top = 24
+    Width = 73
+    Height = 25
+    Caption = <I>'Load'</I>
+    TabOrder = 0
+    OnClick = LoadButtonClick
+  <B>end</B>
+  <B>object</B> Edit1: TEdit
+    Left = 81
+    Top = 24
+    Width = 105
+    Height = 21
+    TabOrder = 1
+    Text = <I>'ICON_A'</I>
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

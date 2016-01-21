@@ -1,0 +1,346 @@
+<HTML><HEAD>
+<TITLE>Project: THWAIT.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: THWAIT.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#THWAIT.DPR> THWAIT.DPR</A>
+<LI> <A HREF=#MAINFORM.PAS> MAINFORM.PAS</A>
+<LI> <A HREF=#CHECKTH.PAS> CHECKTH.PAS</A>
+<LI> <A HREF=#MAINFORM.DFM> MAINFORM.DFM</A>
+</UL>
+<HR>
+<A NAME=THWAIT.DPR><H3>THWAIT.DPR</H3></A>
+
+<PRE>
+<B>program</B> ThWait;
+
+<B>uses</B>
+  Forms,
+  MainForm <B>in</B> <I>'MainForm.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>,
+  CheckTh <B>in</B> <I>'CheckTh.pas'</I>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MAINFORM.PAS><H3>MAINFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> MainForm;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls, ExtCtrls, ComCtrls, CheckTh;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    Button1: TButton;
+    Memo1: TMemo;
+    ProgressBar1: TProgressBar;
+    ProgressBar2: TProgressBar;
+    ProgressBar3: TProgressBar;
+    Button2: TButton;
+    OpenDialog1: TOpenDialog;
+    ProgressBar4: TProgressBar;
+    ProgressBar5: TProgressBar;
+    Edit1: TEdit;
+    Label1: TLabel;
+    <B>procedure</B> Button1Click(Sender: TObject);
+    <B>procedure</B> Button2Click(Sender: TObject);
+    <B>procedure</B> FormDestroy(Sender: TObject);
+    <B>procedure</B> Edit1Exit(Sender: TObject);
+  <B>private</B>
+    MainThread: TMultiFind;
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.Button1Click(Sender: TObject);
+<B>var</B>
+  I: Integer;
+<B>begin</B>
+  <B>if</B> Assigned (MainThread) <B>then</B>
+    MainThread.Free;
+  MainThread := TMultiFind.Create (True);
+  MainThread.Progresses [1] := ProgressBar1;
+  MainThread.Progresses [2] := ProgressBar2;
+  MainThread.Progresses [3] := ProgressBar3;
+  MainThread.Progresses [4] := ProgressBar4;
+  MainThread.Progresses [5] := ProgressBar5;
+  MainThread.Progresses [1].Max := 4;
+  <B>for</B> I := 2 <B>to</B> 5 <B>do</B>
+    MainThread.Progresses[I].Max := Memo1.Lines.Count;
+  <B>for</B> I := 1 <B>to</B> 5 <B>do</B>
+    MainThread.Progresses[I].Position := 0;
+
+  MainThread.LookFor := Edit1.Text;
+  MainThread.Resume;
+<B>end</B>;
+
+<B>procedure</B> TForm1.Button2Click(Sender: TObject);
+<B>begin</B>
+  <B>if</B> OpenDialog1.Execute <B>then</B>
+    Memo1.Lines.LoadFromFile (OpenDialog1.FileName);
+<B>end</B>;
+
+<B>procedure</B> TForm1.FormDestroy(Sender: TObject);
+<B>begin</B>
+  <B>if</B> Assigned (MainThread) <B>then</B>
+    MainThread.Free;
+<B>end</B>;
+
+<B>procedure</B> TForm1.Edit1Exit(Sender: TObject);
+<B>begin</B>
+  <B>if</B> Length (Edit1.Text) &lt;&gt; 4 <B>then</B>
+  <B>begin</B>
+    Edit1.SetFocus;
+    ShowMessage (<I>'The edit box requires four characters'</I>);
+  <B>end</B>;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=CHECKTH.PAS><H3>CHECKTH.PAS</H3></A>
+
+<PRE>
+<B>unit</B> CheckTh;
+
+<B>interface</B>
+
+<B>uses</B>
+  Classes, Graphics, ComCtrls;
+
+<B>type</B>
+  TFindThread = <B>class</B>(TThread)
+  <B>protected</B>
+    Progr: Integer;
+    <B>procedure</B> UpdateProgress;
+    <B>procedure</B> Execute; <B>override</B>;
+  <B>public</B>
+    Found: Integer;
+    LookFor: Char;
+    Progress: TProgressBar;
+  <B>end</B>;
+
+<B>type</B>
+  TMultiFind = <B>class</B>(TThread)
+  <B>protected</B>
+    Progr: Integer;
+    <B>procedure</B> UpdateProgress;
+    <B>procedure</B> Execute; <B>override</B>;
+    <B>procedure</B> Show;
+  <B>public</B>
+    LookFor, Output: <B>String</B>;
+    Progresses: <B>array</B> [1..5] <B>of</B> TProgressBar;
+  <B>end</B>;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{ TPainterThread }</I></FONT>
+
+<B>uses</B>
+  MainForm, Dialogs, SysUtils;
+
+<B>procedure</B> TFindThread.Execute;
+<B>var</B>
+  I, J: Integer;
+  Line: <B>string</B>;
+<B>begin</B>
+  Found := 0;
+  <B>with</B> Form1.Memo1 <B>do</B>
+    <B>for</B> I := 0 <B>to</B> Lines.Count - 1 <B>do</B>
+    <B>begin</B>
+      Line := Lines [I];
+      <B>for</B> J := 1 <B>to</B> Length (Line) <B>do</B>
+        <B>if</B> Line [J] = LookFor <B>then</B>
+          Inc (Found);
+      Progr := I + 1;
+      Synchronize (UpdateProgress);
+    <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TFindThread.UpdateProgress;
+<B>begin</B>
+  Progress.Position := Progr;
+<B>end</B>;
+
+<B>procedure</B> TMultiFind.Execute;
+<B>var</B>
+  Finders: <B>array</B> [1..4] <B>of</B> TFindThread;
+  I: Integer;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// setup the four threads</I></FONT>
+  <B>for</B> I := 1 <B>to</B> 4 <B>do</B>
+  <B>begin</B>
+    Finders[I] := TFindThread.Create (True);
+    Finders[I].LookFor := LookFor[I];
+    Finders[I].Progress := Progresses [I+1];
+    Finders[I].Resume;
+  <B>end</B>;
+
+  <FONT COLOR="#000080"><I>// wait the threads to end...</I></FONT>
+  <B>for</B> I := 1 <B>to</B> 4 <B>do</B>
+  <B>begin</B>
+    Finders[I].WaitFor;
+    Progr := I;
+    Synchronize (UpdateProgress);
+  <B>end</B>;
+
+  <FONT COLOR="#000080"><I>// show the result</I></FONT>
+  Output := <I>'Found: '</I>;
+  <B>for</B> I := 1 <B>to</B> 4 <B>do</B>
+    Output := Output + Format (<I>'%d %s, '</I>,
+      [Finders[I].Found, LookFor[I]]);
+  Synchronize (Show);
+
+  <FONT COLOR="#000080"><I>// delete threads</I></FONT>
+  <B>for</B> I := 1 <B>to</B> 4 <B>do</B>
+    Finders[I].Free;
+<B>end</B>;
+
+<B>procedure</B> TMultiFind.UpdateProgress;
+<B>begin</B>
+  Progresses[1].Position := Progr;
+<B>end</B>;
+
+<B>procedure</B> TMultiFind.Show;
+<B>begin</B>
+  ShowMessage (Output);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MAINFORM.DFM><H3>MAINFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 245
+  Top = 126
+  Width = 462
+  Height = 278
+  Caption = <I>'Thread WaitFor'</I>
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OnDestroy = FormDestroy
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Label1: TLabel
+    Left = 281
+    Top = 12
+    Width = 23
+    Height = 13
+    Caption = <I>'Find:'</I>
+  <B>end</B>
+  <B>object</B> Button1: TButton
+    Left = 360
+    Top = 40
+    Width = 67
+    Height = 25
+    Caption = <I>'Start'</I>
+    TabOrder = 0
+    OnClick = Button1Click
+  <B>end</B>
+  <B>object</B> Memo1: TMemo
+    Left = 8
+    Top = 8
+    Width = 241
+    Height = 233
+    Lines.Strings = (
+      <I>'Sample text: '</I>
+      <I>'load a text file for a more '</I>
+      <I>'complete test'</I>)
+    TabOrder = 1
+  <B>end</B>
+  <B>object</B> ProgressBar1: TProgressBar
+    Left = 280
+    Top = 72
+    Width = 150
+    Height = 13
+    Min = 0
+    Max = 3
+    TabOrder = 2
+  <B>end</B>
+  <B>object</B> ProgressBar2: TProgressBar
+    Left = 280
+    Top = 96
+    Width = 150
+    Height = 13
+    Min = 0
+    Max = 3
+    TabOrder = 3
+  <B>end</B>
+  <B>object</B> ProgressBar3: TProgressBar
+    Left = 280
+    Top = 120
+    Width = 150
+    Height = 13
+    Min = 0
+    Max = 3
+    TabOrder = 4
+  <B>end</B>
+  <B>object</B> Button2: TButton
+    Left = 280
+    Top = 40
+    Width = 65
+    Height = 25
+    Caption = <I>'Load...'</I>
+    TabOrder = 5
+    OnClick = Button2Click
+  <B>end</B>
+  <B>object</B> ProgressBar4: TProgressBar
+    Left = 280
+    Top = 144
+    Width = 150
+    Height = 13
+    Min = 0
+    Max = 100
+    TabOrder = 6
+  <B>end</B>
+  <B>object</B> ProgressBar5: TProgressBar
+    Left = 280
+    Top = 168
+    Width = 150
+    Height = 13
+    Min = 0
+    Max = 100
+    TabOrder = 7
+  <B>end</B>
+  <B>object</B> Edit1: TEdit
+    Left = 312
+    Top = 8
+    Width = 65
+    Height = 21
+    MaxLength = 4
+    TabOrder = 8
+    Text = <I>'Marc'</I>
+    OnExit = Edit1Exit
+  <B>end</B>
+  <B>object</B> OpenDialog1: TOpenDialog
+    FileEditStyle = fsEdit
+    Filter = <I>'Text file (*.txt)|*.txt|Any file (*.*)|*.*'</I>
+    Left = 272
+    Top = 208
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

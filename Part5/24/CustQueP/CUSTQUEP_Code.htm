@@ -1,0 +1,275 @@
+<HTML><HEAD>
+<TITLE>Project: CUSTQUEP.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: CUSTQUEP.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#CUSTQUEP.DPR> CUSTQUEP.DPR</A>
+<LI> <A HREF=#CUSTWEBM.PAS> CUSTWEBM.PAS</A>
+<LI> <A HREF=#CUSTWEBM.DFM> CUSTWEBM.DFM</A>
+</UL>
+<HR>
+<A NAME=CUSTQUEP.DPR><H3>CUSTQUEP.DPR</H3></A>
+
+<PRE>
+<B>library</B> CustQueP;
+
+<B>uses</B>
+  HTTPApp,
+  ISAPIApp,
+  CustWebM <B>in</B> <I>'CustWebM.pas'</I> <FONT COLOR="#000080"><I>{WebModule1: TWebModule}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>exports</B>
+  GetExtensionVersion,
+  HttpExtensionProc,
+  TerminateExtension;
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TWebModule1, WebModule1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=CUSTWEBM.PAS><H3>CUSTWEBM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> CustWebM;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, HTTPApp, Db, DBTables, DBWeb;
+
+<B>type</B>
+  TWebModule1 = <B>class</B>(TWebModule)
+    QueryTableProducer1: TQueryTableProducer;
+    Query1: TQuery;
+    Query1Company: TStringField;
+    Query1State: TStringField;
+    Query1Country: TStringField;
+    PageProducer1: TPageProducer;
+    Query2: TQuery;
+    <B>procedure</B> SearchAction(Sender: TObject;
+      Request: TWebRequest; Response: TWebResponse; <B>var</B> Handled: Boolean);
+    <B>procedure</B> FormAction(Sender: TObject;
+      Request: TWebRequest; Response: TWebResponse; <B>var</B> Handled: Boolean);
+    <B>procedure</B> PageProducer1HTMLTag(Sender: TObject; Tag: TTag;
+      <B>const</B> TagString: <B>String</B>; TagParams: TStrings;
+      <B>var</B> ReplaceText: <B>String</B>);
+    <B>procedure</B> RecordAction(Sender: TObject;
+      Request: TWebRequest; Response: TWebResponse; <B>var</B> Handled: Boolean);
+    <B>procedure</B> QueryTableProducer1FormatCell(Sender: TObject; CellRow,
+      CellColumn: Integer; <B>var</B> BgColor: THTMLBgColor;
+      <B>var</B> Align: THTMLAlign; <B>var</B> VAlign: THTMLVAlign; <B>var</B> CustomAttrs,
+      CellData: <B>String</B>);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  WebModule1: TWebModule1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TWebModule1.SearchAction(Sender: TObject;
+  Request: TWebRequest; Response: TWebResponse; <B>var</B> Handled: Boolean);
+<B>begin</B>
+  Response.Content := QueryTableProducer1.Content;
+<B>end</B>;
+
+<B>procedure</B> TWebModule1.FormAction(Sender: TObject;
+  Request: TWebRequest; Response: TWebResponse; <B>var</B> Handled: Boolean);
+<B>begin</B>
+  Response.Content := PageProducer1.Content;
+<B>end</B>;
+
+<B>procedure</B> TWebModule1.PageProducer1HTMLTag(Sender: TObject; Tag: TTag;
+  <B>const</B> TagString: <B>String</B>; TagParams: TStrings; <B>var</B> ReplaceText: <B>String</B>);
+<B>begin</B>
+  ReplaceText := <I>''</I>;
+  Query2.SQL.Clear;
+  Query2.SQL.Add (<I>'select distinct '</I> +
+    TagString + <I>' from customer'</I>);
+  <B>try</B>
+    Query2.Open;
+    <B>try</B>
+      Query2.First;
+      <B>while</B> <B>not</B> Query2.EOF <B>do</B>
+      <B>begin</B>
+        ReplaceText := ReplaceText +
+          <I>'&lt;option&gt;'</I> + Query2.Fields[0].AsString +
+          <I>'&lt;/option&gt;'#13</I>;
+        Query2.Next;
+      <B>end</B>;
+    <B>finally</B>
+      Query2.Close;
+    <B>end</B>;
+  <B>except</B>
+    ReplaceText := <I>'{wrong field: '</I> + TagString + <I>'}'</I>;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TWebModule1.RecordAction(Sender: TObject;
+  Request: TWebRequest; Response: TWebResponse; <B>var</B> Handled: Boolean);
+<B>var</B>
+  I: Integer;
+<B>begin</B>
+  <B>if</B> Request.QueryFields.Count = 0 <B>then</B>
+    Response.Content := <I>'Record not found'</I>
+  <B>else</B>
+  <B>begin</B>
+    Query2.SQL.Clear;
+    Query2.SQL.Add (<I>'select * from customer '</I> +
+      <I>'where Company=&quot;'</I> + Request.QueryFields[0] + <I>'&quot;'</I>);
+    Query2.Open;
+    Response.Content :=
+      <I>'&lt;HTML&gt;&lt;HEAD&gt;&lt;TITLE&gt;Customer Record&lt;/TITLE&gt;&lt;/HEAD&gt;&lt;BODY&gt;'#13</I> +
+      <I>'&lt;H1&gt;Customer Record: '</I> + Request.QueryFields[0] +
+      <I>'&lt;/H1&gt;'#13</I> +
+      <I>'&lt;table border&gt;'#13</I>;
+    <B>for</B> I := 1 <B>to</B> Query2.FieldCount - 1 <B>do</B>
+      Response.Content := Response.Content +
+        <I>'&lt;tr&gt;&lt;td&gt;'</I> + Query2.Fields [I].FieldName +
+        <I>'&lt;/td&gt;'#13'&lt;td&gt;'</I>   + Query2.Fields [I].AsString +
+        <I>'&lt;/td&gt;&lt;/tr&gt;'#13</I>;
+    Response.Content := Response.Content +
+      <I>'&lt;/table&gt;&lt;hr&gt;'#13</I> +
+      <FONT COLOR="#000080"><I>// pointer to the query form</I></FONT>
+      <I>'&lt;a HREF=&quot;'</I> + Request.ScriptName + <I>'/form&quot;&gt;'</I> +
+      <I>' Next Query &lt;/a&gt;'#13</I> +
+      <I>'&lt;/BODY&gt;&lt;/HTML&gt;'#13</I>;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TWebModule1.QueryTableProducer1FormatCell(Sender: TObject;
+  CellRow, CellColumn: Integer; <B>var</B> BgColor: THTMLBgColor;
+  <B>var</B> Align: THTMLAlign; <B>var</B> VAlign: THTMLVAlign; <B>var</B> CustomAttrs,
+  CellData: <B>String</B>);
+<B>begin</B>
+  <B>if</B> (CellColumn = 0) <B>and</B> (CellRow &lt;&gt; 0) <B>then</B>
+    CellData := <I>'&lt;a HREF=&quot;'</I> + Request.ScriptName +
+      <I>'/record?'</I> + CellData + <I>'&quot;&gt;'</I> + CellData + <I>'&lt;/a&gt;'#13</I>;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=CUSTWEBM.DFM><H3>CUSTWEBM.DFM</H3></A>
+
+<PRE>
+<B>object</B> WebModule1: TWebModule1
+  OldCreateOrder = True
+  Actions = &lt;
+    <B>item</B>
+      Name = <I>'ActionSearch'</I>
+      PathInfo = <I>'/search'</I>
+      OnAction = SearchAction
+    <B>end</B>
+    <B>item</B>
+      Default = True
+      Name = <I>'ActionForm'</I>
+      PathInfo = <I>'/form'</I>
+      OnAction = FormAction
+    <B>end</B>
+    <B>item</B>
+      Name = <I>'ActionRecord'</I>
+      PathInfo = <I>'/record'</I>
+      OnAction = RecordAction
+    <B>end</B>&gt;
+  Left = 245
+  Top = 172
+  Height = 150
+  Width = 215
+  <B>object</B> QueryTableProducer1: TQueryTableProducer
+    Caption = <I>'&lt;b&gt;Customers&lt;/b&gt;'</I>
+    Columns = &lt;
+      <B>item</B>
+        FieldName = <I>'Company'</I>
+      <B>end</B>
+      <B>item</B>
+        FieldName = <I>'State'</I>
+      <B>end</B>
+      <B>item</B>
+        FieldName = <I>'Country'</I>
+      <B>end</B>&gt;
+    Query = Query1
+    TableAttributes.Border = 1
+    TableAttributes.CellSpacing = 3
+    OnFormatCell = QueryTableProducer1FormatCell
+    Left = 48
+    Top = 16
+  <B>end</B>
+  <B>object</B> Query1: TQuery
+    DatabaseName = <I>'DBDEMOS'</I>
+    SQL.Strings = (
+      <I>'SELECT Company, State,  Country'</I>
+      <I>'FROM CUSTOMER.DB'</I>
+      <I>'WHERE '</I>
+      <I>'  State = :State OR Country = :Country'</I>)
+    Left = 120
+    Top = 16
+    ParamData = &lt;
+      <B>item</B>
+        DataType = ftString
+        Name = <I>'State'</I>
+        ParamType = ptUnknown
+      <B>end</B>
+      <B>item</B>
+        DataType = ftString
+        Name = <I>'Country'</I>
+        ParamType = ptUnknown
+        Value = <I>'US'</I>
+      <B>end</B>&gt;
+    <B>object</B> Query1Company: TStringField
+      FieldName = <I>'Company'</I>
+      Size = 30
+    <B>end</B>
+    <B>object</B> Query1State: TStringField
+      FieldName = <I>'State'</I>
+    <B>end</B>
+    <B>object</B> Query1Country: TStringField
+      FieldName = <I>'Country'</I>
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> PageProducer1: TPageProducer
+    HTMLDoc.Strings = (
+      <I>'&lt;h4&gt;Customer QueryProducer Search Form&lt;/h4&gt;'</I>
+      <I>'&lt;form action=&quot;/cgi-bin/CustQueP.dll/search&quot; method=&quot;POST&quot;&gt;'</I>
+      <I>'&lt;table&gt;'</I>
+      <I>'&lt;tr&gt;&lt;td&gt;State:&lt;/td&gt;&lt;td&gt;&lt;select name=&quot;State&quot;&gt;'</I>
+      <I>'&lt;#State&gt;'</I>
+      <I>'&lt;/select&gt;'</I>
+      <I>'&lt;/td&gt;&lt;/tr&gt;'</I>
+      <I>'&lt;tr&gt;&lt;td&gt;Country:&lt;/td&gt;&lt;td&gt;&lt;select name=&quot;Country&quot;&gt;'</I>
+      <I>'&lt;option&gt; &lt;/option&gt;'</I>
+      <I>'&lt;#Country&gt;'</I>
+      <I>'&lt;/select&gt;'</I>
+      <I>'&lt;/td&gt;&lt;/tr&gt;'</I>
+
+              <I>'&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;center&gt;&lt;input type=&quot;Submit&quot;&gt;&lt;/center&gt;&lt;/td&gt;&lt;/tr'</I> +
+        <I>'&gt;'</I>
+      <I>'&lt;/form&gt;'</I>)
+    OnHTMLTag = PageProducer1HTMLTag
+    Left = 48
+    Top = 64
+  <B>end</B>
+  <B>object</B> Query2: TQuery
+    DatabaseName = <I>'DBDEMOS'</I>
+    Left = 120
+    Top = 64
+    ParamData = &lt;&gt;
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

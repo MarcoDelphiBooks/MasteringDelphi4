@@ -1,0 +1,251 @@
+<HTML><HEAD>
+<TITLE>Project: CALLFRST.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: CALLFRST.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#CALLFRST.DPR> CALLFRST.DPR</A>
+<LI> <A HREF=#CALLFORM.PAS> CALLFORM.PAS</A>
+<LI> <A HREF=#CALLFORM.DFM> CALLFORM.DFM</A>
+</UL>
+<HR>
+<A NAME=CALLFRST.DPR><H3>CALLFRST.DPR</H3></A>
+
+<PRE>
+<B>program</B> Callfrst;
+
+<B>uses</B>
+  ShareMem,
+  Forms,
+  CallForm <B>in</B> <I>'CallForm.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=CALLFORM.PAS><H3>CALLFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> CallForm;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes, Graphics, Controls,
+  Forms, Dialogs, StdCtrls, Spin, ExtCtrls;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    BtnDouble: TButton;
+    SpinEdit1: TSpinEdit;
+    Label1: TLabel;
+    BtnTriple: TButton;
+    Label2: TLabel;
+    SpinEdit2: TSpinEdit;
+    BtnDoubleString: TButton;
+    BtnDoublePChar: TButton;
+    EditSource: TEdit;
+    EditDouble: TEdit;
+    Label3: TLabel;
+    Label4: TLabel;
+    Bevel1: TBevel;
+    Bevel2: TBevel;
+    <B>procedure</B> BtnDoubleClick(Sender: TObject);
+    <B>procedure</B> BtnTripleClick(Sender: TObject);
+    <B>procedure</B> BtnDoubleStringClick(Sender: TObject);
+    <B>procedure</B> BtnDoublePCharClick(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<FONT COLOR="#000080"><I>{functions of the Delphi DLL}</I></FONT>
+<B>function</B> Double (N: Integer): Integer;
+  <B>stdcall</B>; <B>external</B> <I>'FIRSTDLL.DLL'</I>;
+<B>function</B> Triple (N: Integer): Integer;
+  <B>stdcall</B>; <B>external</B> <I>'FIRSTDLL.DLL'</I>;
+<B>function</B> DoubleString (S: <B>string</B>; Separator: Char): <B>string</B>;
+  <B>stdcall</B>; <B>external</B> <I>'FIRSTDLL.DLL'</I>;
+<B>function</B> DoublePChar (BufferIn, BufferOut: PChar;
+  BufferOutLen: Integer; Separator: Char): LongBool;
+  <B>stdcall</B>; <B>external</B> <I>'FIRSTDLL.DLL'</I>;
+
+<B>procedure</B> TForm1.BtnDoubleClick(Sender: TObject);
+<B>begin</B>
+  SpinEdit1.Value := Double (SpinEdit1.Value);
+<B>end</B>;
+
+<B>procedure</B> TForm1.BtnTripleClick(Sender: TObject);
+<B>begin</B>
+  SpinEdit2.Value:= Triple (SpinEdit2.Value);
+<B>end</B>;
+
+<B>procedure</B> TForm1.BtnDoubleStringClick(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// call the DLL function directly</I></FONT>
+  EditDouble.Text :=
+    DoubleString (EditSource.Text, <I>';'</I>);
+<B>end</B>;
+
+<B>procedure</B> TForm1.BtnDoublePCharClick(Sender: TObject);
+<B>var</B>
+  Buffer: <B>string</B>;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// make the buffer large enough</I></FONT>
+  SetLength (Buffer, 1000);
+  <FONT COLOR="#000080"><I>// call the DLL function</I></FONT>
+  <B>if</B> DoublePChar (PChar (EditSource.Text), PChar (Buffer), 1000, <I>'/'</I>) <B>then</B>
+    EditDouble.Text := Buffer;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=CALLFORM.DFM><H3>CALLFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 250
+  Top = 134
+  Width = 352
+  Height = 254
+  Caption = <I>'Call Delphi DLL'</I>
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clBlack
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Bevel1: TBevel
+    Left = 8
+    Top = 120
+    Width = 321
+    Height = 97
+  <B>end</B>
+  <B>object</B> Bevel2: TBevel
+    Left = 8
+    Top = 8
+    Width = 321
+    Height = 105
+  <B>end</B>
+  <B>object</B> Label1: TLabel
+    Left = 152
+    Top = 24
+    Width = 30
+    Height = 13
+    Caption = <I>'Value:'</I>
+  <B>end</B>
+  <B>object</B> Label2: TLabel
+    Left = 152
+    Top = 72
+    Width = 30
+    Height = 13
+    Caption = <I>'Value:'</I>
+  <B>end</B>
+  <B>object</B> Label3: TLabel
+    Left = 149
+    Top = 140
+    Width = 37
+    Height = 13
+    Caption = <I>'Source:'</I>
+  <B>end</B>
+  <B>object</B> Label4: TLabel
+    Left = 152
+    Top = 184
+    Width = 37
+    Height = 13
+    Caption = <I>'Double:'</I>
+  <B>end</B>
+  <B>object</B> BtnDouble: TButton
+    Left = 32
+    Top = 16
+    Width = 89
+    Height = 33
+    Caption = <I>'Double'</I>
+    TabOrder = 0
+    OnClick = BtnDoubleClick
+  <B>end</B>
+  <B>object</B> SpinEdit1: TSpinEdit
+    Left = 192
+    Top = 19
+    Width = 81
+    Height = 22
+    MaxValue = 0
+    MinValue = 0
+    TabOrder = 1
+    Value = 10
+  <B>end</B>
+  <B>object</B> BtnTriple: TButton
+    Left = 32
+    Top = 64
+    Width = 89
+    Height = 33
+    Caption = <I>'Triple'</I>
+    TabOrder = 2
+    OnClick = BtnTripleClick
+  <B>end</B>
+  <B>object</B> SpinEdit2: TSpinEdit
+    Left = 192
+    Top = 67
+    Width = 81
+    Height = 22
+    MaxValue = 0
+    MinValue = 0
+    TabOrder = 3
+    Value = 10
+  <B>end</B>
+  <B>object</B> BtnDoubleString: TButton
+    Left = 32
+    Top = 128
+    Width = 89
+    Height = 33
+    Caption = <I>'Double String'</I>
+    TabOrder = 4
+    OnClick = BtnDoubleStringClick
+  <B>end</B>
+  <B>object</B> BtnDoublePChar: TButton
+    Left = 32
+    Top = 176
+    Width = 89
+    Height = 33
+    Caption = <I>'Double PChar'</I>
+    TabOrder = 5
+    OnClick = BtnDoublePCharClick
+  <B>end</B>
+  <B>object</B> EditSource: TEdit
+    Left = 195
+    Top = 137
+    Width = 121
+    Height = 21
+    TabOrder = 6
+    Text = <I>'Hello, world'</I>
+  <B>end</B>
+  <B>object</B> EditDouble: TEdit
+    Left = 195
+    Top = 180
+    Width = 121
+    Height = 21
+    ReadOnly = True
+    TabOrder = 7
+    Text = <I>'(result)'</I>
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

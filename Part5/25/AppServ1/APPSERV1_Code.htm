@@ -1,0 +1,266 @@
+<HTML><HEAD>
+<TITLE>Project: APPSERV1.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: APPSERV1.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#APPSERV1.DPR> APPSERV1.DPR</A>
+<LI> <A HREF=#SERVFORM.PAS> SERVFORM.PAS</A>
+<LI> <A HREF=#APPSERV1_TLB.PAS> APPSERV1_TLB.PAS</A>
+<LI> <A HREF=#FIRSTRM.PAS> FIRSTRM.PAS</A>
+<LI> <A HREF=#SERVFORM.DFM> SERVFORM.DFM</A>
+<LI> <A HREF=#FIRSTRM.DFM> FIRSTRM.DFM</A>
+</UL>
+<HR>
+<A NAME=APPSERV1.DPR><H3>APPSERV1.DPR</H3></A>
+
+<PRE>
+<B>program</B> AppServ1;
+
+<B>uses</B>
+  Forms,
+  ServForm <B>in</B> <I>'ServForm.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>,
+  AppServ1_TLB <B>in</B> <I>'AppServ1_TLB.pas'</I>,
+  FirstRM <B>in</B> <I>'FirstRM.pas'</I> <FONT COLOR="#000080"><I>{MdFirstRM: TDataModule}</I></FONT> <FONT COLOR="#000080"><I>{MdFirstRM: CoClass}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<FONT COLOR="#000080"><I>{$R *.TLB}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=SERVFORM.PAS><H3>SERVFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> ServForm;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  Db, Grids, DBGrids, StdCtrls;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    Label1: TLabel;
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<B>uses</B> FirstRM;
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=APPSERV1_TLB.PAS><H3>APPSERV1_TLB.PAS</H3></A>
+
+<PRE>
+<B>unit</B> AppServ1_TLB;
+
+<FONT COLOR="#000080"><I>// ************************************************************************ //</I></FONT>
+<FONT COLOR="#000080"><I>// WARNING                                                                  //</I></FONT>
+<FONT COLOR="#000080"><I>// -------                                                                  //</I></FONT>
+<FONT COLOR="#000080"><I>// The types declared in this file were generated from data read from a     //</I></FONT>
+<FONT COLOR="#000080"><I>// Type Library. If this type library is explicitly or indirectly (via      //</I></FONT>
+<FONT COLOR="#000080"><I>// another type library referring to this type library) re-imported, or the //</I></FONT>
+<FONT COLOR="#000080"><I>// 'Refresh' command of the Type Library Editor activated while editing the //</I></FONT>
+<FONT COLOR="#000080"><I>// Type Library, the contents of this file will be regenerated and all      //</I></FONT>
+<FONT COLOR="#000080"><I>// manual modifications will be lost.                                       //</I></FONT>
+<FONT COLOR="#000080"><I>// ************************************************************************ //</I></FONT>
+
+<FONT COLOR="#000080"><I>// PASTLWTR : $Revision:   1.11.1.63  $</I></FONT>
+<FONT COLOR="#000080"><I>// File generated on 7/14/98 3:34:47 PM from Type Library described below.</I></FONT>
+
+<FONT COLOR="#000080"><I>// ************************************************************************ //</I></FONT>
+<FONT COLOR="#000080"><I>// Type Lib: C:\md4code\Part5\25\AppServ1\AppServ1.tlb</I></FONT>
+<FONT COLOR="#000080"><I>// IID\LCID: {AE857760-2114-11D1-98D0-444553540000}\0</I></FONT>
+<FONT COLOR="#000080"><I>// Helpfile: </I></FONT>
+<FONT COLOR="#000080"><I>// HelpString: AppServ1 Library</I></FONT>
+<FONT COLOR="#000080"><I>// Version:    1.0</I></FONT>
+<FONT COLOR="#000080"><I>// ************************************************************************ //</I></FONT>
+
+<B>interface</B>
+
+<B>uses</B> Windows, ActiveX, Classes, Graphics, OleCtrls, StdVCL;
+
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+<FONT COLOR="#000080"><I>// GUIDS declared in the TypeLibrary. Following prefixes are used:      //</I></FONT>
+<FONT COLOR="#000080"><I>//   Type Libraries     : LIBID_xxxx                                    //</I></FONT>
+<FONT COLOR="#000080"><I>//   CoClasses          : CLASS_xxxx                                    //</I></FONT>
+<FONT COLOR="#000080"><I>//   DISPInterfaces     : DIID_xxxx                                     //</I></FONT>
+<FONT COLOR="#000080"><I>//   Non-DISP interfaces: IID_xxxx                                      //</I></FONT>
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+<B>const</B>
+  LIBID_AppServ1: TGUID = <I>'{AE857760-2114-11D1-98D0-444553540000}'</I>;
+  IID_IMdFirstRM: TGUID = <I>'{AE857761-2114-11D1-98D0-444553540000}'</I>;
+  CLASS_MdFirstRM: TGUID = <I>'{AE857762-2114-11D1-98D0-444553540000}'</I>;
+<B>type</B>
+
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+<FONT COLOR="#000080"><I>// Forward declaration of interfaces defined in Type Library            //</I></FONT>
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+  IMdFirstRM = <B>interface</B>;
+  IMdFirstRMDisp = <B>dispinterface</B>;
+
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+<FONT COLOR="#000080"><I>// Declaration of CoClasses defined in Type Library                     //</I></FONT>
+<FONT COLOR="#000080"><I>// (NOTE: Here we map each CoClass to its Default Interface)            //</I></FONT>
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+  MdFirstRM = IMdFirstRM;
+
+
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+<FONT COLOR="#000080"><I>// Interface: IMdFirstRM</I></FONT>
+<FONT COLOR="#000080"><I>// Flags:     (4432) Hidden Dual OleAutomation Dispatchable</I></FONT>
+<FONT COLOR="#000080"><I>// GUID:      {AE857761-2114-11D1-98D0-444553540000}</I></FONT>
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+  IMdFirstRM = <B>interface</B>(IDataBroker)
+    [<I>'{AE857761-2114-11D1-98D0-444553540000}'</I>]
+    <B>function</B> Get_Table1: IProvider; safecall;
+    <B>property</B> Table1: IProvider <B>read</B> Get_Table1;
+  <B>end</B>;
+
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+<FONT COLOR="#000080"><I>// DispIntf:  IMdFirstRMDisp</I></FONT>
+<FONT COLOR="#000080"><I>// Flags:     (4432) Hidden Dual OleAutomation Dispatchable</I></FONT>
+<FONT COLOR="#000080"><I>// GUID:      {AE857761-2114-11D1-98D0-444553540000}</I></FONT>
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+  IMdFirstRMDisp = <B>dispinterface</B>
+    [<I>'{AE857761-2114-11D1-98D0-444553540000}'</I>]
+    <B>property</B> Table1: IProvider readonly <B>dispid</B> 1;
+    <B>function</B> GetProviderNames: OleVariant; <B>dispid</B> 22929905;
+  <B>end</B>;
+
+  CoMdFirstRM = <B>class</B>
+    <B>class</B> <B>function</B> Create: IMdFirstRM;
+    <B>class</B> <B>function</B> CreateRemote(<B>const</B> MachineName: <B>string</B>): IMdFirstRM;
+  <B>end</B>;
+
+<B>implementation</B>
+
+<B>uses</B> ComObj;
+
+<B>class</B> <B>function</B> CoMdFirstRM.Create: IMdFirstRM;
+<B>begin</B>
+  Result := CreateComObject(CLASS_MdFirstRM) <B>as</B> IMdFirstRM;
+<B>end</B>;
+
+<B>class</B> <B>function</B> CoMdFirstRM.CreateRemote(<B>const</B> MachineName: <B>string</B>): IMdFirstRM;
+<B>begin</B>
+  Result := CreateRemoteComObject(MachineName, CLASS_MdFirstRM) <B>as</B> IMdFirstRM;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=FIRSTRM.PAS><H3>FIRSTRM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> FirstRM;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  ComServ, ComObj, VCLCom, StdVcl, BdeProv, DataBkr, AppServ1_TLB, Db,
+  DBTables;
+
+<B>type</B>
+  TMdFirstRM = <B>class</B>(TDataModule, IMdFirstRM)
+    Table1: TTable;
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>protected</B>
+    <B>function</B> Get_Table1: IProvider; safecall;
+  <B>end</B>;
+
+<B>var</B>
+  MdFirstRM: TMdFirstRM;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>function</B> TMdFirstRM.Get_Table1: IProvider;
+<B>begin</B>
+  Result := Table1.Provider;
+<B>end</B>;
+
+<B>initialization</B>
+  TComponentFactory.Create(ComServer, TMdFirstRM,
+    Class_MdFirstRM, ciMultiInstance);
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=SERVFORM.DFM><H3>SERVFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 194
+  Top = 108
+  Width = 323
+  Height = 93
+  Caption = <I>'AppServ1'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Label1: TLabel
+    Left = 24
+    Top = 16
+    Width = 264
+    Height = 24
+    Caption = <I>'Remote Data Module Server (1)'</I>
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -19
+    Font.Name = <I>'MS Sans Serif'</I>
+    Font.Style = []
+    ParentFont = False
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<A NAME=FIRSTRM.DFM><H3>FIRSTRM.DFM</H3></A>
+
+<PRE>
+<B>object</B> MdFirstRM: TMdFirstRM
+  OldCreateOrder = True
+  Left = 206
+  Top = 190
+  Height = 315
+  Width = 314
+  <B>object</B> Table1: TTable
+    DatabaseName = <I>'DBDEMOS'</I>
+    TableName = <I>'employee.db'</I>
+    Left = 32
+    Top = 32
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

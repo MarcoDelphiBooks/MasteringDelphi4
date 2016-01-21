@@ -1,0 +1,299 @@
+<HTML><HEAD>
+<TITLE>Project: IBEMP.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: IBEMP.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#IBEMP.DPR> IBEMP.DPR</A>
+<LI> <A HREF=#IBEMPF.PAS> IBEMPF.PAS</A>
+<LI> <A HREF=#IBEMPF.DFM> IBEMPF.DFM</A>
+</UL>
+<HR>
+<A NAME=IBEMP.DPR><H3>IBEMP.DPR</H3></A>
+
+<PRE>
+<B>program</B> IbEmp;
+
+<B>uses</B>
+  Forms,
+  IbEmpF <B>in</B> <I>'IbEmpF.pas'</I> <FONT COLOR="#000080"><I>{FormEmp}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TFormEmp, FormEmp);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=IBEMPF.PAS><H3>IBEMPF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> IbEmpF;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes, Graphics, Controls,
+  StdCtrls, Forms, DBCtrls, DB, DBTables, Mask, ExtCtrls;
+
+<B>type</B>
+  TFormEmp = <B>class</B>(TForm)
+    ScrollBox: TScrollBox;
+    Label1: TLabel;
+    EditEMPNO: TDBEdit;
+    Label2: TLabel;
+    EditLASTNAME: TDBEdit;
+    Label3: TLabel;
+    EditFIRSTNAME: TDBEdit;
+    Label4: TLabel;
+    EditPHONEEXT: TDBEdit;
+    Label5: TLabel;
+    EditHIREDATE: TDBEdit;
+    Label6: TLabel;
+    EditSALARY: TDBEdit;
+    DBNavigator: TDBNavigator;
+    Panel1: TPanel;
+    DataSource1: TDataSource;
+    Panel2: TPanel;
+    Query1: TQuery;
+    Query1EMPNO: TIntegerField;
+    Query1FIRSTNAME: TStringField;
+    Query1LASTNAME: TStringField;
+    Query1PHONEEXT: TStringField;
+    Query1HIREDATE: TDateTimeField;
+    Query1SALARY: TFloatField;
+    <B>procedure</B> FormCreate(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  FormEmp: TFormEmp;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TFormEmp.FormCreate(Sender: TObject);
+<B>begin</B>
+  Query1.Open;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=IBEMPF.DFM><H3>IBEMPF.DFM</H3></A>
+
+<PRE>
+<B>object</B> FormEmp: TFormEmp
+  Left = 213
+  Top = 174
+  Width = 288
+  Height = 218
+  ActiveControl = Panel1
+  Caption = <I>'InterBase Employee'</I>
+  ParentFont = True
+  Position = poScreenCenter
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Panel1: TPanel
+    Left = 0
+    Top = 0
+    Width = 280
+    Height = 41
+    Align = alTop
+    TabOrder = 0
+    <B>object</B> DBNavigator: TDBNavigator
+      Left = 8
+      Top = 8
+      Width = 240
+      Height = 25
+      DataSource = DataSource1
+      Flat = True
+      Ctl3D = False
+      ParentCtl3D = False
+      TabOrder = 0
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> Panel2: TPanel
+    Left = 0
+    Top = 41
+    Width = 280
+    Height = 150
+    Align = alClient
+    BevelInner = bvLowered
+    BorderWidth = 4
+    Caption = <I>'Panel2'</I>
+    TabOrder = 1
+    <B>object</B> ScrollBox: TScrollBox
+      Left = 6
+      Top = 6
+      Width = 268
+      Height = 138
+      HorzScrollBar.Margin = 6
+      HorzScrollBar.Range = 132
+      VertScrollBar.Margin = 6
+      VertScrollBar.Range = 236
+      Align = alClient
+      AutoScroll = False
+      BorderStyle = bsNone
+      TabOrder = 0
+      <B>object</B> Label1: TLabel
+        Left = 174
+        Top = 4
+        Width = 39
+        Height = 13
+        Caption = <I>'EMPNO'</I>
+        FocusControl = EditEMPNO
+      <B>end</B>
+      <B>object</B> Label2: TLabel
+        Left = 6
+        Top = 4
+        Width = 58
+        Height = 13
+        Caption = <I>'LASTNAME'</I>
+        FocusControl = EditLASTNAME
+      <B>end</B>
+      <B>object</B> Label3: TLabel
+        Left = 6
+        Top = 42
+        Width = 62
+        Height = 13
+        Caption = <I>'FIRSTNAME'</I>
+        FocusControl = EditFIRSTNAME
+      <B>end</B>
+      <B>object</B> Label4: TLabel
+        Left = 174
+        Top = 42
+        Width = 59
+        Height = 13
+        Caption = <I>'PHONEEXT'</I>
+        FocusControl = EditPHONEEXT
+      <B>end</B>
+      <B>object</B> Label5: TLabel
+        Left = 6
+        Top = 86
+        Width = 55
+        Height = 13
+        Caption = <I>'HIREDATE'</I>
+        FocusControl = EditHIREDATE
+      <B>end</B>
+      <B>object</B> Label6: TLabel
+        Left = 174
+        Top = 86
+        Width = 42
+        Height = 13
+        Caption = <I>'SALARY'</I>
+        FocusControl = EditSALARY
+      <B>end</B>
+      <B>object</B> EditEMPNO: TDBEdit
+        Left = 174
+        Top = 19
+        Width = 55
+        Height = 21
+        DataField = <I>'EMPNO'</I>
+        DataSource = DataSource1
+        TabOrder = 0
+      <B>end</B>
+      <B>object</B> EditLASTNAME: TDBEdit
+        Left = 6
+        Top = 19
+        Width = 115
+        Height = 21
+        DataField = <I>'LASTNAME'</I>
+        DataSource = DataSource1
+        TabOrder = 1
+      <B>end</B>
+      <B>object</B> EditFIRSTNAME: TDBEdit
+        Left = 6
+        Top = 57
+        Width = 90
+        Height = 21
+        DataField = <I>'FIRSTNAME'</I>
+        DataSource = DataSource1
+        TabOrder = 2
+      <B>end</B>
+      <B>object</B> EditPHONEEXT: TDBEdit
+        Left = 174
+        Top = 57
+        Width = 35
+        Height = 21
+        DataField = <I>'PHONEEXT'</I>
+        DataSource = DataSource1
+        TabOrder = 3
+      <B>end</B>
+      <B>object</B> EditHIREDATE: TDBEdit
+        Left = 6
+        Top = 101
+        Width = 120
+        Height = 21
+        DataField = <I>'HIREDATE'</I>
+        DataSource = DataSource1
+        TabOrder = 4
+      <B>end</B>
+      <B>object</B> EditSALARY: TDBEdit
+        Left = 174
+        Top = 101
+        Width = 65
+        Height = 21
+        DataField = <I>'SALARY'</I>
+        DataSource = DataSource1
+        TabOrder = 5
+      <B>end</B>
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> Query1: TQuery
+    DatabaseName = <I>'IBLOCAL'</I>
+    RequestLive = True
+    SQL.Strings = (
+      <I>'SELECT EMPLOYEE.EMPNO , EMPLOYEE.FIRSTNAME , '</I>
+      <I>' EMPLOYEE.LASTNAME , '</I>
+      <I>' EMPLOYEE.PHONEEXT , '</I>
+      <I>' EMPLOYEE.HIREDATE , EMPLOYEE.SALARY'</I>
+      <I>'FROM EMPLOYEE EMPLOYEE'</I>)
+    Left = 147
+    Top = 69
+    <B>object</B> Query1EMPNO: TIntegerField
+      FieldName = <I>'EMPNO'</I>
+      Origin = <I>'EMPLOYEE.EMPNO'</I>
+    <B>end</B>
+    <B>object</B> Query1FIRSTNAME: TStringField
+      FieldName = <I>'FIRSTNAME'</I>
+      Origin = <I>'EMPLOYEE.FIRSTNAME'</I>
+      Size = 15
+    <B>end</B>
+    <B>object</B> Query1LASTNAME: TStringField
+      FieldName = <I>'LASTNAME'</I>
+      Origin = <I>'EMPLOYEE.LASTNAME'</I>
+    <B>end</B>
+    <B>object</B> Query1PHONEEXT: TStringField
+      FieldName = <I>'PHONEEXT'</I>
+      Origin = <I>'EMPLOYEE.PHONEEXT'</I>
+      Size = 4
+    <B>end</B>
+    <B>object</B> Query1HIREDATE: TDateTimeField
+      FieldName = <I>'HIREDATE'</I>
+      Origin = <I>'EMPLOYEE.HIREDATE'</I>
+    <B>end</B>
+    <B>object</B> Query1SALARY: TFloatField
+      FieldName = <I>'SALARY'</I>
+      Origin = <I>'EMPLOYEE.SALARY'</I>
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> DataSource1: TDataSource
+    DataSet = Query1
+    Left = 143
+    Top = 117
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

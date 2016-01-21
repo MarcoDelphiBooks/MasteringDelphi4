@@ -1,0 +1,102 @@
+<HTML><HEAD>
+<TITLE>Project: PASCHOOK.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: PASCHOOK.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#PASCHOOK.DPR> PASCHOOK.DPR</A>
+<LI> <A HREF=#PASCH.PAS> PASCH.PAS</A>
+</UL>
+<HR>
+<A NAME=PASCHOOK.DPR><H3>PASCHOOK.DPR</H3></A>
+
+<PRE>
+<B>library</B> PasCHook;
+
+<B>uses</B>
+  ComObj,
+  ComServ,
+  PasCH <B>in</B> <I>'PasCH.pas'</I>;
+
+<B>exports</B>
+  DllGetClassObject <B>resident</B>,
+  DllCanUnloadNow <B>resident</B>,
+  DllRegisterServer <B>resident</B>,
+  DllUnregisterServer <B>resident</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=PASCH.PAS><H3>PASCH.PAS</H3></A>
+
+<PRE>
+<B>unit</B> PasCH;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, ComObj, ComServ, ShlObj, ShellAPI,
+  SysUtils;
+
+<B>const</B>
+  CLSID_PascalCopyHook: TGUID =
+    <I>'{80A06FA0-7DF2-11D0-98D0-444553540000}'</I>;
+
+<B>type</B>
+  TPasCopyHook = <B>class</B>(TComObject, ICopyHook)
+  <B>public</B>
+    <B>function</B> CopyCallback (Hwnd: THandle;
+      wFunc, wFlags: UINT; pszSrcFile: PAnsiChar;
+      dwSrcAttribs: DWORD; pszDestFile: PAnsiChar;
+      dwDestAttribs: DWORD): UINT; <B>stdcall</B>;
+  <B>end</B>;
+
+<B>implementation</B>
+
+<B>function</B> TPasCopyHook.CopyCallback (Hwnd: THandle;
+  wFunc, wFlags: UINT; pszSrcFile: PAnsiChar;
+  dwSrcAttribs: DWORD; pszDestFile: PAnsiChar;
+  dwDestAttribs: DWORD): UINT; <B>stdcall</B>;
+<B>var</B>
+  Msg: <B>string</B>;
+<B>begin</B>
+<FONT COLOR="#000080"><I>//  Application.Handle := Hwnd;</I></FONT>
+<FONT COLOR="#000080"><I>//  MessType := mtConfirmation;</I></FONT>
+  <B>case</B> wFunc <B>of</B>
+   FO_COPY: Msg := Format (
+     <I>'Are you sure you want to copy the %s folder to the %s destination'</I>,
+     [pszSrcFile, pszDestFile]);
+   FO_DELETE:
+   <B>begin</B>
+     Msg := Format (<I>'Caution... the folder %s is about to be deleted, unless you say no'</I>,
+       [pszSrcFile]);
+<FONT COLOR="#000080"><I>//     MessType := mtWarning;</I></FONT>
+   <B>end</B>;
+   FO_MOVE: Msg := Format (
+     <I>'Are you sure you want to move the %s folder to the %s destination'</I>,
+     [pszSrcFile, pszDestFile]);
+   FO_RENAME: Msg := Format (
+     <I>'Are you sure you want to rename the %s folder as %s'</I>,
+     [pszSrcFile, pszDestFile]);
+   <B>else</B>
+     Msg := <I>''</I>;
+  <B>end</B>;
+  <B>if</B> Msg &lt;&gt; <I>''</I> <B>then</B> <FONT COLOR="#000080"><I>// ask for confirmation</I></FONT>
+    Result := MessageBox (Hwnd, PChar(Msg),
+      <I>'PasCHook Demo'</I>, mb_YesNoCancel)
+  <B>else</B>
+    Result := idYes;
+<B>end</B>;
+
+<B>initialization</B>
+  TComObjectFactory.Create(ComServer, TPasCopyHook,
+    CLSID_PascalCopyHook, <I>''</I>,
+    <I>'CopyHook Demo from Mastering Delphi 3'</I>,
+    ciMultiInstance);
+<B>end</B>.</PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

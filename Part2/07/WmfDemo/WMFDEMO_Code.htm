@@ -1,0 +1,190 @@
+<HTML><HEAD>
+<TITLE>Project: WMFDEMO.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: WMFDEMO.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#WMFDEMO.DPR> WMFDEMO.DPR</A>
+<LI> <A HREF=#WMFFORM.PAS> WMFFORM.PAS</A>
+<LI> <A HREF=#WMFFORM.DFM> WMFFORM.DFM</A>
+</UL>
+<HR>
+<A NAME=WMFDEMO.DPR><H3>WMFDEMO.DPR</H3></A>
+
+<PRE>
+<B>program</B> WmfDemo;
+
+<B>uses</B>
+  Forms,
+  WmfForm <B>in</B> <I>'WmfForm.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=WMFFORM.PAS><H3>WMFFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> WmfForm;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls, ExtCtrls, ComCtrls;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    BtnCreate: TButton;
+    PaintBox1: TPaintBox;
+    BtnLoad: TButton;
+    PaintBox2: TPaintBox;
+    cbStretched: TCheckBox;
+    <B>procedure</B> BtnCreateClick(Sender: TObject);
+    <B>procedure</B> BtnLoadClick(Sender: TObject);
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> FormDestroy(Sender: TObject);
+  <B>private</B>
+    Wmf: TMetafile;
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.BtnCreateClick(Sender: TObject);
+<B>var</B>
+  WmfCanvas: TMetafileCanvas;
+  X, Y: Integer;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// create the virtual canvas</I></FONT>
+  WmfCanvas := TMetafileCanvas.CreateWithComment(
+    Wmf, 0, <I>'Marco'</I>, <I>'Demo metafile'</I>);
+
+  <B>try</B>
+    <FONT COLOR="#000080"><I>// clear the background</I></FONT>
+    WmfCanvas.Brush.Color := clWhite;
+    WmfCanvas.FillRect (WmfCanvas.ClipRect);
+
+    <FONT COLOR="#000080"><I>// draws 400 lines</I></FONT>
+    <B>for</B> X := 1 <B>to</B> 20 <B>do</B>
+      <B>for</B> Y := 1 <B>to</B> 20 <B>do</B>
+      <B>begin</B>
+        WmfCanvas.MoveTo (15 * (X + Random (3)), 15 * (Y + Random (3)));
+        WmfCanvas.LineTo (45 * Y, 45 * X);
+      <B>end</B>;
+  <B>finally</B>
+    <FONT COLOR="#000080"><I>// end the drawing operation</I></FONT>
+    WmfCanvas.Free;
+  <B>end</B>;
+
+  <FONT COLOR="#000080"><I>// show the current drawing and save it</I></FONT>
+  PaintBox1.Canvas.Draw (0, 0, Wmf);
+  Wmf.SaveToFile (ExtractFilePath (
+    Application.ExeName) + <I>'test.emf'</I>);
+<B>end</B>;
+
+<B>procedure</B> TForm1.BtnLoadClick(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// load the metafile</I></FONT>
+  Wmf.LoadFromFile (ExtractFilePath (
+    Application.ExeName) + <I>'test.emf'</I>);
+
+  <FONT COLOR="#000080"><I>// draw or stretch it</I></FONT>
+  <B>if</B> cbStretched.Checked <B>then</B>
+    PaintBox2.Canvas.StretchDraw (PaintBox2.Canvas.ClipRect, Wmf)
+  <B>else</B>
+    PaintBox2.Canvas.Draw (0, 0, Wmf);
+<B>end</B>;
+
+<B>procedure</B> TForm1.FormCreate(Sender: TObject);
+<B>begin</B>
+  Wmf := TMetafile.Create;
+  Wmf.Enhanced := True;
+  Randomize;
+<B>end</B>;
+
+<B>procedure</B> TForm1.FormDestroy(Sender: TObject);
+<B>begin</B>
+  Wmf.Free;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=WMFFORM.DFM><H3>WMFFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 191
+  Top = 108
+  Width = 723
+  Height = 493
+  Caption = <I>'WmfDemo'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = False
+  Position = poScreenCenter
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> PaintBox1: TPaintBox
+    Left = 8
+    Top = 40
+    Width = 345
+    Height = 417
+  <B>end</B>
+  <B>object</B> PaintBox2: TPaintBox
+    Left = 360
+    Top = 40
+    Width = 345
+    Height = 417
+  <B>end</B>
+  <B>object</B> BtnCreate: TButton
+    Left = 88
+    Top = 8
+    Width = 265
+    Height = 25
+    Caption = <I>'Create, Play, and Save'</I>
+    TabOrder = 0
+    OnClick = BtnCreateClick
+  <B>end</B>
+  <B>object</B> BtnLoad: TButton
+    Left = 360
+    Top = 8
+    Width = 233
+    Height = 25
+    Caption = <I>'Load and Play'</I>
+    TabOrder = 1
+    OnClick = BtnLoadClick
+  <B>end</B>
+  <B>object</B> cbStretched: TCheckBox
+    Left = 600
+    Top = 11
+    Width = 81
+    Height = 17
+    Caption = <I>'Streched'</I>
+    Checked = True
+    State = cbChecked
+    TabOrder = 2
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

@@ -1,0 +1,425 @@
+<HTML><HEAD>
+<TITLE>Project: FORMDLL.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: FORMDLL.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#FORMDLL.DPR> FORMDLL.DPR</A>
+<LI> <A HREF=#SCROLLF.PAS> SCROLLF.PAS</A>
+<LI> <A HREF=#SCROLLF.DFM> SCROLLF.DFM</A>
+</UL>
+<HR>
+<A NAME=FORMDLL.DPR><H3>FORMDLL.DPR</H3></A>
+
+<PRE>
+<B>library</B> FormDLL;
+
+<B>uses</B>
+<FONT COLOR="#000080"><I>//  IsNoLib in 'IsNoLib.pas',</I></FONT>
+  ScrollF <B>in</B> <I>'SCROLLF.PAS'</I> <FONT COLOR="#000080"><I>{FormScroll}</I></FONT>;
+
+<B>exports</B>
+  GetColor, ShowColor;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=SCROLLF.PAS><H3>SCROLLF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> ScrollF;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes, Graphics, Controls,
+  Forms, Dialogs, StdCtrls, ComCtrls, ExtCtrls, Buttons;
+
+<B>type</B>
+  TFormScroll = <B>class</B>(TForm)
+    ScrollBarRed: TScrollBar;
+    ScrollBarGreen: TScrollBar;
+    ScrollBarBlue: TScrollBar;
+    LabelRed: TLabel;
+    LabelGreen: TLabel;
+    LabelBlue: TLabel;
+    Shape1: TShape;
+    Shape2: TShape;
+    Shape3: TShape;
+    Label1: TLabel;
+    Label2: TLabel;
+    LabelScroll: TLabel;
+    TrackBar1: TTrackBar;
+    Panel1: TPanel;
+    sbRed: TSpeedButton;
+    sbBlue: TSpeedButton;
+    sbGreen: TSpeedButton;
+    BitBtn1: TBitBtn;
+    BitBtn2: TBitBtn;
+    spApplication: TSpeedButton;
+    <B>procedure</B> ScrollBarsScroll(Sender: TObject; ScrollCode: TScrollCode;
+      <B>var</B> ScrollPos: Integer);
+    <B>procedure</B> TrackBar1Change(Sender: TObject);
+    <B>procedure</B> FormClose(Sender: TObject; <B>var</B> Action: TCloseAction);
+    <B>procedure</B> sbRedClick(Sender: TObject);
+    <B>procedure</B> sbBlueClick(Sender: TObject);
+    <B>procedure</B> sbGreenClick(Sender: TObject);
+    <B>procedure</B> spApplicationClick(Sender: TObject);
+  <B>private</B>
+    <B>procedure</B> SetSelColor (Col: TColor);
+    <B>function</B> GetSelColor: TColor;
+  <B>public</B>
+    <B>procedure</B> ApplyClick (Sender: TObject);
+    <B>property</B> SelectedColor: TColor
+      <B>read</B> GetSelColor <B>write</B> SetSelColor;
+  <B>end</B>;
+
+<FONT COLOR="#000080"><I>// extern DLL functions declarations</I></FONT>
+<B>function</B> GetColor (Col: LongInt): LongInt; <B>stdcall</B>;
+<B>procedure</B> ShowColor (Col: LongInt); <B>stdcall</B>;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TFormScroll.ScrollBarsScroll(Sender: TObject;
+  ScrollCode: TScrollCode; <B>var</B> ScrollPos: Integer);
+<B>begin</B>
+  (Sender <B>as</B> TScrollBar).Hint := IntToStr(ScrollPos);
+
+  Shape1.Brush.Color := RGB (ScrollBarRed.Position,
+    ScrollBarGreen.Position, ScrollBarBlue.Position);
+  Shape2.Pen.Color := RGB (ScrollBarRed.Position,
+    ScrollBarGreen.Position, ScrollBarBlue.Position);
+<B>end</B>;
+
+<B>procedure</B> TFormScroll.TrackBar1Change(Sender: TObject);
+<B>begin</B>
+  LabelScroll.Caption := <I>'Scroll by '</I> + IntToStr(TrackBar1.Position);
+  ScrollBarGreen.LargeChange := TrackBar1.Position;
+  ScrollBarRed.LargeChange := TrackBar1.Position;
+  ScrollBarBlue.LargeChange := TrackBar1.Position;
+<B>end</B>;
+
+<B>procedure</B> TFormScroll.FormClose(Sender: TObject; <B>var</B> Action: TCloseAction);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// used by the modeless form</I></FONT>
+  Action := caFree;
+<B>end</B>;
+
+<B>procedure</B> TFormScroll.ApplyClick(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// access to the main form directly</I></FONT>
+  Application.MainForm.Color := SelectedColor;
+<B>end</B>;
+
+<B>procedure</B> TFormScroll.sbRedClick(Sender: TObject);
+<B>begin</B>
+  SelectedColor := clRed;
+<B>end</B>;
+
+<FONT COLOR="#000080"><I>// set and get properties</I></FONT>
+
+<B>function</B> TFormScroll.GetSelColor: TColor;
+<B>begin</B>
+  Result := RGB (ScrollBarRed.Position,
+    ScrollBarGreen.Position, ScrollBarBlue.Position);
+<B>end</B>;
+
+<B>procedure</B> TFormScroll.SetSelColor (Col: TColor);
+<B>var</B>
+  RGBCol: Integer;
+<B>begin</B>
+  RGBCol := ColorToRGB (Col);
+  ScrollBarRed.Position := GetRValue (RGBCol);
+  ScrollBarGreen.Position := GetGValue (RGBCol);
+  ScrollBarBlue.Position := GetBValue (RGBCol);
+  Shape1.Brush.Color := Col;
+  Shape2.Pen.Color := Col;
+<B>end</B>;
+
+<B>procedure</B> TFormScroll.sbBlueClick(Sender: TObject);
+<B>begin</B>
+  SelectedColor := clBlue;
+<B>end</B>;
+
+<B>procedure</B> TFormScroll.sbGreenClick(Sender: TObject);
+<B>begin</B>
+  SelectedColor := clGreen;
+<B>end</B>;
+
+<B>procedure</B> TFormScroll.spApplicationClick(Sender: TObject);
+<B>begin</B>
+  ShowMessage (<I>'Application Handle: '</I> +
+    IntToStr (Application.Handle));
+<B>end</B>;
+
+<FONT COLOR="#000080"><I>// extern DLL functions</I></FONT>
+
+<B>function</B> GetColor (Col: LongInt): LongInt; <B>stdcall</B>;
+<B>var</B>
+  FormScroll: TFormScroll;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// default value</I></FONT>
+  Result := Col;
+  <B>try</B>
+    FormScroll := TFormScroll.Create (Application);
+    <B>try</B>
+      <FONT COLOR="#000080"><I>// initialize the data</I></FONT>
+      FormScroll.SelectedColor := Col;
+      <FONT COLOR="#000080"><I>// show the form</I></FONT>
+      <B>if</B> FormScroll.ShowModal = mrOK <B>then</B>
+        Result := FormScroll.SelectedColor;
+    <B>finally</B>
+      FormScroll.Free;
+    <B>end</B>;
+  <B>except</B>
+    <B>on</B> E: Exception <B>do</B>
+      MessageDlg (<I>'Error in FormDLL: '</I> +
+        E.<B>Message</B>, mtError, [mbOK], 0);
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> ShowColor (Col: LongInt); <B>stdcall</B>;
+<B>var</B>
+  FormScroll: TFormScroll;
+<B>begin</B>
+  FormScroll := TFormScroll.Create (Application);
+  <B>try</B>
+    <FONT COLOR="#000080"><I>// initialize the data</I></FONT>
+    FormScroll.SelectedColor := Col;
+    <FONT COLOR="#000080"><I>// initialzie the buttons</I></FONT>
+    FormScroll.BitBtn1.Caption := <I>'Apply'</I>;
+    FormScroll.BitBtn1.OnClick := FormScroll.ApplyClick;
+    FormScroll.BitBtn2.Kind := bkClose;
+    <FONT COLOR="#000080"><I>// show the form</I></FONT>
+    FormScroll.Show;
+  <B>except</B>
+    <B>on</B> E: Exception <B>do</B>
+    <B>begin</B>
+      MessageDlg (<I>'Error in FormDLL: '</I> +
+        E.<B>Message</B>, mtError, [mbOK], 0);
+      FormScroll.Free;
+    <B>end</B>;
+  <B>end</B>;
+<B>end</B>;
+
+<B>initialization</B>
+  Application.CreateHandle;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=SCROLLF.DFM><H3>SCROLLF.DFM</H3></A>
+
+<PRE>
+<B>object</B> FormScroll: TFormScroll
+  Left = 215
+  Top = 130
+  ActiveControl = ScrollBarRed
+  BorderStyle = bsDialog
+  Caption = <I>'Scroll Colors'</I>
+  ClientHeight = 316
+  ClientWidth = 431
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clBlack
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  ShowHint = True
+  OnClose = FormClose
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Shape3: TShape
+    Left = 176
+    Top = 176
+    Width = 145
+    Height = 65
+  <B>end</B>
+  <B>object</B> Shape2: TShape
+    Left = 177
+    Top = 177
+    Width = 143
+    Height = 63
+    Pen.Color = clBtnFace
+    Pen.Width = 40
+  <B>end</B>
+  <B>object</B> LabelRed: TLabel
+    Left = 16
+    Top = 56
+    Width = 23
+    Height = 13
+    Caption = <I>'Red:'</I>
+  <B>end</B>
+  <B>object</B> LabelGreen: TLabel
+    Left = 16
+    Top = 88
+    Width = 32
+    Height = 13
+    Caption = <I>'Green:'</I>
+  <B>end</B>
+  <B>object</B> LabelBlue: TLabel
+    Left = 16
+    Top = 120
+    Width = 24
+    Height = 13
+    Caption = <I>'Blue:'</I>
+  <B>end</B>
+  <B>object</B> Shape1: TShape
+    Left = 16
+    Top = 176
+    Width = 145
+    Height = 65
+    Brush.Color = clBtnFace
+  <B>end</B>
+  <B>object</B> Label1: TLabel
+    Left = 176
+    Top = 152
+    Width = 52
+    Height = 13
+    Caption = <I>'Solid color:'</I>
+  <B>end</B>
+  <B>object</B> Label2: TLabel
+    Left = 16
+    Top = 152
+    Width = 69
+    Height = 13
+    Caption = <I>'Dithered color:'</I>
+  <B>end</B>
+  <B>object</B> LabelScroll: TLabel
+    Left = 16
+    Top = 269
+    Width = 55
+    Height = 13
+    Caption = <I>'Scroll by 25'</I>
+  <B>end</B>
+  <B>object</B> ScrollBarRed: TScrollBar
+    Left = 104
+    Top = 56
+    Width = 305
+    Height = 17
+    Hint = <I>'Red'</I>
+    LargeChange = 25
+    Max = 255
+    PageSize = 0
+    Position = 192
+    TabOrder = 0
+    OnScroll = ScrollBarsScroll
+  <B>end</B>
+  <B>object</B> ScrollBarGreen: TScrollBar
+    Left = 104
+    Top = 88
+    Width = 305
+    Height = 17
+    Hint = <I>'Green'</I>
+    LargeChange = 25
+    Max = 255
+    PageSize = 0
+    Position = 192
+    TabOrder = 1
+    OnScroll = ScrollBarsScroll
+  <B>end</B>
+  <B>object</B> ScrollBarBlue: TScrollBar
+    Left = 104
+    Top = 120
+    Width = 305
+    Height = 17
+    Hint = <I>'Blue'</I>
+    LargeChange = 25
+    Max = 255
+    PageSize = 0
+    Position = 192
+    TabOrder = 2
+    OnScroll = ScrollBarsScroll
+  <B>end</B>
+  <B>object</B> TrackBar1: TTrackBar
+    Left = 96
+    Top = 264
+    Width = 321
+    Height = 33
+    Ctl3D = True
+    Max = 30
+    Min = 1
+    Orientation = trHorizontal
+    ParentCtl3D = False
+    Frequency = 1
+    Position = 25
+    SelEnd = 0
+    SelStart = 0
+    TabOrder = 3
+    TabStop = False
+    ThumbLength = 20
+    TickMarks = tmBottomRight
+    TickStyle = tsAuto
+    OnChange = TrackBar1Change
+  <B>end</B>
+  <B>object</B> Panel1: TPanel
+    Left = 0
+    Top = 0
+    Width = 431
+    Height = 41
+    Align = alTop
+    TabOrder = 4
+    <B>object</B> sbRed: TSpeedButton
+      Left = 8
+      Top = 8
+      Width = 80
+      Height = 25
+      Hint = <I>'Set the color'</I>
+      Caption = <I>'Red'</I>
+      Flat = True
+      OnClick = sbRedClick
+    <B>end</B>
+    <B>object</B> sbBlue: TSpeedButton
+      Left = 96
+      Top = 8
+      Width = 80
+      Height = 25
+      Hint = <I>'Set the color'</I>
+      Caption = <I>'Blue'</I>
+      Flat = True
+      OnClick = sbBlueClick
+    <B>end</B>
+    <B>object</B> sbGreen: TSpeedButton
+      Left = 184
+      Top = 8
+      Width = 80
+      Height = 25
+      Hint = <I>'Set the color'</I>
+      Caption = <I>'Green'</I>
+      Flat = True
+      OnClick = sbGreenClick
+    <B>end</B>
+    <B>object</B> spApplication: TSpeedButton
+      Left = 272
+      Top = 8
+      Width = 80
+      Height = 25
+      Hint = <I>'Get the handle'</I>
+      Caption = <I>'Application?'</I>
+      Flat = True
+      OnClick = spApplicationClick
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> BitBtn1: TBitBtn
+    Left = 336
+    Top = 176
+    Width = 75
+    Height = 25
+    TabOrder = 5
+    Kind = bkOK
+  <B>end</B>
+  <B>object</B> BitBtn2: TBitBtn
+    Left = 336
+    Top = 216
+    Width = 75
+    Height = 25
+    TabOrder = 6
+    Kind = bkCancel
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

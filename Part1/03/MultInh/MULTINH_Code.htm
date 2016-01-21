@@ -1,0 +1,573 @@
+<HTML><HEAD>
+<TITLE>Project: MULTINH.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: MULTINH.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#MULTINH.DPR> MULTINH.DPR</A>
+<LI> <A HREF=#MULTFORM.PAS> MULTFORM.PAS</A>
+<LI> <A HREF=#MULTANIM.PAS> MULTANIM.PAS</A>
+<LI> <A HREF=#MULTFORM.DFM> MULTFORM.DFM</A>
+</UL>
+<HR>
+<A NAME=MULTINH.DPR><H3>MULTINH.DPR</H3></A>
+
+<PRE>
+<B>program</B> MultInh;
+
+<B>uses</B>
+  Forms,
+  MultForm <B>in</B> <I>'MultForm.pas'</I> <FONT COLOR="#000080"><I>{FormAnimMi}</I></FONT>,
+  MultAnim <B>in</B> <I>'MultAnim.pas'</I>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TFormAnimMi, FormAnimMi);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MULTFORM.PAS><H3>MULTFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> MultForm;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls, MultAnim;
+
+<B>type</B>
+  TFormAnimMi = <B>class</B>(TForm)
+    BtnKind: TButton;
+    BtnFly: TButton;
+    Memo1: TMemo;
+    BtnSwim: TButton;
+    BtnWalk: TButton;
+    BtnDuck: TButton;
+    BtnKindI: TButton;
+    BtnFlyI: TButton;
+    BtnSwimI: TButton;
+    BtnWalkI: TButton;
+    Label1: TLabel;
+    Label2: TLabel;
+    BtnMammalsI: TButton;
+    <B>procedure</B> BtnKindClick(Sender: TObject);
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> BtnFlyClick(Sender: TObject);
+    <B>procedure</B> BtnSwimClick(Sender: TObject);
+    <B>procedure</B> BtnWalkClick(Sender: TObject);
+    <B>procedure</B> BtnDuckClick(Sender: TObject);
+    <B>procedure</B> BtnKindIClick(Sender: TObject);
+    <B>procedure</B> BtnFlyIClick(Sender: TObject);
+    <B>procedure</B> BtnSwimIClick(Sender: TObject);
+    <B>procedure</B> BtnWalkIClick(Sender: TObject);
+    <B>procedure</B> FormDestroy(Sender: TObject);
+    <B>procedure</B> BtnMammalsIClick(Sender: TObject);
+  <B>private</B>
+    Animals: <B>array</B> [1..5] <B>of</B> TAnimal;
+    AnimIntf: <B>array</B> [1..5] <B>of</B> IAnimal;
+  <B>end</B>;
+
+<B>var</B>
+  FormAnimMi: TFormAnimMi;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TFormAnimMi.FormCreate(Sender: TObject);
+<B>var</B>
+  I: Integer;
+<B>begin</B>
+  Animals[1] := TEagle.Create;
+  Animals[2] := TPenguin.Create;
+  Animals[3] := TDuck.Create;
+  Animals[4] := TBat.Create;
+  Animals[5] := TMonkey.Create;
+
+  <B>for</B> I := 1 <B>to</B> 5 <B>do</B>
+    (Animals[I] <B>as</B> IAnimal)._AddRef;
+
+  AnimIntf[1] := TEagle.Create;
+  AnimIntf[2] := TPenguin.Create;
+  AnimIntf[3] := TDuck.Create;
+  AnimIntf[4] := TBat.Create;
+  AnimIntf[5] := TMonkey.Create;
+<B>end</B>;
+
+<B>procedure</B> TFormAnimMi.BtnKindClick(Sender: TObject);
+<B>var</B>
+  I: Integer;
+<B>begin</B>
+  Memo1.Lines.Add (<I>'Kinds:'</I>);
+  <B>for</B> I := 1 <B>to</B> 5 <B>do</B>
+    <FONT COLOR="#000080"><I>// standard polymorphic method call</I></FONT>
+    Memo1.Lines.Add (Animals[I].Kind);
+  Memo1.Lines.Add (<I>''</I>);
+<B>end</B>;
+
+<B>procedure</B> TFormAnimMi.BtnFlyClick(Sender: TObject);
+<B>var</B>
+  I: Integer;
+  Fly1: ICanFly;
+<B>begin</B>
+  Fly1 := <B>nil</B>;
+  Memo1.Lines.Add (<I>'Fly:'</I>);
+  <B>for</B> I := 1 <B>to</B> 5 <B>do</B>
+  <B>begin</B>
+    Animals[i].GetInterface (ICanFly, Fly1);
+    <B>if</B> Assigned (Fly1) <B>then</B>
+      Memo1.Lines.Add (Fly1.Fly);
+  <B>end</B>;
+  Memo1.Lines.Add (<I>''</I>);
+<B>end</B>;
+
+<B>procedure</B> TFormAnimMi.BtnSwimClick(Sender: TObject);
+<B>var</B>
+  I: Integer;
+  Swim1: ICanSwim;
+<B>begin</B>
+  Memo1.Lines.Add (<I>'Swim:'</I>);
+  <B>for</B> I := 1 <B>to</B> 5 <B>do</B>
+    <B>if</B> Animals[i].GetInterface (ICanSwim, Swim1) <B>then</B>
+      Memo1.Lines.Add (Swim1.Swim);
+  Memo1.Lines.Add (<I>''</I>);
+<B>end</B>;
+
+<B>procedure</B> TFormAnimMi.BtnWalkClick(Sender: TObject);
+<B>var</B>
+  I: Integer;
+  Walker1: ICanWalk;
+<B>begin</B>
+  Memo1.Lines.Add (<I>'Walk:'</I>);
+  <B>for</B> I := 1 <B>to</B> 5 <B>do</B>
+  <B>try</B>
+    Walker1 := Animals[i] <B>as</B> ICanWalk;
+    Memo1.Lines.Add (Walker1.Walk);
+  <B>except</B>;
+  <B>end</B>;
+  Memo1.Lines.Add (<I>''</I>);
+<B>end</B>;
+
+<B>procedure</B> TFormAnimMi.BtnDuckClick(Sender: TObject);
+<B>var</B>
+  I: Integer;
+  Duck1: TDuck;
+<B>begin</B>
+  Memo1.Lines.Add (<I>'Duck:'</I>);
+  <B>for</B> I := 1 <B>to</B> 5 <B>do</B>
+    <B>if</B> Animals[I] <B>is</B> TDuck <B>then</B>
+    <B>begin</B>
+      Duck1 := TDuck (Animals[I]);
+      Memo1.Lines.Add (Duck1.Kind);
+      Memo1.Lines.Add (Duck1.Walk);
+      Memo1.Lines.Add (Duck1.Fly);
+      Memo1.Lines.Add (Duck1.Swim);
+      Memo1.Lines.Add (Duck1.LayEggs);
+      Memo1.Lines.Add (IntToStr(Duck1.RefCount));
+    <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TFormAnimMi.BtnKindIClick(Sender: TObject);
+<B>var</B>
+  I: Integer;
+<B>begin</B>
+  Memo1.Lines.Add (<I>'Kinds:'</I>);
+  <B>for</B> I := 1 <B>to</B> 5 <B>do</B>
+    <FONT COLOR="#000080"><I>// standard polymorphic method call</I></FONT>
+    Memo1.Lines.Add (AnimIntf[I].Kind);
+  Memo1.Lines.Add (<I>''</I>);
+<B>end</B>;
+
+<B>procedure</B> TFormAnimMi.BtnFlyIClick(Sender: TObject);
+<B>var</B>
+  I: Integer;
+  Fly1: ICanFly;
+<B>begin</B>
+  Memo1.Lines.Add (<I>'Fly:'</I>);
+  <B>for</B> I := 1 <B>to</B> 5 <B>do</B>
+  <B>begin</B>
+    AnimIntf[i].QueryInterface (ICanFly, Fly1);
+    <B>if</B> Assigned (Fly1) <B>then</B>
+      Memo1.Lines.Add (Fly1.Fly);
+  <B>end</B>;
+  Memo1.Lines.Add (<I>''</I>);
+<B>end</B>;
+
+<B>procedure</B> TFormAnimMi.BtnSwimIClick(Sender: TObject);
+<B>var</B>
+  I: Integer;
+  Swim1: ICanSwim;
+<B>begin</B>
+  Memo1.Lines.Add (<I>'Swim:'</I>);
+  <B>for</B> I := 1 <B>to</B> 5 <B>do</B>
+    <B>if</B> AnimIntf[i].QueryInterface (
+        ICanSwim, Swim1) &lt;&gt; E_NoInterface <B>then</B>
+      Memo1.Lines.Add (Swim1.Swim);
+  Memo1.Lines.Add (<I>''</I>);
+
+<B>end</B>;
+
+<B>procedure</B> TFormAnimMi.BtnWalkIClick(Sender: TObject);
+<B>var</B>
+  I: Integer;
+  Walker1: ICanWalk;
+<B>begin</B>
+  Memo1.Lines.Add (<I>'Walk:'</I>);
+  <B>for</B> I := 1 <B>to</B> 5 <B>do</B>
+  <B>try</B>
+    Walker1 := AnimIntf[i] <B>as</B> ICanWalk;
+    Memo1.Lines.Add (Walker1.Walk);
+  <B>except</B>
+  <B>end</B>;
+  Memo1.Lines.Add (<I>''</I>);
+<B>end</B>;
+
+<B>procedure</B> TFormAnimMi.FormDestroy(Sender: TObject);
+<B>var</B>
+  I: Integer;
+<B>begin</B>
+  <B>for</B> I := 1 <B>to</B> 5 <B>do</B>
+    Animals[I].Free;
+<B>end</B>;
+
+<B>procedure</B> TFormAnimMi.BtnMammalsIClick(Sender: TObject);
+<B>var</B>
+  I: Integer;
+  Mam1: IMammal;
+<B>begin</B>
+  Memo1.Lines.Add (<I>'Mammals:'</I>);
+  <B>for</B> I := 1 <B>to</B> 5 <B>do</B>
+  <B>begin</B>
+    AnimIntf[i].QueryInterface (IMammal, Mam1);
+    <B>if</B> Assigned (Mam1) <B>then</B>
+      Memo1.Lines.Add (Mam1.Kind);
+  <B>end</B>;
+  Memo1.Lines.Add (<I>''</I>);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MULTANIM.PAS><H3>MULTANIM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> MultAnim;
+
+<B>interface</B>
+
+<B>type</B>
+  IAnimal = <B>interface</B>
+    [<I>'{248CC900-64CB-11D1-98D1-004845400FAA}'</I>]
+    <B>function</B> Kind: <B>string</B>;
+  <B>end</B>;
+
+  ICanFly = <B>interface</B> (IAnimal)
+    [<I>'{248CC901-64CB-11D1-98D1-004845400FAA}'</I>]
+    <B>function</B> Fly: <B>string</B>;
+  <B>end</B>;
+
+  ICanWalk = <B>interface</B> (IAnimal)
+    [<I>'{248CC902-64CB-11D1-98D1-004845400FAA}'</I>]
+    <B>function</B> Walk: <B>string</B>;
+  <B>end</B>;
+
+  ICanSwim = <B>interface</B> (IAnimal)
+    [<I>'{248CC903-64CB-11D1-98D1-004845400FAA}'</I>]
+    <B>function</B> Swim: <B>string</B>;
+  <B>end</B>;
+
+  IMammal = <B>interface</B> (IAnimal)
+    [<I>'{248CC904-64CB-11D1-98D1-004845400FAA}'</I>]
+    <B>function</B> CarryChild: <B>string</B>;
+  <B>end</B>;
+
+  IBird = <B>interface</B> (IAnimal)
+    [<I>'{248CC905-64CB-11D1-98D1-004845400FAA}'</I>]
+    <B>function</B> LayEggs: <B>string</B>;
+  <B>end</B>;
+
+  TAnimal = <B>class</B> (TInterfacedObject, IAnimal)
+    <B>function</B> Kind: <B>string</B>; <B>virtual</B>; <B>abstract</B>;
+    <B>destructor</B> Destroy; <B>override</B>;
+      <B>end</B>;
+
+  TMammal = <B>class</B> (TAnimal, IMammal)
+    <B>function</B> CarryChild: <B>string</B>; <B>virtual</B>;
+  <B>end</B>;
+
+  TBird = <B>class</B> (TAnimal, IBird)
+    <B>function</B> LayEggs: <B>string</B>; <B>virtual</B>;
+  <B>end</B>;
+
+  TEagle = <B>class</B> (TBird, ICanFly)
+    <B>function</B> Kind: <B>string</B>; <B>override</B>;
+    <B>function</B> Fly: <B>string</B>; <B>virtual</B>;
+  <B>end</B>;
+
+  TPenguin = <B>class</B> (TBird, ICanWalk, ICanSwim)
+    <B>function</B> Kind: <B>string</B>; <B>override</B>;
+    <B>function</B> Walk: <B>string</B>; <B>virtual</B>;
+    <B>function</B> Swim: <B>string</B>; <B>virtual</B>;
+  <B>end</B>;
+
+  TDuck = <B>class</B> (TBird, ICanWalk, ICanFly, ICanSwim)
+    <B>function</B> Kind: <B>string</B>; <B>override</B>;
+    <B>function</B> Walk: <B>string</B>; <B>virtual</B>;
+    <B>function</B> Fly: <B>string</B>; <B>virtual</B>;
+    <B>function</B> Swim: <B>string</B>; <B>virtual</B>;
+  <B>end</B>;
+
+  TBat = <B>class</B> (TMammal, ICanFly)
+    <B>function</B> Kind: <B>string</B>; <B>override</B>;
+    <B>function</B> Fly: <B>string</B>; <B>virtual</B>;
+  <B>end</B>;
+
+  TMonkey = <B>class</B> (TMammal, ICanWalk)
+    <B>function</B> Kind: <B>string</B>; <B>override</B>;
+    <B>function</B> Walk: <B>string</B>; <B>virtual</B>;
+  <B>end</B>;
+
+<B>implementation</B>
+
+<B>uses</B>
+  Windows;
+
+<B>destructor</B> TAnimal.Destroy;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// MessageBox (0, pChar ('Destroying ' + Kind),</I></FONT>
+  <FONT COLOR="#000080"><I>//   'Anim MI', MB_OK);</I></FONT>
+  <B>inherited</B>;
+<B>end</B>;
+
+<B>function</B> TMammal.CarryChild: <B>string</B>;
+<B>begin</B>
+  Result := <I>'Female mammals carry children for months'</I>;
+<B>end</B>;
+
+<B>function</B> TBird.LayEggs: <B>string</B>;
+<B>begin</B>
+  Result := <I>'Birds lay eggs'</I>;
+<B>end</B>;
+
+<B>function</B> TEagle.Kind: <B>string</B>;
+<B>begin</B>
+  Result := <I>'Eagle'</I>;
+<B>end</B>;
+
+<B>function</B> TEagle.Fly: <B>string</B>;
+<B>begin</B>
+  Result := <I>'Eagles fly over mountains'</I>;
+<B>end</B>;
+
+<B>function</B> TPenguin.Kind: <B>string</B>;
+<B>begin</B>
+  Result := <I>'Penguin'</I>;
+<B>end</B>;
+
+<B>function</B> TPenguin.Walk: <B>string</B>;
+<B>begin</B>
+  Result := <I>'Penguins walk on ice'</I>;
+<B>end</B>;
+
+<B>function</B> TPenguin.Swim: <B>string</B>;
+<B>begin</B>
+  Result := <I>'Penguins swim better than they walk'</I>;
+<B>end</B>;
+
+<B>function</B> TBat.Kind: <B>string</B>;
+<B>begin</B>
+  Result := <I>'Bat'</I>;
+<B>end</B>;
+
+<B>function</B> TBat.Fly: <B>string</B>;
+<B>begin</B>
+  Result := <I>'Bats fly in the night'</I>;
+<B>end</B>;
+
+<B>function</B> TDuck.Kind: <B>string</B>;
+<B>begin</B>
+  Result := <I>'Duck'</I>;
+<B>end</B>;
+
+<B>function</B> TDuck.Walk: <B>string</B>;
+<B>begin</B>
+  Result := <I>'Ducks walk in a funny way'</I>;
+<B>end</B>;
+
+<B>function</B> TDuck.Fly: <B>string</B>;
+<B>begin</B>
+  Result := <I>'Ducks fly and migrate'</I>;
+<B>end</B>;
+
+<B>function</B> TDuck.Swim: <B>string</B>;
+<B>begin</B>
+  Result := <I>'Ducks swim as well'</I>;
+<B>end</B>;
+
+<B>function</B> TMonkey.Kind: <B>string</B>;
+<B>begin</B>
+  Result := <I>'Monkey'</I>;
+<B>end</B>;
+
+<B>function</B> TMonkey.Walk: <B>string</B>;
+<B>begin</B>
+  Result := <I>'A walking monkey'</I>;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MULTFORM.DFM><H3>MULTFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> FormAnimMi: TFormAnimMi
+  Left = 194
+  Top = 116
+  Width = 596
+  Height = 305
+  Caption = <I>'Anim MI'</I>
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Label1: TLabel
+    Left = 8
+    Top = 16
+    Width = 44
+    Height = 13
+    Caption = <I>'Objects'</I>
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = <I>'MS Sans Serif'</I>
+    Font.Style = [fsBold]
+    ParentFont = False
+  <B>end</B>
+  <B>object</B> Label2: TLabel
+    Left = 440
+    Top = 16
+    Width = 58
+    Height = 13
+    Caption = <I>'Interfaces'</I>
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = <I>'MS Sans Serif'</I>
+    Font.Style = [fsBold]
+    ParentFont = False
+  <B>end</B>
+  <B>object</B> BtnKind: TButton
+    Left = 8
+    Top = 40
+    Width = 145
+    Height = 25
+    Caption = <I>'Animals kind'</I>
+    TabOrder = 0
+    OnClick = BtnKindClick
+  <B>end</B>
+  <B>object</B> BtnFly: TButton
+    Left = 8
+    Top = 72
+    Width = 145
+    Height = 25
+    Caption = <I>'Animals fly'</I>
+    TabOrder = 1
+    OnClick = BtnFlyClick
+  <B>end</B>
+  <B>object</B> Memo1: TMemo
+    Left = 160
+    Top = 16
+    Width = 265
+    Height = 249
+    ScrollBars = ssVertical
+    TabOrder = 2
+  <B>end</B>
+  <B>object</B> BtnSwim: TButton
+    Left = 8
+    Top = 104
+    Width = 145
+    Height = 25
+    Caption = <I>'Animals swim '</I>
+    TabOrder = 3
+    OnClick = BtnSwimClick
+  <B>end</B>
+  <B>object</B> BtnWalk: TButton
+    Left = 8
+    Top = 136
+    Width = 145
+    Height = 25
+    Caption = <I>'Animals walk'</I>
+    TabOrder = 4
+    OnClick = BtnWalkClick
+  <B>end</B>
+  <B>object</B> BtnDuck: TButton
+    Left = 8
+    Top = 184
+    Width = 145
+    Height = 25
+    Caption = <I>'As Duck'</I>
+    TabOrder = 5
+    OnClick = BtnDuckClick
+  <B>end</B>
+  <B>object</B> BtnKindI: TButton
+    Left = 440
+    Top = 40
+    Width = 145
+    Height = 25
+    Caption = <I>'Animals kind'</I>
+    TabOrder = 6
+    OnClick = BtnKindIClick
+  <B>end</B>
+  <B>object</B> BtnFlyI: TButton
+    Left = 440
+    Top = 72
+    Width = 145
+    Height = 25
+    Caption = <I>'Animals fly'</I>
+    TabOrder = 7
+    OnClick = BtnFlyIClick
+  <B>end</B>
+  <B>object</B> BtnSwimI: TButton
+    Left = 440
+    Top = 104
+    Width = 145
+    Height = 25
+    Caption = <I>'Animals swim '</I>
+    TabOrder = 8
+    OnClick = BtnSwimIClick
+  <B>end</B>
+  <B>object</B> BtnWalkI: TButton
+    Left = 440
+    Top = 136
+    Width = 145
+    Height = 25
+    Caption = <I>'Animals walk'</I>
+    TabOrder = 9
+    OnClick = BtnWalkIClick
+  <B>end</B>
+  <B>object</B> BtnMammalsI: TButton
+    Left = 440
+    Top = 184
+    Width = 145
+    Height = 25
+    Caption = <I>'List Mammals'</I>
+    TabOrder = 10
+    OnClick = BtnMammalsIClick
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

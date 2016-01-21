@@ -1,0 +1,698 @@
+<HTML><HEAD>
+<TITLE>Project: MDIMULTI.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: MDIMULTI.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#MDIMULTI.DPR> MDIMULTI.DPR</A>
+<LI> <A HREF=#FRAME.PAS> FRAME.PAS</A>
+<LI> <A HREF=#CHILD.PAS> CHILD.PAS</A>
+<LI> <A HREF=#CHILD2.PAS> CHILD2.PAS</A>
+<LI> <A HREF=#FRAME.DFM> FRAME.DFM</A>
+<LI> <A HREF=#CHILD.DFM> CHILD.DFM</A>
+<LI> <A HREF=#CHILD2.DFM> CHILD2.DFM</A>
+</UL>
+<HR>
+<A NAME=MDIMULTI.DPR><H3>MDIMULTI.DPR</H3></A>
+
+<PRE>
+<B>program</B> MdiMulti;
+
+<B>uses</B>
+  Forms,
+  Frame <B>in</B> <I>'FRAME.PAS'</I> <FONT COLOR="#000080"><I>{MainForm}</I></FONT>,
+  Child <B>in</B> <I>'CHILD.PAS'</I> <FONT COLOR="#000080"><I>{CircleChildForm}</I></FONT>,
+  Child2 <B>in</B> <I>'CHILD2.PAS'</I> <FONT COLOR="#000080"><I>{BounceChildForm}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TMainForm, MainForm);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=FRAME.PAS><H3>FRAME.PAS</H3></A>
+
+<PRE>
+<B>unit</B> Frame;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Classes, Graphics, Forms, Messages,
+  Controls, Child, Child2, Menus, SysUtils, Dialogs,
+  ExtCtrls, StdActns, ActnList;
+
+<B>type</B>
+  TMainForm = <B>class</B>(TForm)
+    MainMenu1: TMainMenu;
+    Window1: TMenuItem;
+    New1: TMenuItem;
+    File1: TMenuItem;
+    N1: TMenuItem;
+    Exit1: TMenuItem;
+    Cascade1: TMenuItem;
+    Tile1: TMenuItem;
+    ArrangeIcons1: TMenuItem;
+    New2: TMenuItem;
+    Tile2: TMenuItem;
+    CloseAll1: TMenuItem;
+    Count1: TMenuItem;
+    Image1: TImage;
+    ActionList1: TActionList;
+    WindowArrange1: TWindowArrange;
+    WindowCascade1: TWindowCascade;
+    WindowClose1: TWindowClose;
+    WindowMinimizeAll1: TWindowMinimizeAll;
+    WindowTileHorizontal1: TWindowTileHorizontal;
+    WindowTileVertical1: TWindowTileVertical;
+    Close1: TMenuItem;
+    MinimizeAll1: TMenuItem;
+    N2: TMenuItem;
+    <B>procedure</B> New1Click(Sender: TObject);
+    <B>procedure</B> Exit1Click(Sender: TObject);
+    <B>procedure</B> New2Click(Sender: TObject);
+    <B>procedure</B> CloseAll1Click(Sender: TObject);
+    <B>procedure</B> Count1Click(Sender: TObject);
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> FormDestroy(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+    Count: Integer;
+    OutCanvas: TCanvas;
+    OldWinProc, NewWinProc: Pointer;
+    <B>procedure</B> NewWinProcedure (<B>var</B> Msg: TMessage);
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  MainForm: TMainForm;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TMainForm.New1Click(Sender: TObject);
+<B>var</B>
+  ChildForm: TCircleChildForm;
+<B>begin</B>
+  Inc (Count);
+  ChildForm := TCircleChildForm.Create (self);
+  ChildForm.Caption := ChildForm.Caption + <I>' '</I> +
+    IntToStr (Count);
+  ChildForm.Show;
+<B>end</B>;
+
+<B>procedure</B> TMainForm.Exit1Click(Sender: TObject);
+<B>begin</B>
+  Close;
+<B>end</B>;
+
+<B>procedure</B> TMainForm.New2Click(Sender: TObject);
+<B>var</B>
+  ChildForm: TBounceChildForm;
+<B>begin</B>
+  Inc (Count);
+  ChildForm := TBounceChildForm.Create (self);
+  ChildForm.Caption := ChildForm.Caption + <I>' '</I> +
+    IntToStr (Count);
+  ChildForm.Show;
+<B>end</B>;
+
+<B>procedure</B> TMainForm.CloseAll1Click(Sender: TObject);
+<B>var</B>
+  I: Integer;
+<B>begin</B>
+  <B>for</B> I := 0 <B>to</B> MDIChildCount - 1 <B>do</B>
+    MDIChildren [I].Close;
+<B>end</B>;
+
+<B>procedure</B> TMainForm.Count1Click(Sender: TObject);
+<B>var</B>
+  NBounce, NCircle, I: Integer;
+<B>begin</B>
+  NBounce := 0;
+  NCircle := 0;
+  <B>for</B> I := 0 <B>to</B> MDIChildCount - 1 <B>do</B>
+    <B>if</B> MDIChildren [I] <B>is</B> TBounceChildForm <B>then</B>
+      Inc (NBounce)
+    <B>else</B>
+      Inc (NCircle);
+  MessageDlg (
+    Format (<I>'There are %d child forms.'#13</I> +
+      <I>'%d are Circle child windows and '</I> +
+      <I>'%d are Bouncing child windows'</I>,
+      [MDIChildCount, NCircle, NBounce]),
+    mtINformation, [mbOk], 0);
+<B>end</B>;
+
+<B>procedure</B> TMainForm.FormCreate(Sender: TObject);
+<B>begin</B>
+  NewWinProc := MakeObjectInstance (NewWinProcedure);
+  OldWinProc := Pointer (SetWindowLong (
+    ClientHandle, gwl_WndProc, Cardinal (NewWinProc)));
+  OutCanvas := TCanvas.Create;
+<B>end</B>;
+
+<B>procedure</B> TMainForm.NewWinProcedure (<B>var</B> Msg: TMessage);
+<B>var</B>
+  BmpWidth, BmpHeight: Integer;
+  I, J: Integer;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// default processing first</I></FONT>
+  Msg.Result := CallWindowProc (OldWinProc,
+    ClientHandle, Msg.Msg, Msg.wParam, Msg.lParam);
+
+  <FONT COLOR="#000080"><I>// handle background repaint</I></FONT>
+  <B>if</B> Msg.Msg = wm_EraseBkgnd <B>then</B>
+  <B>begin</B>
+    BmpWidth := MainForm.Image1.Width;
+    BmpHeight := MainForm.Image1.Height;
+    <B>if</B> (BmpWidth &lt;&gt; 0) <B>and</B> (BmpHeight &lt;&gt; 0) <B>then</B>
+    <B>begin</B>
+      OutCanvas.Handle := Msg.wParam;
+      <B>for</B> I := 0 <B>to</B> MainForm.ClientWidth <B>div</B> BmpWidth <B>do</B>
+        <B>for</B> J := 0 <B>to</B> MainForm.ClientHeight <B>div</B> BmpHeight <B>do</B>
+          OutCanvas.Draw (I * BmpWidth,
+            J * BmpHeight, MainForm.Image1.Picture.Graphic);
+    <B>end</B>;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TMainForm.FormDestroy(Sender: TObject);
+<B>begin</B>
+  OutCanvas.Free;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=CHILD.PAS><H3>CHILD.PAS</H3></A>
+
+<PRE>
+<B>unit</B> Child;
+
+<B>interface</B>
+
+<B>uses</B> Windows, Classes, Graphics, Forms, Controls, Menus,
+  Dialogs, SysUtils;
+
+<B>type</B>
+  TCircleChildForm = <B>class</B>(TForm)
+    MainMenu1: TMainMenu;
+    Circle1: TMenuItem;
+    FillColor1: TMenuItem;
+    BorderColor1: TMenuItem;
+    BorderSize1: TMenuItem;
+    N1: TMenuItem;
+    GetPosition1: TMenuItem;
+    ColorDialog1: TColorDialog;
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> FormPaint(Sender: TObject);
+    <B>procedure</B> FormMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    <B>procedure</B> FillColor1Click(Sender: TObject);
+    <B>procedure</B> BorderColor1Click(Sender: TObject);
+    <B>procedure</B> BorderSize1Click(Sender: TObject);
+    <B>procedure</B> GetPosition1Click(Sender: TObject);
+    <B>procedure</B> FormClose(Sender: TObject; <B>var</B> Action: TCloseAction);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+    XCenter, YCenter: Integer;
+    BorderSize: Integer;
+    BorderColor, FillColor: TColor;
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TCircleChildForm.FormCreate(Sender: TObject);
+<B>begin</B>
+  XCenter := - 200;
+  YCenter := - 200;
+  BorderSize := 1;
+  BorderColor := clBlack;
+  FillColor := clYellow;
+<B>end</B>;
+
+<B>procedure</B> TCircleChildForm.FormPaint(Sender: TObject);
+<B>begin</B>
+  Canvas.Pen.Width := BorderSize;
+  Canvas.Pen.Color := BorderColor;
+  Canvas.Brush.Color := FillColor;
+  Canvas.Ellipse (XCenter-30, YCenter-30, XCenter+30, YCenter+30);
+<B>end</B>;
+
+<B>procedure</B> TCircleChildForm.FormMouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+<B>begin</B>
+  XCenter := X;
+  YCenter := Y;
+  Refresh;
+<B>end</B>;
+
+<B>procedure</B> TCircleChildForm.FillColor1Click(Sender: TObject);
+<B>begin</B>
+  ColorDialog1.Color := FillColor;
+  <B>if</B> ColorDialog1.Execute <B>then</B>
+    <B>begin</B>
+      FillColor := ColorDialog1.Color;
+      Repaint;
+    <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TCircleChildForm.BorderColor1Click(Sender: TObject);
+<B>begin</B>
+  ColorDialog1.Color := BorderColor;
+  <B>if</B> ColorDialog1.Execute <B>then</B>
+    <B>begin</B>
+      BorderColor := ColorDialog1.Color;
+      Repaint;
+    <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TCircleChildForm.BorderSize1Click(Sender: TObject);
+<B>var</B>
+  InputString: <B>string</B>;
+<B>begin</B>
+  InputString := IntToStr (BorderSize);
+  <B>if</B> InputQuery (<I>'Border'</I>, <I>'Insert width'</I>, InputString) <B>then</B>
+    <B>begin</B>
+      BorderSize := StrToIntDef (InputString, BorderSize);
+      Repaint;
+    <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TCircleChildForm.GetPosition1Click(Sender: TObject);
+<B>begin</B>
+  MessageDlg (<I>'The center of the circle is in the position ('</I> +
+    IntToStr (XCenter) + <I>', '</I> + IntToStr (YCenter) + <I>').'</I>,
+    mtInformation, [mbOk], 0);
+<B>end</B>;
+
+<B>procedure</B> TCircleChildForm.FormClose(Sender: TObject;
+  <B>var</B> Action: TCloseAction);
+<B>begin</B>
+  Action := caFree;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=CHILD2.PAS><H3>CHILD2.PAS</H3></A>
+
+<PRE>
+<B>unit</B> Child2;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Classes, Graphics, Forms,
+  Controls, Menus, Dialogs, StdCtrls, ExtCtrls,
+  SysUtils;
+
+<B>type</B>
+  Directions = (up_right, down_right, down_left, up_left);
+
+  TBounceChildForm = <B>class</B>(TForm)
+    Timer1: TTimer;
+    Shape1: TShape;
+    MainMenu1: TMainMenu;
+    Square1: TMenuItem;
+    FillColor1: TMenuItem;
+    N1: TMenuItem;
+    GetPosition1: TMenuItem;
+    Movement1: TMenuItem;
+    Start1: TMenuItem;
+    Stop1: TMenuItem;
+    ColorDialog1: TColorDialog;
+    <B>procedure</B> Timer1Timer(Sender: TObject);
+    <B>procedure</B> FillColor1Click(Sender: TObject);
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> GetPosition1Click(Sender: TObject);
+    <B>procedure</B> Start1Click(Sender: TObject);
+    <B>procedure</B> Stop1Click(Sender: TObject);
+    <B>procedure</B> FormClose(Sender: TObject; <B>var</B> Action: TCloseAction);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+    Dir : Directions;
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TBounceChildForm.Timer1Timer(Sender: TObject);
+<B>begin</B>
+  <B>case</B> Dir <B>of</B>
+    up_right:
+    <B>begin</B>
+      Shape1.Left := Shape1.Left + 3;
+      Shape1.Top := Shape1.Top - 3;
+      <B>if</B> Shape1.Top &lt;= 0 <B>then</B>
+        Dir := down_right;
+      <B>if</B> Shape1.Left + Shape1.Width &gt;= ClientWidth <B>then</B>
+        Dir := up_left;
+    <B>end</B>;
+    down_right:
+    <B>begin</B>
+      Shape1.Left := Shape1.Left + 3;
+      Shape1.Top := Shape1.Top + 3;
+      <B>if</B> Shape1.Top + Shape1.Height &gt;= ClientHeight <B>then</B>
+        Dir := up_right;
+      <B>if</B> Shape1.Left + Shape1.Width &gt;= ClientWidth <B>then</B>
+        Dir := down_left;
+    <B>end</B>;
+    down_left:
+    <B>begin</B>
+      Shape1.Left := Shape1.Left - 3;
+      Shape1.Top := Shape1.Top + 3;
+      <B>if</B> Shape1.Top + Shape1.Height &gt;= ClientHeight <B>then</B>
+        Dir := up_left;
+      <B>if</B> Shape1.Left &lt;= 0 <B>then</B>
+        Dir := down_right;
+    <B>end</B>;
+    up_left:
+    <B>begin</B>
+      Shape1.Left := Shape1.Left - 3;
+      Shape1.Top := Shape1.Top - 3;
+      <B>if</B> Shape1.Top &lt;= 0 <B>then</B>
+        Dir := down_left;
+      <B>if</B> Shape1.Left &lt;= 0 <B>then</B>
+        Dir := up_right;
+    <B>end</B>;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TBounceChildForm.FillColor1Click(Sender: TObject);
+<B>begin</B>
+  <B>if</B> ColorDialog1.Execute <B>then</B>
+    Shape1.Brush.Color := ColorDialog1.Color;
+<B>end</B>;
+
+<B>procedure</B> TBounceChildForm.FormCreate(Sender: TObject);
+<B>begin</B>
+  ColorDialog1.Color := Shape1.Brush.Color;
+  Dir := down_left;
+<B>end</B>;
+
+<B>procedure</B> TBounceChildForm.GetPosition1Click(Sender: TObject);
+<B>begin</B>
+  MessageDlg (<I>'The top-left corner of the square was in the position ('</I> +
+    IntToStr (Shape1.Left) + <I>', '</I> + IntToStr (Shape1.Top) + <I>').'</I>,
+    mtInformation, [mbOk], 0);
+<B>end</B>;
+
+<B>procedure</B> TBounceChildForm.Start1Click(Sender: TObject);
+<B>begin</B>
+  Timer1.Enabled := True;
+  Start1.Enabled := False;
+  Stop1.Enabled := True;
+<B>end</B>;
+
+<B>procedure</B> TBounceChildForm.Stop1Click(Sender: TObject);
+<B>begin</B>
+  Timer1.Enabled := False;
+  Start1.Enabled := True;
+  Stop1.Enabled := False;
+<B>end</B>;
+
+<B>procedure</B> TBounceChildForm.FormClose(Sender: TObject;
+  <B>var</B> Action: TCloseAction);
+<B>begin</B>
+  Action := caFree;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=FRAME.DFM><H3>FRAME.DFM</H3></A>
+
+<PRE>
+<B>object</B> MainForm: TMainForm
+  Left = 224
+  Top = 188
+  Width = 435
+  Height = 299
+  Caption = <I>'MDI Frame'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -13
+  Font.Name = <I>'System'</I>
+  Font.Style = []
+  FormStyle = fsMDIForm
+  Menu = MainMenu1
+  OldCreateOrder = True
+  WindowMenu = Window1
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  PixelsPerInch = 96
+  TextHeight = 16
+  <B>object</B> Image1: TImage
+    Left = 16
+    Top = 56
+    Width = 153
+    Height = 139
+    AutoSize = True
+    Picture.Data = <FONT COLOR="#000080"><I>{...skipped...}</I></FONT>
+  <B>end</B>
+  <B>object</B> MainMenu1: TMainMenu
+    Left = 16
+    Top = 8
+    <B>object</B> File1: TMenuItem
+      Caption = <I>'&amp;File'</I>
+      GroupIndex = 1
+      <B>object</B> New1: TMenuItem
+        Caption = <I>'&amp;New Circle'</I>
+        OnClick = New1Click
+      <B>end</B>
+      <B>object</B> New2: TMenuItem
+        Caption = <I>'New &amp;Bouncing Square'</I>
+        OnClick = New2Click
+      <B>end</B>
+      <B>object</B> Close1: TMenuItem
+        Action = WindowClose1
+      <B>end</B>
+      <B>object</B> CloseAll1: TMenuItem
+        Caption = <I>'Clo&amp;se All'</I>
+        OnClick = CloseAll1Click
+      <B>end</B>
+      <B>object</B> N1: TMenuItem
+        Caption = <I>'-'</I>
+      <B>end</B>
+      <B>object</B> Exit1: TMenuItem
+        Caption = <I>'&amp;Exit'</I>
+        OnClick = Exit1Click
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> Window1: TMenuItem
+      Caption = <I>'&amp;Window'</I>
+      GroupIndex = 3
+      <B>object</B> Cascade1: TMenuItem
+        Action = WindowCascade1
+      <B>end</B>
+      <B>object</B> Tile1: TMenuItem
+        Action = WindowTileHorizontal1
+      <B>end</B>
+      <B>object</B> Tile2: TMenuItem
+        Action = WindowTileVertical1
+      <B>end</B>
+      <B>object</B> ArrangeIcons1: TMenuItem
+        Action = WindowArrange1
+      <B>end</B>
+      <B>object</B> MinimizeAll1: TMenuItem
+        Action = WindowMinimizeAll1
+      <B>end</B>
+      <B>object</B> N2: TMenuItem
+        Caption = <I>'-'</I>
+      <B>end</B>
+      <B>object</B> Count1: TMenuItem
+        Caption = <I>'Count'</I>
+        OnClick = Count1Click
+      <B>end</B>
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> ActionList1: TActionList
+    Left = 24
+    Top = 72
+    <B>object</B> WindowArrange1: TWindowArrange
+      Category = <I>'Window'</I>
+      Caption = <I>'Arrange Icons'</I>
+    <B>end</B>
+    <B>object</B> WindowCascade1: TWindowCascade
+      Category = <I>'Window'</I>
+      Caption = <I>'Cascade'</I>
+      ImageIndex = 17
+    <B>end</B>
+    <B>object</B> WindowClose1: TWindowClose
+      Category = <I>'Window'</I>
+      Caption = <I>'Close'</I>
+    <B>end</B>
+    <B>object</B> WindowMinimizeAll1: TWindowMinimizeAll
+      Category = <I>'Window'</I>
+      Caption = <I>'Minimize All'</I>
+    <B>end</B>
+    <B>object</B> WindowTileHorizontal1: TWindowTileHorizontal
+      Category = <I>'Window'</I>
+      Caption = <I>'Tile Horizontal'</I>
+      ImageIndex = 15
+    <B>end</B>
+    <B>object</B> WindowTileVertical1: TWindowTileVertical
+      Category = <I>'Window'</I>
+      Caption = <I>'Tile Vertical'</I>
+      ImageIndex = 16
+    <B>end</B>
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<A NAME=CHILD.DFM><H3>CHILD.DFM</H3></A>
+
+<PRE>
+<B>object</B> CircleChildForm: TCircleChildForm
+  Left = 223
+  Top = 148
+  Width = 361
+  Height = 213
+  Caption = <I>'MDI Child'</I>
+  Color = clTeal
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  FormStyle = fsMDIChild
+  Menu = MainMenu1
+  Position = poDefault
+  Visible = True
+  OnClose = FormClose
+  OnCreate = FormCreate
+  OnMouseDown = FormMouseDown
+  OnPaint = FormPaint
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> MainMenu1: TMainMenu
+    Left = 8
+    Top = 8
+    <B>object</B> Circle1: TMenuItem
+      Caption = <I>'&amp;Circle'</I>
+      GroupIndex = 2
+      <B>object</B> FillColor1: TMenuItem
+        Caption = <I>'&amp;Fill Color...'</I>
+        OnClick = FillColor1Click
+      <B>end</B>
+      <B>object</B> BorderColor1: TMenuItem
+        Caption = <I>'&amp;Border Color...'</I>
+        OnClick = BorderColor1Click
+      <B>end</B>
+      <B>object</B> BorderSize1: TMenuItem
+        Caption = <I>'Border &amp;Size...'</I>
+        OnClick = BorderSize1Click
+      <B>end</B>
+      <B>object</B> N1: TMenuItem
+        Caption = <I>'-'</I>
+      <B>end</B>
+      <B>object</B> GetPosition1: TMenuItem
+        Caption = <I>'&amp;Get Position'</I>
+        OnClick = GetPosition1Click
+      <B>end</B>
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> ColorDialog1: TColorDialog
+    Ctl3D = True
+    Left = 40
+    Top = 8
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<A NAME=CHILD2.DFM><H3>CHILD2.DFM</H3></A>
+
+<PRE>
+<B>object</B> BounceChildForm: TBounceChildForm
+  Left = 418
+  Top = 289
+  AutoScroll = False
+  Caption = <I>'Bouncing Square'</I>
+  ClientHeight = 126
+  ClientWidth = 243
+  Color = clAqua
+  Font.Color = clWindowText
+  Font.Height = -13
+  Font.Name = <I>'System'</I>
+  Font.Style = []
+  FormStyle = fsMDIChild
+  Menu = MainMenu1
+  Position = poDefault
+  Visible = True
+  OnClose = FormClose
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 16
+  <B>object</B> Shape1: TShape
+    Left = 40
+    Top = 48
+    Width = 30
+    Height = 30
+    Brush.Color = clFuchsia
+    Pen.Color = clBlue
+    Pen.Width = 2
+    Shape = stSquare
+  <B>end</B>
+  <B>object</B> Timer1: TTimer
+    Interval = 200
+    OnTimer = Timer1Timer
+    Left = 8
+    Top = 8
+  <B>end</B>
+  <B>object</B> MainMenu1: TMainMenu
+    Left = 40
+    Top = 8
+    <B>object</B> Square1: TMenuItem
+      Caption = <I>'&amp;Square'</I>
+      GroupIndex = 2
+      <B>object</B> FillColor1: TMenuItem
+        Caption = <I>'&amp;Fill Color...'</I>
+        OnClick = FillColor1Click
+      <B>end</B>
+      <B>object</B> N1: TMenuItem
+        Caption = <I>'-'</I>
+      <B>end</B>
+      <B>object</B> GetPosition1: TMenuItem
+        Caption = <I>'&amp;Get Position'</I>
+        OnClick = GetPosition1Click
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> Movement1: TMenuItem
+      Caption = <I>'&amp;Movement'</I>
+      GroupIndex = 2
+      <B>object</B> Start1: TMenuItem
+        Caption = <I>'&amp;Start'</I>
+        Enabled = False
+        OnClick = Start1Click
+      <B>end</B>
+      <B>object</B> Stop1: TMenuItem
+        Caption = <I>'S&amp;top'</I>
+        OnClick = Stop1Click
+      <B>end</B>
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> ColorDialog1: TColorDialog
+    Ctl3D = True
+    Left = 72
+    Top = 8
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

@@ -1,0 +1,77 @@
+<HTML><HEAD>
+<TITLE>Project: FIRSTDLL.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: FIRSTDLL.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#FIRSTDLL.DPR> FIRSTDLL.DPR</A>
+</UL>
+<HR>
+<A NAME=FIRSTDLL.DPR><H3>FIRSTDLL.DPR</H3></A>
+
+<PRE>
+<B>library</B> Firstdll;
+
+<FONT COLOR="#000080"><I>{changing the uses statement, as suggested in
+the comments, the size of the DLL changes}</I></FONT>
+
+<B>uses</B>
+  ShareMem, SysUtils, Dialogs; <FONT COLOR="#000080"><I>// larger code</I></FONT>
+<FONT COLOR="#000080"><I>{uses
+  Windows; // minimal}</I></FONT>
+
+<B>function</B> Triple (N: Integer): Integer; <B>stdcall</B>;
+<B>begin</B>
+  ShowMessage (<I>'Triple function called'</I>);
+<FONT COLOR="#000080"><I>{  MessageBox (0, 'Triple function called',
+    'First DLL', mb_OK);}</I></FONT>
+  Result := N * 3;
+<B>end</B>;
+
+<B>function</B> Double (N: Integer): Integer; <B>stdcall</B>;
+<B>begin</B>
+  ShowMessage (<I>'Double function called'</I>);
+<FONT COLOR="#000080"><I>{  MessageBox (0, 'Double function called',
+    'First DLL', mb_OK);}</I></FONT>
+  Result := N * 2;
+<B>end</B>;
+
+<B>function</B> DoubleString (S: <B>string</B>; Separator: Char): <B>string</B>; <B>stdcall</B>;
+<B>begin</B>
+  Result := S + Separator + S;
+<B>end</B>;
+
+<B>function</B> DoublePChar (BufferIn, BufferOut: PChar;
+  BufferOutLen: Integer; Separator: Char): LongBool; <B>stdcall</B>;
+<B>var</B>
+  SepStr: <B>array</B> [0..1] <B>of</B> Char;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// if the buffer is large enough</I></FONT>
+  <B>if</B> BufferOutLen &gt; StrLen (BufferIn) * 2 + 2 <B>then</B>
+  <B>begin</B>
+    <FONT COLOR="#000080"><I>// copy the input buffer in the output buffer</I></FONT>
+    StrCopy (BufferOut, BufferIn);
+    <FONT COLOR="#000080"><I>// build the separator string (value plus null terminator)</I></FONT>
+    SepStr [0] := Separator;
+    SepStr [1] := <I>#0</I>;
+    <FONT COLOR="#000080"><I>// append the separator</I></FONT>
+    StrCat (BufferOut, SepStr);
+    <FONT COLOR="#000080"><I>// append the input buffer once more</I></FONT>
+    StrCat (BufferOut, BufferIn);
+    Result := True;
+  <B>end</B>
+  <B>else</B>
+    <FONT COLOR="#000080"><I>// not enough space</I></FONT>
+    Result := False;
+<B>end</B>;
+
+<B>exports</B>
+  Triple, Double, DoubleString, DoublePChar;
+
+<B>end</B>.</PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

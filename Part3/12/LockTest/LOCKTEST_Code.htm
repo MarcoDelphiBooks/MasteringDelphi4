@@ -1,0 +1,251 @@
+<HTML><HEAD>
+<TITLE>Project: LOCKTEST.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: LOCKTEST.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#LOCKTEST.DPR> LOCKTEST.DPR</A>
+<LI> <A HREF=#LOCKFORM.PAS> LOCKFORM.PAS</A>
+<LI> <A HREF=#LOCKFORM.DFM> LOCKFORM.DFM</A>
+</UL>
+<HR>
+<A NAME=LOCKTEST.DPR><H3>LOCKTEST.DPR</H3></A>
+
+<PRE>
+<B>program</B> LockTest;
+
+<B>uses</B>
+  Forms,
+  LockForm <B>in</B> <I>'LockForm.pas'</I> <FONT COLOR="#000080"><I>{NavigForm}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TNavigForm, NavigForm);
+  Application.CreateForm(TNavigForm, NavigForm);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=LOCKFORM.PAS><H3>LOCKFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> LockForm;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes, Graphics, Controls,
+  Forms, Dialogs, ExtCtrls, DBCtrls, StdCtrls, Mask, DB, DBTables;
+
+<B>type</B>
+  TNavigForm = <B>class</B>(TForm)
+    DataSource1: TDataSource;
+    Table1: TTable;
+    DBEdit1: TDBEdit;
+    DBEdit2: TDBEdit;
+    Label1: TLabel;
+    Label2: TLabel;
+    DBNavigator1: TDBNavigator;
+    Label3: TLabel;
+    DBEdit3: TDBEdit;
+    Timer1: TTimer;
+    <B>procedure</B> DataSource1DataChange(Sender: TObject; Field: TField);
+    <B>procedure</B> Timer1Timer(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <B>procedure</B> TestLockStatus;
+  <B>end</B>;
+
+<B>var</B>
+  NavigForm: TNavigForm;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>uses</B>
+  BDE;
+
+<B>function</B> IsRecordLocked (Table: TTable): Boolean;
+<B>var</B>
+  Locked: BOOL;
+  hCur: hDBICur;
+    rslt: DBIResult;
+<B>begin</B>
+    Table.UpdateCursorPos;
+  <FONT COLOR="#000080"><I>// test if the record is locked by the current session</I></FONT>
+  Check (DbiIsRecordLocked (Table.Handle, Locked));
+  Result := Locked;
+  <FONT COLOR="#000080"><I>// otherwise check all sessions</I></FONT>
+  <B>if</B> (Result = False) <B>then</B>
+    <B>begin</B>
+    <FONT COLOR="#000080"><I>// get a new cursor to the same record</I></FONT>
+    Check (DbiCloneCursor (Table.Handle, False, False, hCur));
+        <B>try</B>
+      <FONT COLOR="#000080"><I>// try to place a write lock in the record</I></FONT>
+      rslt := DbiGetRecord (hCur, dbiWRITELOCK, <B>nil</B>, <B>nil</B>);
+      <FONT COLOR="#000080"><I>// don't call Check: we want to do special actions</I></FONT>
+      <FONT COLOR="#000080"><I>// instead of raising an exception</I></FONT>
+      <B>if</B> rslt &lt;&gt; DBIERR_NONE <B>then</B>
+            <B>begin</B>
+        <FONT COLOR="#000080"><I>// if a lock error occured</I></FONT>
+        <B>if</B> HiByte (rslt) = ERRCAT_LOCKCONFLICT <B>then</B>
+          Result := True
+        <B>else</B>
+          <FONT COLOR="#000080"><I>// if some other error happened</I></FONT>
+          Check (rslt); <FONT COLOR="#000080"><I>// raise the exception</I></FONT>
+      <B>end</B>
+            <B>else</B>
+        <FONT COLOR="#000080"><I>// if the function was successful, release the lock</I></FONT>
+        Check (DbiRelRecordLock (hCur, False));
+        <B>finally</B>
+      <FONT COLOR="#000080"><I>// close the cloned cursor </I></FONT>
+      Check (DbiCloseCursor (hCur));
+    <B>end</B>;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TNavigForm.TestLockStatus;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// if the table is not in edit mode</I></FONT>
+  <B>if</B> Table1.State <B>in</B> [dsEdit, dsInsert] <B>then</B>
+    Caption := <I>'LockTest - Record in edit mode'</I>
+  <B>else</B> <B>if</B> IsRecordLocked (Table1) <B>then</B>
+  <B>begin</B>
+    DbEdit1.ReadOnly := True;
+    DbEdit2.ReadOnly := True;
+    DbEdit3.ReadOnly := True;
+    Caption := <I>'LockTest - Record already locked'</I>;
+  <B>end</B>
+  <B>else</B>
+  <B>begin</B>
+    DbEdit1.ReadOnly := False;
+    DbEdit2.ReadOnly := False;
+    DbEdit3.ReadOnly := False;
+    Caption := <I>'LockTest - Record not locked'</I>;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TNavigForm.DataSource1DataChange(Sender: TObject; Field: TField);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// if the record changed</I></FONT>
+  <B>if</B> (Field = <B>nil</B>) <B>then</B>
+    TestLockStatus;
+<B>end</B>;
+
+<B>procedure</B> TNavigForm.Timer1Timer(Sender: TObject);
+<B>begin</B>
+  TestLockStatus;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=LOCKFORM.DFM><H3>LOCKFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> NavigForm: TNavigForm
+  Left = 258
+  Top = 135
+  Width = 337
+  Height = 215
+  ActiveControl = DBEdit1
+  Caption = <I>'Edit Demo'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Label1: TLabel
+    Left = 40
+    Top = 56
+    Width = 39
+    Height = 13
+    Caption = <I>'Country:'</I>
+  <B>end</B>
+  <B>object</B> Label2: TLabel
+    Left = 40
+    Top = 91
+    Width = 35
+    Height = 13
+    Caption = <I>'Capital:'</I>
+  <B>end</B>
+  <B>object</B> Label3: TLabel
+    Left = 40
+    Top = 124
+    Width = 48
+    Height = 13
+    Caption = <I>'Continent:'</I>
+  <B>end</B>
+  <B>object</B> DBEdit1: TDBEdit
+    Left = 104
+    Top = 52
+    Width = 169
+    Height = 21
+    DataField = <I>'Name'</I>
+    DataSource = DataSource1
+    MaxLength = 24
+    TabOrder = 0
+  <B>end</B>
+  <B>object</B> DBEdit2: TDBEdit
+    Left = 104
+    Top = 86
+    Width = 169
+    Height = 21
+    DataField = <I>'Capital'</I>
+    DataSource = DataSource1
+    MaxLength = 24
+    TabOrder = 1
+  <B>end</B>
+  <B>object</B> DBNavigator1: TDBNavigator
+    Left = 0
+    Top = 0
+    Width = 329
+    Height = 25
+    DataSource = DataSource1
+    VisibleButtons = [nbFirst, nbPrior, nbNext, nbLast, nbInsert, nbEdit, nbPost, nbCancel]
+    Align = alTop
+    Flat = True
+    TabOrder = 2
+  <B>end</B>
+  <B>object</B> DBEdit3: TDBEdit
+    Left = 104
+    Top = 120
+    Width = 169
+    Height = 21
+    DataField = <I>'Continent'</I>
+    DataSource = DataSource1
+    TabOrder = 3
+  <B>end</B>
+  <B>object</B> DataSource1: TDataSource
+    DataSet = Table1
+    OnDataChange = DataSource1DataChange
+    Left = 64
+    Top = 144
+  <B>end</B>
+  <B>object</B> Table1: TTable
+    Active = True
+    DatabaseName = <I>'DBDEMOS'</I>
+    TableName = <I>'COUNTRY.DB'</I>
+    Left = 16
+    Top = 144
+  <B>end</B>
+  <B>object</B> Timer1: TTimer
+    Interval = 5000
+    OnTimer = Timer1Timer
+    Left = 8
+    Top = 40
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

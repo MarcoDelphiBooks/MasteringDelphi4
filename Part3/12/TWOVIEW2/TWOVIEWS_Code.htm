@@ -1,0 +1,755 @@
+<HTML><HEAD>
+<TITLE>Project: TWOVIEWS.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: TWOVIEWS.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#TWOVIEWS.DPR> TWOVIEWS.DPR</A>
+<LI> <A HREF=#GRIDVIEW.PAS> GRIDVIEW.PAS</A>
+<LI> <A HREF=#DATAM.PAS> DATAM.PAS</A>
+<LI> <A HREF=#FORMVIEW.PAS> FORMVIEW.PAS</A>
+<LI> <A HREF=#RANGEDB.PAS> RANGEDB.PAS</A>
+<LI> <A HREF=#GRIDVIEW.DFM> GRIDVIEW.DFM</A>
+<LI> <A HREF=#DATAM.DFM> DATAM.DFM</A>
+<LI> <A HREF=#FORMVIEW.DFM> FORMVIEW.DFM</A>
+<LI> <A HREF=#RANGEDB.DFM> RANGEDB.DFM</A>
+</UL>
+<HR>
+<A NAME=TWOVIEWS.DPR><H3>TWOVIEWS.DPR</H3></A>
+
+<PRE>
+<B>program</B> TwoViews;
+
+<B>uses</B>
+  Forms,
+  GridView <B>in</B> <I>'GridView.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>,
+  DataM <B>in</B> <I>'DataM.pas'</I> <FONT COLOR="#000080"><I>{DataModule2}</I></FONT>,
+  FormView <B>in</B> <I>'FormView.pas'</I> <FONT COLOR="#000080"><I>{Form3}</I></FONT>,
+  RangeDb <B>in</B> <I>'RangeDb.pas'</I> <FONT COLOR="#000080"><I>{FormRange}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TForm1, Form1);
+  Application.CreateForm(TDataModule2, DataModule2);
+  Application.CreateForm(TForm3, Form3);
+  Application.CreateForm(TFormRange, FormRange);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=GRIDVIEW.PAS><H3>GRIDVIEW.PAS</H3></A>
+
+<PRE>
+<B>unit</B> GridView;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  Grids, DBGrids, Buttons, DBCtrls, ExtCtrls;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    Panel1: TPanel;
+    DBNavigator1: TDBNavigator;
+    SpeedButtonView: TSpeedButton;
+    DBGrid1: TDBGrid;
+    RangeSpeedButton: TSpeedButton;
+    <B>procedure</B> SpeedButtonViewClick(Sender: TObject);
+    <B>procedure</B> RangeSpeedButtonClick(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<B>uses</B> DataM, FormView;
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.SpeedButtonViewClick(Sender: TObject);
+<B>begin</B>
+  Form3.Show;
+<B>end</B>;
+
+<B>procedure</B> TForm1.RangeSpeedButtonClick(Sender: TObject);
+<B>begin</B>
+  DataModule2.ChooseRange;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=DATAM.PAS><H3>DATAM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> DataM;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  DBTables, DB;
+
+<B>type</B>
+  TDataModule2 = <B>class</B>(TDataModule)
+    Table1: TTable;
+    DataSource1: TDataSource;
+    Table1CustNo: TFloatField;
+    Table1Company: TStringField;
+    Table1Addr1: TStringField;
+    Table1Addr2: TStringField;
+    Table1City: TStringField;
+    Table1State: TStringField;
+    Table1Zip: TStringField;
+    Table1Country: TStringField;
+    Table1Phone: TStringField;
+    Table1FAX: TStringField;
+    Table1TaxRate: TFloatField;
+    Table1Contact: TStringField;
+    Table1LastInvoiceDate: TDateTimeField;
+    <B>procedure</B> Table1NewRecord(DataSet: TDataSet);
+    <B>procedure</B> Table1BeforeInsert(DataSet: TDataSet);
+  <B>public</B>
+    Max: Integer;
+    <B>procedure</B> ComputeMax;
+    <B>procedure</B> ChooseRange;
+  <B>end</B>;
+
+<B>var</B>
+  DataModule2: TDataModule2;
+
+<B>implementation</B>
+
+<B>uses</B> RangeDb;
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TDataModule2.ComputeMax;
+<B>var</B>
+  Bookmark: TBookmark;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// save a bookmark</I></FONT>
+  Bookmark := Table1.GetBookmark;
+  <B>try</B>
+    Table1.DisableControls;
+    Max := 0;
+    <B>try</B>
+      Table1.First;
+      <B>while</B> <B>not</B> Table1.EOF <B>do</B>
+      <B>begin</B>
+        <B>if</B> Table1CustNo.AsInteger &gt; Max <B>then</B>
+          Max := Table1CustNo.AsInteger;
+        Table1.Next;
+      <B>end</B>;
+    <B>finally</B>
+      Table1.EnableControls;
+    <B>end</B>;
+  <B>finally</B>
+    <FONT COLOR="#000080"><I>// return to the bookmark</I></FONT>
+    Table1.GotoBookmark (Bookmark);
+    Table1.FreeBookmark (Bookmark);
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TDataModule2.Table1NewRecord(DataSet: TDataSet);
+<B>begin</B>
+  Table1CustNo.Value := Max + 1;
+<B>end</B>;
+
+<B>procedure</B> TDataModule2.Table1BeforeInsert(DataSet: TDataSet);
+<B>begin</B>
+  ComputeMax;
+<B>end</B>;
+
+<B>procedure</B> TDataModule2.ChooseRange;
+<B>begin</B>
+  <B>with</B> FormRange <B>do</B>
+    <B>if</B> ShowModal = mrOK <B>then</B>
+      <B>if</B> CheckBoxRange.Checked <B>then</B>
+        Table1.SetRange ([Edit1.Text], [Edit2.Text])
+      <B>else</B>
+        Table1.CancelRange;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=FORMVIEW.PAS><H3>FORMVIEW.PAS</H3></A>
+
+<PRE>
+<B>unit</B> FormView;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  ExtCtrls, DBCtrls, StdCtrls, Mask;
+
+<B>type</B>
+  TForm3 = <B>class</B>(TForm)
+    DBEdit1: TDBEdit;
+    DBEdit2: TDBEdit;
+    DBEdit3: TDBEdit;
+    DBEdit4: TDBEdit;
+    DBEdit5: TDBEdit;
+    DBEdit6: TDBEdit;
+    DBEdit7: TDBEdit;
+    DBEdit8: TDBEdit;
+    DBEdit9: TDBEdit;
+    DBEdit10: TDBEdit;
+    DBEdit11: TDBEdit;
+    DBEdit12: TDBEdit;
+    Label1: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
+    Label4: TLabel;
+    Label5: TLabel;
+    Label6: TLabel;
+    Label7: TLabel;
+    Label8: TLabel;
+    Label9: TLabel;
+    Label10: TLabel;
+    Label11: TLabel;
+    Label12: TLabel;
+    DBNavigator1: TDBNavigator;
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form3: TForm3;
+
+<B>implementation</B>
+
+<B>uses</B> DataM;
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=RANGEDB.PAS><H3>RANGEDB.PAS</H3></A>
+
+<PRE>
+<B>unit</B> RangeDb;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls, Buttons;
+
+<B>type</B>
+  TFormRange = <B>class</B>(TForm)
+    CheckBoxRange: TCheckBox;
+    Edit1: TEdit;
+    Edit2: TEdit;
+    Label1: TLabel;
+    Label2: TLabel;
+    BitBtn1: TBitBtn;
+    BitBtn2: TBitBtn;
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  FormRange: TFormRange;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=GRIDVIEW.DFM><H3>GRIDVIEW.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 45
+  Top = 113
+  Width = 479
+  Height = 300
+  Caption = <I>'Grid View'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Panel1: TPanel
+    Left = 0
+    Top = 0
+    Width = 471
+    Height = 41
+    Align = alTop
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 0
+    <B>object</B> SpeedButtonView: TSpeedButton
+      Left = 16
+      Top = 8
+      Width = 25
+      Height = 25
+      Hint = <I>'Open Form View'</I>
+      Flat = True
+      Glyph.Data = <FONT COLOR="#000080"><I>{
+        76010000424D7601000000000000760000002800000020000000100000000100
+        04000000000000010000120B0000120B00001000000000000000000000000000
+        800000800000008080008000000080008000808000007F7F7F00BFBFBF000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333333333333
+        33333FFFFFFFFFFFFFFF000000000000000077777777777777770FFFFFFFFFFF
+        FFF07F3FF3FF3FFF3FF70F00F00F000F00F07F773773777377370FFFFFFFFFFF
+        FFF07F3FF3FF33FFFFF70F00F00FF00000F07F773773377777F70FEEEEEFF0F9
+        FCF07F33333337F7F7F70FFFFFFFF0F9FCF07F3FFFF337F737F70F0000FFF0FF
+        FCF07F7777F337F337370F0000FFF0FFFFF07F777733373333370FFFFFFFFFFF
+        FFF07FFFFFFFFFFFFFF70CCCCCCCCCCCCCC07777777777777777088CCCCCCCCC
+        C880733777777777733700000000000000007777777777777777333333333333
+        3333333333333333333333333333333333333333333333333333}</I></FONT>
+      NumGlyphs = 2
+      ParentShowHint = False
+      ShowHint = True
+      OnClick = SpeedButtonViewClick
+    <B>end</B>
+    <B>object</B> RangeSpeedButton: TSpeedButton
+      Left = 283
+      Top = 8
+      Width = 57
+      Height = 25
+      Caption = <I>'Range...'</I>
+      Flat = True
+      OnClick = RangeSpeedButtonClick
+    <B>end</B>
+    <B>object</B> DBNavigator1: TDBNavigator
+      Left = 42
+      Top = 8
+      Width = 240
+      Height = 25
+      DataSource = DataModule2.DataSource1
+      Flat = True
+      TabOrder = 0
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> DBGrid1: TDBGrid
+    Left = 0
+    Top = 41
+    Width = 471
+    Height = 232
+    Align = alClient
+    DataSource = DataModule2.DataSource1
+    TabOrder = 1
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = <I>'MS Sans Serif'</I>
+    TitleFont.Style = []
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<A NAME=DATAM.DFM><H3>DATAM.DFM</H3></A>
+
+<PRE>
+<B>object</B> DataModule2: TDataModule2
+  Left = 300
+  Top = 370
+  Height = 159
+  Width = 196
+  <B>object</B> Table1: TTable
+    Active = True
+    BeforeInsert = Table1BeforeInsert
+    OnNewRecord = Table1NewRecord
+    DatabaseName = <I>'DBDEMOS'</I>
+    IndexName = <I>'ByCompany'</I>
+    TableName = <I>'CUSTOMER.DB'</I>
+    Left = 24
+    Top = 16
+    <B>object</B> Table1CustNo: TFloatField
+      DisplayWidth = 7
+      FieldName = <I>'CustNo'</I>
+    <B>end</B>
+    <B>object</B> Table1Company: TStringField
+      DisplayWidth = 25
+      FieldName = <I>'Company'</I>
+      Size = 30
+    <B>end</B>
+    <B>object</B> Table1Addr1: TStringField
+      DisplayWidth = 21
+      FieldName = <I>'Addr1'</I>
+      Size = 30
+    <B>end</B>
+    <B>object</B> Table1Addr2: TStringField
+      DisplayWidth = 28
+      FieldName = <I>'Addr2'</I>
+      Size = 30
+    <B>end</B>
+    <B>object</B> Table1City: TStringField
+      DisplayWidth = 15
+      FieldName = <I>'City'</I>
+      Size = 15
+    <B>end</B>
+    <B>object</B> Table1State: TStringField
+      DisplayWidth = 20
+      FieldName = <I>'State'</I>
+    <B>end</B>
+    <B>object</B> Table1Zip: TStringField
+      DisplayWidth = 10
+      FieldName = <I>'Zip'</I>
+      Size = 10
+    <B>end</B>
+    <B>object</B> Table1Country: TStringField
+      DisplayWidth = 20
+      FieldName = <I>'Country'</I>
+    <B>end</B>
+    <B>object</B> Table1Phone: TStringField
+      DisplayWidth = 15
+      FieldName = <I>'Phone'</I>
+      EditMask = <I>'!999-000-0000;1;_'</I>
+      Size = 15
+    <B>end</B>
+    <B>object</B> Table1FAX: TStringField
+      DisplayWidth = 15
+      FieldName = <I>'FAX'</I>
+      EditMask = <I>'!999-000-0000;1;_'</I>
+      Size = 15
+    <B>end</B>
+    <B>object</B> Table1TaxRate: TFloatField
+      DisplayWidth = 10
+      FieldName = <I>'TaxRate'</I>
+    <B>end</B>
+    <B>object</B> Table1Contact: TStringField
+      DisplayWidth = 20
+      FieldName = <I>'Contact'</I>
+    <B>end</B>
+    <B>object</B> Table1LastInvoiceDate: TDateTimeField
+      DisplayWidth = 13
+      FieldName = <I>'LastInvoiceDate'</I>
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> DataSource1: TDataSource
+    DataSet = Table1
+    Left = 88
+    Top = 16
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<A NAME=FORMVIEW.DFM><H3>FORMVIEW.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form3: TForm3
+  Left = 525
+  Top = 113
+  Width = 289
+  Height = 360
+  Caption = <I>'Form View'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  Visible = True
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Label1: TLabel
+    Left = 16
+    Top = 44
+    Width = 64
+    Height = 13
+    Caption = <I>'Customer No.'</I>
+  <B>end</B>
+  <B>object</B> Label2: TLabel
+    Left = 16
+    Top = 68
+    Width = 44
+    Height = 13
+    Caption = <I>'Company'</I>
+  <B>end</B>
+  <B>object</B> Label3: TLabel
+    Left = 16
+    Top = 92
+    Width = 53
+    Height = 13
+    Caption = <I>'Address (1)'</I>
+  <B>end</B>
+  <B>object</B> Label4: TLabel
+    Left = 16
+    Top = 116
+    Width = 53
+    Height = 13
+    Caption = <I>'Address (2)'</I>
+  <B>end</B>
+  <B>object</B> Label5: TLabel
+    Left = 16
+    Top = 140
+    Width = 17
+    Height = 13
+    Caption = <I>'City'</I>
+  <B>end</B>
+  <B>object</B> Label6: TLabel
+    Left = 16
+    Top = 164
+    Width = 25
+    Height = 13
+    Caption = <I>'State'</I>
+  <B>end</B>
+  <B>object</B> Label7: TLabel
+    Left = 16
+    Top = 188
+    Width = 17
+    Height = 13
+    Caption = <I>'ZIP'</I>
+  <B>end</B>
+  <B>object</B> Label8: TLabel
+    Left = 16
+    Top = 212
+    Width = 36
+    Height = 13
+    Caption = <I>'Country'</I>
+  <B>end</B>
+  <B>object</B> Label9: TLabel
+    Left = 16
+    Top = 236
+    Width = 31
+    Height = 13
+    Caption = <I>'Phone'</I>
+  <B>end</B>
+  <B>object</B> Label10: TLabel
+    Left = 16
+    Top = 260
+    Width = 20
+    Height = 13
+    Caption = <I>'FAX'</I>
+  <B>end</B>
+  <B>object</B> Label11: TLabel
+    Left = 16
+    Top = 284
+    Width = 44
+    Height = 13
+    Caption = <I>'Tax Rate'</I>
+  <B>end</B>
+  <B>object</B> Label12: TLabel
+    Left = 16
+    Top = 308
+    Width = 37
+    Height = 13
+    Caption = <I>'Contact'</I>
+  <B>end</B>
+  <B>object</B> DBEdit1: TDBEdit
+    Left = 88
+    Top = 40
+    Width = 89
+    Height = 21
+    DataField = <I>'CustNo'</I>
+    DataSource = DataModule2.DataSource1
+    TabOrder = 0
+  <B>end</B>
+  <B>object</B> DBEdit2: TDBEdit
+    Left = 88
+    Top = 64
+    Width = 177
+    Height = 21
+    DataField = <I>'Company'</I>
+    DataSource = DataModule2.DataSource1
+    TabOrder = 1
+  <B>end</B>
+  <B>object</B> DBEdit3: TDBEdit
+    Left = 88
+    Top = 88
+    Width = 177
+    Height = 21
+    DataField = <I>'Addr1'</I>
+    DataSource = DataModule2.DataSource1
+    TabOrder = 2
+  <B>end</B>
+  <B>object</B> DBEdit4: TDBEdit
+    Left = 88
+    Top = 112
+    Width = 177
+    Height = 21
+    DataField = <I>'Addr2'</I>
+    DataSource = DataModule2.DataSource1
+    TabOrder = 3
+  <B>end</B>
+  <B>object</B> DBEdit5: TDBEdit
+    Left = 88
+    Top = 136
+    Width = 97
+    Height = 21
+    DataField = <I>'City'</I>
+    DataSource = DataModule2.DataSource1
+    TabOrder = 4
+  <B>end</B>
+  <B>object</B> DBEdit6: TDBEdit
+    Left = 88
+    Top = 160
+    Width = 97
+    Height = 21
+    DataField = <I>'State'</I>
+    DataSource = DataModule2.DataSource1
+    TabOrder = 5
+  <B>end</B>
+  <B>object</B> DBEdit7: TDBEdit
+    Left = 88
+    Top = 184
+    Width = 97
+    Height = 21
+    DataField = <I>'Zip'</I>
+    DataSource = DataModule2.DataSource1
+    TabOrder = 6
+  <B>end</B>
+  <B>object</B> DBEdit8: TDBEdit
+    Left = 88
+    Top = 208
+    Width = 97
+    Height = 21
+    DataField = <I>'Country'</I>
+    DataSource = DataModule2.DataSource1
+    TabOrder = 7
+  <B>end</B>
+  <B>object</B> DBEdit9: TDBEdit
+    Left = 88
+    Top = 232
+    Width = 97
+    Height = 21
+    DataField = <I>'Phone'</I>
+    DataSource = DataModule2.DataSource1
+    MaxLength = 12
+    TabOrder = 8
+  <B>end</B>
+  <B>object</B> DBEdit10: TDBEdit
+    Left = 88
+    Top = 256
+    Width = 97
+    Height = 21
+    DataField = <I>'FAX'</I>
+    DataSource = DataModule2.DataSource1
+    MaxLength = 12
+    TabOrder = 9
+  <B>end</B>
+  <B>object</B> DBEdit11: TDBEdit
+    Left = 88
+    Top = 280
+    Width = 97
+    Height = 21
+    DataField = <I>'TaxRate'</I>
+    DataSource = DataModule2.DataSource1
+    TabOrder = 10
+  <B>end</B>
+  <B>object</B> DBEdit12: TDBEdit
+    Left = 88
+    Top = 304
+    Width = 177
+    Height = 21
+    DataField = <I>'Contact'</I>
+    DataSource = DataModule2.DataSource1
+    TabOrder = 11
+  <B>end</B>
+  <B>object</B> DBNavigator1: TDBNavigator
+    Left = 16
+    Top = 8
+    Width = 250
+    Height = 25
+    DataSource = DataModule2.DataSource1
+    TabOrder = 12
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<A NAME=RANGEDB.DFM><H3>RANGEDB.DFM</H3></A>
+
+<PRE>
+<B>object</B> FormRange: TFormRange
+  Left = 252
+  Top = 203
+  BorderStyle = bsDialog
+  Caption = <I>'Choose Range'</I>
+  ClientHeight = 108
+  ClientWidth = 305
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  Position = poScreenCenter
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Label1: TLabel
+    Left = 17
+    Top = 45
+    Width = 19
+    Height = 13
+    Caption = <I>'First'</I>
+  <B>end</B>
+  <B>object</B> Label2: TLabel
+    Left = 17
+    Top = 71
+    Width = 20
+    Height = 13
+    Caption = <I>'Last'</I>
+  <B>end</B>
+  <B>object</B> CheckBoxRange: TCheckBox
+    Left = 45
+    Top = 16
+    Width = 97
+    Height = 17
+    Caption = <I>'Range Active'</I>
+    TabOrder = 0
+  <B>end</B>
+  <B>object</B> Edit1: TEdit
+    Left = 56
+    Top = 41
+    Width = 121
+    Height = 21
+    TabOrder = 1
+    Text = <I>'Abacus'</I>
+  <B>end</B>
+  <B>object</B> Edit2: TEdit
+    Left = 56
+    Top = 67
+    Width = 121
+    Height = 21
+    TabOrder = 2
+    Text = <I>'Custom'</I>
+  <B>end</B>
+  <B>object</B> BitBtn1: TBitBtn
+    Left = 224
+    Top = 40
+    Width = 75
+    Height = 25
+    TabOrder = 3
+    Kind = bkOK
+  <B>end</B>
+  <B>object</B> BitBtn2: TBitBtn
+    Left = 224
+    Top = 72
+    Width = 75
+    Height = 25
+    TabOrder = 4
+    Kind = bkCancel
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

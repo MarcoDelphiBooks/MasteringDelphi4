@@ -1,0 +1,321 @@
+<HTML><HEAD>
+<TITLE>Project: SPLIT.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: SPLIT.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#SPLIT.DPR> SPLIT.DPR</A>
+<LI> <A HREF=#SPLITFRM.PAS> SPLITFRM.PAS</A>
+<LI> <A HREF=#SPLITFRM.DFM> SPLITFRM.DFM</A>
+</UL>
+<HR>
+<A NAME=SPLIT.DPR><H3>SPLIT.DPR</H3></A>
+
+<PRE>
+<B>program</B> Split;
+
+<B>uses</B>
+  Forms,
+  SplitFrm <B>in</B> <I>'SplitFrm.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=SPLITFRM.PAS><H3>SPLITFRM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> SplitFrm;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  ExtCtrls, StdCtrls, Buttons, ComCtrls;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    ListBox1: TListBox;
+    ListBox2: TListBox;
+    ListBox3: TListBox;
+    Splitter1: TSplitter;
+    Splitter2: TSplitter;
+    Panel1: TPanel;
+    SpeedBeveled: TSpeedButton;
+    SpeedColor: TSpeedButton;
+    ColorDialog1: TColorDialog;
+    LabelMin: TLabel;
+    EditMin: TEdit;
+    UpDownMin: TUpDown;
+    LabelWidth: TLabel;
+    EditWidth: TEdit;
+    UpDownWidth: TUpDown;
+    FontDialog1: TFontDialog;
+    <B>procedure</B> SpeedBeveledClick(Sender: TObject);
+    <B>procedure</B> SpeedColorClick(Sender: TObject);
+    <B>procedure</B> UpDownMinClick(Sender: TObject; Button: TUDBtnType);
+    <B>procedure</B> UpDownWidthClick(Sender: TObject; Button: TUDBtnType);
+    <B>procedure</B> OnListClick(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+
+
+
+
+<B>procedure</B> TForm1.SpeedBeveledClick(Sender: TObject);
+<B>begin</B>
+  Splitter1.Beveled := SpeedBeveled.Down;
+  Splitter2.Beveled := SpeedBeveled.Down;
+  <B>end</B>;
+
+<B>procedure</B> TForm1.SpeedColorClick(Sender: TObject);
+<B>begin</B>
+  <B>with</B> ColorDialog1 <B>do</B>
+    <B>if</B> Execute <B>then</B>
+    <B>begin</B>
+      Splitter1.Color := Color;
+      Splitter2.Color := Color;
+    <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TForm1.UpDownMinClick(Sender: TObject; Button: TUDBtnType);
+<B>begin</B>
+  Splitter1.MinSize := UpDownMin.Position;
+  Splitter2.MinSize := UpDownMin.Position;
+<B>end</B>;
+
+<B>procedure</B> TForm1.UpDownWidthClick(Sender: TObject; Button: TUDBtnType);
+<B>begin</B>
+  Splitter1.Width := UpDownWidth.Position;
+  Splitter2.Width := UpDownWidth.Position;
+<B>end</B>;
+
+<B>procedure</B> TForm1.OnListClick(Sender: TObject);
+<B>begin</B>
+  <B>with</B> FontDialog1 <B>do</B>
+    <B>if</B> Execute <B>then</B>
+      (Sender <B>as</B> TListBox).Font := Font;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=SPLITFRM.DFM><H3>SPLITFRM.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 232
+  Top = 141
+  Width = 696
+  Height = 480
+  Caption = <I>'Split (with the Splitter component)'</I>
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Splitter1: TSplitter
+    Left = 280
+    Top = 41
+    Width = 3
+    Height = 412
+    Cursor = crHSplit
+    Beveled = False
+  <B>end</B>
+  <B>object</B> Splitter2: TSplitter
+    Left = 463
+    Top = 41
+    Width = 3
+    Height = 412
+    Cursor = crHSplit
+    Beveled = False
+  <B>end</B>
+  <B>object</B> ListBox1: TListBox
+    Left = 0
+    Top = 41
+    Width = 280
+    Height = 412
+    Align = alLeft
+    Font.Color = clBlack
+    Font.Height = -64
+    Font.Name = <I>'Arial'</I>
+    Font.Style = []
+    ItemHeight = 72
+    Items.Strings = (
+      <I>'Whale'</I>
+      <I>'Elephant'</I>
+      <I>'Rhino'</I>
+      <I>'Shark'</I>
+      <I>'Giraffe'</I>)
+    ParentFont = False
+    TabOrder = 0
+    OnDblClick = OnListClick
+  <B>end</B>
+  <B>object</B> ListBox2: TListBox
+    Left = 283
+    Top = 41
+    Width = 180
+    Height = 412
+    Align = alLeft
+    Font.Color = clBlack
+    Font.Height = -32
+    Font.Name = <I>'Arial'</I>
+    Font.Style = []
+    ItemHeight = 36
+    Items.Strings = (
+      <I>'Dog'</I>
+      <I>'Cat'</I>
+      <I>'Hen'</I>
+      <I>'Monkey'</I>
+      <I>'Cow'</I>
+      <I>'Bull'</I>
+      <I>'Hare'</I>
+      <I>'Sheep'</I>)
+    ParentFont = False
+    TabOrder = 1
+    OnDblClick = OnListClick
+  <B>end</B>
+  <B>object</B> ListBox3: TListBox
+    Left = 466
+    Top = 41
+    Width = 222
+    Height = 412
+    Align = alClient
+    Font.Color = clBlack
+    Font.Height = -12
+    Font.Name = <I>'Arial'</I>
+    Font.Style = []
+    ItemHeight = 15
+    Items.Strings = (
+      <I>'Lizard'</I>
+      <I>'Ant'</I>
+      <I>'Shrimp'</I>
+      <I>'Bug'</I>
+      <I>'Bee'</I>)
+    ParentFont = False
+    TabOrder = 2
+    OnDblClick = OnListClick
+  <B>end</B>
+  <B>object</B> Panel1: TPanel
+    Left = 0
+    Top = 0
+    Width = 688
+    Height = 41
+    Align = alTop
+    TabOrder = 3
+    <B>object</B> SpeedBeveled: TSpeedButton
+      Left = 16
+      Top = 8
+      Width = 81
+      Height = 25
+      AllowAllUp = True
+      GroupIndex = 1
+      Caption = <I>'Beveled'</I>
+      OnClick = SpeedBeveledClick
+    <B>end</B>
+    <B>object</B> SpeedColor: TSpeedButton
+      Left = 104
+      Top = 8
+      Width = 81
+      Height = 25
+      Caption = <I>'Color...'</I>
+      OnClick = SpeedColorClick
+    <B>end</B>
+    <B>object</B> LabelMin: TLabel
+      Left = 200
+      Top = 13
+      Width = 40
+      Height = 13
+      Caption = <I>'MinSize:'</I>
+    <B>end</B>
+    <B>object</B> LabelWidth: TLabel
+      Left = 328
+      Top = 12
+      Width = 31
+      Height = 13
+      Caption = <I>'Width:'</I>
+    <B>end</B>
+    <B>object</B> EditMin: TEdit
+      Left = 256
+      Top = 8
+      Width = 41
+      Height = 21
+      ReadOnly = True
+      TabOrder = 0
+      Text = <I>'30'</I>
+    <B>end</B>
+    <B>object</B> UpDownMin: TUpDown
+      Left = 297
+      Top = 8
+      Width = 15
+      Height = 21
+      Associate = EditMin
+      Min = 10
+      Max = 200
+      Increment = 10
+      Position = 30
+      TabOrder = 1
+      Wrap = False
+      OnClick = UpDownMinClick
+    <B>end</B>
+    <B>object</B> EditWidth: TEdit
+      Left = 368
+      Top = 8
+      Width = 49
+      Height = 21
+      ReadOnly = True
+      TabOrder = 2
+      Text = <I>'3'</I>
+    <B>end</B>
+    <B>object</B> UpDownWidth: TUpDown
+      Left = 417
+      Top = 8
+      Width = 15
+      Height = 21
+      Associate = EditWidth
+      Min = 1
+      Position = 3
+      TabOrder = 3
+      Wrap = False
+      OnClick = UpDownWidthClick
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> ColorDialog1: TColorDialog
+    Ctl3D = True
+    Left = 24
+    Top = 72
+  <B>end</B>
+  <B>object</B> FontDialog1: TFontDialog
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = <I>'MS Sans Serif'</I>
+    Font.Style = []
+    MinFontSize = 0
+    MaxFontSize = 0
+    Left = 24
+    Top = 128
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

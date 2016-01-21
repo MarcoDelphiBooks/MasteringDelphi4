@@ -1,0 +1,318 @@
+<HTML><HEAD>
+<TITLE>Project: CORBA1.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: CORBA1.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#CORBA1.DPR> CORBA1.DPR</A>
+<LI> <A HREF=#CORBAF.PAS> CORBAF.PAS</A>
+<LI> <A HREF=#CORBA1_TLB.PAS> CORBA1_TLB.PAS</A>
+<LI> <A HREF=#CORBADM.PAS> CORBADM.PAS</A>
+<LI> <A HREF=#CORBAF.DFM> CORBAF.DFM</A>
+<LI> <A HREF=#CORBADM.DFM> CORBADM.DFM</A>
+</UL>
+<HR>
+<A NAME=CORBA1.DPR><H3>CORBA1.DPR</H3></A>
+
+<PRE>
+<B>program</B> Corba1;
+
+<B>uses</B>
+  Forms,
+  CorbaF <B>in</B> <I>'CorbaF.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>,
+  Corba1_TLB <B>in</B> <I>'Corba1_TLB.pas'</I>,
+  CorbaDM <B>in</B> <I>'CorbaDM.pas'</I> <FONT COLOR="#000080"><I>{FirstCorba: TCorbaDataModule}</I></FONT> <FONT COLOR="#000080"><I>{FirstCorba: CoClass}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.TLB}</I></FONT> <FONT COLOR="#000080"><I>{CORBA}</I></FONT>
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=CORBAF.PAS><H3>CORBAF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> CorbaF;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=CORBA1_TLB.PAS><H3>CORBA1_TLB.PAS</H3></A>
+
+<PRE>
+<B>unit</B> Corba1_TLB;
+
+<FONT COLOR="#000080"><I>// ************************************************************************ //</I></FONT>
+<FONT COLOR="#000080"><I>// WARNING                                                                  //</I></FONT>
+<FONT COLOR="#000080"><I>// -------                                                                  //</I></FONT>
+<FONT COLOR="#000080"><I>// The types declared in this file were generated from data read from a     //</I></FONT>
+<FONT COLOR="#000080"><I>// Type Library. If this type library is explicitly or indirectly (via      //</I></FONT>
+<FONT COLOR="#000080"><I>// another type library referring to this type library) re-imported, or the //</I></FONT>
+<FONT COLOR="#000080"><I>// 'Refresh' command of the Type Library Editor activated while editing the //</I></FONT>
+<FONT COLOR="#000080"><I>// Type Library, the contents of this file will be regenerated and all      //</I></FONT>
+<FONT COLOR="#000080"><I>// manual modifications will be lost.                                       //</I></FONT>
+<FONT COLOR="#000080"><I>// ************************************************************************ //</I></FONT>
+
+<FONT COLOR="#000080"><I>// PASTLWTR : $Revision:   1.11.1.63  $</I></FONT>
+<FONT COLOR="#000080"><I>// File generated on 7/14/98 6:23:01 PM from Type Library described below.</I></FONT>
+
+<FONT COLOR="#000080"><I>// ************************************************************************ //</I></FONT>
+<FONT COLOR="#000080"><I>// Type Lib: C:\md4code\Part5\25\Corba1\Corba1.tlb</I></FONT>
+<FONT COLOR="#000080"><I>// IID\LCID: {4A0AD345-1B2C-11D2-B9F1-004845400FAA}\0</I></FONT>
+<FONT COLOR="#000080"><I>// Helpfile: </I></FONT>
+<FONT COLOR="#000080"><I>// HelpString: Project1 Library</I></FONT>
+<FONT COLOR="#000080"><I>// Version:    1.0</I></FONT>
+<FONT COLOR="#000080"><I>// ************************************************************************ //</I></FONT>
+
+<B>interface</B>
+
+<B>uses</B> Windows, ActiveX, Classes, Graphics, OleCtrls, StdVCL, SysUtils, CORBAObj, OrbPas, CorbaStd;
+
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+<FONT COLOR="#000080"><I>// GUIDS declared in the TypeLibrary. Following prefixes are used:      //</I></FONT>
+<FONT COLOR="#000080"><I>//   Type Libraries     : LIBID_xxxx                                    //</I></FONT>
+<FONT COLOR="#000080"><I>//   CoClasses          : CLASS_xxxx                                    //</I></FONT>
+<FONT COLOR="#000080"><I>//   DISPInterfaces     : DIID_xxxx                                     //</I></FONT>
+<FONT COLOR="#000080"><I>//   Non-DISP interfaces: IID_xxxx                                      //</I></FONT>
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+<B>const</B>
+  LIBID_Corba1: TGUID = <I>'{4A0AD345-1B2C-11D2-B9F1-004845400FAA}'</I>;
+  IID_IFirstCorba: TGUID = <I>'{4A0AD346-1B2C-11D2-B9F1-004845400FAA}'</I>;
+  CLASS_FirstCorba: TGUID = <I>'{4A0AD348-1B2C-11D2-B9F1-004845400FAA}'</I>;
+<B>type</B>
+
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+<FONT COLOR="#000080"><I>// Forward declaration of interfaces defined in Type Library            //</I></FONT>
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+  IFirstCorba = <B>interface</B>;
+  IFirstCorbaDisp = <B>dispinterface</B>;
+
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+<FONT COLOR="#000080"><I>// Declaration of CoClasses defined in Type Library                     //</I></FONT>
+<FONT COLOR="#000080"><I>// (NOTE: Here we map each CoClass to its Default Interface)            //</I></FONT>
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+  FirstCorba = IFirstCorba;
+
+
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+<FONT COLOR="#000080"><I>// Interface: IFirstCorba</I></FONT>
+<FONT COLOR="#000080"><I>// Flags:     (4416) Dual OleAutomation Dispatchable</I></FONT>
+<FONT COLOR="#000080"><I>// GUID:      {4A0AD346-1B2C-11D2-B9F1-004845400FAA}</I></FONT>
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+  IFirstCorba = <B>interface</B>(IDataBroker)
+    [<I>'{4A0AD346-1B2C-11D2-B9F1-004845400FAA}'</I>]
+    <B>function</B> Get_Table1: IProvider; safecall;
+    <B>property</B> Table1: IProvider <B>read</B> Get_Table1;
+  <B>end</B>;
+
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+<FONT COLOR="#000080"><I>// DispIntf:  IFirstCorbaDisp</I></FONT>
+<FONT COLOR="#000080"><I>// Flags:     (4416) Dual OleAutomation Dispatchable</I></FONT>
+<FONT COLOR="#000080"><I>// GUID:      {4A0AD346-1B2C-11D2-B9F1-004845400FAA}</I></FONT>
+<FONT COLOR="#000080"><I>// *********************************************************************//</I></FONT>
+  IFirstCorbaDisp = <B>dispinterface</B>
+    [<I>'{4A0AD346-1B2C-11D2-B9F1-004845400FAA}'</I>]
+    <B>property</B> Table1: IProvider readonly <B>dispid</B> 1;
+    <B>function</B> GetProviderNames: OleVariant; <B>dispid</B> 22929905;
+  <B>end</B>;
+
+  TFirstCorbaStub = <B>class</B>(TDataBrokerStub, IFirstCorba)
+  <B>public</B>
+    <B>function</B> Get_Table1: IProvider; safecall;
+  <B>end</B>;
+
+  TFirstCorbaSkeleton = <B>class</B>(TDataBrokerSkeleton)
+  <B>private</B>
+    FIntf: IFirstCorba;
+  <B>public</B>
+    <B>constructor</B> Create(<B>const</B> InstanceName: <B>string</B>; <B>const</B> Impl: IUnknown); <B>override</B>;
+    <B>procedure</B> GetImplementation(out Impl: IUnknown); <B>override</B>; <B>stdcall</B>;
+  <B>published</B>
+    <B>procedure</B> Get_Table1(<B>const</B> InBuf: IMarshalInBuffer; Cookie: Pointer);
+  <B>end</B>;
+
+  CoFirstCorba = <B>class</B>
+    <B>class</B> <B>function</B> Create: IFirstCorba;
+    <B>class</B> <B>function</B> CreateRemote(<B>const</B> MachineName: <B>string</B>): IFirstCorba;
+  <B>end</B>;
+
+  TFirstCorbaCorbaFactory = <B>class</B>
+    <B>class</B> <B>function</B> CreateInstance(<B>const</B> InstanceName: <B>string</B>): IFirstCorba;
+  <B>end</B>;
+
+<B>implementation</B>
+
+<B>uses</B> ComObj;
+
+<FONT COLOR="#000080"><I>{ TFirstCorbaStub }</I></FONT>
+
+<B>function</B> TFirstCorbaStub.Get_Table1: IProvider;
+<B>var</B>
+  OutBuf: IMarshalOutBuffer;
+  InBuf: IMarshalInBuffer;
+<B>begin</B>
+  FStub.CreateRequest(<I>'Get_Table1'</I>, True, OutBuf);
+  FStub.Invoke(OutBuf, InBuf);
+  Result := UnmarshalObject(InBuf, IProvider) <B>as</B> IProvider;
+<B>end</B>;
+
+<FONT COLOR="#000080"><I>{ TFirstCorbaSkeleton }</I></FONT>
+
+<B>constructor</B> TFirstCorbaSkeleton.Create(<B>const</B> InstanceName: <B>string</B>; <B>const</B> Impl: IUnknown);
+<B>begin</B>
+  <B>inherited</B>;
+  <B>inherited</B> InitSkeleton(<I>'FirstCorba'</I>, InstanceName, <I>''</I>, tmMultiThreaded, True);
+  FIntf := Impl <B>as</B> IFirstCorba;
+<B>end</B>;
+
+<B>procedure</B> TFirstCorbaSkeleton.GetImplementation(out Impl: IUnknown);
+<B>begin</B>
+  Impl := FIntf;
+<B>end</B>;
+
+<B>procedure</B> TFirstCorbaSkeleton.Get_Table1(<B>const</B> InBuf: IMarshalInBuffer; Cookie: Pointer);
+<B>var</B>
+  OutBuf: IMarshalOutBuffer;
+  Retval: IProvider;
+<B>begin</B>
+  Retval := FIntf.Get_Table1;
+  FSkeleton.GetReplyBuffer(Cookie, OutBuf);
+  MarshalObject(OutBuf, IProvider, Retval);
+<B>end</B>;
+
+<B>class</B> <B>function</B> CoFirstCorba.Create: IFirstCorba;
+<B>begin</B>
+  Result := CreateComObject(CLASS_FirstCorba) <B>as</B> IFirstCorba;
+<B>end</B>;
+
+<B>class</B> <B>function</B> CoFirstCorba.CreateRemote(<B>const</B> MachineName: <B>string</B>): IFirstCorba;
+<B>begin</B>
+  Result := CreateRemoteComObject(MachineName, CLASS_FirstCorba) <B>as</B> IFirstCorba;
+<B>end</B>;
+
+<B>class</B> <B>function</B> TFirstCorbaCorbaFactory.CreateInstance(<B>const</B> InstanceName: <B>string</B>): IFirstCorba;
+<B>begin</B>
+  Result := CorbaFactoryCreateStub(<I>'IDL:Corba1/FirstCorbaFactory:1.0'</I>, <I>'FirstCorba'</I>,
+    InstanceName, <I>''</I>, IFirstCorba) <B>as</B> IFirstCorba;
+<B>end</B>;
+
+<B>initialization</B>
+  CorbaStubManager.RegisterStub(IFirstCorba, TFirstCorbaStub);
+  CorbaInterfaceIDManager.RegisterInterface(IFirstCorba, <I>'IDL:FirstCorba:1.0'</I>);
+  CorbaSkeletonManager.RegisterSkeleton(IFirstCorba, TFirstCorbaSkeleton);
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=CORBADM.PAS><H3>CORBADM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> CorbaDM;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  ComObj, VCLCom, StdVcl, BdeProv, DataBkr, CorbaRdm, CorbaObj,
+  Corba1_TLB, Db, DBTables;
+
+<B>type</B>
+
+  TFirstCorba = <B>class</B>(TCorbaDataModule, IFirstCorba)
+    Table1: TTable;
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>protected</B>
+    <B>function</B> Get_Table1: IProvider; safecall;
+  <B>end</B>;
+
+<B>var</B>
+  FirstCorba: TFirstCorba;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>uses</B> CorbInit, CorbaVcl;
+
+<B>function</B> TFirstCorba.Get_Table1: IProvider;
+<B>begin</B>
+  Result := Table1.Provider;
+<B>end</B>;
+
+<B>initialization</B>
+  TCorbaVclComponentFactory.Create(<I>'FirstCorbaFactory'</I>, <I>'FirstCorba'</I>, <I>'IDL:Corba1/FirstCorbaFactory:1.0'</I>, IFirstCorba,
+    TFirstCorba, iMultiInstance, tmSingleThread);
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=CORBAF.DFM><H3>CORBAF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 229
+  Top = 108
+  Width = 185
+  Height = 44
+  Caption = <I>'Corba1 Server'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = False
+  PixelsPerInch = 96
+  TextHeight = 13
+<B>end</B></PRE>
+<HR>
+
+<A NAME=CORBADM.DFM><H3>CORBADM.DFM</H3></A>
+
+<PRE>
+<B>object</B> FirstCorba: TFirstCorba
+  OldCreateOrder = False
+  Left = 283
+  Top = 192
+  Height = 150
+  Width = 215
+  <B>object</B> Table1: TTable
+    DatabaseName = <I>'DBDEMOS'</I>
+    TableName = <I>'biolife.db'</I>
+    Left = 24
+    Top = 16
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

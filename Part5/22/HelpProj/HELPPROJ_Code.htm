@@ -1,0 +1,157 @@
+<HTML><HEAD>
+<TITLE>Project: HELPPROJ.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: HELPPROJ.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#HELPPROJ.DPR> HELPPROJ.DPR</A>
+<LI> <A HREF=#HELPFORM.PAS> HELPFORM.PAS</A>
+<LI> <A HREF=#HELPFORM.DFM> HELPFORM.DFM</A>
+</UL>
+<HR>
+<A NAME=HELPPROJ.DPR><H3>HELPPROJ.DPR</H3></A>
+
+<PRE>
+<B>program</B> HelpProj;
+
+<B>uses</B>
+  Forms,
+  HelpForm <B>in</B> <I>'HelpForm.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.HelpFile := <I>'C:\md4code\Part5\22\HelpProj\Helpproj.hlp'</I>;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=HELPFORM.PAS><H3>HELPFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> HelpForm;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  Menus, StdCtrls;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    MainMenu1: TMainMenu;
+    File1: TMenuItem;
+    New1: TMenuItem;
+    Open1: TMenuItem;
+    N1: TMenuItem;
+    Close1: TMenuItem;
+    N2: TMenuItem;
+    Exit1: TMenuItem;
+    Edit1: TMenuItem;
+    Help1: TMenuItem;
+    Index1: TMenuItem;
+    N3: TMenuItem;
+    About1: TMenuItem;
+    Index2: TMenuItem;
+    Button1: TButton;
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=HELPFORM.DFM><H3>HELPFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 192
+  Top = 107
+  Width = 544
+  Height = 375
+  HelpContext = 1
+  BorderIcons = [biSystemMenu, biMinimize, biMaximize, biHelp]
+  Caption = <I>'Form1'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  Menu = MainMenu1
+  OldCreateOrder = False
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Button1: TButton
+    Left = 200
+    Top = 112
+    Width = 75
+    Height = 25
+    Caption = <I>'Button1'</I>
+    TabOrder = 0
+  <B>end</B>
+  <B>object</B> MainMenu1: TMainMenu
+    Left = 24
+    Top = 16
+    <B>object</B> File1: TMenuItem
+      Caption = <I>'File'</I>
+      <B>object</B> New1: TMenuItem
+        Caption = <I>'New'</I>
+        HelpContext = 101
+      <B>end</B>
+      <B>object</B> Open1: TMenuItem
+        Caption = <I>'Open'</I>
+        HelpContext = 102
+      <B>end</B>
+      <B>object</B> N1: TMenuItem
+        Caption = <I>'-'</I>
+      <B>end</B>
+      <B>object</B> Close1: TMenuItem
+        Caption = <I>'Close'</I>
+        HelpContext = 103
+      <B>end</B>
+      <B>object</B> N2: TMenuItem
+        Caption = <I>'-'</I>
+      <B>end</B>
+      <B>object</B> Exit1: TMenuItem
+        Caption = <I>'Exit'</I>
+        HelpContext = 104
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> Edit1: TMenuItem
+      Caption = <I>'Edit'</I>
+    <B>end</B>
+    <B>object</B> Help1: TMenuItem
+      Caption = <I>'Help'</I>
+      <B>object</B> Index2: TMenuItem
+        Caption = <I>'Index'</I>
+      <B>end</B>
+      <B>object</B> Index1: TMenuItem
+        Caption = <I>'Help Topics'</I>
+      <B>end</B>
+      <B>object</B> N3: TMenuItem
+        Caption = <I>'-'</I>
+      <B>end</B>
+      <B>object</B> About1: TMenuItem
+        Caption = <I>'About'</I>
+      <B>end</B>
+    <B>end</B>
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

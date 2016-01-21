@@ -1,0 +1,19 @@
+;Delphi-generated INF file for AfLocal.ocx
+[Add.Code]
+AfLocal.ocx=AfLocal.ocx
+country.px=country.px
+country.db=country.db
+
+[AfLocal.ocx]
+file=./AfLocal.cab
+clsid={CE612B48-243B-11D1-98D0-444553540000}
+RegisterServer=yes
+FileVersion=1,0,0,6
+
+[country.px]
+file=./country.cab
+
+
+[country.db]
+file=./country.cab
+

@@ -1,0 +1,240 @@
+<HTML><HEAD>
+<TITLE>Project: OPENARR.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: OPENARR.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#OPENARR.DPR> OPENARR.DPR</A>
+<LI> <A HREF=#OPENARRF.PAS> OPENARRF.PAS</A>
+<LI> <A HREF=#OPENARRF.DFM> OPENARRF.DFM</A>
+</UL>
+<HR>
+<A NAME=OPENARR.DPR><H3>OPENARR.DPR</H3></A>
+
+<PRE>
+<B>program</B> OpenArr;
+
+<B>uses</B>
+  Forms,
+  OpenArrF <B>in</B> <I>'OpenArrF.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=OPENARRF.PAS><H3>OPENARRF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> OpenArrF;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    Button1: TButton;
+    Button2: TButton;
+    Button3: TButton;
+    Button4: TButton;
+    Button6: TButton;
+    <B>procedure</B> Button1Click(Sender: TObject);
+    <B>procedure</B> Button2Click(Sender: TObject);
+    <B>procedure</B> Button3Click(Sender: TObject);
+    <B>procedure</B> Button4Click(Sender: TObject);
+    <B>procedure</B> Button6Click(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<FONT COLOR="#000080"><I>// typed open array</I></FONT>
+<B>function</B> Sum (<B>const</B> A: <B>array</B> <B>of</B> Integer): Integer;
+<B>var</B>
+  I: Integer;
+<B>begin</B>
+  Result := 0;
+  <B>for</B> I := Low (A) <B>to</B> High (A) <B>do</B>
+    Result := Result + A[I];
+<B>end</B>;
+
+<FONT COLOR="#000080"><I>// untyped open array</I></FONT>
+<B>function</B> SumAll (<B>const</B> Args: <B>array</B> <B>of</B> <B>const</B>): Extended;
+<B>var</B>
+  I: Integer;
+<B>begin</B>
+  Result := 0;
+  <B>for</B> I := Low (Args) <B>to</B> High (Args) <B>do</B>
+    <B>case</B> Args [I].VType <B>of</B>
+      vtInteger: Result :=
+        Result + Args [I].VInteger;
+      vtBoolean:
+        <B>if</B> Args [I].VBoolean <B>then</B>
+          Result := Result + 1;
+      vtChar:
+        Result := Result + Ord (Args [I].VChar);
+      vtExtended:
+        Result := Result + Args [I].VExtended^;
+      vtString:
+        Result := Result + StrToIntDef ((Args [I].VString^), 0);
+      vtAnsiString:
+        Result := Result + StrToIntDef (
+          <B>string</B> (Args [I].VAnsiString), 0);
+      vtWideChar:
+        Result := Result + Ord (Args [I].VWideChar);
+      vtCurrency:
+        Result := Result + Args [I].VCurrency^;
+    <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TForm1.Button1Click(Sender: TObject);
+<B>var</B>
+  X, Y, I: Integer;
+<B>begin</B>
+  Y := 10;
+  I := 3;
+  X := Sum ([10, Y, 27*I]);
+  ShowMessage (<I>'Sum ([10, Y, 27*I]) =&gt; '</I> +
+    IntToStr (X));
+<B>end</B>;
+
+<B>procedure</B> TForm1.Button2Click(Sender: TObject);
+<B>var</B>
+  List: <B>array</B> [1..10] <B>of</B> Integer;
+  X, I: Integer;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// initialize array</I></FONT>
+  <B>for</B> I := Low (List) <B>to</B> High (List) <B>do</B>
+    List [I] := I * 2;
+  <FONT COLOR="#000080"><I>// call</I></FONT>
+  X := Sum (List);
+  ShowMessage (<I>'Sum (List)) =&gt; '</I> +
+    IntToStr (X));
+<B>end</B>;
+
+<B>procedure</B> TForm1.Button3Click(Sender: TObject);
+<B>var</B>
+  List: <B>array</B> [1..10] <B>of</B> Integer;
+  X, I: Integer;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// initialize array</I></FONT>
+  <B>for</B> I := Low (List) <B>to</B> High (List) <B>do</B>
+    List [I] := I * 2;
+  <FONT COLOR="#000080"><I>// call</I></FONT>
+  X := Sum (Slice (List, 5));
+  ShowMessage (<I>'Sum (Slice (List, 5)) =&gt; '</I> +
+    IntToStr (X));
+<B>end</B>;
+
+<B>procedure</B> TForm1.Button4Click(Sender: TObject);
+<B>var</B>
+  X: Extended;
+  Y: Integer;
+<B>begin</B>
+  Y := 10;
+  X := SumAll ([Y * Y, <I>'k'</I>, True, 10.34, <I>'999'</I>]);
+  ShowMessage (Format (
+    <I>'SumAll ([Y * Y, ''k'', True, 10.34, ''999'']) =&gt; %n'</I>,
+    [X]));
+<B>end</B>;
+
+<B>procedure</B> TForm1.Button6Click(Sender: TObject);
+<B>var</B>
+  DynArr: <B>array</B> <B>of</B> Integer;
+  I, X: Integer;
+<B>begin</B>
+  SetLength (DynArr, 10);
+  <B>for</B> I := 0 <B>to</B> High (DynArr) <B>do</B>
+    DynArr [I] := I * 3;
+  X := Sum (DynArr);
+  ShowMessage (<I>'Sum (DynArr) =&gt; '</I> + IntToStr (X));
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=OPENARRF.DFM><H3>OPENARRF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 246
+  Top = 123
+  Width = 228
+  Height = 250
+  Caption = <I>'Open Array'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Button1: TButton
+    Left = 64
+    Top = 24
+    Width = 75
+    Height = 25
+    Caption = <I>'Plain Call'</I>
+    TabOrder = 0
+    OnClick = Button1Click
+  <B>end</B>
+  <B>object</B> Button2: TButton
+    Left = 64
+    Top = 88
+    Width = 75
+    Height = 25
+    Caption = <I>'Slice'</I>
+    TabOrder = 1
+    OnClick = Button2Click
+  <B>end</B>
+  <B>object</B> Button3: TButton
+    Left = 64
+    Top = 120
+    Width = 75
+    Height = 25
+    Caption = <I>'Partial Slice'</I>
+    TabOrder = 2
+    OnClick = Button3Click
+  <B>end</B>
+  <B>object</B> Button4: TButton
+    Left = 64
+    Top = 168
+    Width = 75
+    Height = 25
+    Caption = <I>'Untyped'</I>
+    TabOrder = 3
+    OnClick = Button4Click
+  <B>end</B>
+  <B>object</B> Button6: TButton
+    Left = 64
+    Top = 56
+    Width = 75
+    Height = 25
+    Caption = <I>'Dynamic'</I>
+    TabOrder = 4
+    OnClick = Button6Click
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

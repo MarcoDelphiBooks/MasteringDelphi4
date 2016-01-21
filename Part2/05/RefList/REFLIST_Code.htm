@@ -1,0 +1,363 @@
+<HTML><HEAD>
+<TITLE>Project: REFLIST.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: REFLIST.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#REFLIST.DPR> REFLIST.DPR</A>
+<LI> <A HREF=#REFFORM.PAS> REFFORM.PAS</A>
+<LI> <A HREF=#REFFORM.DFM> REFFORM.DFM</A>
+</UL>
+<HR>
+<A NAME=REFLIST.DPR><H3>REFLIST.DPR</H3></A>
+
+<PRE>
+<B>program</B> RefList;
+
+<B>uses</B>
+  Forms,
+  RefForm <B>in</B> <I>'RefForm.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=REFFORM.PAS><H3>REFFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> RefForm;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes, Graphics, Controls, Forms, Dialogs,
+  ComCtrls, Menus, ImgList;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    ListView1: TListView;
+    MainMenu1: TMainMenu;
+    File1: TMenuItem;
+    Exit1: TMenuItem;
+    View1: TMenuItem;
+    LargeIcons1: TMenuItem;
+    SmallIcons1: TMenuItem;
+    List1: TMenuItem;
+    Details1: TMenuItem;
+    Help1: TMenuItem;
+    About1: TMenuItem;
+    N1: TMenuItem;
+    CheckBoxes1: TMenuItem;
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> LargeIcons1Click(Sender: TObject);
+    <B>procedure</B> SmallIcons1Click(Sender: TObject);
+    <B>procedure</B> List1Click(Sender: TObject);
+    <B>procedure</B> Details1Click(Sender: TObject);
+    <B>procedure</B> Exit1Click(Sender: TObject);
+    <B>procedure</B> About1Click(Sender: TObject);
+    <B>procedure</B> CheckBoxes1Click(Sender: TObject);
+    <B>procedure</B> ListView1ColumnClick(Sender: TObject; Column: TListColumn);
+    <B>procedure</B> ListView1Compare(Sender: TObject; Item1, Item2: TListItem;
+      Data: Integer; <B>var</B> Compare: Integer);
+    <B>procedure</B> ListView1MouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    <B>procedure</B> FormDestroy(Sender: TObject);
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>private</B>
+    nSortCol: Integer;
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+<FONT COLOR="#000080"><I>{$R BITMAPS.RES}</I></FONT>
+
+<B>uses</B>
+  StdCtrls;
+
+<B>procedure</B> TForm1.FormCreate(Sender: TObject);
+<B>var</B>
+  ImageList1, ImageList2: TImageList;
+  List: TStringList;
+  NewItem: TListItem;
+  I: Integer;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// stops warning message</I></FONT>
+  NewItem := <B>nil</B>;
+
+  <FONT COLOR="#000080"><I>// load the large images</I></FONT>
+  ImageList1 := TImageList.Create (self);
+  ImageList1.Height := 32;
+  ImageList1.Width := 32;
+  ImageList1.ResourceLoad (rtBitmap,
+    <I>'LargeImages'</I>, clWhite);
+  ListView1.LargeImages := ImageList1;
+
+  <FONT COLOR="#000080"><I>// load the small images</I></FONT>
+  ImageList2 := TImageList.Create (self);
+  ImageList2.ResourceLoad (rtBitmap,
+    <I>'SmallImages'</I>, clWhite);
+  ListView1.SmallImages := ImageList2;
+
+  <FONT COLOR="#000080"><I>// load the items</I></FONT>
+  ListView1.Items.Clear;
+  List := TStringList.Create;
+  <B>try</B>
+    List.LoadFromFile (
+      ExtractFilePath (Application.ExeName) + <I>'Items.txt'</I>);
+    <B>for</B> I := 0 <B>to</B> List.Count - 1 <B>do</B>
+      <B>if</B> List [I][1] = <I>#9</I> <B>then</B>
+        NewItem.SubItems.Add (Trim (List [I]))
+      <B>else</B> <B>if</B> List [I][1] = <I>'@'</I> <B>then</B>
+        NewItem.ImageIndex := StrToIntDef (List [I][2], 0)
+      <B>else</B>
+      <B>begin</B>
+        <FONT COLOR="#000080"><I>// a new item</I></FONT>
+        NewItem := ListView1.Items.Add;
+        NewItem.Caption := List [I];
+      <B>end</B>;
+  <B>finally</B>
+    List.Free;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TForm1.LargeIcons1Click(Sender: TObject);
+<B>begin</B>
+  ListView1.ViewStyle := vsIcon;
+  LargeIcons1.Checked := True;
+<B>end</B>;
+
+<B>procedure</B> TForm1.SmallIcons1Click(Sender: TObject);
+<B>begin</B>
+  ListView1.ViewStyle := vsSmallIcon;
+  SmallIcons1.Checked := True;
+<B>end</B>;
+
+<B>procedure</B> TForm1.List1Click(Sender: TObject);
+<B>begin</B>
+  ListView1.ViewStyle := vsList;
+  List1.Checked := True;
+<B>end</B>;
+
+<B>procedure</B> TForm1.Details1Click(Sender: TObject);
+<B>begin</B>
+  ListView1.ViewStyle := vsReport;
+  Details1.Checked := True;
+<B>end</B>;
+
+<B>procedure</B> TForm1.Exit1Click(Sender: TObject);
+<B>begin</B>
+  Close;
+<B>end</B>;
+
+<B>procedure</B> TForm1.About1Click(Sender: TObject);
+<B>begin</B>
+  MessageDlg (<I>'Reference List (ListView example)'</I> +
+    <I>#13'from &quot;Mastering Delphi&quot;'#13'author: Marco Cantù'</I>  ,
+    mtInformation, [mbOk], 0);
+<B>end</B>;
+
+<B>procedure</B> TForm1.CheckBoxes1Click(Sender: TObject);
+<B>begin</B>
+  ListView1.Checkboxes :=
+    <B>not</B> ListView1.Checkboxes;
+  CheckBoxes1.Checked :=
+    <B>not</B> CheckBoxes1.Checked;
+<B>end</B>;
+
+<B>procedure</B> TForm1.ListView1ColumnClick(Sender: TObject;
+  Column: TListColumn);
+<B>begin</B>
+  nSortCol := Column.<B>Index</B>;
+  ListView1.AlphaSort;
+<B>end</B>;
+
+<B>procedure</B> TForm1.ListView1Compare(Sender: TObject;
+  Item1, Item2: TListItem;
+  Data: Integer; <B>var</B> Compare: Integer);
+<B>begin</B>
+  <B>if</B> nSortCol = 0 <B>then</B>
+    Compare := CompareStr (Item1.Caption, Item2.Caption)
+  <B>else</B>
+    Compare := CompareStr (Item1.SubItems [nSortCol - 1],
+       Item2.SubItems [nSortCol - 1]);
+<B>end</B>;
+
+<B>procedure</B> TForm1.ListView1MouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+<B>var</B>
+  strDescr: <B>string</B>;
+  I: Integer;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// if there is a selected item</I></FONT>
+  <B>if</B> ListView1.Selected &lt;&gt; <B>nil</B> <B>then</B>
+    <B>if</B> Button = mbLeft <B>then</B>
+    <B>begin</B>
+      <FONT COLOR="#000080"><I>// create and show a description</I></FONT>
+      strDescr := ListView1.Columns [0].Caption + <I>#9</I> +
+        ListView1.Selected.Caption + <I>#13</I>;
+      <B>for</B> I := 1 <B>to</B> ListView1.Selected.SubItems.Count <B>do</B>
+        strDescr := strDescr + ListView1.Columns [I].Caption + <I>#9</I> +
+          ListView1.Selected.SubItems [I-1] + <I>#13</I>;
+      ShowMessage (strDescr);
+    <B>end</B>
+    <B>else</B> <B>if</B> Button = mbRight <B>then</B>
+      <FONT COLOR="#000080"><I>// edit the caption</I></FONT>
+      ListView1.Selected.EditCaption;
+<B>end</B>;
+
+<B>procedure</B> TForm1.FormDestroy(Sender: TObject);
+<B>var</B>
+  I, J: Integer;
+  List: TStringList;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// store the items</I></FONT>
+  List := TStringList.Create;
+  <B>try</B>
+    <B>for</B> I := 0 <B>to</B> ListView1.Items.Count - 1 <B>do</B>
+    <B>begin</B>
+      <FONT COLOR="#000080"><I>// save the caption</I></FONT>
+      List.Add (ListView1.Items[I].Caption);
+      <FONT COLOR="#000080"><I>// save the index</I></FONT>
+      List.Add (<I>'@'</I> + IntToStr (ListView1.Items[I].ImageIndex));
+      <FONT COLOR="#000080"><I>// save the subitems (indented)</I></FONT>
+      <B>for</B> J := 0 <B>to</B> ListView1.Items[I].SubItems.Count - 1 <B>do</B>
+        List.Add (<I>#9</I> + ListView1.Items[I].SubItems [J]);
+    <B>end</B>;
+    List.SaveToFile (
+      ExtractFilePAth (Application.ExeName) + <I>'Items.txt'</I>);
+  <B>finally</B>
+    List.Free;
+  <B>end</B>;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=REFFORM.DFM><H3>REFFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 194
+  Top = 108
+  Width = 488
+  Height = 300
+  ActiveControl = ListView1
+  Caption = <I>'Reference List'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  Menu = MainMenu1
+  OldCreateOrder = True
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> ListView1: TListView
+    Left = 0
+    Top = 0
+    Width = 480
+    Height = 254
+    Align = alClient
+    Columns = &lt;
+      <B>item</B>
+        Caption = <I>'Reference'</I>
+        Width = 230
+      <B>end</B>
+      <B>item</B>
+        Caption = <I>'Author'</I>
+        Width = 180
+      <B>end</B>
+      <B>item</B>
+        Caption = <I>'Country'</I>
+      <B>end</B>&gt;
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = <I>'MS Sans Serif'</I>
+    Font.Style = [fsBold]
+    FullDrag = True
+    HideSelection = False
+    HotTrack = True
+    HotTrackStyles = [htHandPoint, htUnderlineHot]
+    ParentFont = False
+    SortType = stBoth
+    TabOrder = 0
+    ViewStyle = vsList
+    OnColumnClick = ListView1ColumnClick
+    OnCompare = ListView1Compare
+    OnMouseDown = ListView1MouseDown
+  <B>end</B>
+  <B>object</B> MainMenu1: TMainMenu
+    Left = 424
+    Top = 8
+    <B>object</B> File1: TMenuItem
+      Caption = <I>'&amp;File'</I>
+      <B>object</B> Exit1: TMenuItem
+        Caption = <I>'E&amp;xit'</I>
+        OnClick = Exit1Click
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> View1: TMenuItem
+      Caption = <I>'&amp;View'</I>
+      <B>object</B> LargeIcons1: TMenuItem
+        Caption = <I>'Lar&amp;ge Icons'</I>
+        GroupIndex = 1
+        RadioItem = True
+        OnClick = LargeIcons1Click
+      <B>end</B>
+      <B>object</B> SmallIcons1: TMenuItem
+        Caption = <I>'S&amp;mall Icons'</I>
+        GroupIndex = 1
+        RadioItem = True
+        OnClick = SmallIcons1Click
+      <B>end</B>
+      <B>object</B> List1: TMenuItem
+        Caption = <I>'&amp;List'</I>
+        Checked = True
+        GroupIndex = 1
+        RadioItem = True
+        OnClick = List1Click
+      <B>end</B>
+      <B>object</B> Details1: TMenuItem
+        Caption = <I>'&amp;Details'</I>
+        GroupIndex = 1
+        RadioItem = True
+        OnClick = Details1Click
+      <B>end</B>
+      <B>object</B> N1: TMenuItem
+        Caption = <I>'-'</I>
+        GroupIndex = 1
+      <B>end</B>
+      <B>object</B> CheckBoxes1: TMenuItem
+        Caption = <I>'CheckBoxes'</I>
+        GroupIndex = 1
+        OnClick = CheckBoxes1Click
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> Help1: TMenuItem
+      Caption = <I>'&amp;Help'</I>
+      <B>object</B> About1: TMenuItem
+        Caption = <I>'About Reference List...'</I>
+        OnClick = About1Click
+      <B>end</B>
+    <B>end</B>
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

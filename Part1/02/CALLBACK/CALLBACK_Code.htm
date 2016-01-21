@@ -1,0 +1,136 @@
+<HTML><HEAD>
+<TITLE>Project: CALLBACK.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: CALLBACK.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#CALLBACK.DPR> CALLBACK.DPR</A>
+<LI> <A HREF=#CBACKF.PAS> CBACKF.PAS</A>
+<LI> <A HREF=#CBACKF.DFM> CBACKF.DFM</A>
+</UL>
+<HR>
+<A NAME=CALLBACK.DPR><H3>CALLBACK.DPR</H3></A>
+
+<PRE>
+<B>program</B> Callback;
+
+<B>uses</B>
+  Forms,
+  CbackF <B>in</B> <I>'CbackF.pas'</I> <FONT COLOR="#000080"><I>{FormCallback}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TFormCallback, FormCallback);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=CBACKF.PAS><H3>CBACKF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> CbackF;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls, ExtCtrls;
+
+<B>type</B>
+  TFormCallback = <B>class</B>(TForm)
+    ListBox1: TListBox;
+    Panel1: TPanel;
+    BtnTitles: TButton;
+    <B>procedure</B> BtnTitlesClick(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  FormCallback: TFormCallback;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>type</B>
+  EnumWindowsProc = <B>function</B> (Hwnd: THandle;
+    Param: Pointer): Boolean; <B>stdcall</B>;
+
+<B>function</B> GetTitle (Hwnd: THandle; Param: Pointer): Boolean; <B>stdcall</B>;
+<B>var</B>
+  Text: <B>string</B>;
+<B>begin</B>
+  SetLength (Text, 100);
+  GetWindowText (Hwnd, PChar (Text), 100);
+  FormCallBack.ListBox1.Items.Add (
+    IntToStr (Hwnd) + <I>': '</I> + Text);
+  Result := True;
+<B>end</B>;
+
+<B>procedure</B> TFormCallback.BtnTitlesClick(Sender: TObject);
+<B>var</B>
+  EWProc: EnumWindowsProc;
+<B>begin</B>
+  ListBox1.Items.Clear;
+  EWProc := GetTitle;
+  EnumWindows (@EWProc, 0);
+<B>end</B>;
+
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=CBACKF.DFM><H3>CBACKF.DFM</H3></A>
+
+<PRE>
+<B>object</B> FormCallback: TFormCallback
+  Left = 200
+  Top = 108
+  Width = 304
+  Height = 352
+  Caption = <I>'Callback Function Call'</I>
+  Font.Charset = ANSI_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> ListBox1: TListBox
+    Left = 0
+    Top = 41
+    Width = 296
+    Height = 284
+    Align = alClient
+    ItemHeight = 13
+    TabOrder = 0
+  <B>end</B>
+  <B>object</B> Panel1: TPanel
+    Left = 0
+    Top = 0
+    Width = 296
+    Height = 41
+    Align = alTop
+    TabOrder = 1
+    <B>object</B> BtnTitles: TButton
+      Left = 72
+      Top = 8
+      Width = 153
+      Height = 25
+      Caption = <I>'Get Windows Titles'</I>
+      TabOrder = 0
+      OnClick = BtnTitlesClick
+    <B>end</B>
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

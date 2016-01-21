@@ -1,0 +1,174 @@
+<HTML><HEAD>
+<TITLE>Project: THOLD.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: THOLD.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#THOLD.DPR> THOLD.DPR</A>
+<LI> <A HREF=#MAINFORM.PAS> MAINFORM.PAS</A>
+<LI> <A HREF=#PAINTTH.PAS> PAINTTH.PAS</A>
+<LI> <A HREF=#MAINFORM.DFM> MAINFORM.DFM</A>
+</UL>
+<HR>
+<A NAME=THOLD.DPR><H3>THOLD.DPR</H3></A>
+
+<PRE>
+<B>program</B> ThOld;
+
+<B>uses</B>
+  Forms,
+  MainForm <B>in</B> <I>'MainForm.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>,
+  PaintTh <B>in</B> <I>'PaintTh.pas'</I>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MAINFORM.PAS><H3>MAINFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> MainForm;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls, ExtCtrls, Paintth;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    Button1: TButton;
+    Button2: TButton;
+    <B>procedure</B> Button1Click(Sender: TObject);
+    <B>procedure</B> Button2Click(Sender: TObject);
+    <B>procedure</B> FormMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+    PT: TPainterThread;
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.Button1Click(Sender: TObject);
+<B>begin</B>
+  Button1.Enabled := False;
+  Button2.Enabled := True;
+  PT := TPainterThread.Create (False);  <FONT COLOR="#000080"><I>// start</I></FONT>
+<B>end</B>;
+
+<B>procedure</B> TForm1.Button2Click(Sender: TObject);
+<B>begin</B>
+  PT.Free;
+  Button1.Enabled := True;
+  Button2.Enabled := False;
+<B>end</B>;
+
+<B>procedure</B> TForm1.FormMouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+<B>begin</B>
+  Canvas.Pen.Color := Color; <FONT COLOR="#000080"><I>// of the form</I></FONT>
+  Canvas.Brush.Color := Color;
+  Canvas.Ellipse (x - 30, y - 30, x + 30, y + 30);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=PAINTTH.PAS><H3>PAINTTH.PAS</H3></A>
+
+<PRE>
+<B>unit</B> paintth;
+
+<B>interface</B>
+
+<B>uses</B>
+  Classes;
+
+<B>type</B>
+  TPainterThread = <B>class</B>(TThread)
+  <B>private</B>
+    X, Y: Integer;
+  <B>protected</B>
+    <B>procedure</B> Execute; <B>override</B>;
+    <B>procedure</B> Paint;
+  <B>end</B>;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{ TPainterThread }</I></FONT>
+
+<B>uses</B>
+  MainForm, Graphics;
+
+<B>procedure</B> TPainterThread.Paint;
+<B>begin</B>
+  Form1.Canvas.Pixels [X, Y] := clRed;
+<B>end</B>;
+
+<B>procedure</B> TPainterThread.Execute;
+<B>begin</B>
+  Randomize;
+  <B>repeat</B>
+    X := Random (300);
+    Y := Random (Form1.ClientHeight);
+    Synchronize (Paint);
+  <B>until</B> Terminated;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MAINFORM.DFM><H3>MAINFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 200
+  Top = 109
+  Width = 370
+  Height = 293
+  Caption = <I>'Thread Old'</I>
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OnMouseDown = FormMouseDown
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Button1: TButton
+    Left = 272
+    Top = 16
+    Width = 75
+    Height = 25
+    Caption = <I>'Start'</I>
+    TabOrder = 0
+    OnClick = Button1Click
+  <B>end</B>
+  <B>object</B> Button2: TButton
+    Left = 272
+    Top = 48
+    Width = 75
+    Height = 25
+    Caption = <I>'Stop'</I>
+    Enabled = False
+    TabOrder = 1
+    OnClick = Button2Click
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

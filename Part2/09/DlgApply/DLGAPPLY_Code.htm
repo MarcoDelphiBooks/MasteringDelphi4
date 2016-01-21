@@ -1,0 +1,544 @@
+<HTML><HEAD>
+<TITLE>Project: DLGAPPLY.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: DLGAPPLY.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#DLGAPPLY.DPR> DLGAPPLY.DPR</A>
+<LI> <A HREF=#MAIN.PAS> MAIN.PAS</A>
+<LI> <A HREF=#STYLED.PAS> STYLED.PAS</A>
+<LI> <A HREF=#LISTD.PAS> LISTD.PAS</A>
+<LI> <A HREF=#MAIN.DFM> MAIN.DFM</A>
+<LI> <A HREF=#STYLED.DFM> STYLED.DFM</A>
+<LI> <A HREF=#LISTD.DFM> LISTD.DFM</A>
+</UL>
+<HR>
+<A NAME=DLGAPPLY.DPR><H3>DLGAPPLY.DPR</H3></A>
+
+<PRE>
+<B>program</B> DlgApply;
+
+<B>uses</B>
+  Forms,
+  Main <B>in</B> <I>'MAIN.PAS'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>,
+  StyleD <B>in</B> <I>'StyleD.pas'</I> <FONT COLOR="#000080"><I>{StyleDial}</I></FONT>,
+  ListD <B>in</B> <I>'ListD.pas'</I> <FONT COLOR="#000080"><I>{ListDial}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.CreateForm(TStyleDial, StyleDial);
+  Application.CreateForm(TListDial, ListDial);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MAIN.PAS><H3>MAIN.PAS</H3></A>
+
+<PRE>
+<B>unit</B> Main;
+
+<B>interface</B>
+
+<B>uses</B> Windows, Classes, Graphics, Forms, Controls,
+     StyleD, ListD, StdCtrls, ExtCtrls;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    Label1: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
+    Label4: TLabel;
+    Label5: TLabel;
+    Label6: TLabel;
+    StyleButton: TButton;
+    Bevel1: TBevel;
+    <B>procedure</B> LabelDoubleClick(Sender: TObject);
+    <B>procedure</B> LabelClick(Sender: TObject);
+    <B>procedure</B> StyleButtonClick(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.LabelDoubleClick(Sender: TObject);
+<B>begin</B>
+  <B>with</B> ListDial.Listbox1 <B>do</B>
+  <B>begin</B>
+    <FONT COLOR="#000080"><I>// select current the name in the listbox</I></FONT>
+    ItemIndex := Items.IndexOf ((Sender <B>as</B> TLabel).Caption);
+    <FONT COLOR="#000080"><I>// show the modal dialog box, checking the return value</I></FONT>
+    <B>if</B> (ListDial.ShowModal = mrOk) <B>and</B> (ItemIndex &gt;= 0) <B>then</B>
+      <FONT COLOR="#000080"><I>// if OK, then copy the selected item of the list to the label</I></FONT>
+      (Sender <B>as</B> TLabel).Caption := Items [ItemIndex];
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TForm1.LabelClick(Sender: TObject);
+<B>var</B>
+  I: Integer;
+<B>begin</B>
+  <B>for</B> I := 0 <B>to</B> ComponentCount - 1 <B>do</B>
+   <B>if</B> (Components[I] <B>is</B> TLabel) <B>and</B>
+       (Components[I].Tag = 1) <B>then</B>
+     TLabel (Components[I]).Font.Color := clBlack;
+
+  <FONT COLOR="#000080"><I>// set the color of the clicked label to red</I></FONT>
+  (Sender <B>as</B> TLabel).Font.Color := clRed;
+<B>end</B>;
+
+<B>procedure</B> TForm1.StyleButtonClick(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// run modeless dialog</I></FONT>
+  StyleDial.Show;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=STYLED.PAS><H3>STYLED.PAS</H3></A>
+
+<PRE>
+<B>unit</B> StyleD;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Classes, Graphics, Forms,
+  Controls, Buttons, StdCtrls;
+
+<B>type</B>
+  TStyleDial = <B>class</B>(TForm)
+    ApplyBitBtn: TBitBtn;
+    CloseBitBtn: TBitBtn;
+    ItalicCheckBox: TCheckBox;
+    BoldCheckBox: TCheckBox;
+    UnderlineCheckBox: TCheckBox;
+    LabelSample: TLabel;
+    <B>procedure</B> ApplyBitBtnClick(Sender: TObject);
+    <B>procedure</B> CloseBitBtnClick(Sender: TObject);
+    <B>procedure</B> ItalicCheckBoxClick(Sender: TObject);
+    <B>procedure</B> BoldCheckBoxClick(Sender: TObject);
+    <B>procedure</B> UnderlineCheckBoxClick(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  StyleDial: TStyleDial;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<FONT COLOR="#000080"><I>{allow access to the main form}</I></FONT>
+<B>uses</B> Main;
+
+<B>procedure</B> TStyleDial.ApplyBitBtnClick(Sender: TObject);
+<B>var</B>
+  I: Integer;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>{copy the style from the sample label of the dialog box
+  to the five labels of the main form}</I></FONT>
+  <B>for</B> I := 1 <B>to</B> 5 <B>do</B>
+    (Form1.FindComponent (<I>'Label'</I> + IntToStr (I)) <B>as</B> TLabel).
+       Font.Style := LabelSample.Font.Style;
+<B>end</B>;
+
+<B>procedure</B> TStyleDial.CloseBitBtnClick(Sender: TObject);
+<B>begin</B>
+  Close;
+<B>end</B>;
+
+<B>procedure</B> TStyleDial.ItalicCheckBoxClick(Sender: TObject);
+<B>begin</B>
+  <B>if</B> ItalicCheckBox.Checked <B>then</B>
+    LabelSample.Font.Style := LabelSample.Font.Style + [fsItalic]
+  <B>else</B>
+    LabelSample.Font.Style := LabelSample.Font.Style - [fsItalic];
+<B>end</B>;
+
+<B>procedure</B> TStyleDial.BoldCheckBoxClick(Sender: TObject);
+<B>begin</B>
+  <B>if</B> BoldCheckBox.Checked <B>then</B>
+    LabelSample.Font.Style := LabelSample.Font.Style + [fsBold]
+  <B>else</B>
+    LabelSample.Font.Style := LabelSample.Font.Style - [fsBold];
+<B>end</B>;
+
+<B>procedure</B> TStyleDial.UnderlineCheckBoxClick(Sender: TObject);
+<B>begin</B>
+  <B>if</B> UnderlineCheckBox.Checked <B>then</B>
+    LabelSample.Font.Style := LabelSample.Font.Style + [fsUnderline]
+  <B>else</B>
+    LabelSample.Font.Style := LabelSample.Font.Style - [fsUnderline];
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=LISTD.PAS><H3>LISTD.PAS</H3></A>
+
+<PRE>
+<B>unit</B> ListD;
+
+<B>interface</B>
+
+<B>uses</B> Windows, Classes, Graphics, Forms,
+  Controls, Buttons, StdCtrls;
+
+<B>type</B>
+  TListDial = <B>class</B>(TForm)
+    ListBox1: TListBox;
+    BitBtn1: TBitBtn;
+    BitBtn2: TBitBtn;
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  ListDial: TListDial;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MAIN.DFM><H3>MAIN.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 151
+  Top = 137
+  Width = 350
+  Height = 237
+  ActiveControl = StyleButton
+  Caption = <I>'DlgApply (Modal &amp; modeless dialogs)'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clBlack
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Bevel1: TBevel
+    Left = 168
+    Top = 57
+    Width = 169
+    Height = 97
+  <B>end</B>
+  <B>object</B> Label1: TLabel
+    Tag = 1
+    Left = 27
+    Top = 26
+    Width = 50
+    Height = 22
+    Caption = <I>'Name'</I>
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clBlack
+    Font.Height = -19
+    Font.Name = <I>'Arial'</I>
+    Font.Style = []
+    ParentFont = False
+    OnClick = LabelClick
+    OnDblClick = LabelDoubleClick
+  <B>end</B>
+  <B>object</B> Label2: TLabel
+    Tag = 1
+    Left = 27
+    Top = 60
+    Width = 50
+    Height = 22
+    Caption = <I>'Name'</I>
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clBlack
+    Font.Height = -19
+    Font.Name = <I>'Arial'</I>
+    Font.Style = []
+    ParentFont = False
+    OnClick = LabelClick
+    OnDblClick = LabelDoubleClick
+  <B>end</B>
+  <B>object</B> Label3: TLabel
+    Tag = 1
+    Left = 27
+    Top = 94
+    Width = 50
+    Height = 22
+    Caption = <I>'Name'</I>
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clBlack
+    Font.Height = -19
+    Font.Name = <I>'Arial'</I>
+    Font.Style = []
+    ParentFont = False
+    OnClick = LabelClick
+    OnDblClick = LabelDoubleClick
+  <B>end</B>
+  <B>object</B> Label4: TLabel
+    Tag = 1
+    Left = 27
+    Top = 128
+    Width = 50
+    Height = 22
+    Caption = <I>'Name'</I>
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clBlack
+    Font.Height = -19
+    Font.Name = <I>'Arial'</I>
+    Font.Style = []
+    ParentFont = False
+    OnClick = LabelClick
+    OnDblClick = LabelDoubleClick
+  <B>end</B>
+  <B>object</B> Label5: TLabel
+    Tag = 1
+    Left = 27
+    Top = 162
+    Width = 50
+    Height = 22
+    Caption = <I>'Name'</I>
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clBlack
+    Font.Height = -19
+    Font.Name = <I>'Arial'</I>
+    Font.Style = []
+    ParentFont = False
+    OnClick = LabelClick
+    OnDblClick = LabelDoubleClick
+  <B>end</B>
+  <B>object</B> Label6: TLabel
+    Left = 176
+    Top = 65
+    Width = 153
+    Height = 48
+    Alignment = taCenter
+    AutoSize = False
+    Caption =
+       <I>'Double-click on a name to change it or click on the button below'</I> +
+      <I>' to modify text style'</I>
+    WordWrap = True
+  <B>end</B>
+  <B>object</B> StyleButton: TButton
+    Left = 220
+    Top = 117
+    Width = 65
+    Height = 21
+    Caption = <I>'&amp;Style...'</I>
+    TabOrder = 0
+    OnClick = StyleButtonClick
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<A NAME=STYLED.DFM><H3>STYLED.DFM</H3></A>
+
+<PRE>
+<B>object</B> StyleDial: TStyleDial
+  Left = 333
+  Top = 198
+  ActiveControl = ApplyBitBtn
+  BorderStyle = bsDialog
+  Caption = <I>'Select style'</I>
+  ClientHeight = 152
+  ClientWidth = 221
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clBlack
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> LabelSample: TLabel
+    Left = 4
+    Top = 120
+    Width = 209
+    Height = 22
+    Alignment = taCenter
+    AutoSize = False
+    Caption = <I>'Sample label'</I>
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clBlack
+    Font.Height = -19
+    Font.Name = <I>'Arial'</I>
+    Font.Style = []
+    ParentFont = False
+  <B>end</B>
+  <B>object</B> ApplyBitBtn: TBitBtn
+    Left = 128
+    Top = 21
+    Width = 75
+    Height = 28
+    Caption = <I>'&amp;Apply'</I>
+    Default = True
+    ModalResult = 1
+    TabOrder = 0
+    OnClick = ApplyBitBtnClick
+    Glyph.Data = <FONT COLOR="#000080"><I>{
+      42010000424D4201000000000000760000002800000012000000110000000100
+      040000000000CC00000000000000000000001000000000000000000000000000
+      80000080000000808000800000008000800080800000C0C0C000808080000000
+      FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333333333333
+      3333330000003333344333333333330000003333422433333333330000003334
+      2222433333333300000033422222243333333300000034222A22224333333300
+      00003222A3A222433333330000003A2A333A222433333300000033A33333A222
+      433333000000333333333A222433330000003333333333A22243330000003333
+      3333333A222433000000333333333333A222430000003333333333333A224300
+      000033333333333333A223000000333333333333333A33000000333333333333
+      333333000000}</I></FONT>
+  <B>end</B>
+  <B>object</B> CloseBitBtn: TBitBtn
+    Left = 128
+    Top = 61
+    Width = 75
+    Height = 28
+    Cancel = True
+    Caption = <I>'Close'</I>
+    ModalResult = 2
+    TabOrder = 1
+    OnClick = CloseBitBtnClick
+    Glyph.Data = <FONT COLOR="#000080"><I>{
+      FE000000424DFE00000000000000760000002800000010000000110000000100
+      0400000000008800000000000000000000001000000000000000000000000000
+      80000080000000808000800000008000800080800000C0C0C000808080000000
+      FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333333333333
+      3333338833333333333339118333339833333911183339118333391111839111
+      1833339111181111183333391111111183333333911111183333333331111183
+      3333333339111183333333339111118333333339111811183333339111839111
+      8333339118333911183333391333339111833333333333391933333333333333
+      3333}</I></FONT>
+  <B>end</B>
+  <B>object</B> ItalicCheckBox: TCheckBox
+    Left = 24
+    Top = 13
+    Width = 89
+    Height = 25
+    Caption = <I>'&amp;Italic'</I>
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clBlack
+    Font.Height = -11
+    Font.Name = <I>'MS Sans Serif'</I>
+    Font.Style = [fsItalic]
+    ParentFont = False
+    TabOrder = 2
+    OnClick = ItalicCheckBoxClick
+  <B>end</B>
+  <B>object</B> BoldCheckBox: TCheckBox
+    Left = 24
+    Top = 45
+    Width = 89
+    Height = 25
+    Caption = <I>'&amp;Bold'</I>
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clBlack
+    Font.Height = -11
+    Font.Name = <I>'MS Sans Serif'</I>
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 3
+    OnClick = BoldCheckBoxClick
+  <B>end</B>
+  <B>object</B> UnderlineCheckBox: TCheckBox
+    Left = 24
+    Top = 77
+    Width = 89
+    Height = 25
+    Caption = <I>'&amp;Underline'</I>
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clBlack
+    Font.Height = -11
+    Font.Name = <I>'MS Sans Serif'</I>
+    Font.Style = [fsUnderline]
+    ParentFont = False
+    TabOrder = 4
+    OnClick = UnderlineCheckBoxClick
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<A NAME=LISTD.DFM><H3>LISTD.DFM</H3></A>
+
+<PRE>
+<B>object</B> ListDial: TListDial
+  Left = 328
+  Top = 272
+  ActiveControl = ListBox1
+  BorderStyle = bsDialog
+  Caption = <I>'Select a name'</I>
+  ClientHeight = 123
+  ClientWidth = 217
+  Font.Color = clBlack
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> ListBox1: TListBox
+    Left = 0
+    Top = 0
+    Width = 129
+    Height = 123
+    Align = alLeft
+    ItemHeight = 13
+    Items.Strings = (
+      <I>'Bob'</I>
+      <I>'Cindy'</I>
+      <I>'Jane'</I>
+      <I>'Jeff'</I>
+      <I>'John'</I>
+      <I>'Julia'</I>
+      <I>'Mark'</I>
+      <I>'Martha'</I>
+      <I>'Mary'</I>
+      <I>'Micheal'</I>
+      <I>'Nan'</I>
+      <I>'Paul'</I>
+      <I>'Robert'</I>
+      <I>'Roberta'</I>
+      <I>'Steve'</I>)
+    Sorted = True
+    TabOrder = 0
+  <B>end</B>
+  <B>object</B> BitBtn1: TBitBtn
+    Left = 136
+    Top = 29
+    Width = 75
+    Height = 28
+    TabOrder = 1
+    Kind = bkOK
+  <B>end</B>
+  <B>object</B> BitBtn2: TBitBtn
+    Left = 136
+    Top = 66
+    Width = 75
+    Height = 28
+    TabOrder = 2
+    Kind = bkCancel
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

@@ -1,0 +1,586 @@
+<HTML><HEAD>
+<TITLE>Project: CTRLMENU.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: CTRLMENU.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#CTRLMENU.DPR> CTRLMENU.DPR</A>
+<LI> <A HREF=#CTRLFORM.PAS> CTRLFORM.PAS</A>
+<LI> <A HREF=#CTRLFORM.DFM> CTRLFORM.DFM</A>
+</UL>
+<HR>
+<A NAME=CTRLMENU.DPR><H3>CTRLMENU.DPR</H3></A>
+
+<PRE>
+<B>program</B> CtrlMenu;
+
+<B>uses</B>
+  Forms,
+  CtrlForm <B>in</B> <I>'CtrlForm.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=CTRLFORM.PAS><H3>CTRLFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> CtrlForm;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  Buttons, StdCtrls, ExtCtrls, Menus, ComCtrls, ToolWin, ImgList, ActnList;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    ControlBar: TControlBar;
+    Label1: TLabel;
+    ImageList1: TImageList;
+    ToolFontStyle: TToolBar;
+    tbBold: TToolButton;
+    tbitalic: TToolButton;
+    tbUnderline: TToolButton;
+    ToolAlign: TToolBar;
+    tbNote: TToolButton;
+    ToolButton9: TToolButton;
+    tbLeft: TToolButton;
+    tbCenter: TToolButton;
+    tbRight: TToolButton;
+    MainMenu1: TMainMenu;
+    File1: TMenuItem;
+    Exit1: TMenuItem;
+    Toolbar1: TMenuItem;
+    Visible1: TMenuItem;
+    DisableSound1: TMenuItem;
+    DisableStyles1: TMenuItem;
+    Help1: TMenuItem;
+    AboutToolbar1: TMenuItem;
+    PopupMenu1: TPopupMenu;
+    Hide1: TMenuItem;
+    N1: TMenuItem;
+    DisableSound2: TMenuItem;
+    DisableStyles2: TMenuItem;
+    ActionList1: TActionList;
+    actVisible: TAction;
+    actDisableSound: TAction;
+    actDisableStyles: TAction;
+    actExit: TAction;
+    ToolMenu: TToolBar;
+    ToolButton1: TToolButton;
+    ToolButton2: TToolButton;
+    ToolButton3: TToolButton;
+    Panel1: TPanel;
+    ComboFont: TComboBox;
+    <B>procedure</B> tbLeftClick(Sender: TObject);
+    <B>procedure</B> tbCenterClick(Sender: TObject);
+    <B>procedure</B> tbRightClick(Sender: TObject);
+    <B>procedure</B> tbNoteClick(Sender: TObject);
+    <B>procedure</B> tbBoldClick(Sender: TObject);
+    <B>procedure</B> tbitalicClick(Sender: TObject);
+    <B>procedure</B> tbUnderlineClick(Sender: TObject);
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> ComboFontChange(Sender: TObject);
+    <B>procedure</B> AboutToolbar1Click(Sender: TObject);
+    <B>procedure</B> actDisableSoundExecute(Sender: TObject);
+    <B>procedure</B> actDisableStylesExecute(Sender: TObject);
+    <B>procedure</B> actExitExecute(Sender: TObject);
+    <B>procedure</B> actVisibleExecute(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.tbLeftClick(Sender: TObject);
+<B>begin</B>
+  Label1.Alignment := taLeftJustify;
+<B>end</B>;
+
+<B>procedure</B> TForm1.tbCenterClick(Sender: TObject);
+<B>begin</B>
+  Label1.Alignment := taCenter;
+<B>end</B>;
+
+<B>procedure</B> TForm1.tbRightClick(Sender: TObject);
+<B>begin</B>
+  Label1.Alignment := taRightJustify;
+<B>end</B>;
+
+<B>procedure</B> TForm1.tbNoteClick(Sender: TObject);
+<B>begin</B>
+  Beep;
+<B>end</B>;
+
+<B>procedure</B> TForm1.tbBoldClick(Sender: TObject);
+<B>begin</B>
+  <B>with</B> Label1.Font <B>do</B>
+    <B>if</B> fsBold <B>in</B> Style <B>then</B>
+      Style := Style - [fsBold]
+    <B>else</B>
+      Style := Style + [fsBold];
+<B>end</B>;
+
+<B>procedure</B> TForm1.tbitalicClick(Sender: TObject);
+<B>begin</B>
+  <B>with</B> Label1.Font <B>do</B>
+    <B>if</B> fsItalic <B>in</B> Style <B>then</B>
+      Style := Style - [fsItalic]
+    <B>else</B>
+      Style := Style + [fsItalic];
+<B>end</B>;
+
+<B>procedure</B> TForm1.tbUnderlineClick(Sender: TObject);
+<B>begin</B>
+  <B>with</B> Label1.Font <B>do</B>
+    <B>if</B> fsUnderline <B>in</B> Style <B>then</B>
+      Style := Style - [fsUnderline]
+    <B>else</B>
+      Style := Style + [fsUnderline];
+<B>end</B>;
+
+<B>procedure</B> TForm1.FormCreate(Sender: TObject);
+<B>begin</B>
+  ComboFont.Items := Screen.Fonts;
+  ComboFont.ItemIndex :=
+    ComboFont.Items.IndexOf (Label1.Font.Name);
+<B>end</B>;
+
+<B>procedure</B> TForm1.ComboFontChange(Sender: TObject);
+<B>begin</B>
+  Label1.Font.Name := ComboFont.Text;
+<B>end</B>;
+
+<B>procedure</B> TForm1.AboutToolbar1Click(Sender: TObject);
+<B>begin</B>
+  MessageDlg (<I>'Toolbar example for &quot;Mastering Delphi&quot;'</I> +
+    Chr (13) +  <I>'Written by Marco Cantù'</I>,
+    mtInformation, [mbOk], 0);
+<B>end</B>;
+
+<B>procedure</B> TForm1.actDisableSoundExecute(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// disable or enable button and set check mark</I></FONT>
+  tbNote.Enabled := <B>not</B> tbNote.Enabled;
+  actDisableSound.Checked := <B>not</B> tbNote.Enabled;
+<B>end</B>;
+
+<B>procedure</B> TForm1.actDisableStylesExecute(Sender: TObject);
+<B>begin</B>
+  ToolFontStyle.Visible := <B>not</B> ToolFontStyle.Visible;
+  actDisableStyles.Checked := ToolFontStyle.Visible;
+<B>end</B>;
+
+<B>procedure</B> TForm1.actExitExecute(Sender: TObject);
+<B>begin</B>
+  Close;
+<B>end</B>;
+
+<B>procedure</B> TForm1.actVisibleExecute(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// hide or display the toolbar, setting the checkmark</I></FONT>
+  ToolAlign.Visible := <B>not</B> ToolAlign.Visible;
+  Visible1.Checked := ToolAlign.Visible;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=CTRLFORM.DFM><H3>CTRLFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 206
+  Top = 127
+  Width = 671
+  Height = 392
+  Caption = <I>'CtrlMenu (Control Bar with Menu)'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = False
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Label1: TLabel
+    Left = 0
+    Top = 56
+    Width = 663
+    Height = 309
+    Align = alClient
+    Caption =
+       <I>'A caption with some sample text to show the effect of the speed '</I> +
+      <I>'buttons of the toolbar. You can replace it with something more u'</I> +
+      <I>'seful.'</I>
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clBlack
+    Font.Height = -19
+    Font.Name = <I>'Arial'</I>
+    Font.Style = []
+    ParentFont = False
+    WordWrap = True
+  <B>end</B>
+  <B>object</B> ControlBar: TControlBar
+    Left = 0
+    Top = 0
+    Width = 663
+    Height = 56
+    Align = alTop
+    AutoDrag = False
+    AutoSize = True
+    DockSite = False
+    DragKind = dkDock
+    PopupMenu = PopupMenu1
+    RowSize = 25
+    RowSnap = False
+    TabOrder = 0
+    <B>object</B> ToolFontStyle: TToolBar
+      Left = 133
+      Top = 2
+      Width = 72
+      Height = 22
+      AutoSize = True
+      EdgeBorders = []
+      EdgeInner = esNone
+      EdgeOuter = esNone
+      Flat = True
+      Images = ImageList1
+      TabOrder = 0
+      <B>object</B> tbBold: TToolButton
+        Left = 0
+        Top = 0
+        Caption = <I>'tbBold'</I>
+        ImageIndex = 4
+        Style = tbsCheck
+        OnClick = tbBoldClick
+      <B>end</B>
+      <B>object</B> tbitalic: TToolButton
+        Left = 23
+        Top = 0
+        Caption = <I>'tbitalic'</I>
+        ImageIndex = 5
+        Style = tbsCheck
+        OnClick = tbitalicClick
+      <B>end</B>
+      <B>object</B> tbUnderline: TToolButton
+        Left = 46
+        Top = 0
+        Caption = <I>'tbUnderline'</I>
+        ImageIndex = 6
+        Style = tbsCheck
+        OnClick = tbUnderlineClick
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> ToolAlign: TToolBar
+      Left = 11
+      Top = 28
+      Width = 105
+      Height = 22
+      AutoSize = True
+      EdgeBorders = []
+      EdgeInner = esNone
+      EdgeOuter = esNone
+      Flat = True
+      Images = ImageList1
+      TabOrder = 1
+      <B>object</B> tbNote: TToolButton
+        Left = 0
+        Top = 0
+        Caption = <I>'ToolButton3'</I>
+        ImageIndex = 0
+        OnClick = tbNoteClick
+      <B>end</B>
+      <B>object</B> ToolButton9: TToolButton
+        Left = 23
+        Top = 0
+        Width = 8
+        Caption = <I>'ToolButton6'</I>
+        ImageIndex = 3
+        Style = tbsSeparator
+      <B>end</B>
+      <B>object</B> tbLeft: TToolButton
+        Left = 31
+        Top = 0
+        Caption = <I>'ToolButton4'</I>
+        Grouped = True
+        ImageIndex = 1
+        OnClick = tbLeftClick
+      <B>end</B>
+      <B>object</B> tbCenter: TToolButton
+        Left = 54
+        Top = 0
+        Caption = <I>'ToolButton5'</I>
+        Grouped = True
+        ImageIndex = 2
+        OnClick = tbCenterClick
+      <B>end</B>
+      <B>object</B> tbRight: TToolButton
+        Left = 77
+        Top = 0
+        Caption = <I>'ToolButton7'</I>
+        Grouped = True
+        ImageIndex = 3
+        OnClick = tbRightClick
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> ToolMenu: TToolBar
+      Left = 11
+      Top = 2
+      Width = 109
+      Height = 21
+      AutoSize = True
+      ButtonHeight = 21
+      ButtonWidth = 49
+      EdgeBorders = []
+      Flat = True
+      ShowCaptions = True
+      TabOrder = 2
+      <B>object</B> ToolButton1: TToolButton
+        Left = 0
+        Top = 0
+        AutoSize = True
+        Caption = <I>'&amp;File'</I>
+        MenuItem = File1
+      <B>end</B>
+      <B>object</B> ToolButton2: TToolButton
+        Left = 27
+        Top = 0
+        AutoSize = True
+        Caption = <I>'&amp;Toolbar'</I>
+        MenuItem = Toolbar1
+        OnClick = actVisibleExecute
+      <B>end</B>
+      <B>object</B> ToolButton3: TToolButton
+        Left = 74
+        Top = 0
+        AutoSize = True
+        Caption = <I>'&amp;Help'</I>
+        Grouped = True
+        MenuItem = Help1
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> Panel1: TPanel
+      Left = 129
+      Top = 28
+      Width = 145
+      Height = 21
+      AutoSize = True
+      BevelOuter = bvNone
+      TabOrder = 3
+      <B>object</B> ComboFont: TComboBox
+        Left = 0
+        Top = 0
+        Width = 145
+        Height = 21
+        Style = csDropDownList
+        ItemHeight = 13
+        TabOrder = 0
+        OnChange = ComboFontChange
+      <B>end</B>
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> ImageList1: TImageList
+    Left = 40
+    Top = 80
+    Bitmap = <FONT COLOR="#000080"><I>{
+      360C000007000000424D360C0000000000003604000028000000400000002000
+      0000010008000000000000080000000000000000000000010000000000000000
+      0000000080000080000000808000800000008000800080800000C0C0C000C0DC
+      C000F0CAA6000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000000000000000000F0FBFF00A4A0A0008080
+      80000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000FFFFFF000700FFFFFF070707FF00F8070000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000070707070707F8FFFFFCFFFCFFFCFCF80000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000FF07FF070007FF0707070707F8F8FFFF0000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000F9FBF9FFFFFFF8FFFF0007FF07FF07FF0000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000007FF07F8FFFFFFFFFFFFFFFFF8FFF9F90000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000070707070707FF07FF07F8F8F8FFFFFF0000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000FFF9F9F907070700070707070707FF070000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000FFFFFFFBF9FBF9FFFFFFFF00F80707070000
+</I></FONT>      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000070707070707F8FFFFFCFFFCFFFCFCF80000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000007FF07FF07FF0707070707070707F80000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000F8F8F8FFFFFFFF0007FF07FF07FF07FF0000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000007FF07F8FFFFFFFFFFFFFFFFFFFFFFFF0000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000070707070707FF07FF07FF07FF07FF070000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000FFFFFF0007070707070707070707FF070000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000707070707F8F8F8FF00F807070707070000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000070707070707F8FFFFFFFFFFFFFFFFFF0000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000000000000000000000000000424D
+      3E010000000000003E0000002800000040000000200000000100010000000000
+      000100000000000000000000020000000000000000000000FFFFFF00FFFFFFFF
+      FFFF0000FFFFFFFFFFFFF800E01FF03FF00F0000E00FFCFFF00FF800F3CFFCFF
+      FFFFF800F3CFFCFFFC4F00F8F38FFE7FF80F0000F01FFE7FF91FF800F00FFE7F
+      F99F0000F3CFFF3FF99FF803F3CFFF3FF99FF800E00FFC0FF11FF803E01FFFFF
+      FFFF0000FFFFFFFFFFFF0003FFFFFFFFFFFF0000FFFFFFFFFFFF0100CFFF8001
+      80018001873FBFFDBFFDBFFD821FA03DB81DBC05C20FBFFDBFFDBFFDFB0FA3FD
+      BC3DBFC5FBEFBFFDBFFDBFFDFBEFA0FDB81DBF05FBEFBFFDBFFDBFFDFBEFA3FD
+      BE7DBFC5FBEFBFFDBFFDBFFDF8EFA01DB00DB805FB0FBFFDBFFDBFFDF8EFA07D
+      B81DBE05FF0FBFFDBFFDBFFDFFFF800180018001FFFFFFFFFFFFFFFF}
+  <B>end</B>
+  <B>object</B> MainMenu1: TMainMenu
+    Left = 40
+    Top = 136
+    <B>object</B> File1: TMenuItem
+      Caption = <I>'&amp;File'</I>
+      <B>object</B> Exit1: TMenuItem
+        Caption = <I>'E&amp;xit'</I>
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> Toolbar1: TMenuItem
+      Caption = <I>'&amp;Toolbar'</I>
+      <B>object</B> Visible1: TMenuItem
+        Action = actVisible
+      <B>end</B>
+      <B>object</B> DisableSound1: TMenuItem
+        Action = actDisableSound
+      <B>end</B>
+      <B>object</B> DisableStyles1: TMenuItem
+        Action = actDisableStyles
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> Help1: TMenuItem
+      Caption = <I>'&amp;Help'</I>
+      <B>object</B> AboutToolbar1: TMenuItem
+        Caption = <I>'&amp;About Toolbar...'</I>
+        OnClick = AboutToolbar1Click
+      <B>end</B>
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> PopupMenu1: TPopupMenu
+    Left = 112
+    Top = 80
+    <B>object</B> Hide1: TMenuItem
+      Action = actVisible
+      Caption = <I>'&amp;Toolbar Visible'</I>
+    <B>end</B>
+    <B>object</B> N1: TMenuItem
+      Caption = <I>'-'</I>
+    <B>end</B>
+    <B>object</B> DisableSound2: TMenuItem
+      Action = actDisableSound
+      Caption = <I>'Disable &amp;Sound'</I>
+    <B>end</B>
+    <B>object</B> DisableStyles2: TMenuItem
+      Action = actDisableStyles
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> ActionList1: TActionList
+    Left = 112
+    Top = 136
+    <B>object</B> actVisible: TAction
+      Caption = <I>'Align &amp;Visible'</I>
+      ShortCut = 49238
+      OnExecute = actVisibleExecute
+    <B>end</B>
+    <B>object</B> actDisableSound: TAction
+      Caption = <I>'Disable &amp;Sounds'</I>
+      OnExecute = actDisableSoundExecute
+    <B>end</B>
+    <B>object</B> actDisableStyles: TAction
+      Caption = <I>'&amp;Hide Styles'</I>
+      OnExecute = actDisableStylesExecute
+    <B>end</B>
+    <B>object</B> actExit: TAction
+      Caption = <I>'&amp;Exit'</I>
+      ShortCut = 32883
+      OnExecute = actExitExecute
+    <B>end</B>
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

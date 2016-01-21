@@ -1,0 +1,310 @@
+<HTML><HEAD>
+<TITLE>Project: SENDTODB.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: SENDTODB.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#SENDTODB.DPR> SENDTODB.DPR</A>
+<LI> <A HREF=#SENDTOF.PAS> SENDTOF.PAS</A>
+<LI> <A HREF=#SENDTOF.DFM> SENDTOF.DFM</A>
+</UL>
+<HR>
+<A NAME=SENDTODB.DPR><H3>SENDTODB.DPR</H3></A>
+
+<PRE>
+<B>program</B> SendToDb;
+
+<B>uses</B>
+  Forms,
+  SendToF <B>in</B> <I>'SendToF.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=SENDTOF.PAS><H3>SENDTOF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> SendToF;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  DBTables, DB, StdCtrls, Grids, DBGrids, ComCtrls;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    Table1: TTable;
+    Table1Name: TStringField;
+    Table1Capital: TStringField;
+    Table1Continent: TStringField;
+    Table1Area: TFloatField;
+    Table1Population: TFloatField;
+    EditCapital: TEdit;
+    EditPopulation: TEdit;
+    EditArea: TEdit;
+    Label1: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
+    Label4: TLabel;
+    Label5: TLabel;
+    ComboContinent: TComboBox;
+    Button1: TButton;
+    Button2: TButton;
+    ComboName: TComboBox;
+    <B>procedure</B> Button1Click(Sender: TObject);
+    <B>procedure</B> Button2Click(Sender: TObject);
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> ComboNameKeyPress(Sender: TObject; <B>var</B> Key: Char);
+    <B>procedure</B> ComboNameClick(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <B>procedure</B> GetData;
+    <B>procedure</B> SendData;
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.GetData;
+<B>begin</B>
+  Table1.FindNearest ([ComboName.Text]);
+  ComboName.Text := Table1Name.AsString;
+  EditCapital.Text := Table1Capital.AsString;
+  ComboContinent.Text := Table1Continent.AsString;
+  EditArea.Text := Table1Area.AsString;
+  EditPopulation.Text := Table1Population.AsString;
+<B>end</B>;
+
+<B>procedure</B> TForm1.SendData;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// raise an exception if there is no name</I></FONT>
+  <B>if</B> ComboName.Text = <I>''</I> <B>then</B>
+    <B>raise</B> Exception.Create (<I>'Insert the name'</I>);
+
+  <FONT COLOR="#000080"><I>// check if record the is already in the table    </I></FONT>
+  <B>if</B> Table1.FindKey ([ComboName.Text]) <B>then</B>
+  <B>begin</B>
+    <FONT COLOR="#000080"><I>// modify found record</I></FONT>
+    Table1.Edit;
+    Table1Capital.AsString := EditCapital.Text;
+    Table1Continent.AsString := ComboContinent.Text;
+    Table1Area.AsString := EditArea.Text;
+    Table1Population.AsString := EditPopulation.Text;
+    Table1.Post;
+  <B>end</B>
+  <B>else</B>
+  <B>begin</B>
+    <FONT COLOR="#000080"><I>// insert new record</I></FONT>
+    Table1.InsertRecord ([ComboName.Text,
+      EditCapital.Text, ComboContinent.Text,
+      EditArea.Text, EditPopulation.Text]);
+    <FONT COLOR="#000080"><I>// add to list</I></FONT>
+    ComboName.Items.Add (ComboName.Text)
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TForm1.Button1Click(Sender: TObject);
+<B>begin</B>
+  GetData;
+<B>end</B>;
+
+<B>procedure</B> TForm1.Button2Click(Sender: TObject);
+<B>begin</B>
+  SendData;
+<B>end</B>;
+
+<B>procedure</B> TForm1.FormCreate(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// fill the list of names</I></FONT>
+  Table1.Open;
+  <B>while</B> <B>not</B> Table1.Eof <B>do</B>
+  <B>begin</B>
+    ComboName.Items.Add (Table1Name.AsString);
+    Table1.Next;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TForm1.ComboNameKeyPress(Sender: TObject; <B>var</B> Key: Char);
+<B>begin</B>
+  <B>if</B> Key = <I>#13</I> <B>then</B>
+    GetData;
+<B>end</B>;
+
+<B>procedure</B> TForm1.ComboNameClick(Sender: TObject);
+<B>begin</B>
+  GetData;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=SENDTOF.DFM><H3>SENDTOF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 201
+  Top = 113
+  Width = 424
+  Height = 287
+  Caption = <I>'Send To Database'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Label1: TLabel
+    Left = 72
+    Top = 88
+    Width = 28
+    Height = 13
+    Caption = <I>'&amp;Name'</I>
+  <B>end</B>
+  <B>object</B> Label2: TLabel
+    Left = 72
+    Top = 123
+    Width = 32
+    Height = 13
+    Caption = <I>'&amp;Capital'</I>
+    FocusControl = EditCapital
+  <B>end</B>
+  <B>object</B> Label3: TLabel
+    Left = 72
+    Top = 158
+    Width = 45
+    Height = 13
+    Caption = <I>'C&amp;ontinent'</I>
+    FocusControl = ComboContinent
+  <B>end</B>
+  <B>object</B> Label4: TLabel
+    Left = 72
+    Top = 193
+    Width = 50
+    Height = 13
+    Caption = <I>'&amp;Population'</I>
+    FocusControl = EditPopulation
+  <B>end</B>
+  <B>object</B> Label5: TLabel
+    Left = 72
+    Top = 228
+    Width = 22
+    Height = 13
+    Caption = <I>'&amp;Area'</I>
+    FocusControl = EditArea
+  <B>end</B>
+  <B>object</B> EditCapital: TEdit
+    Left = 160
+    Top = 119
+    Width = 150
+    Height = 21
+    TabOrder = 1
+  <B>end</B>
+  <B>object</B> EditPopulation: TEdit
+    Left = 160
+    Top = 189
+    Width = 150
+    Height = 21
+    TabOrder = 2
+  <B>end</B>
+  <B>object</B> EditArea: TEdit
+    Left = 160
+    Top = 224
+    Width = 150
+    Height = 21
+    TabOrder = 3
+  <B>end</B>
+  <B>object</B> ComboContinent: TComboBox
+    Left = 160
+    Top = 154
+    Width = 150
+    Height = 21
+    ItemHeight = 13
+    Items.Strings = (
+      <I>'South America'</I>
+      <I>'North America'</I>
+      <I>'Europe'</I>
+      <I>'Asia'</I>
+      <I>'Africa'</I>)
+    TabOrder = 4
+  <B>end</B>
+  <B>object</B> Button1: TButton
+    Left = 104
+    Top = 24
+    Width = 75
+    Height = 25
+    Caption = <I>'&amp;Get'</I>
+    TabOrder = 5
+    OnClick = Button1Click
+  <B>end</B>
+  <B>object</B> Button2: TButton
+    Left = 200
+    Top = 24
+    Width = 75
+    Height = 25
+    Caption = <I>'&amp;Send'</I>
+    TabOrder = 6
+    OnClick = Button2Click
+  <B>end</B>
+  <B>object</B> ComboName: TComboBox
+    Left = 160
+    Top = 83
+    Width = 150
+    Height = 21
+    ItemHeight = 13
+    TabOrder = 0
+    OnClick = ComboNameClick
+    OnKeyPress = ComboNameKeyPress
+  <B>end</B>
+  <B>object</B> Table1: TTable
+    DatabaseName = <I>'DBDEMOS'</I>
+    TableName = <I>'COUNTRY.DB'</I>
+    Left = 16
+    Top = 8
+    <B>object</B> Table1Name: TStringField
+      DisplayWidth = 17
+      FieldName = <I>'Name'</I>
+      Visible = False
+      Size = 24
+    <B>end</B>
+    <B>object</B> Table1Capital: TStringField
+      DisplayWidth = 18
+      FieldName = <I>'Capital'</I>
+      Size = 24
+    <B>end</B>
+    <B>object</B> Table1Continent: TStringField
+      DisplayWidth = 18
+      FieldName = <I>'Continent'</I>
+      Size = 24
+    <B>end</B>
+    <B>object</B> Table1Area: TFloatField
+      DisplayWidth = 12
+      FieldName = <I>'Area'</I>
+    <B>end</B>
+    <B>object</B> Table1Population: TFloatField
+      DisplayWidth = 12
+      FieldName = <I>'Population'</I>
+    <B>end</B>
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

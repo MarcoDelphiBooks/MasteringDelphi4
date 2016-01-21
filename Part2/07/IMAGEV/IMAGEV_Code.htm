@@ -1,0 +1,180 @@
+<HTML><HEAD>
+<TITLE>Project: IMAGEV.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: IMAGEV.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#IMAGEV.DPR> IMAGEV.DPR</A>
+<LI> <A HREF=#IMAGEF.PAS> IMAGEF.PAS</A>
+<LI> <A HREF=#IMAGEF.DFM> IMAGEF.DFM</A>
+</UL>
+<HR>
+<A NAME=IMAGEV.DPR><H3>IMAGEV.DPR</H3></A>
+
+<PRE>
+<B>program</B> Imagev;
+
+<B>uses</B>
+  Forms,
+  ImageF <B>in</B> <I>'ImageF.pas'</I> <FONT COLOR="#000080"><I>{ViewerForm}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TViewerForm, ViewerForm);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=IMAGEF.PAS><H3>IMAGEF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> ImageF;
+
+<B>interface</B>
+
+<B>uses</B> Windows, Classes, Graphics, Forms, Controls, Menus,
+  Dialogs, StdCtrls, ExtCtrls;
+
+<B>type</B>
+  TViewerForm = <B>class</B>(TForm)
+    MainMenu1: TMainMenu;
+    File1: TMenuItem;
+    Open1: TMenuItem;
+    N1: TMenuItem;
+    Exit1: TMenuItem;
+    Help1: TMenuItem;
+    AboutImageViewer1: TMenuItem;
+    OpenDialog1: TOpenDialog;
+    Options1: TMenuItem;
+    Stretch1: TMenuItem;
+    Image1: TImage;
+    Center1: TMenuItem;
+    <B>procedure</B> Open1Click(Sender: TObject);
+    <B>procedure</B> Stretch1Click(Sender: TObject);
+    <B>procedure</B> Exit1Click(Sender: TObject);
+    <B>procedure</B> AboutImageViewer1Click(Sender: TObject);
+    <B>procedure</B> Center1Click(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  ViewerForm: TViewerForm;
+
+<B>implementation</B>
+
+              <FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TViewerForm.Open1Click(Sender: TObject);
+<B>begin</B>
+  <B>if</B> OpenDialog1.Execute <B>then</B>
+  <B>begin</B>
+    Image1.Picture.LoadFromFile (OpenDialog1.FileName);
+    Caption := <I>'Image Viewer - '</I> + OpenDialog1.FileName;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TViewerForm.Stretch1Click(Sender: TObject);
+<B>begin</B>
+  Image1.Stretch := <B>not</B> Image1.Stretch;
+  Stretch1.Checked := Image1.Stretch;
+<B>end</B>;
+
+<B>procedure</B> TViewerForm.Center1Click(Sender: TObject);
+<B>begin</B>
+  Image1.Center := <B>not</B> Image1.Center;
+  Center1.Checked := Image1.Center;
+<B>end</B>;
+
+<B>procedure</B> TViewerForm.Exit1Click(Sender: TObject);
+<B>begin</B>
+  Close;
+<B>end</B>;
+
+<B>procedure</B> TViewerForm.AboutImageViewer1Click(Sender: TObject);
+<B>begin</B>
+  MessageDlg (<I>'Image Viewer is an example'</I>
+    + <I>#13'of the book &quot;Mastering Delphi&quot;'</I>
+    + <I>#13'written by Marco Cantù'</I>,
+    mtInformation, [mbOk], 0);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=IMAGEF.DFM><H3>IMAGEF.DFM</H3></A>
+
+<PRE>
+<B>object</B> ViewerForm: TViewerForm
+  Left = 182
+  Top = 149
+  Width = 434
+  Height = 299
+  Caption = <I>'Image Viewer'</I>
+  Font.Color = clWindowText
+  Font.Height = -13
+  Font.Name = <I>'System'</I>
+  Font.Style = []
+  Menu = MainMenu1
+  PixelsPerInch = 96
+  TextHeight = 16
+  <B>object</B> Image1: TImage
+    Left = 0
+    Top = 0
+    Width = 426
+    Height = 253
+    Align = alClient
+  <B>end</B>
+  <B>object</B> MainMenu1: TMainMenu
+    Left = 16
+    Top = 16
+    <B>object</B> File1: TMenuItem
+      Caption = <I>'&amp;File'</I>
+      <B>object</B> Open1: TMenuItem
+        Caption = <I>'&amp;Open...'</I>
+        OnClick = Open1Click
+      <B>end</B>
+      <B>object</B> N1: TMenuItem
+        Caption = <I>'-'</I>
+      <B>end</B>
+      <B>object</B> Exit1: TMenuItem
+        Caption = <I>'&amp;Exit'</I>
+        OnClick = Exit1Click
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> Options1: TMenuItem
+      Caption = <I>'&amp;Options'</I>
+      <B>object</B> Stretch1: TMenuItem
+        Caption = <I>'&amp;Stretch'</I>
+        OnClick = Stretch1Click
+      <B>end</B>
+      <B>object</B> Center1: TMenuItem
+        Caption = <I>'&amp;Center'</I>
+        OnClick = Center1Click
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> Help1: TMenuItem
+      Caption = <I>'&amp;Help'</I>
+      <B>object</B> AboutImageViewer1: TMenuItem
+        Caption = <I>'&amp;About Image Viewer...'</I>
+        OnClick = AboutImageViewer1Click
+      <B>end</B>
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> OpenDialog1: TOpenDialog
+    FileEditStyle = fsEdit
+    Filter = <I>'Bitmap (*.bmp)|*.bmp|Icon (*.ico)|*.ico|Metafile (*.wmf)|*.wmf'</I>
+    Options = [ofHideReadOnly, ofPathMustExist, ofFileMustExist]
+    Left = 56
+    Top = 16
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

@@ -1,0 +1,326 @@
+<HTML><HEAD>
+<TITLE>Project: MORE.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: MORE.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#MORE.DPR> MORE.DPR</A>
+<LI> <A HREF=#MOREF.PAS> MOREF.PAS</A>
+<LI> <A HREF=#CONFDIAL.PAS> CONFDIAL.PAS</A>
+<LI> <A HREF=#MOREF.DFM> MOREF.DFM</A>
+<LI> <A HREF=#CONFDIAL.DFM> CONFDIAL.DFM</A>
+</UL>
+<HR>
+<A NAME=MORE.DPR><H3>MORE.DPR</H3></A>
+
+<PRE>
+<B>program</B> More;
+
+<B>uses</B>
+  Forms,
+  MoreF <B>in</B> <I>'MoreF.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>,
+  Confdial <B>in</B> <I>'CONFDIAL.PAS'</I> <FONT COLOR="#000080"><I>{ConfigureDialog}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TForm1, Form1);
+  Application.CreateForm(TConfigureDialog, ConfigureDialog);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MOREF.PAS><H3>MOREF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> MoreF;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Classes, Graphics, Forms,
+  Controls, ConfDial, StdCtrls;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    ConfigureButton: TButton;
+    Label1: TLabel;
+    Label2: TLabel;
+    <B>procedure</B> ConfigureButtonClick(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.ConfigureButtonClick(Sender: TObject);
+<B>begin</B>
+  ConfigureDialog.CheckBox1.Checked := Label1.Visible;
+  ConfigureDialog.CheckBox2.Checked := Label2.Visible;
+  <B>if</B> (fsItalic <B>in</B> Label1.Font.Style) <B>then</B>
+    ConfigureDialog.ItalicCheckBox.Checked := True
+  <B>else</B>
+    ConfigureDialog.ItalicCheckBox.Checked := False;
+  <B>if</B> (fsBold <B>in</B> Label1.Font.Style) <B>then</B>
+    ConfigureDialog.BoldCheckBox.Checked := True
+  <B>else</B>
+    ConfigureDialog.BoldCheckBox.Checked := False;
+  <B>if</B> (ConfigureDialog.ShowModal = mrOk) <B>then</B>
+    <B>begin</B>
+      Label1.Visible := ConfigureDialog.CheckBox1.Checked;
+      Label2.Visible := ConfigureDialog.CheckBox2.Checked;
+
+      <FONT COLOR="#000080"><I>{compute the style of the first label}</I></FONT>
+      <B>if</B> ConfigureDialog.BoldCheckBox.Checked <B>then</B>
+        Label1.Font.Style := [fsBold]
+      <B>else</B>
+        Label1.Font.Style := [];
+      <B>if</B> ConfigureDialog.ItalicCheckBox.Checked <B>then</B>
+        Label1.Font.Style := Label1.Font.Style + [fsItalic];
+
+      <FONT COLOR="#000080"><I>{copy the style to the other label}</I></FONT>
+      Label2.Font.Style := Label1.Font.Style;
+    <B>end</B>;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=CONFDIAL.PAS><H3>CONFDIAL.PAS</H3></A>
+
+<PRE>
+<B>unit</B> Confdial;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Classes, Graphics, Forms,
+  Controls, Buttons, StdCtrls;
+
+<B>type</B>
+  TConfigureDialog = <B>class</B>(TForm)
+    BitBtn1: TBitBtn;
+    BitBtn2: TBitBtn;
+    CheckBox1: TCheckBox;
+    CheckBox2: TCheckBox;
+    BitBtn3: TBitBtn;
+    Label1: TLabel;
+    ItalicCheckBox: TCheckBox;
+    BoldCheckBox: TCheckBox;
+    <B>procedure</B> BitBtn3Click(Sender: TObject);
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> FormActivate(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    OldHeight, NewHeight: Integer;
+  <B>end</B>;
+
+<B>var</B>
+  ConfigureDialog: TConfigureDialog;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TConfigureDialog.BitBtn3Click(Sender: TObject);
+<B>var</B>
+  I: Integer;
+<B>begin</B>
+  BitBtn3.Enabled := False;
+  BoldCheckBox.Enabled := True;
+  ItalicCheckBox.Enabled := True;
+  <B>for</B> I := ClientHeight <B>to</B> NewHeight <B>do</B>
+  <B>begin</B>
+    ClientHeight := I;
+    Update;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TConfigureDialog.FormCreate(Sender: TObject);
+<B>begin</B>
+  OldHeight := ClientHeight;
+  <FONT COLOR="#000080"><I>// bottom of the checkbox + margin above the button</I></FONT>
+  NewHeight := ItalicCheckBox.Top +
+    ItalicCheckBox.Height + BitBtn1.Top;
+<B>end</B>;
+
+<B>procedure</B> TConfigureDialog.FormActivate(Sender: TObject);
+<B>begin</B>
+  ClientHeight := OldHeight;
+  BitBtn3.Enabled := True;
+  BoldCheckBox.Enabled := False;
+  ItalicCheckBox.Enabled := False;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MOREF.DFM><H3>MOREF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 130
+  Top = 119
+  Width = 334
+  Height = 116
+  ActiveControl = ConfigureButton
+  Caption = <I>'Dialog test'</I>
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clBlack
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Label1: TLabel
+    Left = 16
+    Top = 19
+    Width = 116
+    Height = 16
+    Caption = <I>'This is the first label'</I>
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clBlack
+    Font.Height = -13
+    Font.Name = <I>'Arial'</I>
+    Font.Style = []
+    ParentFont = False
+  <B>end</B>
+  <B>object</B> Label2: TLabel
+    Left = 16
+    Top = 51
+    Width = 137
+    Height = 16
+    Caption = <I>'This is the second label'</I>
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clBlack
+    Font.Height = -13
+    Font.Name = <I>'Arial'</I>
+    Font.Style = []
+    ParentFont = False
+  <B>end</B>
+  <B>object</B> ConfigureButton: TButton
+    Left = 232
+    Top = 30
+    Width = 81
+    Height = 25
+    Caption = <I>'&amp;Configure...'</I>
+    TabOrder = 0
+    OnClick = ConfigureButtonClick
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<A NAME=CONFDIAL.DFM><H3>CONFDIAL.DFM</H3></A>
+
+<PRE>
+<B>object</B> ConfigureDialog: TConfigureDialog
+  Left = 240
+  Top = 251
+  ActiveControl = BitBtn1
+  BorderStyle = bsDialog
+  Caption = <I>'Choose configuration'</I>
+  ClientHeight = 107
+  ClientWidth = 306
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clBlack
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  OnActivate = FormActivate
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Label1: TLabel
+    Left = 16
+    Top = 112
+    Width = 161
+    Height = 33
+    AutoSize = False
+    Caption = <I>'Here comes the rest of the dialog box, with some new controls...'</I>
+    WordWrap = True
+  <B>end</B>
+  <B>object</B> BitBtn1: TBitBtn
+    Left = 200
+    Top = 8
+    Width = 97
+    Height = 27
+    TabOrder = 0
+    Kind = bkOK
+  <B>end</B>
+  <B>object</B> BitBtn2: TBitBtn
+    Left = 200
+    Top = 40
+    Width = 97
+    Height = 28
+    TabOrder = 1
+    Kind = bkCancel
+  <B>end</B>
+  <B>object</B> CheckBox1: TCheckBox
+    Left = 24
+    Top = 25
+    Width = 105
+    Height = 24
+    Caption = <I>'Show &amp;first label'</I>
+    TabOrder = 2
+  <B>end</B>
+  <B>object</B> CheckBox2: TCheckBox
+    Left = 24
+    Top = 57
+    Width = 121
+    Height = 24
+    Caption = <I>'Show &amp;second label'</I>
+    TabOrder = 3
+  <B>end</B>
+  <B>object</B> BitBtn3: TBitBtn
+    Left = 200
+    Top = 72
+    Width = 97
+    Height = 28
+    Caption = <I>'&amp;More &gt;&gt;'</I>
+    TabOrder = 4
+    OnClick = BitBtn3Click
+    Glyph.Data = <FONT COLOR="#000080"><I>{
+      F6000000424DF600000000000000760000002800000010000000100000000100
+      0400000000008000000000000000000000001000000000000000000000000000
+      80000080000000808000800000008000800080800000C0C0C000808080000000
+      FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF003333333CCC33
+      3333333333CCCCC3333333333CCCCCCC33333333CCCCCCCCC333333CCC3CCC3C
+      CC3333CCC33CCC33CCC333CC333CCC333CC333C3333CCC3333C33333333CCC33
+      33333333333CCC3333333333333CCC3333333333333CCC3333333333333CCC33
+      33333333333CCC3333333333333CCC3333333333333333333333}</I></FONT>
+  <B>end</B>
+  <B>object</B> ItalicCheckBox: TCheckBox
+    Left = 17
+    Top = 152
+    Width = 65
+    Height = 25
+    Caption = <I>'&amp;Italic'</I>
+    Enabled = False
+    TabOrder = 5
+  <B>end</B>
+  <B>object</B> BoldCheckBox: TCheckBox
+    Left = 105
+    Top = 152
+    Width = 81
+    Height = 25
+    Caption = <I>'&amp;Bold'</I>
+    Enabled = False
+    TabOrder = 6
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

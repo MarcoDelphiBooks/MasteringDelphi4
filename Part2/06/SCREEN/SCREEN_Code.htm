@@ -1,0 +1,277 @@
+<HTML><HEAD>
+<TITLE>Project: SCREEN.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: SCREEN.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#SCREEN.DPR> SCREEN.DPR</A>
+<LI> <A HREF=#SCREENF.PAS> SCREENF.PAS</A>
+<LI> <A HREF=#SECONDF.PAS> SECONDF.PAS</A>
+<LI> <A HREF=#SCREENF.DFM> SCREENF.DFM</A>
+<LI> <A HREF=#SECONDF.DFM> SECONDF.DFM</A>
+</UL>
+<HR>
+<A NAME=SCREEN.DPR><H3>SCREEN.DPR</H3></A>
+
+<PRE>
+<B>program</B> Screen;
+
+<B>uses</B>
+  Forms,
+  ScreenF <B>in</B> <I>'ScreenF.pas'</I> <FONT COLOR="#000080"><I>{MainForm}</I></FONT>,
+  SecondF <B>in</B> <I>'SecondF.pas'</I> <FONT COLOR="#000080"><I>{SecondForm}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TMainForm, MainForm);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=SCREENF.PAS><H3>SCREENF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> ScreenF;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes,
+  Graphics, Controls, Forms, Dialogs, StdCtrls;
+
+<B>type</B>
+  TMainForm = <B>class</B>(TForm)
+    FormsLabel: TLabel;
+    FormsListBox: TListBox;
+    NewButton: TButton;
+    ActiveLabel: TLabel;
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> NewButtonClick(Sender: TObject);
+    <B>procedure</B> FormClose(Sender: TObject;
+      <B>var</B> Action: TCloseAction);
+    <B>procedure</B> FormsListBoxClick(Sender: TObject);
+  <B>private</B>
+    nForms: Integer;
+  <B>public</B>
+    <B>procedure</B> FillFormsList (Sender: TObject);
+    <FONT COLOR="#000080"><I>// handler of a user defined Windows message</I></FONT>
+    <B>procedure</B> ChildClosed (<B>var</B> <B>Message</B>: TMessage);
+      <B>message</B> wm_User;
+  <B>end</B>;
+
+<B>var</B>
+  MainForm: TMainForm;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>uses</B>
+  SecondF;
+
+<B>procedure</B> TMainForm.FormCreate(Sender: TObject);
+<B>begin</B>
+  FillFormsList (self);
+  <FONT COLOR="#000080"><I>// set the secondary forms counter to 0</I></FONT>
+  nForms := 0;
+  <FONT COLOR="#000080"><I>// activate an event handler of the screen object</I></FONT>
+  Screen.OnActiveFormChange := FillFormsList;
+<B>end</B>;
+
+           <B>procedure</B> TMainForm.FillFormsList (Sender: TObject);
+<B>var</B>
+  I: Integer;
+<B>begin</B>
+  FormsLabel.Caption := <I>'Forms: '</I> + IntToStr (Screen.FormCount);
+  FormsListBox.Clear;
+  <FONT COLOR="#000080"><I>// write class name and form title to the list box</I></FONT>
+  <B>for</B> I := 0 <B>to</B> Screen.FormCount - 1 <B>do</B>
+    FormsListBox.Items.Add (Screen.Forms[I].ClassName +
+      <I>' - '</I> + Screen.Forms[I].Caption);
+  ActiveLabel.Caption := <I>'Active Form : '</I> +
+    Screen.ActiveForm.Caption;
+<B>end</B>;
+
+<B>procedure</B> TMainForm.ChildClosed (<B>var</B> <B>Message</B>: TMessage);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// handler of the user message sent by the secondary form</I></FONT>
+  FillFormsList (self);
+<B>end</B>;
+
+<B>procedure</B> TMainForm.NewButtonClick(Sender: TObject);
+<B>var</B>
+  NewForm: TSecondForm;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>{create a new form, set its caption, and run it}</I></FONT>
+  NewForm := TSecondForm.Create (self);
+  Inc (nForms);
+  NewForm.Caption := <I>'Second '</I> + IntToStr (nForms);
+  NewForm.Show;
+<B>end</B>;
+
+<B>procedure</B> TMainForm.FormClose(Sender: TObject;
+  <B>var</B> Action: TCloseAction);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// VERY IMPORTANT! disable the event handler to avoid a GPFault</I></FONT>
+  Screen.OnActiveFormChange := <B>nil</B>;
+<B>end</B>;
+
+<B>procedure</B> TMainForm.FormsListBoxClick(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// activate the form the user has clicked onto</I></FONT>
+  Screen.Forms [FormsListBox.ItemIndex].BringToFront;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=SECONDF.PAS><H3>SECONDF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> SecondF;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes,
+  Graphics, Controls, Forms, Dialogs, StdCtrls;
+
+<B>type</B>
+  TSecondForm = <B>class</B>(TForm)
+    CloseButton: TButton;
+    <B>procedure</B> CloseButtonClick(Sender: TObject);
+    <B>procedure</B> FormClose(Sender: TObject; <B>var</B> Action: TCloseAction);
+    <B>procedure</B> FormDestroy(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  SecondForm: TSecondForm;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>uses</B>
+  ScreenF;
+
+<B>procedure</B> TSecondForm.CloseButtonClick(Sender: TObject);
+<B>begin</B>
+  Close;
+<B>end</B>;
+
+<B>procedure</B> TSecondForm.FormClose(Sender: TObject;
+  <B>var</B> Action: TCloseAction);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>{actually delete the form}</I></FONT>
+  Action := caFree;
+<B>end</B>;
+
+<B>procedure</B> TSecondForm.FormDestroy(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>{post a message to the main form, but only if it is
+  not closing, to avoid a GPFault}</I></FONT>
+  <B>if</B> <B>not</B> (csDestroying <B>in</B> MainForm.ComponentState) <B>then</B>
+    PostMessage (MainForm.Handle, wm_User, 0, 0);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=SCREENF.DFM><H3>SCREENF.DFM</H3></A>
+
+<PRE>
+<B>object</B> MainForm: TMainForm
+  Left = 229
+  Top = 155
+  Width = 296
+  Height = 253
+  BorderWidth = 1
+  Caption = <I>'Screen Info'</I>
+  Color = clBtnFace
+  ParentFont = True
+  OldCreateOrder = False
+  Visible = True
+  OnClose = FormClose
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> FormsLabel: TLabel
+    Left = 8
+    Top = 32
+    Width = 34
+    Height = 13
+    Caption = <I>'Forms: '</I>
+  <B>end</B>
+  <B>object</B> ActiveLabel: TLabel
+    Left = 8
+    Top = 8
+    Width = 56
+    Height = 13
+    Caption = <I>'ActiveLabel'</I>
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clBlack
+    Font.Height = -11
+    Font.Name = <I>'MS Sans Serif'</I>
+    Font.Style = []
+    ParentFont = False
+  <B>end</B>
+  <B>object</B> FormsListBox: TListBox
+    Left = 8
+    Top = 48
+    Width = 273
+    Height = 169
+    ItemHeight = 13
+    TabOrder = 0
+    OnClick = FormsListBoxClick
+  <B>end</B>
+  <B>object</B> NewButton: TButton
+    Left = 232
+    Top = 8
+    Width = 49
+    Height = 25
+    Caption = <I>'New'</I>
+    TabOrder = 1
+    OnClick = NewButtonClick
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<A NAME=SECONDF.DFM><H3>SECONDF.DFM</H3></A>
+
+<PRE>
+<B>object</B> SecondForm: TSecondForm
+  Left = 223
+  Top = 153
+  Width = 144
+  Height = 118
+  Caption = <I>'Second'</I>
+  Font.Color = clBlack
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  Position = poDefaultPosOnly
+  OnClose = FormClose
+  OnDestroy = FormDestroy
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> CloseButton: TButton
+    Left = 40
+    Top = 31
+    Width = 56
+    Height = 28
+    Caption = <I>'Close'</I>
+    TabOrder = 0
+    OnClick = CloseButtonClick
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

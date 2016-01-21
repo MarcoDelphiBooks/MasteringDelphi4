@@ -1,0 +1,143 @@
+<HTML><HEAD>
+<TITLE>Project: LONGSTR.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: LONGSTR.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#LONGSTR.DPR> LONGSTR.DPR</A>
+<LI> <A HREF=#LONGFORM.PAS> LONGFORM.PAS</A>
+<LI> <A HREF=#LONGFORM.DFM> LONGFORM.DFM</A>
+</UL>
+<HR>
+<A NAME=LONGSTR.DPR><H3>LONGSTR.DPR</H3></A>
+
+<PRE>
+<B>program</B> LongStr;
+
+<B>uses</B>
+  Forms,
+  LongForm <B>in</B> <I>'LongForm.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=LONGFORM.PAS><H3>LONGFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> LongForm;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    Button1: TButton;
+    Button2: TButton;
+    Button3: TButton;
+    <B>procedure</B> Button1Click(Sender: TObject);
+    <B>procedure</B> Button2Click(Sender: TObject);
+    <B>procedure</B> Button3Click(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.Button1Click(Sender: TObject);
+<B>var</B>
+  S1: <B>String</B>;
+<B>begin</B>
+  SetLength (S1, 100);
+  GetWindowText (Handle, PChar (S1), Length (S1));
+  Button1.Caption := S1;
+<B>end</B>;
+
+<B>procedure</B> TForm1.Button2Click(Sender: TObject);
+<B>var</B>
+  S1: <B>String</B>;
+<B>begin</B>
+  SetLength (S1, 100);
+  GetWindowText (Handle, PChar (S1), Length (S1));
+  S1 := S1 + <I>' is the title'</I>;
+  Button2.Caption := S1;
+<B>end</B>;
+
+<B>procedure</B> TForm1.Button3Click(Sender: TObject);
+<B>var</B>
+  S1: <B>String</B>;
+<B>begin</B>
+  SetLength (S1, 100);
+  GetWindowText (Handle, PChar (S1), Length (S1));
+  S1 := <B>String</B> (PChar (S1));
+  S1 := S1 + <I>' is the title'</I>;
+  Button3.Caption := S1;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=LONGFORM.DFM><H3>LONGFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 200
+  Top = 108
+  Width = 247
+  Height = 158
+  Caption = <I>'Long Strings'</I>
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Button1: TButton
+    Left = 32
+    Top = 16
+    Width = 169
+    Height = 25
+    Caption = <I>'GetTitle'</I>
+    TabOrder = 0
+    OnClick = Button1Click
+  <B>end</B>
+  <B>object</B> Button2: TButton
+    Left = 32
+    Top = 48
+    Width = 169
+    Height = 25
+    Caption = <I>'Get + Add (Wrong)'</I>
+    TabOrder = 1
+    OnClick = Button2Click
+  <B>end</B>
+  <B>object</B> Button3: TButton
+    Left = 32
+    Top = 80
+    Width = 169
+    Height = 25
+    Caption = <I>'Get + Add (OK)'</I>
+    TabOrder = 2
+    OnClick = Button3Click
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

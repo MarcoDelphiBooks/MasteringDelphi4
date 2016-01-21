@@ -1,0 +1,178 @@
+<HTML><HEAD>
+<TITLE>Project: MLTGRID.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: MLTGRID.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#MLTGRID.DPR> MLTGRID.DPR</A>
+<LI> <A HREF=#MLTDBGRD.PAS> MLTDBGRD.PAS</A>
+<LI> <A HREF=#MLTDBGRD.DFM> MLTDBGRD.DFM</A>
+</UL>
+<HR>
+<A NAME=MLTGRID.DPR><H3>MLTGRID.DPR</H3></A>
+
+<PRE>
+<B>program</B> mltgrid;
+
+<B>uses</B>
+  Forms,
+  mltdbgrd <B>in</B> <I>'mltdbgrd.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MLTDBGRD.PAS><H3>MLTDBGRD.PAS</H3></A>
+
+<PRE>
+<B>unit</B> mltdbgrd;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  DB, DBTables, Grids, DBGrids, StdCtrls, ExtCtrls;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    DBGrid1: TDBGrid;
+    DataSource1: TDataSource;
+    Table1: TTable;
+    Splitter1: TSplitter;
+    Panel1: TPanel;
+    ListBox1: TListBox;
+    Button1: TButton;
+    <B>procedure</B> Button1Click(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.Button1Click(Sender: TObject);
+<B>var</B>
+  I: Integer;
+  BookmarkList: TBookmarkList;
+  Bookmark: TBookmark;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// store the current position</I></FONT>
+  Bookmark := Table1.GetBookmark;
+  <B>try</B>
+    <FONT COLOR="#000080"><I>// empty the listbox</I></FONT>
+    ListBox1.Items.Clear;
+    <FONT COLOR="#000080"><I>// get the selected rows of the grid</I></FONT>
+    BookmarkList := DbGrid1.SelectedRows;
+    <B>for</B> I := 0 <B>to</B> BookmarkList.Count - 1 <B>do</B>
+    <B>begin</B>
+      <FONT COLOR="#000080"><I>// for each, move the table to that record</I></FONT>
+      Table1.GotoBookmark (Pointer (BookmarkList [I]));
+      <FONT COLOR="#000080"><I>// add the name field to the listbox</I></FONT>
+      ListBox1.Items.Add (Table1.FieldByName (
+        <I>'Name'</I>).AsString);
+    <B>end</B>;
+  <B>finally</B>
+    <FONT COLOR="#000080"><I>// go back to the initial record</I></FONT>
+    Table1.GotoBookmark (Bookmark);
+    Table1.FreeBookmark (Bookmark);
+  <B>end</B>;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MLTDBGRD.DFM><H3>MLTDBGRD.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 98
+  Top = 177
+  Width = 563
+  Height = 318
+  Caption = <I>'Multiple Selection Grid'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Splitter1: TSplitter
+    Left = 385
+    Top = 0
+    Width = 0
+    Height = 291
+    Cursor = crHSplit
+  <B>end</B>
+  <B>object</B> DBGrid1: TDBGrid
+    Left = 0
+    Top = 0
+    Width = 385
+    Height = 291
+    Align = alLeft
+    DataSource = DataSource1
+    Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgMultiSelect]
+    TabOrder = 0
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = <I>'MS Sans Serif'</I>
+    TitleFont.Style = []
+  <B>end</B>
+  <B>object</B> Panel1: TPanel
+    Left = 385
+    Top = 0
+    Width = 170
+    Height = 291
+    Align = alClient
+    TabOrder = 1
+    <B>object</B> ListBox1: TListBox
+      Left = 9
+      Top = 40
+      Width = 150
+      Height = 241
+      ItemHeight = 13
+      TabOrder = 0
+    <B>end</B>
+    <B>object</B> Button1: TButton
+      Left = 11
+      Top = 8
+      Width = 150
+      Height = 25
+      Caption = <I>'Get Selected'</I>
+      TabOrder = 1
+      OnClick = Button1Click
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> DataSource1: TDataSource
+    DataSet = Table1
+    Left = 32
+    Top = 24
+  <B>end</B>
+  <B>object</B> Table1: TTable
+    Active = True
+    DatabaseName = <I>'DBDEMOS'</I>
+    TableName = <I>'COUNTRY.DB'</I>
+    Left = 88
+    Top = 24
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

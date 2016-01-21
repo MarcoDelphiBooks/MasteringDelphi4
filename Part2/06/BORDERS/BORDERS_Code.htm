@@ -1,0 +1,173 @@
+<HTML><HEAD>
+<TITLE>Project: BORDERS.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: BORDERS.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#BORDERS.DPR> BORDERS.DPR</A>
+<LI> <A HREF=#BORDERSF.PAS> BORDERSF.PAS</A>
+<LI> <A HREF=#SECOND.PAS> SECOND.PAS</A>
+<LI> <A HREF=#BORDERSF.DFM> BORDERSF.DFM</A>
+<LI> <A HREF=#SECOND.DFM> SECOND.DFM</A>
+</UL>
+<HR>
+<A NAME=BORDERS.DPR><H3>BORDERS.DPR</H3></A>
+
+<PRE>
+<B>program</B> Borders;
+
+<B>uses</B>
+  Forms,
+  BordersF <B>in</B> <I>'BordersF.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>,
+  Second <B>in</B> <I>'Second.pas'</I> <FONT COLOR="#000080"><I>{Form2}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TForm1, Form1);
+  Application.CreateForm(TForm2, Form2);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=BORDERSF.PAS><H3>BORDERSF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> BordersF;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls, ExtCtrls;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    BtnNewForm: TButton;
+    BorderRadioGroup: TRadioGroup;
+    <B>procedure</B> BtnNewFormClick(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>uses</B>
+  Second;
+
+<B>procedure</B> TForm1.BtnNewFormClick(Sender: TObject);
+<B>var</B>
+  NewForm: TForm2;
+<B>begin</B>
+  NewForm := TForm2.Create (Application);
+  NewForm.BorderStyle := TFormBorderStyle (
+    BorderRadioGroup.ItemIndex);
+  NewForm.Caption := BorderRadioGroup.Items[
+    BorderRadioGroup.ItemIndex];
+  NewForm.Show;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=SECOND.PAS><H3>SECOND.PAS</H3></A>
+
+<PRE>
+<B>unit</B> Second;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes, Graphics, Controls, Forms, Dialogs;
+
+<B>type</B>
+  TForm2 = <B>class</B>(TForm)
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form2: TForm2;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=BORDERSF.DFM><H3>BORDERSF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 210
+  Top = 103
+  Width = 291
+  Height = 197
+  Caption = <I>'Borders'</I>
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> BtnNewForm: TButton
+    Left = 192
+    Top = 16
+    Width = 75
+    Height = 25
+    Caption = <I>'New Form'</I>
+    TabOrder = 0
+    OnClick = BtnNewFormClick
+  <B>end</B>
+  <B>object</B> BorderRadioGroup: TRadioGroup
+    Left = 8
+    Top = 8
+    Width = 169
+    Height = 153
+    Caption = <I>' Border '</I>
+    ItemIndex = 2
+    Items.Strings = (
+      <I>'None'</I>
+      <I>'Single'</I>
+      <I>'Sizeable'</I>
+      <I>'Dialog'</I>
+      <I>'Tool Window'</I>
+      <I>'Sizeable Tool Window'</I>)
+    TabOrder = 1
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<A NAME=SECOND.DFM><H3>SECOND.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form2: TForm2
+  Left = 210
+  Top = 144
+  Width = 250
+  Height = 100
+  Caption = <I>'Form2'</I>
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  PixelsPerInch = 96
+  Position = poDefaultPosOnly
+  TextHeight = 13
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

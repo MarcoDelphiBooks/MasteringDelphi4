@@ -1,0 +1,249 @@
+<HTML><HEAD>
+<TITLE>Project: SERVER2.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: SERVER2.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#SERVER2.DPR> SERVER2.DPR</A>
+<LI> <A HREF=#SERVERFORM.PAS> SERVERFORM.PAS</A>
+<LI> <A HREF=#SERVERFORM.DFM> SERVERFORM.DFM</A>
+</UL>
+<HR>
+<A NAME=SERVER2.DPR><H3>SERVER2.DPR</H3></A>
+
+<PRE>
+<B>program</B> Server2;
+
+<B>uses</B>
+  Forms,
+  ServerForm <B>in</B> <I>'ServerForm.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=SERVERFORM.PAS><H3>SERVERFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> ServerForm;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  ScktComp, StdCtrls, FileCtrl;
+
+<B>const</B>
+  wm_RefreshClients = wm_User;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    ServerSocket1: TServerSocket;
+    lbClients: TListBox;
+    Label1: TLabel;
+    Label2: TLabel;
+    lbLog: TListBox;
+    FileListBox1: TFileListBox;
+    <B>procedure</B> ServerSocket1ClientConnect(Sender: TObject;
+      Socket: TCustomWinSocket);
+    <B>procedure</B> ServerSocket1ClientDisconnect(Sender: TObject;
+      Socket: TCustomWinSocket);
+    <B>procedure</B> ServerSocket1ClientRead(Sender: TObject;
+      Socket: TCustomWinSocket);
+  <B>public</B>
+    <B>procedure</B> RefreshClients (<B>var</B> Msg: TMessage);
+      <B>message</B> wm_RefreshClients;
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.ServerSocket1ClientConnect(Sender: TObject;
+  Socket: TCustomWinSocket);
+<B>begin</B>
+  lbLog.Items.Add (<I>'Connected: '</I> +
+    Socket.RemoteHost + <I>' ('</I> +
+    Socket.RemoteAddress + <I>')'</I> );
+<B>end</B>;
+
+<B>procedure</B> TForm1.ServerSocket1ClientDisconnect(Sender: TObject;
+  Socket: TCustomWinSocket);
+<B>begin</B>
+  lbLog.Items.Add (<I>'Disconnected: '</I> +
+    Socket.RemoteHost + <I>' ('</I> +
+    Socket.RemoteAddress + <I>')'</I> );
+<B>end</B>;
+
+<B>procedure</B> TForm1.RefreshClients;
+<B>begin</B>
+<B>end</B>;
+
+<B>procedure</B> TForm1.ServerSocket1ClientRead(Sender: TObject;
+  Socket: TCustomWinSocket);
+<B>var</B>
+  strCommand, strFile, strFeedback: <B>string</B>;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// read from the client</I></FONT>
+  strCommand := Socket.ReceiveText;
+  lbLog.Items.Add (<I>'Client: '</I> + Socket.RemoteAddress + <I>': '</I> +
+    strCommand);
+  <FONT COLOR="#000080"><I>// extract the file name (all commands have 5 characters)</I></FONT>
+  strFile := Copy (strCommand, 6, Length (strCommand) - 5);
+
+  <FONT COLOR="#000080"><I>// execute program</I></FONT>
+  <B>if</B> Pos (<I>'EXEC!'</I>, strCommand) = 1 <B>then</B>
+  <B>begin</B>
+    <B>if</B> FileExists (strFile) <B>and</B> (
+        WinExec (pChar (strFile), sw_ShowNormal) &gt; 31) <B>then</B>
+      strFeedback := <I>'ERROR'</I> + strFile + <I>' activated'</I>
+    <B>else</B>
+      strFeedback := <I>'ERROR'</I> + strFile + <I>' not found'</I>;
+    Socket.SendText (strFeedback);
+  <B>end</B>
+
+    <FONT COLOR="#000080"><I>// send back a text file</I></FONT>
+  <B>else</B> <B>if</B> Pos (<I>'TEXT!'</I>, strCommand) = 1 <B>then</B>
+  <B>begin</B>
+    <B>if</B> FileExists (strFile) <B>then</B>
+    <B>begin</B>
+      strFeedback := <I>'TEXT!'</I>;
+      Socket.SendText (strFeedback);
+      Socket.SendStream (TFileStream.Create (
+        strFile, fmOpenRead <B>or</B> fmShareDenyWrite));
+    <B>end</B>
+    <B>else</B>
+    <B>begin</B>
+      strFeedback := <I>'ERROR'</I> + strFile + <I>' not found'</I>;
+      Socket.SendText (strFeedback);
+    <B>end</B>;
+  <B>end</B>
+
+  <FONT COLOR="#000080"><I>// send back a bitmap file</I></FONT>
+  <B>else</B> <B>if</B> Pos (<I>'BITM!'</I>, strCommand) = 1 <B>then</B>
+  <B>begin</B>
+    <B>if</B> FileExists (strFile) <B>then</B>
+    <B>begin</B>
+      strFeedback := <I>'BITM!'</I>;
+      Socket.SendText (strFeedback);
+      Socket.SendStream (TFileStream.Create (
+        strFile, fmOpenRead <B>or</B> fmShareDenyWrite));
+    <B>end</B>
+    <B>else</B>
+    <B>begin</B>
+      strFeedback := <I>'ERROR'</I> + strFile + <I>' not found'</I>;
+      Socket.SendText (strFeedback);
+    <B>end</B>;
+  <B>end</B>
+
+  <FONT COLOR="#000080"><I>// send back a directory listing</I></FONT>
+  <B>else</B> <B>if</B> Pos (<I>'LIST!'</I>, strCommand) = 1 <B>then</B>
+  <B>begin</B>
+    <B>if</B> DirectoryExists (strFile) <B>then</B>
+    <B>begin</B>
+      strFeedback := <I>'LIST!'</I>;
+      Socket.SendText (strFeedback);
+      FileListBox1.Directory := strFile;
+      Socket.SendText (FileListBox1.Items.Text);
+    <B>end</B>
+    <B>else</B>
+    <B>begin</B>
+      strFeedback := <I>'ERROR'</I> + strFile + <I>' not found'</I>;
+      Socket.SendText (strFeedback);
+    <B>end</B>;
+  <B>end</B>
+  <B>else</B>
+  <B>begin</B>
+    strFeedback := <I>'ERROR'</I> + <I>'Undefined command: '</I> + strCommand;
+    Socket.SendText (strFeedback);
+  <B>end</B>;
+
+  <FONT COLOR="#000080"><I>// log result</I></FONT>
+  lbLog.Items.Add (strFeedback);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=SERVERFORM.DFM><H3>SERVERFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 192
+  Top = 107
+  Width = 696
+  Height = 283
+  Caption = <I>'Server'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Label1: TLabel
+    Left = 16
+    Top = 8
+    Width = 31
+    Height = 13
+    Caption = <I>'Clients'</I>
+  <B>end</B>
+  <B>object</B> Label2: TLabel
+    Left = 192
+    Top = 8
+    Width = 18
+    Height = 13
+    Caption = <I>'Log'</I>
+  <B>end</B>
+  <B>object</B> lbClients: TListBox
+    Left = 16
+    Top = 24
+    Width = 161
+    Height = 217
+    ItemHeight = 13
+    TabOrder = 0
+  <B>end</B>
+  <B>object</B> lbLog: TListBox
+    Left = 192
+    Top = 24
+    Width = 481
+    Height = 217
+    ItemHeight = 13
+    TabOrder = 1
+  <B>end</B>
+  <B>object</B> FileListBox1: TFileListBox
+    Left = 200
+    Top = 184
+    Width = 169
+    Height = 49
+    ItemHeight = 13
+    TabOrder = 2
+    Visible = False
+  <B>end</B>
+  <B>object</B> ServerSocket1: TServerSocket
+    Active = True
+    Port = 51
+    ServerType = stNonBlocking
+    OnClientConnect = ServerSocket1ClientConnect
+    OnClientDisconnect = ServerSocket1ClientDisconnect
+    OnClientRead = ServerSocket1ClientRead
+    Left = 72
+    Top = 40
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

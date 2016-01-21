@@ -1,0 +1,97 @@
+<HTML><HEAD>
+<TITLE>Project: DLLMEM.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: DLLMEM.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#DLLMEM.DPR> DLLMEM.DPR</A>
+<LI> <A HREF=#DLLMEMU.PAS> DLLMEMU.PAS</A>
+</UL>
+<HR>
+<A NAME=DLLMEM.DPR><H3>DLLMEM.DPR</H3></A>
+
+<PRE>
+<B>library</B> dllmem;
+
+<B>uses</B>
+  SysUtils,
+  DllMemU <B>in</B> <I>'DllMemU.pas'</I>;
+
+<B>exports</B>
+  SetData, GetData,
+  GetShareData, SetShareData;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=DLLMEMU.PAS><H3>DLLMEMU.PAS</H3></A>
+
+<PRE>
+<B>unit</B> DllMemU;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, SysUtils;
+
+<B>procedure</B> SetData (I: Integer); <B>stdcall</B>;
+<B>function</B> GetData: Integer; <B>stdcall</B>;
+<B>procedure</B> SetShareData (I: Integer); <B>stdcall</B>;
+<B>function</B> GetShareData: Integer; <B>stdcall</B>;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>// global DLL data</I></FONT>
+<B>var</B>
+  PlainData: Integer = 0; <FONT COLOR="#000080"><I>// not shared</I></FONT>
+  ShareData: ^Integer; <FONT COLOR="#000080"><I>// shared</I></FONT>
+  hMapFile: THandle;
+
+<B>const</B>
+  VirtualFileName = <I>'ShareDllData'</I>;
+  DataSize = sizeof (Integer);
+
+<FONT COLOR="#000080"><I>// plain (non shared) data read and write</I></FONT>
+
+<B>procedure</B> SetData (I: Integer); <B>stdcall</B>;
+<B>begin</B>
+  PlainData := I;
+<B>end</B>;
+
+<B>function</B> GetData: Integer; <B>stdcall</B>;
+<B>begin</B>
+  Result := PlainData;
+<B>end</B>;
+
+<FONT COLOR="#000080"><I>// shared data read and write</I></FONT>
+
+<B>procedure</B> SetShareData (I: Integer); <B>stdcall</B>;
+<B>begin</B>
+  ShareData^ := I;
+<B>end</B>;
+
+<B>function</B> GetShareData: Integer; <B>stdcall</B>;
+<B>begin</B>
+  Result := ShareData^;
+<B>end</B>;
+
+<B>initialization</B>
+  <FONT COLOR="#000080"><I>//create memory mapped file</I></FONT>
+  hMapFile := CreateFileMapping ($FFFFFFFF, <B>nil</B>,
+    Page_ReadWrite, 0, DataSize, VirtualFileName);
+  <B>if</B> hMapFile = 0 <B>then</B>
+    <B>raise</B> Exception.Create (<I>'Error creating memory mapped file'</I>);
+  <FONT COLOR="#000080"><I>// get the pointer to the actual data</I></FONT>
+  ShareData := MapViewOfFile (
+    hMapFile, File_Map_Write, 0, 0, DataSize);
+
+<B>finalization</B>
+  UnmapViewOfFile (ShareData);
+  CloseHandle (hMapFile);
+<B>end</B>.</PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

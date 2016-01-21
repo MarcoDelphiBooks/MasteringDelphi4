@@ -1,0 +1,488 @@
+<HTML><HEAD>
+<TITLE>Project: ORDERS.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: ORDERS.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#ORDERS.DPR> ORDERS.DPR</A>
+<LI> <A HREF=#ORDERF.PAS> ORDERF.PAS</A>
+<LI> <A HREF=#ORDERF.DFM> ORDERF.DFM</A>
+</UL>
+<HR>
+<A NAME=ORDERS.DPR><H3>ORDERS.DPR</H3></A>
+
+<PRE>
+<B>program</B> Orders;
+
+<B>uses</B>
+  Forms,
+  OrderF <B>in</B> <I>'OrderF.pas'</I> <FONT COLOR="#000080"><I>{OrdersForm}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TOrdersForm, OrdersForm);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=ORDERF.PAS><H3>ORDERF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> OrderF;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes, Graphics, Controls,
+  StdCtrls, Forms, DBCtrls, DB, DBGrids, DBTables, ExtCtrls, DBLookup,
+  Grids, Mask;
+
+<B>type</B>
+  TOrdersForm = <B>class</B>(TForm)
+    ScrollBox: TScrollBox;
+    Label1: TLabel;
+    EditOrderNo: TDBEdit;
+    Label3: TLabel;
+    EditSaleDate: TDBEdit;
+    Label4: TLabel;
+    EditShipToContact: TDBEdit;
+    Label5: TLabel;
+    EditShipToAddr: TDBEdit;
+    Label6: TLabel;
+    EditShipToAddr2: TDBEdit;
+    Label7: TLabel;
+    EditShipToCity: TDBEdit;
+    Label8: TLabel;
+    EditShipToState: TDBEdit;
+    Label9: TLabel;
+    EditShipToZip: TDBEdit;
+    Label10: TLabel;
+    EditShipToCountry: TDBEdit;
+    Label11: TLabel;
+    EditPaymentMethod: TDBEdit;
+    Label12: TLabel;
+    EditItemsTotal: TDBEdit;
+    DBGrid1: TDBGrid;
+    DBNavigator: TDBNavigator;
+    Panel1: TPanel;
+    DataSource1: TDataSource;
+    Panel2: TPanel;
+    Panel3: TPanel;
+    Query1: TQuery;
+    Query2: TQuery;
+    DataSource2: TDataSource;
+    Label13: TLabel;
+    DataSource3: TDataSource;
+    Table1: TTable;
+    DBLookupComboBox1: TDBLookupComboBox;
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  OrdersForm: TOrdersForm;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=ORDERF.DFM><H3>ORDERF.DFM</H3></A>
+
+<PRE>
+<B>object</B> OrdersForm: TOrdersForm
+  Left = 219
+  Top = 144
+  Width = 495
+  Height = 398
+  ActiveControl = Panel1
+  Caption = <I>'Orders (with three data sources)'</I>
+  Font.Color = clBlack
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  Position = poScreenCenter
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Panel1: TPanel
+    Left = 0
+    Top = 0
+    Width = 487
+    Height = 35
+    Align = alTop
+    TabOrder = 0
+    <B>object</B> DBNavigator: TDBNavigator
+      Left = 16
+      Top = 5
+      Width = 104
+      Height = 25
+      DataSource = DataSource1
+      VisibleButtons = [nbFirst, nbPrior, nbNext, nbLast]
+      Flat = False
+      Ctl3D = False
+      ParentCtl3D = False
+      TabOrder = 0
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> Panel2: TPanel
+    Left = 0
+    Top = 35
+    Width = 487
+    Height = 206
+    Align = alTop
+    BevelInner = bvLowered
+    BorderWidth = 4
+    Caption = <I>'Panel2'</I>
+    TabOrder = 1
+    <B>object</B> ScrollBox: TScrollBox
+      Left = 6
+      Top = 6
+      Width = 475
+      Height = 194
+      HorzScrollBar.Margin = 6
+      VertScrollBar.Margin = 6
+      Align = alClient
+      BorderStyle = bsNone
+      TabOrder = 0
+      <B>object</B> Label1: TLabel
+        Left = 254
+        Top = 25
+        Width = 89
+        Height = 13
+        Alignment = taRightJustify
+        AutoSize = False
+        Caption = <I>'OrderNo'</I>
+        FocusControl = EditOrderNo
+      <B>end</B>
+      <B>object</B> Label3: TLabel
+        Left = 254
+        Top = 53
+        Width = 89
+        Height = 13
+        Alignment = taRightJustify
+        AutoSize = False
+        Caption = <I>'SaleDate'</I>
+        FocusControl = EditSaleDate
+      <B>end</B>
+      <B>object</B> Label4: TLabel
+        Left = 6
+        Top = 75
+        Width = 89
+        Height = 13
+        Alignment = taRightJustify
+        AutoSize = False
+        Caption = <I>'ShipToContact'</I>
+        FocusControl = EditShipToContact
+      <B>end</B>
+      <B>object</B> Label5: TLabel
+        Left = 6
+        Top = 97
+        Width = 89
+        Height = 13
+        Alignment = taRightJustify
+        AutoSize = False
+        Caption = <I>'ShipToAddr1'</I>
+        FocusControl = EditShipToAddr
+      <B>end</B>
+      <B>object</B> Label6: TLabel
+        Left = 254
+        Top = 95
+        Width = 89
+        Height = 13
+        Alignment = taRightJustify
+        AutoSize = False
+        Caption = <I>'ShipToAddr2'</I>
+        FocusControl = EditShipToAddr2
+      <B>end</B>
+      <B>object</B> Label7: TLabel
+        Left = 6
+        Top = 121
+        Width = 89
+        Height = 13
+        Alignment = taRightJustify
+        AutoSize = False
+        Caption = <I>'ShipToCity'</I>
+        FocusControl = EditShipToCity
+      <B>end</B>
+      <B>object</B> Label8: TLabel
+        Left = 254
+        Top = 119
+        Width = 89
+        Height = 13
+        Alignment = taRightJustify
+        AutoSize = False
+        Caption = <I>'ShipToState'</I>
+        FocusControl = EditShipToState
+      <B>end</B>
+      <B>object</B> Label9: TLabel
+        Left = 6
+        Top = 145
+        Width = 89
+        Height = 13
+        Alignment = taRightJustify
+        AutoSize = False
+        Caption = <I>'ShipToZip'</I>
+        FocusControl = EditShipToZip
+      <B>end</B>
+      <B>object</B> Label10: TLabel
+        Left = 254
+        Top = 143
+        Width = 89
+        Height = 13
+        Alignment = taRightJustify
+        AutoSize = False
+        Caption = <I>'ShipToCountry'</I>
+        FocusControl = EditShipToCountry
+      <B>end</B>
+      <B>object</B> Label11: TLabel
+        Left = 6
+        Top = 169
+        Width = 89
+        Height = 13
+        Alignment = taRightJustify
+        AutoSize = False
+        Caption = <I>'PaymentMethod'</I>
+        FocusControl = EditPaymentMethod
+      <B>end</B>
+      <B>object</B> Label12: TLabel
+        Left = 254
+        Top = 167
+        Width = 89
+        Height = 13
+        Alignment = taRightJustify
+        AutoSize = False
+        Caption = <I>'ItemsTotal'</I>
+        FocusControl = EditItemsTotal
+      <B>end</B>
+      <B>object</B> Label13: TLabel
+        Left = 48
+        Top = 27
+        Width = 44
+        Height = 13
+        Caption = <I>'Customer'</I>
+      <B>end</B>
+      <B>object</B> EditOrderNo: TDBEdit
+        Left = 349
+        Top = 22
+        Width = 50
+        Height = 21
+        DataField = <I>'OrderNo'</I>
+        DataSource = DataSource1
+        MaxLength = 0
+        TabOrder = 0
+      <B>end</B>
+      <B>object</B> EditSaleDate: TDBEdit
+        Left = 349
+        Top = 50
+        Width = 50
+        Height = 21
+        DataField = <I>'SaleDate'</I>
+        DataSource = DataSource1
+        MaxLength = 0
+        TabOrder = 1
+      <B>end</B>
+      <B>object</B> EditShipToContact: TDBEdit
+        Left = 101
+        Top = 72
+        Width = 100
+        Height = 21
+        DataField = <I>'ShipToContact'</I>
+        DataSource = DataSource1
+        MaxLength = 20
+        TabOrder = 2
+      <B>end</B>
+      <B>object</B> EditShipToAddr: TDBEdit
+        Left = 101
+        Top = 94
+        Width = 150
+        Height = 21
+        DataField = <I>'ShipToAddr1'</I>
+        DataSource = DataSource1
+        MaxLength = 30
+        TabOrder = 3
+      <B>end</B>
+      <B>object</B> EditShipToAddr2: TDBEdit
+        Left = 349
+        Top = 92
+        Width = 100
+        Height = 21
+        DataField = <I>'ShipToAddr2'</I>
+        DataSource = DataSource1
+        MaxLength = 30
+        TabOrder = 4
+      <B>end</B>
+      <B>object</B> EditShipToCity: TDBEdit
+        Left = 101
+        Top = 118
+        Width = 100
+        Height = 21
+        DataField = <I>'ShipToCity'</I>
+        DataSource = DataSource1
+        MaxLength = 15
+        TabOrder = 5
+      <B>end</B>
+      <B>object</B> EditShipToState: TDBEdit
+        Left = 349
+        Top = 116
+        Width = 100
+        Height = 21
+        DataField = <I>'ShipToState'</I>
+        DataSource = DataSource1
+        MaxLength = 20
+        TabOrder = 6
+      <B>end</B>
+      <B>object</B> EditShipToZip: TDBEdit
+        Left = 101
+        Top = 142
+        Width = 100
+        Height = 21
+        DataField = <I>'ShipToZip'</I>
+        DataSource = DataSource1
+        MaxLength = 10
+        TabOrder = 7
+      <B>end</B>
+      <B>object</B> EditShipToCountry: TDBEdit
+        Left = 349
+        Top = 140
+        Width = 100
+        Height = 21
+        DataField = <I>'ShipToCountry'</I>
+        DataSource = DataSource1
+        MaxLength = 20
+        TabOrder = 8
+      <B>end</B>
+      <B>object</B> EditPaymentMethod: TDBEdit
+        Left = 101
+        Top = 166
+        Width = 100
+        Height = 21
+        DataField = <I>'PaymentMethod'</I>
+        DataSource = DataSource1
+        MaxLength = 7
+        TabOrder = 9
+      <B>end</B>
+      <B>object</B> EditItemsTotal: TDBEdit
+        Left = 349
+        Top = 164
+        Width = 100
+        Height = 21
+        DataField = <I>'ItemsTotal'</I>
+        DataSource = DataSource1
+        MaxLength = 0
+        TabOrder = 10
+      <B>end</B>
+      <B>object</B> DBLookupComboBox1: TDBLookupComboBox
+        Left = 101
+        Top = 23
+        Width = 169
+        Height = 21
+        DataField = <I>'CustNo'</I>
+        DataSource = DataSource1
+        DropDownWidth = 300
+        KeyField = <I>'CustNo'</I>
+        ListField = <I>'Company;CustNo'</I>
+        ListSource = DataSource3
+        TabOrder = 11
+      <B>end</B>
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> Panel3: TPanel
+    Left = 0
+    Top = 241
+    Width = 487
+    Height = 130
+    Align = alClient
+    BevelInner = bvLowered
+    BorderWidth = 4
+    Caption = <I>'Panel3'</I>
+    TabOrder = 2
+    <B>object</B> DBGrid1: TDBGrid
+      Left = 6
+      Top = 6
+      Width = 475
+      Height = 118
+      Align = alClient
+      BorderStyle = bsNone
+      DataSource = DataSource2
+      TabOrder = 0
+      TitleFont.Color = clBlack
+      TitleFont.Height = -11
+      TitleFont.Name = <I>'MS Sans Serif'</I>
+      TitleFont.Style = []
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> Query1: TQuery
+    Active = True
+    DatabaseName = <I>'DBDEMOS'</I>
+    RequestLive = True
+    SQL.Strings = (
+      <I>'Select'</I>
+      <I>'  orders.&quot;OrderNo&quot;,'</I>
+      <I>'  orders.&quot;CustNo&quot;,'</I>
+      <I>'  orders.&quot;SaleDate&quot;,'</I>
+      <I>'  orders.&quot;ShipToContact&quot;,'</I>
+      <I>'  orders.&quot;ShipToAddr1&quot;,'</I>
+      <I>'  orders.&quot;ShipToAddr2&quot;,'</I>
+      <I>'  orders.&quot;ShipToCity&quot;,'</I>
+      <I>'  orders.&quot;ShipToState&quot;,'</I>
+      <I>'  orders.&quot;ShipToZip&quot;,'</I>
+      <I>'  orders.&quot;ShipToCountry&quot;,'</I>
+      <I>'  orders.&quot;PaymentMethod&quot;,'</I>
+      <I>'  orders.&quot;ItemsTotal&quot;'</I>
+      <I>'From orders'</I>)
+    Left = 132
+    Top = 5
+  <B>end</B>
+  <B>object</B> Query2: TQuery
+    Active = True
+    DatabaseName = <I>'DBDEMOS'</I>
+    DataSource = DataSource1
+    Params.Data = <FONT COLOR="#000080"><I>{01000100074F726465724E6F000608000000000000588F400000}</I></FONT>
+    RequestLive = True
+    SQL.Strings = (
+      <I>'Select'</I>
+      <I>'  items.&quot;OrderNo&quot;,'</I>
+      <I>'  items.&quot;ItemNo&quot;,'</I>
+      <I>'  items.&quot;PartNo&quot;,'</I>
+      <I>'  items.&quot;Qty&quot;'</I>
+      <I>'From items'</I>
+      <I>'Where'</I>
+      <I>'  &quot;items&quot;.&quot;OrderNo&quot; =:&quot;OrderNo&quot;'</I>)
+    Left = 234
+    Top = 5
+  <B>end</B>
+  <B>object</B> DataSource1: TDataSource
+    DataSet = Query1
+    Left = 183
+    Top = 5
+  <B>end</B>
+  <B>object</B> DataSource2: TDataSource
+    DataSet = Query2
+    Left = 285
+    Top = 5
+  <B>end</B>
+  <B>object</B> DataSource3: TDataSource
+    DataSet = Table1
+    Left = 392
+    Top = 5
+  <B>end</B>
+  <B>object</B> Table1: TTable
+    Active = True
+    DatabaseName = <I>'DBDEMOS'</I>
+    IndexName = <I>'ByCompany'</I>
+    TableName = <I>'CUSTOMER.DB'</I>
+    Left = 336
+    Top = 5
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

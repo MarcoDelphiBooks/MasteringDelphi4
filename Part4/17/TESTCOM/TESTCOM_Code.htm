@@ -1,0 +1,242 @@
+<HTML><HEAD>
+<TITLE>Project: TESTCOM.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: TESTCOM.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#TESTCOM.DPR> TESTCOM.DPR</A>
+<LI> <A HREF=#TESTCOMF.PAS> TESTCOMF.PAS</A>
+<LI> <A HREF=#TESTCOMF.DFM> TESTCOMF.DFM</A>
+</UL>
+<HR>
+<A NAME=TESTCOM.DPR><H3>TESTCOM.DPR</H3></A>
+
+<PRE>
+<B>program</B> TestCom;
+
+<B>uses</B>
+  Forms,
+  TestComF <B>in</B> <I>'TestComF.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=TESTCOMF.PAS><H3>TESTCOMF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> TestComF;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls, Spin, NumIntf;
+
+<FONT COLOR="#000080"><I>// redeclare the server GUID</I></FONT>
+<B>const</B>
+  ClsID_NumServer: TGUID =
+    <I>'{22053AE1-DD08-11D1-B9F1-004845400FAA}'</I>;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    SpinEdit1: TSpinEdit;
+    Button1: TButton;
+    Button2: TButton;
+    SpinEdit2: TSpinEdit;
+    Button3: TButton;
+    Button4: TButton;
+    Label1: TLabel;
+    Label2: TLabel;
+    Button5: TButton;
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> Button1Click(Sender: TObject);
+    <B>procedure</B> Button2Click(Sender: TObject);
+    <B>procedure</B> Button3Click(Sender: TObject);
+    <B>procedure</B> Button4Click(Sender: TObject);
+    <B>procedure</B> Button5Click(Sender: TObject);
+  <B>private</B>
+    Num1, Num2 : INumber;
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>uses</B>
+  ComObj;
+
+<B>procedure</B> TForm1.FormCreate(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// create first object</I></FONT>
+  Num1 := CreateComObject (CLSID_NumServer) <B>as</B> INumber;
+  Num1.SetValue (SpinEdit1.Value);
+  Label1.Caption := <I>'Num1: '</I> + IntToStr (Num1.GetValue);
+  Button1.Enabled := True;
+  Button2.Enabled := True;
+
+  <FONT COLOR="#000080"><I>// create second object</I></FONT>
+  Num2 := CreateComObject (CLSID_NumServer) <B>as</B> INumber;
+  Label2.Caption := <I>'Num2: '</I> + IntToStr (Num2.GetValue);
+  Button3.Enabled := True;
+  Button4.Enabled := True;
+<B>end</B>;
+
+<B>procedure</B> TForm1.Button1Click(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// change</I></FONT>
+  Num1.SetValue (SpinEdit1.Value);
+  Label1.Caption := <I>'Num1: '</I> + IntToStr (Num1.GetValue);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Button2Click(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// increase</I></FONT>
+  Num1.Increase;
+  Label1.Caption := <I>'Num1: '</I> + IntToStr (Num1.GetValue);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Button3Click(Sender: TObject);
+<B>begin</B>
+  Num2.SetValue (SpinEdit2.Value);
+  Label2.Caption := <I>'Num2: '</I> + IntToStr (Num2.GetValue);
+<B>end</B>;
+
+
+<B>procedure</B> TForm1.Button4Click(Sender: TObject);
+<B>begin</B>
+  Num2.Increase;
+  Label2.Caption := <I>'Num2: '</I> + IntToStr (Num2.GetValue);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Button5Click(Sender: TObject);
+<B>var</B>
+  Num3: INumber;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// create a new temporary COM object</I></FONT>
+  Num3 := CreateComObject (CLSID_NumServer) <B>as</B> INumber;
+  Num3.SetValue (100);
+  Num3.Increase;
+  ShowMessage (<I>'Num3: '</I> + IntToStr (Num3.GetValue));
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=TESTCOMF.DFM><H3>TESTCOMF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 51
+  Top = 150
+  Width = 294
+  Height = 244
+  Caption = <I>'TestPrj'</I>
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Label1: TLabel
+    Left = 40
+    Top = 24
+    Width = 28
+    Height = 13
+    Caption = <I>'Num1'</I>
+  <B>end</B>
+  <B>object</B> Label2: TLabel
+    Left = 168
+    Top = 24
+    Width = 28
+    Height = 13
+    Caption = <I>'Num2'</I>
+  <B>end</B>
+  <B>object</B> SpinEdit1: TSpinEdit
+    Left = 40
+    Top = 48
+    Width = 73
+    Height = 22
+    MaxValue = 0
+    MinValue = 0
+    TabOrder = 0
+    Value = 22
+  <B>end</B>
+  <B>object</B> Button1: TButton
+    Left = 40
+    Top = 88
+    Width = 75
+    Height = 25
+    Caption = <I>'&amp;Change'</I>
+    Enabled = False
+    TabOrder = 1
+    OnClick = Button1Click
+  <B>end</B>
+  <B>object</B> Button2: TButton
+    Left = 40
+    Top = 128
+    Width = 75
+    Height = 25
+    Caption = <I>'&amp;Next'</I>
+    Enabled = False
+    TabOrder = 2
+    OnClick = Button2Click
+  <B>end</B>
+  <B>object</B> SpinEdit2: TSpinEdit
+    Left = 168
+    Top = 48
+    Width = 73
+    Height = 22
+    MaxValue = 0
+    MinValue = 0
+    TabOrder = 3
+    Value = 22
+  <B>end</B>
+  <B>object</B> Button3: TButton
+    Left = 168
+    Top = 88
+    Width = 75
+    Height = 25
+    Caption = <I>'C&amp;hange'</I>
+    Enabled = False
+    TabOrder = 4
+    OnClick = Button3Click
+  <B>end</B>
+  <B>object</B> Button4: TButton
+    Left = 168
+    Top = 128
+    Width = 75
+    Height = 25
+    Caption = <I>'N&amp;ext'</I>
+    Enabled = False
+    TabOrder = 5
+    OnClick = Button4Click
+  <B>end</B>
+  <B>object</B> Button5: TButton
+    Left = 88
+    Top = 176
+    Width = 105
+    Height = 25
+    Caption = <I>'Compute (Num3)'</I>
+    TabOrder = 6
+    OnClick = Button5Click
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

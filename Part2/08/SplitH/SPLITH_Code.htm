@@ -1,0 +1,151 @@
+<HTML><HEAD>
+<TITLE>Project: SPLITH.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: SPLITH.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#SPLITH.DPR> SPLITH.DPR</A>
+<LI> <A HREF=#SPLITHF.PAS> SPLITHF.PAS</A>
+<LI> <A HREF=#SPLITHF.DFM> SPLITHF.DFM</A>
+</UL>
+<HR>
+<A NAME=SPLITH.DPR><H3>SPLITH.DPR</H3></A>
+
+<PRE>
+<B>program</B> SplitH;
+
+<B>uses</B>
+  Forms,
+  SplitHF <B>in</B> <I>'SplitHF.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=SPLITHF.PAS><H3>SPLITHF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> SplitHF;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  ExtCtrls, StdCtrls, ComCtrls;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    MemoUp: TMemo;
+    Splitter1: TSplitter;
+    MemoDown: TMemo;
+    OpenDialog1: TOpenDialog;
+    StatusBar1: TStatusBar;
+    <B>procedure</B> Splitter1Moved(Sender: TObject);
+    <B>procedure</B> MemoDblClick(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.Splitter1Moved(Sender: TObject);
+<B>begin</B>
+  StatusBar1.Panels[0].Text := Format (
+    <I>'Upper Memo: %d - Lower Memo: %d'</I>,
+    [MemoUp.Height, MemoDown.Height]);
+ <B>end</B>;
+
+<B>procedure</B> TForm1.MemoDblClick(Sender: TObject);
+<B>begin</B>
+  <B>with</B> Sender <B>as</B> TMemo, OpenDialog1 <B>do</B>
+    <B>if</B> Execute <B>then</B>
+      Lines.LoadFromFile (FileName);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=SPLITHF.DFM><H3>SPLITHF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 41
+  Top = 89
+  Width = 721
+  Height = 529
+  Caption = <I>'Horizontal Splitter'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  OnResize = Splitter1Moved
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Splitter1: TSplitter
+    Left = 0
+    Top = 200
+    Width = 713
+    Height = 5
+    Cursor = crVSplit
+    Align = alTop
+    OnMoved = Splitter1Moved
+  <B>end</B>
+  <B>object</B> MemoUp: TMemo
+    Left = 0
+    Top = 0
+    Width = 713
+    Height = 200
+    Align = alTop
+    ScrollBars = ssVertical
+    TabOrder = 0
+    OnDblClick = MemoDblClick
+  <B>end</B>
+  <B>object</B> MemoDown: TMemo
+    Left = 0
+    Top = 205
+    Width = 713
+    Height = 278
+    Align = alClient
+    ScrollBars = ssVertical
+    TabOrder = 1
+    OnDblClick = MemoDblClick
+  <B>end</B>
+  <B>object</B> StatusBar1: TStatusBar
+    Left = 0
+    Top = 483
+    Width = 713
+    Height = 19
+    Panels = &lt;
+      <B>item</B>
+        Width = 50
+      <B>end</B>&gt;
+    SimplePanel = False
+  <B>end</B>
+  <B>object</B> OpenDialog1: TOpenDialog
+    Filter = <I>'Text file (*.txt)|*.txt|Any file (*.*)|*.*'</I>
+    Options = [ofHideReadOnly, ofPathMustExist, ofFileMustExist]
+    Left = 40
+    Top = 32
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

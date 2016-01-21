@@ -1,0 +1,793 @@
+<HTML><HEAD>
+<TITLE>Project: DBCROSS.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: DBCROSS.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#DBCROSS.DPR> DBCROSS.DPR</A>
+<LI> <A HREF=#DBCROSSF.PAS> DBCROSSF.PAS</A>
+<LI> <A HREF=#HTMLDATA.PAS> HTMLDATA.PAS</A>
+<LI> <A HREF=#DBCROSSF.DFM> DBCROSSF.DFM</A>
+</UL>
+<HR>
+<A NAME=DBCROSS.DPR><H3>DBCROSS.DPR</H3></A>
+
+<PRE>
+<B>program</B> DbCross;
+
+<B>uses</B>
+  Forms,
+  DbCrossF <B>in</B> <I>'DbCrossF.pas'</I> <FONT COLOR="#000080"><I>{DbCrossForm}</I></FONT>,
+  HtmlData <B>in</B> <I>'HtmlData.pas'</I>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TDbCrossForm, DbCrossForm);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=DBCROSSF.PAS><H3>DBCROSSF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> DbCrossF;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  Db, DBTables, StdCtrls, ComCtrls;
+
+<B>type</B>
+  TDbCrossForm = <B>class</B>(TForm)
+    TableCustomers: TTable;
+    TableOrders: TTable;
+    TableItems: TTable;
+    BtnGenerate: TButton;
+    DataSource1: TDataSource;
+    TableCustomersCustNo: TFloatField;
+    TableCustomersCompany: TStringField;
+    TableCustomersAddr1: TStringField;
+    TableCustomersAddr2: TStringField;
+    TableCustomersCity: TStringField;
+    TableCustomersState: TStringField;
+    TableCustomersZip: TStringField;
+    TableCustomersCountry: TStringField;
+    TableCustomersPhone: TStringField;
+    TableCustomersFAX: TStringField;
+    TableCustomersTaxRate: TFloatField;
+    TableCustomersContact: TStringField;
+    TableCustomersLastInvoiceDate: TDateTimeField;
+    DataSource2: TDataSource;
+    TableOrdersOrderNo: TFloatField;
+    TableOrdersCustNo: TFloatField;
+    TableOrdersSaleDate: TDateTimeField;
+    TableOrdersShipDate: TDateTimeField;
+    TableOrdersEmpNo: TIntegerField;
+    TableOrdersShipToContact: TStringField;
+    TableOrdersShipToAddr1: TStringField;
+    TableOrdersShipToAddr2: TStringField;
+    TableOrdersShipToCity: TStringField;
+    TableOrdersShipToState: TStringField;
+    TableOrdersShipToZip: TStringField;
+    TableOrdersShipToCountry: TStringField;
+    TableOrdersShipToPhone: TStringField;
+    TableOrdersShipVIA: TStringField;
+    TableOrdersPO: TStringField;
+    TableOrdersTerms: TStringField;
+    TableOrdersPaymentMethod: TStringField;
+    TableOrdersItemsTotal: TCurrencyField;
+    TableOrdersTaxRate: TFloatField;
+    TableOrdersFreight: TCurrencyField;
+    TableOrdersAmountPaid: TCurrencyField;
+    TableItemsOrderNo: TFloatField;
+    TableItemsItemNo: TFloatField;
+    TableItemsPartNo: TFloatField;
+    TableItemsQty: TIntegerField;
+    TableItemsDiscount: TFloatField;
+    EditPath: TEdit;
+    Label1: TLabel;
+    TableParts: TTable;
+    TableItemsPart: TStringField;
+    TablePartsPartNo: TFloatField;
+    TablePartsVendorNo: TFloatField;
+    TablePartsDescription: TStringField;
+    TablePartsOnHand: TFloatField;
+    TablePartsOnOrder: TFloatField;
+    TablePartsCost: TCurrencyField;
+    TablePartsListPrice: TCurrencyField;
+    ButtonMain: TButton;
+    ButtonCross: TButton;
+    BtnPath: TButton;
+    ProgressBar1: TProgressBar;
+    <B>procedure</B> BtnGenerateClick(Sender: TObject);
+    <B>procedure</B> ButtonMainClick(Sender: TObject);
+    <B>procedure</B> ButtonCrossClick(Sender: TObject);
+    <B>procedure</B> BtnPathClick(Sender: TObject);
+    <B>procedure</B> FormCreate(Sender: TObject);
+  <B>end</B>;
+
+<B>var</B>
+  DbCrossForm: TDbCrossForm;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>uses</B>
+  Shellapi, HtmlData, FileCtrl;
+
+<FONT COLOR="#000080"><I>// partial version (with no cross reference)</I></FONT>
+<FONT COLOR="#000080"><I>{procedure TDbCrossForm.BtnGenerateClick(Sender: TObject);
+var
+  HtmlCust, HtmlOrd, HtmlItem: THtmlData;
+begin
+  // initialize
+  Screen.Cursor := crHourglass;
+  ProgressBar1.Max := TableCustomers.RecordCount;
+
+  // create the string lists
+  HtmlCust := THtmlData.Create (TableCustomers);
+  HtmlOrd := THtmlData.Create (TableOrders);
+  HtmlItem := THtmlData.Create (TableItems);
+
+  try
+    // the main file (customers)
+    HtmlCust.AddHeader ('All the Customers');
+
+    // for each customer
+    TableCustomers.First;
+    while not TableCustomers.EOF do
+    begin
+      // add a row to the html customers table,
+      // linked with the orders of the customer
+      HtmlCust.AddTableRow ('Cust');
+
+      // create an order file for each customer
+      HtmlOrd.AddHeader (TableCustomersCompany.AsString +
+        ' Orders');
+
+      // for each order of the current customer
+      TableOrders.First;
+      while not TableOrders.EOF do
+      begin
+        // add the data of the order file,
+        // linked with the items of each order
+        HtmlOrd.AddTableRow ('Ord');
+
+        // create an item file for each order
+        HtmlItem.AddHeader (
+          TableCustomersCompany.AsString + ' Order No. ' +
+</I></FONT>          TableOrders.FieldByName(<I>'OrderNo'</I>).AsString);
+
+        <FONT COLOR="#000080"><I>// for each item of the current order</I></FONT>
+        <B>while</B> <B>not</B> TableItems.EOF <B>do</B>
+        <B>begin</B>
+          <FONT COLOR="#000080"><I>// add the data of the current item</I></FONT>
+          <FONT COLOR="#000080"><I>// (with no further links)</I></FONT>
+          HtmlItem.AddTableRow (<I>''</I>);
+          TableItems.Next;
+        <B>end</B>;
+
+        <FONT COLOR="#000080"><I>// save the html file with the items of the order</I></FONT>
+        HtmlItem.AddFooter;
+        HtmlItem.SaveToFile (EditPath.Text + <I>'Ord'</I> +
+          TableOrders.FieldByName(<I>'OrderNo'</I>).AsString +
+          <I>'.htm'</I>);
+        TableOrders.Next;
+      <B>end</B>;
+
+      <FONT COLOR="#000080"><I>// save the html file with the orders of the customer</I></FONT>
+      HtmlOrd.AddFooter;
+      HtmlOrd.SaveToFile (EditPath.Text + <I>'Cust'</I> +
+        TableCustomersCustNo.AsString + <I>'.htm'</I>);
+      TableCustomers.Next;
+
+      <FONT COLOR="#000080"><I>// update the UI</I></FONT>
+      ProgressBar1.Position := TableCustomers.RecNo;
+      Application.ProcessMessages;
+    <B>end</B>;
+
+    <FONT COLOR="#000080"><I>// save the main file with the list of customers</I></FONT>
+    HtmlCust.AddFooter;
+    HtmlCust.SaveToFile (EditPath.Text + <I>'main.htm'</I>);
+  <B>finally</B>
+    HtmlCust.Free;
+    HtmlOrd.Free;
+    HtmlItem.Free;
+    Beep;
+    Screen.Cursor := crDefault;
+  <B>end</B>;
+<B>end</B>;}
+
+<FONT COLOR="#000080"><I>// complete version (with cross reference)</I></FONT>
+<B>procedure</B> TDbCrossForm.BtnGenerateClick(Sender: TObject);
+<B>var</B>
+  HtmlCust, HtmlOrd, HtmlItem, HtmlParts: THtmlData;
+  HtmlMem: THtmlStrings;
+  ListOfLists: TStringList;
+  <B>Index</B>: Integer;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// initialize</I></FONT>
+  Screen.Cursor := crHourglass;
+  ProgressBar1.Max := TableCustomers.RecordCount;
+
+  <FONT COLOR="#000080"><I>// create the string lists</I></FONT>
+  HtmlCust := THtmlData.Create (TableCustomers);
+  HtmlOrd := THtmlData.Create (TableOrders);
+  HtmlItem := THtmlData.Create (TableItems);
+  HtmlParts := THtmlData.Create (TableParts);
+  ListOfLists := TStringList.Create;
+
+  <B>try</B>
+    <FONT COLOR="#000080"><I>// the main file (customers)</I></FONT>
+    HtmlCust.AddHeader (<I>'All the Customers'</I>);
+
+    <FONT COLOR="#000080"><I>// for each customer</I></FONT>
+    TableCustomers.First;
+    <B>while</B> <B>not</B> TableCustomers.EOF <B>do</B>
+    <B>begin</B>
+      <FONT COLOR="#000080"><I>// add a row to the html customers table,</I></FONT>
+      <FONT COLOR="#000080"><I>// linked with the orders of the customer</I></FONT>
+      HtmlCust.AddTableRow (<I>'Cust'</I>);
+
+      <FONT COLOR="#000080"><I>// create an order file for each customer</I></FONT>
+      HtmlOrd.AddHeader (TableCustomersCompany.AsString +
+        <I>' Orders'</I>);
+
+      <FONT COLOR="#000080"><I>// for each order of the current customer</I></FONT>
+      TableOrders.First;
+      <B>while</B> <B>not</B> TableOrders.EOF <B>do</B>
+      <B>begin</B>
+        <FONT COLOR="#000080"><I>// add the data of the order file,</I></FONT>
+        <FONT COLOR="#000080"><I>// linked with the items of each order</I></FONT>
+        HtmlOrd.AddTableRow (<I>'Ord'</I>);
+
+        <FONT COLOR="#000080"><I>// create an item file for each order</I></FONT>
+        HtmlItem.AddHeader (
+          TableCustomersCompany.AsString + <I>' Order No. '</I> +
+          TableOrders.FieldByName(<I>'OrderNo'</I>).AsString);
+
+        <FONT COLOR="#000080"><I>// for each item of the current order</I></FONT>
+        <B>while</B> <B>not</B> TableItems.EOF <B>do</B>
+        <B>begin</B>
+          <FONT COLOR="#000080"><I>// add the data of the current item</I></FONT>
+          <FONT COLOR="#000080"><I>// (with no further links)</I></FONT>
+          HtmlItem.AddTableRow (<I>''</I>);
+
+          <FONT COLOR="#000080"><I>// look for the part number in the cross</I></FONT>
+          <FONT COLOR="#000080"><I>// reference files in memory</I></FONT>
+          <B>Index</B> := ListOfLists.IndexOf (
+            TableItemsPartNo.AsString);
+          <FONT COLOR="#000080"><I>// if not found, create a new entry</I></FONT>
+          <B>if</B> <B>Index</B> &lt; 0 <B>then</B>
+          <B>begin</B>
+            <FONT COLOR="#000080"><I>// create a new string list for this part</I></FONT>
+            HtmlMem := THtmlStrings.Create;
+             HtmlMem.AddHeader (<I>'Part: '</I> +
+              TableItemsPart.AsString);
+            <FONT COLOR="#000080"><I>// add it to the main list of parts</I></FONT>
+            <B>Index</B> := ListOfLists.AddObject (
+              TableItemsPartNo.AsString, HtmlMem);
+          <B>end</B>;
+          <FONT COLOR="#000080"><I>// in any case, add a new reference to the</I></FONT>
+          <FONT COLOR="#000080"><I>// (existing or new) string list for this part</I></FONT>
+          THtmlStrings (ListOfLists.Objects[<B>Index</B>]).
+            Add (<I>'&lt;a href=&quot;Ord'</I> +
+              TableItemsOrderNo.AsString + <I>'.htm&quot;&gt;'</I> +
+              TableCustomersCompany.AsString +
+              <I>' Order No. '</I> +
+              TableOrders.FieldByName(<I>'OrderNo'</I>).AsString +
+              <I>'&lt;/a&gt;&lt;p&gt;'</I>);
+          TableItems.Next;
+        <B>end</B>;
+
+        <FONT COLOR="#000080"><I>// save the html file with the items of the order</I></FONT>
+        HtmlItem.AddFooter;
+        HtmlItem.SaveToFile (EditPath.Text + <I>'Ord'</I> +
+          TableOrders.FieldByName(<I>'OrderNo'</I>).AsString +
+          <I>'.htm'</I>);
+        TableOrders.Next;
+      <B>end</B>;
+
+      <FONT COLOR="#000080"><I>// save the html file with the orders of the customer</I></FONT>
+      HtmlOrd.AddFooter;
+      HtmlOrd.SaveToFile (EditPath.Text + <I>'Cust'</I> +
+        TableCustomersCustNo.AsString + <I>'.htm'</I>);
+      TableCustomers.Next;
+
+      <FONT COLOR="#000080"><I>// update the UI</I></FONT>
+      ProgressBar1.Position := TableCustomers.RecNo;
+      Application.ProcessMessages;
+    <B>end</B>;
+
+    <FONT COLOR="#000080"><I>// save the main file with the list of customers</I></FONT>
+    HtmlCust.AddFooter;
+    HtmlCust.SaveToFile (EditPath.Text + <I>'main.htm'</I>);
+
+    <FONT COLOR="#000080"><I>// save each file of the cross reference</I></FONT>
+    <B>for</B> <B>Index</B> := 0 <B>to</B> ListOfLists.Count - 1 <B>do</B>
+    <B>begin</B>
+      HtmlMem := THtmlStrings (ListOfLists.Objects[<B>Index</B>]);
+      HtmlMem.AddFooter;
+      HtmlMem.SaveToFile (EditPath.Text + <I>'Itx'</I> +
+        ListOfLists [<B>Index</B>] + <I>'.htm'</I>);
+      HtmlMem.Free;
+    <B>end</B>;
+
+    <FONT COLOR="#000080"><I>// generate the index of the cross reference</I></FONT>
+    HtmlParts.AddHeader (<I>'Parts Cross Reference'</I>);
+    TableParts.First;
+    <B>while</B> <B>not</B> TableParts.EOF <B>do</B>
+    <B>begin</B>
+      <FONT COLOR="#000080"><I>// add a row to the html customers table</I></FONT>
+      HtmlParts.AddTableRow (<I>'Itx'</I>);
+      TableParts.Next;
+    <B>end</B>;
+    HtmlParts.AddFooter;
+    HtmlParts.SaveToFile (EditPath.Text +
+      <I>'Parts.htm'</I>);
+
+  <B>finally</B>
+    HtmlCust.Free;
+    HtmlOrd.Free;
+    HtmlItem.Free;
+    HtmlParts.Free;
+    ListOfLists.Free;
+    Beep;
+    Screen.Cursor := crDefault;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TDbCrossForm.ButtonMainClick(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// open the main file with the default browser</I></FONT>
+  ShellExecute (Handle, <I>'open'</I>,
+    pChar (EditPath.Text + <I>'main.htm'</I>),
+    <I>''</I>, <I>''</I>, sw_ShowNormal);
+<B>end</B>;
+
+<B>procedure</B> TDbCrossForm.ButtonCrossClick(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// open the main file with the default browser</I></FONT>
+  ShellExecute (Handle, <I>'open'</I>,
+    pChar (EditPath.Text + <I>'parts.htm'</I>),
+    <I>''</I>, <I>''</I>, sw_ShowNormal);
+<B>end</B>;
+
+<B>procedure</B> TDbCrossForm.BtnPathClick(Sender: TObject);
+<B>var</B>
+  SelDir: <B>string</B>;
+<B>begin</B>
+  SelDir := EditPath.Text;
+  <B>if</B> SelectDirectory (SelDir,
+      [sdAllowCreate, sdPerformCreate, sdPrompt], 0) <B>then</B>
+    EditPath.Text := SelDir + <I>'\'</I>;
+<B>end</B>;
+
+<B>procedure</B> TDbCrossForm.FormCreate(Sender: TObject);
+<B>begin</B>
+  EditPath.Text := ExtractFilePath (Application.Exename);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=HTMLDATA.PAS><H3>HTMLDATA.PAS</H3></A>
+
+<PRE>
+<B>unit</B> HtmlData;
+
+<B>interface</B>
+
+<B>uses</B>
+  Classes, DB;
+
+<B>type</B>
+  THtmlStrings = <B>class</B> (TStringList)
+  <B>public</B>
+    <B>procedure</B> AddHeader (Title: <B>string</B>); <B>virtual</B>;
+    <B>procedure</B> AddFooter; <B>virtual</B>;
+  <B>end</B>;
+
+  THtmlData = <B>class</B> (THtmlStrings)
+  <B>public</B>
+    <B>constructor</B> Create (DataSet: TDataSet);
+    <B>procedure</B> AddHeader (Title: <B>string</B>); <B>override</B>;
+    <B>procedure</B> AddFooter; <B>override</B>;
+    <B>procedure</B> AddTableRow (LinkStr: <B>string</B>);
+  <B>private</B>
+    Data: TDataSet;
+  <B>end</B>;
+
+<B>implementation</B>
+
+<B>uses</B>
+  SysUtils;
+
+<FONT COLOR="#000080"><I>////// THtmlStrings //////</I></FONT>
+
+<B>procedure</B> THtmlStrings.AddHeader (Title: <B>string</B>);
+<B>begin</B>
+  Clear;
+  Add (<I>'&lt;HTML&gt;'</I>);
+  Add (<I>'&lt;HEAD&gt;'</I>);
+  Add (<I>'&lt;TITLE&gt;'</I> + Title + <I>'&lt;/TITLE&gt;'</I>);
+  Add (<I>'&lt;/HEAD&gt;'</I>);
+  Add (<I>'&lt;BODY&gt;'</I>);
+  Add (<I>'&lt;H1&gt;&lt;CENTER&gt;'</I> + Title + <I>'&lt;/CENTER&gt;&lt;/H1&gt;'</I>);
+<B>end</B>;
+
+<B>procedure</B> THtmlStrings.AddFooter;
+<B>begin</B>
+  Add (<I>'&lt;HR&gt;'</I>);
+  Add (<I>'Generated by the program '</I> +
+    ExtractFileName (ParamStr(0)));
+  Add (<I>'&lt;/BODY&gt;'</I>);
+  Add (<I>'&lt;/HTML&gt;'</I>);
+<B>end</B>;
+
+<FONT COLOR="#000080"><I>////// THtlmData //////</I></FONT>
+
+<B>constructor</B> THtmlData.Create (DataSet: TDataSet);
+<B>begin</B>
+  <B>inherited</B> Create;
+  Data := DataSet;
+<B>end</B>;
+
+<B>procedure</B> THtmlData.AddHeader (Title: <B>string</B>);
+<B>var</B>
+  I: Integer;
+<B>begin</B>
+  <B>inherited</B> AddHeader (Title);
+
+  <FONT COLOR="#000080"><I>// start table with borders</I></FONT>
+  Add(<I>'&lt;table border&gt;'</I>);
+  <FONT COLOR="#000080"><I>// new row, with the table headers (tag &lt;th&gt;) for the visible fields</I></FONT>
+  Add(<I>'&lt;tr&gt;'</I>);
+  <B>for</B> I := 0 <B>to</B> Data.FieldCount - 1 <B>do</B>
+    <B>if</B> Data.Fields[I].Visible <B>then</B>
+      Add(<I>'&lt;th&gt;'</I> + Data.Fields[I].FieldName + <I>'&lt;/th&gt;'</I>);
+  Add(<I>'&lt;/tr&gt;'</I>);
+<B>end</B>;
+
+<B>procedure</B> THtmlData.AddFooter;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// end the table</I></FONT>
+  Add(<I>'&lt;/table&gt;'</I>);
+
+  <B>inherited</B> AddFooter;
+<B>end</B>;
+
+<B>procedure</B> THtmlData.AddTableRow (LinkStr: <B>string</B>);
+<B>var</B>
+  I: Integer;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// new row, with table data (tag &lt;td&gt;)</I></FONT>
+  Add(<I>'&lt;tr&gt;'</I>);
+  <B>if</B> LinkStr &lt;&gt; <I>''</I> <B>then</B>
+    <FONT COLOR="#000080"><I>// add a link</I></FONT>
+    Add(<I>'&lt;td&gt;&lt;a href=&quot;'</I> + LinkStr +
+      Data.Fields[0].DisplayText + <I>'.htm&quot;&gt;'</I>
+      + Data.Fields[0].DisplayText + <I>'&lt;/a&gt;&lt;/td&gt;'</I>)
+  <B>else</B>
+    <FONT COLOR="#000080"><I>// plain data</I></FONT>
+    Add(<I>'&lt;td&gt;'</I> + Data.Fields[0].DisplayText + <I>'&lt;/td&gt;'</I>);
+
+  <FONT COLOR="#000080"><I>// all the other visible fields</I></FONT>
+  <B>for</B> I := 1 <B>to</B> Data.FieldCount - 1 <B>do</B>
+    <B>if</B> Data.Fields[I].Visible <B>then</B>
+      <B>if</B> Data.Fields[I].DisplayText &lt;&gt; <I>''</I> <B>then</B>
+        Add(<I>'&lt;td&gt;'</I> + Data.Fields[I].DisplayText + <I>'&lt;/td&gt;'</I>)
+      <B>else</B>
+        Add(<I>'&lt;td&gt;&lt;br&gt;&lt;/td&gt;'</I>);
+  Add(<I>'&lt;/tr&gt;'</I>);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=DBCROSSF.DFM><H3>DBCROSSF.DFM</H3></A>
+
+<PRE>
+<B>object</B> DbCrossForm: TDbCrossForm
+  Left = 285
+  Top = 110
+  Width = 288
+  Height = 233
+  Caption = <I>'Database Cross-Reference'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Label1: TLabel
+    Left = 48
+    Top = 21
+    Width = 94
+    Height = 13
+    Caption = <I>'Path for HTML files:'</I>
+  <B>end</B>
+  <B>object</B> BtnGenerate: TButton
+    Left = 48
+    Top = 80
+    Width = 145
+    Height = 25
+    Caption = <I>'Generate &amp;Files'</I>
+    TabOrder = 0
+    OnClick = BtnGenerateClick
+  <B>end</B>
+  <B>object</B> EditPath: TEdit
+    Left = 48
+    Top = 40
+    Width = 145
+    Height = 21
+    ReadOnly = True
+    TabOrder = 1
+    Text = <I>'c:\tmp\'</I>
+  <B>end</B>
+  <B>object</B> ButtonMain: TButton
+    Left = 48
+    Top = 112
+    Width = 145
+    Height = 25
+    Caption = <I>'Open &amp;Main'</I>
+    TabOrder = 2
+    OnClick = ButtonMainClick
+  <B>end</B>
+  <B>object</B> ButtonCross: TButton
+    Left = 48
+    Top = 144
+    Width = 145
+    Height = 25
+    Caption = <I>'Open &amp;Cross Reference'</I>
+    TabOrder = 3
+    OnClick = ButtonCrossClick
+  <B>end</B>
+  <B>object</B> BtnPath: TButton
+    Left = 200
+    Top = 40
+    Width = 25
+    Height = 21
+    Caption = <I>'...'</I>
+    TabOrder = 4
+    OnClick = BtnPathClick
+  <B>end</B>
+  <B>object</B> ProgressBar1: TProgressBar
+    Left = 8
+    Top = 184
+    Width = 265
+    Height = 16
+    Min = 0
+    Max = 100
+    TabOrder = 5
+  <B>end</B>
+  <B>object</B> TableCustomers: TTable
+    Active = True
+    DatabaseName = <I>'DBDEMOS'</I>
+    IndexName = <I>'ByCompany'</I>
+    TableName = <I>'CUSTOMER.DB'</I>
+    Left = 8
+    Top = 16
+    <B>object</B> TableCustomersCustNo: TFloatField
+      FieldName = <I>'CustNo'</I>
+    <B>end</B>
+    <B>object</B> TableCustomersCompany: TStringField
+      FieldName = <I>'Company'</I>
+      Size = 30
+    <B>end</B>
+    <B>object</B> TableCustomersAddr1: TStringField
+      FieldName = <I>'Addr1'</I>
+      Size = 30
+    <B>end</B>
+    <B>object</B> TableCustomersAddr2: TStringField
+      FieldName = <I>'Addr2'</I>
+      Visible = False
+      Size = 30
+    <B>end</B>
+    <B>object</B> TableCustomersCity: TStringField
+      FieldName = <I>'City'</I>
+      Size = 15
+    <B>end</B>
+    <B>object</B> TableCustomersState: TStringField
+      FieldName = <I>'State'</I>
+    <B>end</B>
+    <B>object</B> TableCustomersZip: TStringField
+      FieldName = <I>'Zip'</I>
+      Size = 10
+    <B>end</B>
+    <B>object</B> TableCustomersCountry: TStringField
+      FieldName = <I>'Country'</I>
+    <B>end</B>
+    <B>object</B> TableCustomersPhone: TStringField
+      FieldName = <I>'Phone'</I>
+      Size = 15
+    <B>end</B>
+    <B>object</B> TableCustomersFAX: TStringField
+      FieldName = <I>'FAX'</I>
+      Size = 15
+    <B>end</B>
+    <B>object</B> TableCustomersTaxRate: TFloatField
+      FieldName = <I>'TaxRate'</I>
+    <B>end</B>
+    <B>object</B> TableCustomersContact: TStringField
+      FieldName = <I>'Contact'</I>
+    <B>end</B>
+    <B>object</B> TableCustomersLastInvoiceDate: TDateTimeField
+      FieldName = <I>'LastInvoiceDate'</I>
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> TableOrders: TTable
+    Active = True
+    DatabaseName = <I>'DBDEMOS'</I>
+    IndexName = <I>'CustNo'</I>
+    MasterFields = <I>'CustNo'</I>
+    MasterSource = DataSource1
+    TableName = <I>'ORDERS.DB'</I>
+    Left = 8
+    Top = 64
+    <B>object</B> TableOrdersOrderNo: TFloatField
+      FieldName = <I>'OrderNo'</I>
+    <B>end</B>
+    <B>object</B> TableOrdersCustNo: TFloatField
+      FieldName = <I>'CustNo'</I>
+      Required = True
+      Visible = False
+    <B>end</B>
+    <B>object</B> TableOrdersSaleDate: TDateTimeField
+      FieldName = <I>'SaleDate'</I>
+    <B>end</B>
+    <B>object</B> TableOrdersShipDate: TDateTimeField
+      FieldName = <I>'ShipDate'</I>
+    <B>end</B>
+    <B>object</B> TableOrdersEmpNo: TIntegerField
+      FieldName = <I>'EmpNo'</I>
+      Required = True
+    <B>end</B>
+    <B>object</B> TableOrdersShipToContact: TStringField
+      FieldName = <I>'ShipToContact'</I>
+    <B>end</B>
+    <B>object</B> TableOrdersShipToAddr1: TStringField
+      FieldName = <I>'ShipToAddr1'</I>
+      Size = 30
+    <B>end</B>
+    <B>object</B> TableOrdersShipToAddr2: TStringField
+      FieldName = <I>'ShipToAddr2'</I>
+      Size = 30
+    <B>end</B>
+    <B>object</B> TableOrdersShipToCity: TStringField
+      FieldName = <I>'ShipToCity'</I>
+      Size = 15
+    <B>end</B>
+    <B>object</B> TableOrdersShipToState: TStringField
+      FieldName = <I>'ShipToState'</I>
+    <B>end</B>
+    <B>object</B> TableOrdersShipToZip: TStringField
+      FieldName = <I>'ShipToZip'</I>
+      Size = 10
+    <B>end</B>
+    <B>object</B> TableOrdersShipToCountry: TStringField
+      FieldName = <I>'ShipToCountry'</I>
+    <B>end</B>
+    <B>object</B> TableOrdersShipToPhone: TStringField
+      FieldName = <I>'ShipToPhone'</I>
+      Size = 15
+    <B>end</B>
+    <B>object</B> TableOrdersShipVIA: TStringField
+      FieldName = <I>'ShipVIA'</I>
+      Size = 7
+    <B>end</B>
+    <B>object</B> TableOrdersPO: TStringField
+      FieldName = <I>'PO'</I>
+      Size = 15
+    <B>end</B>
+    <B>object</B> TableOrdersTerms: TStringField
+      FieldName = <I>'Terms'</I>
+      Size = 6
+    <B>end</B>
+    <B>object</B> TableOrdersPaymentMethod: TStringField
+      FieldName = <I>'PaymentMethod'</I>
+      Size = 7
+    <B>end</B>
+    <B>object</B> TableOrdersItemsTotal: TCurrencyField
+      FieldName = <I>'ItemsTotal'</I>
+    <B>end</B>
+    <B>object</B> TableOrdersTaxRate: TFloatField
+      FieldName = <I>'TaxRate'</I>
+    <B>end</B>
+    <B>object</B> TableOrdersFreight: TCurrencyField
+      FieldName = <I>'Freight'</I>
+    <B>end</B>
+    <B>object</B> TableOrdersAmountPaid: TCurrencyField
+      FieldName = <I>'AmountPaid'</I>
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> TableItems: TTable
+    Active = True
+    DatabaseName = <I>'DBDEMOS'</I>
+    IndexName = <I>'ByOrderNo'</I>
+    MasterFields = <I>'OrderNo'</I>
+    MasterSource = DataSource2
+    TableName = <I>'ITEMS.DB'</I>
+    Left = 8
+    Top = 112
+    <B>object</B> TableItemsOrderNo: TFloatField
+      FieldName = <I>'OrderNo'</I>
+    <B>end</B>
+    <B>object</B> TableItemsItemNo: TFloatField
+      FieldName = <I>'ItemNo'</I>
+    <B>end</B>
+    <B>object</B> TableItemsPart: TStringField
+      FieldKind = fkLookup
+      FieldName = <I>'Part'</I>
+      LookupDataSet = TableParts
+      LookupKeyFields = <I>'PartNo'</I>
+      LookupResultField = <I>'Description'</I>
+      KeyFields = <I>'PartNo'</I>
+      Size = 30
+      Lookup = True
+    <B>end</B>
+    <B>object</B> TableItemsPartNo: TFloatField
+      FieldName = <I>'PartNo'</I>
+    <B>end</B>
+    <B>object</B> TableItemsQty: TIntegerField
+      FieldName = <I>'Qty'</I>
+    <B>end</B>
+    <B>object</B> TableItemsDiscount: TFloatField
+      FieldName = <I>'Discount'</I>
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> DataSource1: TDataSource
+    DataSet = TableCustomers
+    Left = 208
+    Top = 8
+  <B>end</B>
+  <B>object</B> DataSource2: TDataSource
+    DataSet = TableOrders
+    Left = 208
+    Top = 96
+  <B>end</B>
+  <B>object</B> TableParts: TTable
+    Active = True
+    DatabaseName = <I>'DBDEMOS'</I>
+    IndexName = <I>'ByDescription'</I>
+    TableName = <I>'PARTS.DB'</I>
+    Left = 208
+    Top = 136
+    <B>object</B> TablePartsPartNo: TFloatField
+      FieldName = <I>'PartNo'</I>
+    <B>end</B>
+    <B>object</B> TablePartsVendorNo: TFloatField
+      FieldName = <I>'VendorNo'</I>
+    <B>end</B>
+    <B>object</B> TablePartsDescription: TStringField
+      FieldName = <I>'Description'</I>
+      Size = 30
+    <B>end</B>
+    <B>object</B> TablePartsOnHand: TFloatField
+      FieldName = <I>'OnHand'</I>
+    <B>end</B>
+    <B>object</B> TablePartsOnOrder: TFloatField
+      FieldName = <I>'OnOrder'</I>
+    <B>end</B>
+    <B>object</B> TablePartsCost: TCurrencyField
+      FieldName = <I>'Cost'</I>
+    <B>end</B>
+    <B>object</B> TablePartsListPrice: TCurrencyField
+      FieldName = <I>'ListPrice'</I>
+    <B>end</B>
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

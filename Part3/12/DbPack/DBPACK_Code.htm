@@ -1,0 +1,227 @@
+<HTML><HEAD>
+<TITLE>Project: DBPACK.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: DBPACK.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#DBPACK.DPR> DBPACK.DPR</A>
+<LI> <A HREF=#DBPACKF.PAS> DBPACKF.PAS</A>
+<LI> <A HREF=#DBPACKF.DFM> DBPACKF.DFM</A>
+</UL>
+<HR>
+<A NAME=DBPACK.DPR><H3>DBPACK.DPR</H3></A>
+
+<PRE>
+<B>program</B> DbPack;
+
+<B>uses</B>
+  Forms,
+  DbPackF <B>in</B> <I>'DbPackF.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=DBPACKF.PAS><H3>DBPACKF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> DbPackF;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls, DBTables, Db;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    BtnDbase: TButton;
+    BtnPdx: TButton;
+    ListDbase: TListBox;
+    ListPdx: TListBox;
+    Table1: TTable;
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> BtnPdxClick(Sender: TObject);
+    <B>procedure</B> BtnDbaseClick(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>uses</B>
+  BDE;
+
+<B>procedure</B> PackPdoxTable (Table:TTable);
+<B>var</B>
+  TableDesc: CRTblDesc;
+  WasActive: Boolean;
+  hDatabase: hDbiDB;
+<B>begin</B>
+  WasActive := Table.Active;
+  Screen.Cursor := crHourglass;
+  <B>try</B>
+    <FONT COLOR="#000080"><I>// open if it was closed</I></FONT>
+    <FONT COLOR="#000080"><I>// (to get the valid DBHandle)</I></FONT>
+    <B>if</B> <B>not</B> WasActive <B>then</B>
+      Table.Open;
+    <FONT COLOR="#000080"><I>// get the database handle and close the table</I></FONT>
+    hDatabase := Table.DBHandle;
+    Table.Close;
+    <FONT COLOR="#000080"><I>// fill the table descriptor</I></FONT>
+    FillChar (TableDesc, SizeOf (CRTblDesc), 0);
+    <B>with</B> TableDesc <B>do</B>
+    <B>begin</B>
+      StrPCopy (szTblName, Table.TableName);
+      StrPCopy (szTblType, szParadox);
+      bPack := True;
+    <B>end</B>;
+    <FONT COLOR="#000080"><I>// restructure the table, packing it</I></FONT>
+    <B>if</B> hDatabase &lt;&gt; <B>nil</B> <B>then</B>
+      Check (DBIDoRestructure (hDatabase, 1,
+        @TableDesc, <B>nil</B>, <B>nil</B>, <B>nil</B>, False))
+    <B>else</B>
+      ShowMessage (<I>'Database handle is nil'</I>);
+  <B>finally</B>
+    Screen.Cursor := crDefault;
+    <FONT COLOR="#000080"><I>// eventually reopen</I></FONT>
+    <B>if</B> WasActive <B>then</B>
+      Table.Open;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> PackDBaseTable (Table: TTable);
+<B>var</B>
+  WasActive: Boolean;
+<B>begin</B>
+  WasActive  := Table.Active;
+  Screen.Cursor := crHourglass;
+  <B>try</B>
+    <FONT COLOR="#000080"><I>// close if open</I></FONT>
+    <B>if</B> WasActive <B>then</B>
+      Table.Close;
+    <FONT COLOR="#000080"><I>// reopen in exclusive mode</I></FONT>
+    Table.Exclusive := True;
+    Table.Open;
+    <FONT COLOR="#000080"><I>// pack the table</I></FONT>
+    Check (DBIPackTable (Table.DBHandle,
+      Table.Handle, <B>nil</B>, <B>nil</B>, True));
+    <FONT COLOR="#000080"><I>// remove the exclusive mode</I></FONT>
+    Table.Close;
+    Table.Exclusive := False;
+  <B>finally</B>
+    Screen.Cursor := crDefault;
+    <FONT COLOR="#000080"><I>// eventually reopen</I></FONT>
+    <B>if</B> WasActive <B>then</B>
+      Table.Open;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TForm1.FormCreate(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// get the table names</I></FONT>
+  Session.GetTableNames (Table1.DatabaseName,
+    <I>'*.db'</I>, True, False, ListPdx.Items);
+  Session.GetTableNames (Table1.DatabaseName,
+    <I>'*.dbf'</I>, True, False, ListDbase.Items);
+  <FONT COLOR="#000080"><I>// select the first item of each list</I></FONT>
+  ListPdx.ItemIndex := 0;
+  ListDbase.ItemIndex := 0;
+<B>end</B>;
+
+<B>procedure</B> TForm1.BtnPdxClick(Sender: TObject);
+<B>begin</B>
+  Table1.TableName :=
+    ListPdx.Items [ListPdx.ItemIndex];
+  PackPdoxTable (Table1);
+<B>end</B>;
+
+<B>procedure</B> TForm1.BtnDbaseClick(Sender: TObject);
+<B>begin</B>
+  Table1.TableName :=
+    ListDbase.Items [ListDbase.ItemIndex];
+  PackDBaseTable (Table1);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=DBPACKF.DFM><H3>DBPACKF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 192
+  Top = 107
+  Width = 450
+  Height = 228
+  Caption = <I>'DbPack'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  Visible = True
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> BtnDbase: TButton
+    Left = 272
+    Top = 168
+    Width = 121
+    Height = 25
+    Caption = <I>'Pack dBase table'</I>
+    TabOrder = 0
+    OnClick = BtnDbaseClick
+  <B>end</B>
+  <B>object</B> BtnPdx: TButton
+    Left = 48
+    Top = 168
+    Width = 121
+    Height = 25
+    Caption = <I>'Pack Paradox table'</I>
+    TabOrder = 1
+    OnClick = BtnPdxClick
+  <B>end</B>
+  <B>object</B> ListDbase: TListBox
+    Left = 224
+    Top = 8
+    Width = 209
+    Height = 153
+    ItemHeight = 13
+    TabOrder = 2
+  <B>end</B>
+  <B>object</B> ListPdx: TListBox
+    Left = 8
+    Top = 8
+    Width = 209
+    Height = 153
+    ItemHeight = 13
+    TabOrder = 3
+  <B>end</B>
+  <B>object</B> Table1: TTable
+    DatabaseName = <I>'DBDEMOS'</I>
+    TableName = <I>'clients.dbf'</I>
+    Left = 32
+    Top = 24
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

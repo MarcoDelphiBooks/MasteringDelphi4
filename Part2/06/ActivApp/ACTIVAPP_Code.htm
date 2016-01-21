@@ -1,0 +1,216 @@
+<HTML><HEAD>
+<TITLE>Project: ACTIVAPP.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: ACTIVAPP.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#ACTIVAPP.DPR> ACTIVAPP.DPR</A>
+<LI> <A HREF=#MAINF.PAS> MAINF.PAS</A>
+<LI> <A HREF=#SECONDF.PAS> SECONDF.PAS</A>
+<LI> <A HREF=#MAINF.DFM> MAINF.DFM</A>
+<LI> <A HREF=#SECONDF.DFM> SECONDF.DFM</A>
+</UL>
+<HR>
+<A NAME=ACTIVAPP.DPR><H3>ACTIVAPP.DPR</H3></A>
+
+<PRE>
+<B>program</B> ActivApp;
+
+<B>uses</B>
+  Forms,
+  MainF <B>in</B> <I>'MainF.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>,
+  SecondF <B>in</B> <I>'SecondF.pas'</I> <FONT COLOR="#000080"><I>{Form2}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.CreateForm(TForm2, Form2);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MAINF.PAS><H3>MAINF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> MainF;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    Label1: TLabel;
+    Label2: TLabel;
+    <B>procedure</B> FormActivate(Sender: TObject);
+    <B>procedure</B> FormDeactivate(Sender: TObject);
+    <B>procedure</B> FormCreate(Sender: TObject);
+  <B>public</B>
+    <B>procedure</B> AppActiv(Sender: TObject);
+    <B>procedure</B> AppDeActiv(Sender: TObject);
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.FormActivate(Sender: TObject);
+<B>begin</B>
+  Label2.Caption := <I>'Form1 Active'</I>;
+  Label2.Color := clRed;
+<B>end</B>;
+
+<B>procedure</B> TForm1.FormDeactivate(Sender: TObject);
+<B>begin</B>
+  Label2.Caption := <I>'Form1 Not Active'</I>;
+  Label2.Color := clBtnFace;
+<B>end</B>;
+
+<B>procedure</B> TForm1.AppActiv(Sender: TObject);
+<B>begin</B>
+  Label1.Caption := <I>'Application Active'</I>;
+  Label1.Color := clRed;
+  Beep;
+<B>end</B>;
+
+<B>procedure</B> TForm1.AppDeActiv(Sender: TObject);
+<B>begin</B>
+  Label1.Caption := <I>'Application Not Active'</I>;
+  Label1.Color := clBtnFace;
+<B>end</B>;
+
+<B>procedure</B> TForm1.FormCreate(Sender: TObject);
+<B>begin</B>
+  Application.OnActivate := AppActiv;
+  Application.OnDeActivate := AppDeActiv;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=SECONDF.PAS><H3>SECONDF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> SecondF;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls;
+
+<B>type</B>
+  TForm2 = <B>class</B>(TForm)
+    Label2: TLabel;
+    <B>procedure</B> FormActivate(Sender: TObject);
+    <B>procedure</B> FormDeactivate(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form2: TForm2;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm2.FormActivate(Sender: TObject);
+<B>begin</B>
+  Label2.Caption := <I>'Form2 Active'</I>;
+  Label2.Color := clRed;
+<B>end</B>;
+
+<B>procedure</B> TForm2.FormDeactivate(Sender: TObject);
+<B>begin</B>
+  Label2.Caption := <I>'Form2 Not Active'</I>;
+  Label2.Color := clBtnFace;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MAINF.DFM><H3>MAINF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 83
+  Top = 175
+  Width = 290
+  Height = 191
+  Caption = <I>'Form1'</I>
+  Color = clBtnFace
+  Font.Charset = ANSI_CHARSET
+  Font.Color = clBlack
+  Font.Height = -19
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  OnActivate = FormActivate
+  OnCreate = FormCreate
+  OnDeactivate = FormDeactivate
+  PixelsPerInch = 96
+  TextHeight = 24
+  <B>object</B> Label1: TLabel
+    Left = 24
+    Top = 24
+    Width = 149
+    Height = 24
+    Caption = <I>'Application Active'</I>
+    Color = clRed
+    ParentColor = False
+  <B>end</B>
+  <B>object</B> Label2: TLabel
+    Left = 24
+    Top = 64
+    Width = 56
+    Height = 24
+    Caption = <I>'Label2'</I>
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<A NAME=SECONDF.DFM><H3>SECONDF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form2: TForm2
+  Left = 385
+  Top = 175
+  Width = 300
+  Height = 193
+  Caption = <I>'Form2'</I>
+  Color = clBtnFace
+  Font.Charset = ANSI_CHARSET
+  Font.Color = clBlack
+  Font.Height = -19
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  Visible = True
+  OnActivate = FormActivate
+  OnDeactivate = FormDeactivate
+  PixelsPerInch = 96
+  TextHeight = 24
+  <B>object</B> Label2: TLabel
+    Left = 24
+    Top = 64
+    Width = 56
+    Height = 24
+    Caption = <I>'Label2'</I>
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

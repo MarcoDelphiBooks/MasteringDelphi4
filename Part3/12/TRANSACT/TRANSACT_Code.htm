@@ -1,0 +1,212 @@
+<HTML><HEAD>
+<TITLE>Project: TRANSACT.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: TRANSACT.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#TRANSACT.DPR> TRANSACT.DPR</A>
+<LI> <A HREF=#TRANFORM.PAS> TRANFORM.PAS</A>
+<LI> <A HREF=#TRANFORM.DFM> TRANFORM.DFM</A>
+</UL>
+<HR>
+<A NAME=TRANSACT.DPR><H3>TRANSACT.DPR</H3></A>
+
+<PRE>
+<B>program</B> transact;
+
+<B>uses</B>
+  Forms,
+  Tranform <B>in</B> <I>'Tranform.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=TRANFORM.PAS><H3>TRANFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> Tranform;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls, Grids, DBGrids, DB, DBTables, ExtCtrls;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    Database1: TDatabase;
+    DataSource1: TDataSource;
+    DBGrid1: TDBGrid;
+    Panel1: TPanel;
+    BtnStart: TButton;
+    BtnCommit: TButton;
+    BtnRollback: TButton;
+    Query1: TQuery;
+    <B>procedure</B> BtnStartClick(Sender: TObject);
+    <B>procedure</B> BtnCommitClick(Sender: TObject);
+    <B>procedure</B> BtnRollbackClick(Sender: TObject);
+    <B>procedure</B> Query1BeforeEdit(DataSet: TDataSet);
+    <B>procedure</B> FormCreate(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.BtnStartClick(Sender: TObject);
+<B>begin</B>
+  Database1.StartTransaction;
+  <FONT COLOR="#000080"><I>// set buttons</I></FONT>
+  BtnStart.Enabled := False;
+  BtnCommit.Enabled := True;
+  BtnRollback.Enabled := True;
+<B>end</B>;
+
+<B>procedure</B> TForm1.BtnCommitClick(Sender: TObject);
+<B>begin</B>
+  Query1.Post;
+  Database1.Commit;
+  <FONT COLOR="#000080"><I>// set buttons</I></FONT>
+  BtnStart.Enabled := True;
+  BtnCommit.Enabled := False;
+  BtnRollback.Enabled := False;
+<B>end</B>;
+
+<B>procedure</B> TForm1.BtnRollbackClick(Sender: TObject);
+<B>begin</B>
+  Query1.Cancel;
+  Database1.Rollback;
+  <FONT COLOR="#000080"><I>// refresh</I></FONT>
+  Query1.Refresh;
+  <FONT COLOR="#000080"><I>// set buttons</I></FONT>
+  BtnStart.Enabled := True;
+  BtnCommit.Enabled := False;
+  BtnRollback.Enabled := False;
+<B>end</B>;
+
+<B>procedure</B> TForm1.Query1BeforeEdit(DataSet: TDataSet);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// start a transaction, if not already started</I></FONT>
+  <B>if</B> <B>not</B> Database1.InTransaction <B>then</B>
+    BtnStartClick (self);
+<B>end</B>;
+
+<B>procedure</B> TForm1.FormCreate(Sender: TObject);
+<B>begin</B>
+  Query1.Open;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=TRANFORM.DFM><H3>TRANFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 194
+  Top = 109
+  Width = 533
+  Height = 291
+  Caption = <I>'Transact'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> DBGrid1: TDBGrid
+    Left = 0
+    Top = 41
+    Width = 525
+    Height = 223
+    Align = alClient
+    DataSource = DataSource1
+    TabOrder = 0
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = <I>'MS Sans Serif'</I>
+    TitleFont.Style = []
+  <B>end</B>
+  <B>object</B> Panel1: TPanel
+    Left = 0
+    Top = 0
+    Width = 525
+    Height = 41
+    Align = alTop
+    TabOrder = 1
+    <B>object</B> BtnStart: TButton
+      Left = 8
+      Top = 8
+      Width = 75
+      Height = 25
+      Caption = <I>'Start'</I>
+      TabOrder = 0
+      OnClick = BtnStartClick
+    <B>end</B>
+    <B>object</B> BtnCommit: TButton
+      Left = 88
+      Top = 8
+      Width = 75
+      Height = 25
+      Caption = <I>'Commit'</I>
+      Enabled = False
+      TabOrder = 1
+      OnClick = BtnCommitClick
+    <B>end</B>
+    <B>object</B> BtnRollback: TButton
+      Left = 168
+      Top = 8
+      Width = 75
+      Height = 25
+      Caption = <I>'Rollback'</I>
+      Enabled = False
+      TabOrder = 2
+      OnClick = BtnRollbackClick
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> Database1: TDatabase
+    AliasName = <I>'DBDEMOS'</I>
+    Connected = True
+    DatabaseName = <I>'MyData'</I>
+    SessionName = <I>'Default'</I>
+    TransIsolation = tiDirtyRead
+    Left = 352
+  <B>end</B>
+  <B>object</B> DataSource1: TDataSource
+    DataSet = Query1
+    Left = 448
+  <B>end</B>
+  <B>object</B> Query1: TQuery
+    BeforeEdit = Query1BeforeEdit
+    DatabaseName = <I>'MyData'</I>
+    RequestLive = True
+    SQL.Strings = (
+      <I>'select * from Employee'</I>)
+    Left = 400
+    ParamData = &lt;&gt;
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

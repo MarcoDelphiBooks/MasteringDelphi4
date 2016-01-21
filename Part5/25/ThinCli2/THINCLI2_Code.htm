@@ -1,0 +1,921 @@
+<HTML><HEAD>
+<TITLE>Project: THINCLI2.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: THINCLI2.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#THINCLI2.DPR> THINCLI2.DPR</A>
+<LI> <A HREF=#THINFORM.PAS> THINFORM.PAS</A>
+<LI> <A HREF=#RECONC.PAS> RECONC.PAS</A>
+<LI> <A HREF=#DELTFORM.PAS> DELTFORM.PAS</A>
+<LI> <A HREF=#THINFORM.DFM> THINFORM.DFM</A>
+<LI> <A HREF=#RECONC.DFM> RECONC.DFM</A>
+<LI> <A HREF=#DELTFORM.DFM> DELTFORM.DFM</A>
+</UL>
+<HR>
+<A NAME=THINCLI2.DPR><H3>THINCLI2.DPR</H3></A>
+
+<PRE>
+<B>program</B> ThinCli2;
+
+<B>uses</B>
+  Forms,
+  ThinForm <B>in</B> <I>'ThinForm.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>,
+  Reconc <B>in</B> <I>'Reconc.pas'</I> <FONT COLOR="#000080"><I>{ReconcileErrorForm}</I></FONT>,
+  DeltForm <B>in</B> <I>'DeltForm.pas'</I> <FONT COLOR="#000080"><I>{FormDelta}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.CreateForm(TFormDelta, FormDelta);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=THINFORM.PAS><H3>THINFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> ThinForm;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  Db, DBClient, Grids, DBGrids, StdCtrls, ExtCtrls, ComCtrls, MConnect,
+  MidasCon;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    ClientDataSet1: TClientDataSet;
+    DataSource1: TDataSource;
+    Panel1: TPanel;
+    ButtonUpdate: TButton;
+    ClientDataSet1Name: TStringField;
+    ClientDataSet1Capital: TStringField;
+    ClientDataSet1Continent: TStringField;
+    ClientDataSet1Area: TFloatField;
+    ClientDataSet1Population: TFloatField;
+    ButtonSnap: TButton;
+    ButtonReload: TButton;
+    OpenDialog1: TOpenDialog;
+    SaveDialog1: TSaveDialog;
+    ClientDataSet2: TClientDataSet;
+    ButtonDelta: TButton;
+    ClientDataSet1Status: TStringField;
+    ButtonUndo: TButton;
+    DBGrid1: TDBGrid;
+    DCOMConnection1: TDCOMConnection;
+    <B>procedure</B> ButtonUpdateClick(Sender: TObject);
+    <B>procedure</B> ButtonSnapClick(Sender: TObject);
+    <B>procedure</B> ButtonReloadClick(Sender: TObject);
+    <B>procedure</B> ButtonDeltaClick(Sender: TObject);
+    <B>procedure</B> ClientDataSet1CalcFields(DataSet: TDataSet);
+    <B>procedure</B> ButtonUndoClick(Sender: TObject);
+    <B>procedure</B> ClientDataSet1ReconcileError(DataSet: TClientDataSet;
+      E: EReconcileError; UpdateKind: TUpdateKind;
+      <B>var</B> Action: TReconcileAction);
+    <B>procedure</B> ClientDataSet1AfterPost(DataSet: TDataSet);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>uses</B>
+  TypInfo, Reconc, DeltForm;
+
+<B>procedure</B> TForm1.ButtonUpdateClick(Sender: TObject);
+<B>begin</B>
+  ClientDataSet1.ApplyUpdates (-1);
+  FormDelta.Hide;
+<B>end</B>;
+
+<B>procedure</B> TForm1.ButtonSnapClick(Sender: TObject);
+<B>begin</B>
+  <B>if</B> SaveDialog1.Execute <B>then</B>
+    ClientDataSet1.SaveToFile (SaveDialog1.FileName);
+<B>end</B>;
+
+<B>procedure</B> TForm1.ButtonReloadClick(Sender: TObject);
+<B>begin</B>
+  <B>if</B> OpenDialog1.Execute <B>then</B>
+    ClientDataSet1.LoadFromFile (OpenDialog1.FileName);
+<B>end</B>;
+
+<B>procedure</B> TForm1.ButtonDeltaClick(Sender: TObject);
+<B>begin</B>
+  <B>if</B> ClientDataSet1.ChangeCount &gt; 0 <B>then</B>
+  <B>begin</B>
+    ClientDataSet2.Data :=
+      ClientDataSet1.Delta;
+    ClientDataSet2.Open;
+    FormDelta.DataSource1.DataSet :=
+       ClientDataSet2;
+    FormDelta.Show;
+  <B>end</B>
+  <B>else</B>
+    FormDelta.Hide;
+<B>end</B>;
+
+<B>procedure</B> TForm1.ClientDataSet1CalcFields(DataSet: TDataSet);
+<B>begin</B>
+  ClientDataSet1Status.AsString :=
+    GetEnumName (TypeInfo(TUpdateStatus),
+      Integer (ClientDataSet1.UpdateStatus));
+<B>end</B>;
+
+<B>procedure</B> TForm1.ButtonUndoClick(Sender: TObject);
+<B>begin</B>
+  ClientDataSet1.UndoLastChange (True);
+<B>end</B>;
+
+<B>procedure</B> TForm1.ClientDataSet1ReconcileError(DataSet: TClientDataSet;
+  E: EReconcileError; UpdateKind: TUpdateKind;
+  <B>var</B> Action: TReconcileAction);
+<B>begin</B>
+  Action := HandleReconcileError(DataSet, UpdateKind, E);
+<B>end</B>;
+
+<B>procedure</B> TForm1.ClientDataSet1AfterPost(DataSet: TDataSet);
+<B>begin</B>
+  <B>if</B> FormDelta.Visible <B>and</B>
+    (ClientDataSet1.ChangeCount &gt; 0) <B>then</B>
+  <B>begin</B>
+    ClientDataSet2.Data := ClientDataSet1.Delta;
+  <B>end</B>;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=RECONC.PAS><H3>RECONC.PAS</H3></A>
+
+<PRE>
+
+<FONT COLOR="#000080"><I>{*******************************************************}</I></FONT>
+<FONT COLOR="#000080"><I>{                                                       }</I></FONT>
+<FONT COLOR="#000080"><I>{       Delphi Visual Component Library                 }</I></FONT>
+<FONT COLOR="#000080"><I>{       ClientDataSet Standard Reconcile Error Dialog   }</I></FONT>
+<FONT COLOR="#000080"><I>{                                                       }</I></FONT>
+<FONT COLOR="#000080"><I>{       Copyright (c) 1997 Borland International        }</I></FONT>
+<FONT COLOR="#000080"><I>{                                                       }</I></FONT>
+<FONT COLOR="#000080"><I>{*******************************************************}</I></FONT>
+
+<FONT COLOR="#000080"><I>{ Note: To use this dialog you should add a call to HandleReconcileError in
+  the OnReconcileError event handler of TClientDataSet (see the Client dataset
+  demos for an example).  Also, after adding this unit to your project you must
+  go into the Project Options dialog and remove this form from the list of
+  Auto-created forms or an error will occur when compiling. }</I></FONT>
+
+<B>unit</B> Reconc;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls, Grids, DB, DBTables, DBClient, BDEProv, ExtCtrls;
+
+<B>const</B>
+  ActionStr: <B>array</B>[TReconcileAction] <B>of</B> <B>string</B> = (<I>'Skip'</I>, <I>'Abort'</I>, <I>'Merge'</I>,
+    <I>'Correct'</I>, <I>'Cancel'</I>, <I>'Refresh'</I>);
+  UpdateKindStr: <B>array</B>[TUpdateKind] <B>of</B> <B>string</B> = (<I>'Modified'</I>, <I>'Inserted'</I>,
+    <I>'Deleted'</I>);
+  SCaption = <I>'Update Error - %s'</I>;
+  SUnchanged = <I>'&lt;Unchanged&gt;'</I>;
+  SBinary = <I>'(Binary)'</I>;
+  SFieldName = <I>'Field Name'</I>;
+  SOriginal = <I>'Original Value'</I>;
+  SConflict = <I>'Conflicting Value'</I>;
+  SValue = <I>' Value'</I>;
+  SNoData = <I>'&lt;No Records&gt;'</I>;
+  SNew = <I>'New'</I>;
+
+<B>type</B>
+  TReconcileErrorForm = <B>class</B>(TForm)
+    UpdateType: TLabel;
+    UpdateData: TStringGrid;
+    ActionGroup: TRadioGroup;
+    CancelBtn: TButton;
+    OKBtn: TButton;
+    ConflictsOnly: TCheckBox;
+    IconImage: TImage;
+    ErrorMsg: TMemo;
+    ChangedOnly: TCheckBox;
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> FormDestroy(Sender: TObject);
+    <B>procedure</B> UpdateDataSetEditText(Sender: TObject; ACol, ARow: Integer;
+      <B>const</B> Value: <B>string</B>);
+    <B>procedure</B> DisplayFieldValues(Sender: TObject);
+    <B>procedure</B> UpdateDataSelectCell(Sender: TObject; Col, Row: Integer;
+      <B>var</B> CanSelect: Boolean);
+  <B>private</B>
+    FDataSet: TDataSet;
+    FError: EReconcileError;
+    FUpdateKind: TUpdateKind;
+    FDataFields: TList;
+    FCurColIdx: Integer;
+    FNewColIdx: Integer;
+    FOldColIdx: Integer;
+    <B>procedure</B> AdjustColumnWidths;
+    <B>procedure</B> InitDataFields;
+    <B>procedure</B> InitUpdateData(HasCurValues: Boolean);
+    <B>procedure</B> InitReconcileActions;
+    <B>procedure</B> SetFieldValues(DataSet: TDataSet);
+  <B>public</B>
+    <B>constructor</B> CreateForm(DataSet: TDataSet; UpdateKind: TUpdateKind;
+      Error: EReconcileError);
+  <B>end</B>;
+
+<B>function</B> HandleReconcileError(DataSet: TDataSet;  UpdateKind: TUpdateKind;
+  ReconcileError: EReconcileError): TReconcileAction;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>type</B>
+  PFieldData = ^TFieldData;
+  TFieldData = <B>record</B>
+    Field: TField;
+    NewValue: <B>string</B>;
+    OldValue: <B>string</B>;
+    CurValue: <B>string</B>;
+    EditValue: <B>string</B>;
+    Edited: Boolean;
+  <B>end</B>;
+
+<FONT COLOR="#000080"><I>{ Public and Private Methods }</I></FONT>
+
+<B>function</B> HandleReconcileError(DataSet: TDataSet; UpdateKind: TUpdateKind;
+  ReconcileError: EReconcileError): TReconcileAction;
+<B>var</B>
+  UpdateForm: TReconcileErrorForm;
+<B>begin</B>
+  UpdateForm := TReconcileErrorForm.CreateForm(DataSet, UpdateKind, ReconcileError);
+  <B>with</B> UpdateForm <B>do</B>
+  <B>try</B>
+    <B>if</B> ShowModal = mrOK <B>then</B>
+    <B>begin</B>
+      Result := TReconcileAction(ActionGroup.Items.Objects[ActionGroup.ItemIndex]);
+      <B>if</B> Result = raCorrect <B>then</B> SetFieldValues(DataSet);
+    <B>end</B> <B>else</B>
+      Result := raAbort;
+  <B>finally</B>
+    Free;
+  <B>end</B>;
+<B>end</B>;
+
+<FONT COLOR="#000080"><I>{ Routine to convert a variant value into a string.
+  Handles binary fields types and &quot;empty&quot; (Unchanged) field values specially }</I></FONT>
+
+<B>function</B> VarToStr(V: Variant; DataType: TFieldType): <B>string</B>;
+<B>const</B>
+  BinaryDataTypes: <B>set</B> <B>of</B> TFieldType = [ftBytes, ftVarBytes, ftBlob,
+    ftGraphic..ftCursor];
+<B>begin</B>
+  <B>try</B>
+    <B>if</B> VarIsEmpty(V) <B>then</B>
+      Result := SUnchanged
+    <B>else</B> <B>if</B> DataType <B>in</B> BinaryDataTypes <B>then</B>
+      Result := SBinary
+    <B>else</B>
+      Result := System.VarToStr(V);
+  <B>except</B>
+    <B>on</B> E: Exception <B>do</B>
+      Result := E.<B>Message</B>;
+  <B>end</B>;
+<B>end</B>;
+
+<FONT COLOR="#000080"><I>{ TReconcileErrorForm }</I></FONT>
+
+<B>constructor</B> TReconcileErrorForm.CreateForm(DataSet: TDataSet;
+  UpdateKind: TUpdateKind; Error: EReconcileError);
+<B>begin</B>
+  FDataSet := DataSet;
+  FUpdateKind := UpdateKind;
+  FError := Error;
+  <B>inherited</B> Create(Application);
+<B>end</B>;
+
+<FONT COLOR="#000080"><I>{ Create a list of the data fields in the dataset, and store string values
+  associated with NewValue, OldValue, and CurValue in string variables
+  to make display switching faster }</I></FONT>
+
+<B>procedure</B> TReconcileErrorForm.InitDataFields;
+<B>var</B>
+  I: Integer;
+  FD: PFieldData;
+  V: Variant;
+  HasCurValues: Boolean;
+<B>begin</B>
+  HasCurValues := False;
+  <B>for</B> I := 0 <B>to</B> FDataSet.FieldCount - 1 <B>do</B>
+  <B>with</B> FDataset.Fields[I] <B>do</B>
+  <B>begin</B>
+    <B>if</B> (FieldKind &lt;&gt; fkData) <B>then</B> Continue;
+    FD := New(PFieldData);
+    <B>try</B>
+      FD.Field := FDataset.Fields[I];
+      FD.Edited := False;
+      <B>if</B> FUpdateKind &lt;&gt; ukDelete <B>then</B>
+        FD.NewValue := VarToStr(NewValue, DataType);
+      V := CurValue;
+      <B>if</B> <B>not</B> VarIsEmpty(V) <B>then</B> HasCurValues := True;
+      FD.CurValue := VarToStr(CurValue, DataType);
+      <B>if</B> FUpdateKind &lt;&gt; ukInsert <B>then</B>
+        FD.OldValue := VarToStr(OldValue, DataType);
+      FDataFields.Add(FD);
+    <B>except</B>
+      Dispose(FD);
+      <B>raise</B>;
+    <B>end</B>;
+  <B>end</B>;
+  InitUpdateData(HasCurValues);
+<B>end</B>;
+
+<FONT COLOR="#000080"><I>{ Initialize the column indexes and grid titles }</I></FONT>
+
+<B>procedure</B> TReconcileErrorForm.InitUpdateData(HasCurValues: Boolean);
+<B>var</B>
+  FColCount: Integer;
+<B>begin</B>
+  FColCount := 1;
+  UpdateData.ColCount := 4;
+  UpdateData.Cells[0,0] := SFieldName;
+  <B>if</B> FUpdateKind &lt;&gt; ukDelete <B>then</B>
+  <B>begin</B>
+    FNewColIdx := FColCount;
+    Inc(FColCount);
+    UpdateData.Cells[FNewColIdx,0] := UpdateKindStr[FUpdateKind] + SValue;
+  <B>end</B> <B>else</B>
+  <B>begin</B>
+    FOldColIdx := FColCount;
+    Inc(FColCount);
+    UpdateData.Cells[FOldColIdx,0] := SOriginal;
+  <B>end</B>;
+  <B>if</B> HasCurValues <B>then</B>
+  <B>begin</B>
+    FCurColIdx := FColCount;
+    Inc(FColCount);
+    UpdateData.Cells[FCurColIdx,0] := SConflict;
+  <B>end</B>;
+  <B>if</B> FUpdateKind = ukModify <B>then</B>
+  <B>begin</B>
+    FOldColIdx := FColCount;
+    Inc(FColCount);
+    UpdateData.Cells[FOldColIdx,0] := SOriginal;
+  <B>end</B>;
+  UpdateData.ColCount := FColCount;
+<B>end</B>;
+
+<FONT COLOR="#000080"><I>{ Update the reconcile action radio group based on the valid reconcile actions }</I></FONT>
+
+<B>procedure</B> TReconcileErrorForm.InitReconcileActions;
+
+  <B>procedure</B> AddAction(Action: TReconcileAction);
+  <B>begin</B>
+    ActionGroup.Items.AddObject(ActionStr[Action], TObject(Action));
+  <B>end</B>;
+
+<B>begin</B>
+  AddAction(raSkip);
+  AddAction(raCancel);
+  AddAction(raCorrect);
+  <B>if</B> FCurColIdx &gt; 0 <B>then</B>
+  <B>begin</B>
+    AddAction(raRefresh);
+    AddAction(raMerge);
+  <B>end</B>;
+  ActionGroup.ItemIndex := 0;
+<B>end</B>;
+
+<FONT COLOR="#000080"><I>{ Update the grid based on the current display options }</I></FONT>
+
+<B>procedure</B> TReconcileErrorForm.DisplayFieldValues(Sender: TObject);
+<B>var</B>
+  I: Integer;
+  CurRow: Integer;
+  Action: TReconcileAction;
+<B>begin</B>
+  <B>if</B> <B>not</B> Visible <B>then</B> Exit;
+  Action := TReconcileAction(ActionGroup.Items.Objects[ActionGroup.ItemIndex]);
+  UpdateData.Col := 1;
+  UpdateData.Row := 1;
+  CurRow := 1;
+  UpdateData.Cells[0, CurRow] := SNoData;
+  <B>for</B> I := 1 <B>to</B> UpdateData.ColCount - 1 <B>do</B>
+    UpdateData.Cells[I, CurRow] := <I>''</I>;
+  <B>for</B> I := 0 <B>to</B> FDataFields.Count - 1 <B>do</B>
+    <B>with</B> PFieldData(FDataFields[I])^ <B>do</B>
+    <B>begin</B>
+      <B>if</B> ConflictsOnly.Checked <B>and</B> (CurValue = SUnChanged) <B>then</B> Continue;
+      <B>if</B> ChangedOnly.Checked <B>and</B> (NewValue = SUnChanged) <B>then</B> Continue;
+      UpdateData.RowCount := CurRow + 1;
+      UpdateData.Cells[0, CurRow] := Field.DisplayName;
+      <B>if</B> FNewColIdx &gt; 0 <B>then</B>
+      <B>begin</B>
+        <B>case</B> Action <B>of</B>
+          raCancel, raRefresh:
+            UpdateData.Cells[FNewColIdx, CurRow] := SUnChanged;
+          raCorrect:
+            <B>if</B> Edited <B>then</B>
+              UpdateData.Cells[FNewColIdx, CurRow] := EditValue <B>else</B>
+              UpdateData.Cells[FNewColIdx, CurRow] := NewValue;
+          <B>else</B>
+            UpdateData.Cells[FNewColIdx, CurRow] := NewValue;
+        <B>end</B>;
+        UpdateData.Objects[FNewColIdx, CurRow] := FDataFields[I];
+      <B>end</B>;
+      <B>if</B> FCurColIdx &gt; 0 <B>then</B>
+        UpdateData.Cells[FCurColIdx, CurRow] := CurValue;
+      <B>if</B> FOldColIdx &gt; 0 <B>then</B>
+        <B>if</B> (Action <B>in</B> [raMerge, raRefresh]) <B>and</B> (CurValue &lt;&gt; SUnchanged) <B>then</B>
+           UpdateData.Cells[FOldColIdx, CurRow] := CurValue <B>else</B>
+           UpdateData.Cells[FOldColIdx, CurRow] := OldValue;
+      Inc(CurRow);
+    <B>end</B>;
+  AdjustColumnWidths;
+<B>end</B>;
+
+<FONT COLOR="#000080"><I>{ For fields that the user has edited, copy the changes back into the
+  NewValue property of the associated field }</I></FONT>
+
+<B>procedure</B> TReconcileErrorForm.SetFieldValues(DataSet: TDataSet);
+<B>var</B>
+  I: Integer;
+<B>begin</B>
+  <B>for</B> I := 0 <B>to</B> FDataFields.Count - 1 <B>do</B>
+    <B>with</B> PFieldData(FDataFields[I])^ <B>do</B>
+      <B>if</B> Edited <B>then</B> Field.NewValue := EditValue;
+<B>end</B>;
+
+<B>procedure</B> TReconcileErrorForm.AdjustColumnWidths;
+<B>var</B>
+  NewWidth, I: integer;
+<B>begin</B>
+  <B>with</B> UpdateData <B>do</B>
+  <B>begin</B>
+    NewWidth := (ClientWidth - ColWidths[0]) <B>div</B> (ColCount - 1);
+    <B>for</B> I := 1 <B>to</B> ColCount - 1 <B>do</B>
+      ColWidths[I] := NewWidth - 1;
+  <B>end</B>;
+<B>end</B>;
+
+<FONT COLOR="#000080"><I>{ Event handlers }</I></FONT>
+
+<B>procedure</B> TReconcileErrorForm.FormCreate(Sender: TObject);
+<B>begin</B>
+  <B>if</B> FDataSet = <B>nil</B> <B>then</B> Exit;
+  FDataFields := TList.Create;
+  InitDataFields;
+  Caption := Format(SCaption, [FDataSet.Name]);
+  UpdateType.Caption := UpdateKindStr[FUpdateKind];
+  ErrorMsg.Text := FError.<B>Message</B>;
+  <B>if</B> FError.Context &lt;&gt; <I>''</I> <B>then</B>
+    ErrorMsg.Lines.Add(FError.Context);
+  ConflictsOnly.Enabled := FCurColIdx &gt; 0;
+  ConflictsOnly.Checked := ConflictsOnly.Enabled;
+  ChangedOnly.Enabled := FNewColIdx &gt; 0;
+  InitReconcileActions;
+  UpdateData.DefaultRowHeight := UpdateData.Canvas.TextHeight(<I>'SWgjp'</I>) + 7; <FONT COLOR="#000080"><I>{ Do not localize }</I></FONT>
+<B>end</B>;
+
+<B>procedure</B> TReconcileErrorForm.FormDestroy(Sender: TObject);
+<B>var</B>
+  I: Integer;
+<B>begin</B>
+  <B>if</B> Assigned(FDataFields) <B>then</B>
+  <B>begin</B>
+    <B>for</B> I := 0 <B>to</B> FDataFields.Count - 1 <B>do</B>
+      Dispose(PFieldData(FDataFields[I]));
+    FDataFields.Destroy;
+  <B>end</B>;
+<B>end</B>;
+
+<FONT COLOR="#000080"><I>{ Set the Edited flag in the DataField list and save the value }</I></FONT>
+
+<B>procedure</B> TReconcileErrorForm.UpdateDataSetEditText(Sender: TObject; ACol,
+  ARow: Integer; <B>const</B> Value: <B>string</B>);
+<B>begin</B>
+  PFieldData(UpdateData.Objects[ACol, ARow]).EditValue := Value;
+  PFieldData(UpdateData.Objects[ACol, ARow]).Edited := True;
+<B>end</B>;
+
+<FONT COLOR="#000080"><I>{ Enable the editing in the grid if we are on the NewValue column and the
+  current reconcile action is raCorrect }</I></FONT>
+
+<B>procedure</B> TReconcileErrorForm.UpdateDataSelectCell(Sender: TObject; Col,
+  Row: Integer; <B>var</B> CanSelect: Boolean);
+<B>begin</B>
+  <B>if</B> (Col = FNewColIdx) <B>and</B>
+    (TReconcileAction(ActionGroup.Items.Objects[ActionGroup.ItemIndex]) = raCorrect) <B>then</B>
+    UpdateData.Options := UpdateData.Options + [goEditing] <B>else</B>
+    UpdateData.Options := UpdateData.Options - [goEditing];
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=DELTFORM.PAS><H3>DELTFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> DeltForm;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  Db, Grids, DBGrids;
+
+<B>type</B>
+  TFormDelta = <B>class</B>(TForm)
+    DBGrid1: TDBGrid;
+    DataSource1: TDataSource;
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  FormDelta: TFormDelta;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=THINFORM.DFM><H3>THINFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 207
+  Top = 126
+  Width = 514
+  Height = 278
+  Caption = <I>'Client 3 Tier'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Panel1: TPanel
+    Left = 0
+    Top = 0
+    Width = 506
+    Height = 41
+    Align = alTop
+    TabOrder = 0
+    <B>object</B> ButtonUpdate: TButton
+      Left = 8
+      Top = 8
+      Width = 75
+      Height = 25
+      Caption = <I>'Update'</I>
+      TabOrder = 0
+      OnClick = ButtonUpdateClick
+    <B>end</B>
+    <B>object</B> ButtonSnap: TButton
+      Left = 88
+      Top = 8
+      Width = 75
+      Height = 25
+      Caption = <I>'SnapShot...'</I>
+      TabOrder = 1
+      OnClick = ButtonSnapClick
+    <B>end</B>
+    <B>object</B> ButtonReload: TButton
+      Left = 168
+      Top = 8
+      Width = 75
+      Height = 25
+      Caption = <I>'Reload...'</I>
+      TabOrder = 2
+      OnClick = ButtonReloadClick
+    <B>end</B>
+    <B>object</B> ButtonDelta: TButton
+      Left = 248
+      Top = 8
+      Width = 75
+      Height = 25
+      Caption = <I>'Show Delta'</I>
+      TabOrder = 3
+      OnClick = ButtonDeltaClick
+    <B>end</B>
+    <B>object</B> ButtonUndo: TButton
+      Left = 328
+      Top = 8
+      Width = 75
+      Height = 25
+      Caption = <I>'Undo'</I>
+      TabOrder = 4
+      OnClick = ButtonUndoClick
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> DBGrid1: TDBGrid
+    Left = 0
+    Top = 41
+    Width = 506
+    Height = 210
+    Align = alClient
+    DataSource = DataSource1
+    TabOrder = 1
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = <I>'MS Sans Serif'</I>
+    TitleFont.Style = []
+  <B>end</B>
+  <B>object</B> ClientDataSet1: TClientDataSet
+    Active = True
+    Aggregates = &lt;&gt;
+    PacketRecords = 5
+    Params = &lt;&gt;
+    ProviderName = <I>'Table1'</I>
+    RemoteServer = DCOMConnection1
+    AfterPost = ClientDataSet1AfterPost
+    OnCalcFields = ClientDataSet1CalcFields
+    OnReconcileError = ClientDataSet1ReconcileError
+    Left = 136
+    Top = 72
+    <B>object</B> ClientDataSet1Status: TStringField
+      DisplayWidth = 15
+      FieldKind = fkCalculated
+      FieldName = <I>'Status'</I>
+      Size = 30
+      Calculated = True
+    <B>end</B>
+    <B>object</B> ClientDataSet1Name: TStringField
+      DisplayWidth = 23
+      FieldName = <I>'Name'</I>
+      Size = 24
+    <B>end</B>
+    <B>object</B> ClientDataSet1Capital: TStringField
+      DisplayWidth = 19
+      FieldName = <I>'Capital'</I>
+      Size = 24
+    <B>end</B>
+    <B>object</B> ClientDataSet1Continent: TStringField
+      DisplayWidth = 17
+      FieldName = <I>'Continent'</I>
+      Size = 24
+    <B>end</B>
+    <B>object</B> ClientDataSet1Area: TFloatField
+      DisplayWidth = 14
+      FieldName = <I>'Area'</I>
+    <B>end</B>
+    <B>object</B> ClientDataSet1Population: TFloatField
+      DisplayWidth = 12
+      FieldName = <I>'Population'</I>
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> DataSource1: TDataSource
+    DataSet = ClientDataSet1
+    Left = 216
+    Top = 72
+  <B>end</B>
+  <B>object</B> OpenDialog1: TOpenDialog
+    DefaultExt = <I>'CDS'</I>
+    Filter = <I>'Client DataSet (*.cds)|*.cds|Any file (*.*)|*.*'</I>
+    Left = 137
+    Top = 121
+  <B>end</B>
+  <B>object</B> SaveDialog1: TSaveDialog
+    DefaultExt = <I>'CDS'</I>
+    Filter = <I>'Client DataSet (*.cds)|*.cds|Any file (*.*)|*.*'</I>
+    Left = 56
+    Top = 120
+  <B>end</B>
+  <B>object</B> ClientDataSet2: TClientDataSet
+    Aggregates = &lt;&gt;
+    Params = &lt;&gt;
+    Left = 302
+    Top = 71
+  <B>end</B>
+  <B>object</B> DCOMConnection1: TDCOMConnection
+    Connected = True
+    ServerGUID = <I>'{C5DDE903-2214-11D1-98D0-444553540000}'</I>
+    ServerName = <I>'AppServ2.RdmCount'</I>
+    Left = 56
+    Top = 72
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<A NAME=RECONC.DFM><H3>RECONC.DFM</H3></A>
+
+<PRE>
+<B>object</B> ReconcileErrorForm: TReconcileErrorForm
+  Left = 314
+  Top = 187
+  BorderStyle = bsDialog
+  Caption = <I>'Update Error'</I>
+  ClientHeight = 311
+  ClientWidth = 527
+  ParentFont = True
+  Position = poScreenCenter
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  OnShow = DisplayFieldValues
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Label1: TLabel
+    Left = 57
+    Top = 13
+    Width = 65
+    Height = 13
+    Caption = <I>'Update Type:'</I>
+  <B>end</B>
+  <B>object</B> UpdateType: TLabel
+    Left = 134
+    Top = 13
+    Width = 49
+    Height = 13
+    Caption = <I>'Modified'</I>
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clBlack
+    Font.Height = -11
+    Font.Name = <I>'Default'</I>
+    Font.Style = [fsBold]
+    ParentFont = False
+  <B>end</B>
+  <B>object</B> Label3: TLabel
+    Left = 57
+    Top = 33
+    Width = 71
+    Height = 13
+    Caption = <I>'Error Message:'</I>
+  <B>end</B>
+  <B>object</B> IconImage: TImage
+    Left = 12
+    Top = 12
+    Width = 34
+    Height = 34
+    Picture.Data = <FONT COLOR="#000080"><I>{
+      055449636F6E0000010002002020100000000000E80200002600000020200200
+      00000000300100000E0300002800000020000000400000000100040000000000
+      0002000000000000000000000000000000000000000000000000800000800000
+      00808000800000008000800080800000C0C0C000808080000000FF0000FF0000
+      00FFFF00FF000000FF00FF00FFFF0000FFFFFF00000008888888888888888888
+      8888880000008888888888888888888888888880003000000000000000000000
+      0008888803BBBBBBBBBBBBBBBBBBBBBBBB7088883BBBBBBBBBBBBBBBBBBBBBBB
+      BBB708883BBBBBBBBBBBBBBBBBBBBBBBBBBB08883BBBBBBBBBBBB7007BBBBBBB
+      BBBB08803BBBBBBBBBBBB0000BBBBBBBBBB7088003BBBBBBBBBBB0000BBBBBBB
+      BBB0880003BBBBBBBBBBB7007BBBBBBBBB708800003BBBBBBBBBBBBBBBBBBBBB
+      BB088000003BBBBBBBBBBB0BBBBBBBBBB70880000003BBBBBBBBB707BBBBBBBB
+      B08800000003BBBBBBBBB303BBBBBBBB7088000000003BBBBBBBB000BBBBBBBB
+      0880000000003BBBBBBB70007BBBBBB708800000000003BBBBBB30003BBBBBB0
+      88000000000003BBBBBB00000BBBBB70880000000000003BBBBB00000BBBBB08
+      800000000000003BBBBB00000BBBB7088000000000000003BBBB00000BBBB088
+      0000000000000003BBBB00000BBB708800000000000000003BBB70007BBB0880
+      00000000000000003BBBBBBBBBB70880000000000000000003BBBBBBBBB08800
+      000000000000000003BBBBBBBB7088000000000000000000003BBBBBBB088000
+      0000000000000000003BBBBBB708800000000000000000000003BBBBB0880000
+      00000000000000000003BBBB70800000000000000000000000003BB700000000
+      0000000000000000000003330000000000000000F8000003F0000001C0000000
+      80000000000000000000000000000001000000018000000380000003C0000007
+      C0000007E000000FE000000FF000001FF000001FF800003FF800003FFC00007F
+      FC00007FFE0000FFFE0000FFFF0001FFFF0001FFFF8003FFFF8003FFFFC007FF
+      FFC007FFFFE00FFFFFE01FFFFFF07FFFFFF8FFFF280000002000000040000000
+      0100010000000000800000000000000000000000000000000000000000000000
+      FFFFFF000000000000000000000000003FFFFFC07FFFFFE07FFFFFF07FFCFFF0
+      7FF87FE03FF87FE03FFCFFC01FFFFFC01FFDFF800FFDFF800FFDFF0007F8FF00
+      07F8FE0003F8FE0003F07C0001F07C0001F0780000F0780000F070000078F000
+      007FE000003FE000003FC000001FC000001F8000000F8000000F000000060000
+      00000000FFFFFFFFFFFFFFFFC000001F8000000F000000070000000700000007
+      000000078000000F8000000FC000001FC000001FE000003FE000003FF000007F
+      F000007FF80000FFF80000FFFC0001FFFC0001FFFE0003FFFE0003FFFF0007FF
+      FF0007FFFF800FFFFF800FFFFFC01FFFFFC01FFFFFE03FFFFFE03FFFFFF07FFF
+      FFF8FFFF}</I></FONT>
+  <B>end</B>
+  <B>object</B> UpdateData: TStringGrid
+    Left = 9
+    Top = 140
+    Width = 504
+    Height = 131
+    ColCount = 4
+    DefaultColWidth = 119
+    RowCount = 2
+    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goThumbTracking]
+    TabOrder = 1
+    OnSelectCell = UpdateDataSelectCell
+    OnSetEditText = UpdateDataSetEditText
+  <B>end</B>
+  <B>object</B> ActionGroup: TRadioGroup
+    Left = 410
+    Top = 10
+    Width = 102
+    Height = 113
+    Caption = <I>' Reconcile Action '</I>
+    TabOrder = 0
+    OnClick = DisplayFieldValues
+  <B>end</B>
+  <B>object</B> CancelBtn: TButton
+    Left = 438
+    Top = 281
+    Width = 75
+    Height = 25
+    Cancel = True
+    Caption = <I>'Cancel'</I>
+    ModalResult = 2
+    TabOrder = 5
+  <B>end</B>
+  <B>object</B> OKBtn: TButton
+    Left = 350
+    Top = 281
+    Width = 75
+    Height = 25
+    Caption = <I>'OK'</I>
+    Default = True
+    ModalResult = 1
+    TabOrder = 4
+  <B>end</B>
+  <B>object</B> ConflictsOnly: TCheckBox
+    Left = 11
+    Top = 282
+    Width = 153
+    Height = 17
+    Caption = <I>'Show conflicting fields only'</I>
+    TabOrder = 2
+    OnClick = DisplayFieldValues
+  <B>end</B>
+  <B>object</B> ErrorMsg: TMemo
+    Left = 56
+    Top = 52
+    Width = 342
+    Height = 71
+    TabStop = False
+    Color = clBtnFace
+    ReadOnly = True
+    TabOrder = 6
+  <B>end</B>
+  <B>object</B> ChangedOnly: TCheckBox
+    Left = 185
+    Top = 282
+    Width = 141
+    Height = 17
+    Caption = <I>'Show changed fields only'</I>
+    TabOrder = 3
+    OnClick = DisplayFieldValues
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<A NAME=DELTFORM.DFM><H3>DELTFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> FormDelta: TFormDelta
+  Left = 207
+  Top = 407
+  Width = 513
+  Height = 237
+  Caption = <I>'ClientDataSet Delta'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> DBGrid1: TDBGrid
+    Left = 0
+    Top = 0
+    Width = 505
+    Height = 210
+    Align = alClient
+    DataSource = DataSource1
+    TabOrder = 0
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = <I>'MS Sans Serif'</I>
+    TitleFont.Style = []
+  <B>end</B>
+  <B>object</B> DataSource1: TDataSource
+    Left = 40
+    Top = 24
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

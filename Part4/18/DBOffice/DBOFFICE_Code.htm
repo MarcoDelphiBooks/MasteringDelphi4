@@ -1,0 +1,300 @@
+<HTML><HEAD>
+<TITLE>Project: DBOFFICE.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: DBOFFICE.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#DBOFFICE.DPR> DBOFFICE.DPR</A>
+<LI> <A HREF=#OFFICEFORM.PAS> OFFICEFORM.PAS</A>
+<LI> <A HREF=#OFFICEFORM.DFM> OFFICEFORM.DFM</A>
+</UL>
+<HR>
+<A NAME=DBOFFICE.DPR><H3>DBOFFICE.DPR</H3></A>
+
+<PRE>
+<B>program</B> DBOffice;
+
+<B>uses</B>
+  Forms,
+  OfficeForm <B>in</B> <I>'OfficeForm.pas'</I> <FONT COLOR="#000080"><I>{FormOff}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TFormOff, FormOff);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=OFFICEFORM.PAS><H3>OFFICEFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> OfficeForm;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes, Graphics,
+  Controls, Forms, DBCtrls, StdCtrls, DBTables,
+  ExtCtrls, Mask, Db, Dialogs, Excel_TLB, Word_TLB;
+
+<B>type</B>
+  TFormOff = <B>class</B>(TForm)
+    DBEdit3: TDBEdit;
+    Label3: TLabel;
+    Label2: TLabel;
+    DBEdit2: TDBEdit;
+    DBEdit1: TDBEdit;
+    Label1: TLabel;
+    DBNavigator1: TDBNavigator;
+    Table1: TTable;
+    DataSource1: TDataSource;
+    BtnWord: TButton;
+    BtnExcel: TButton;
+    SaveDialog1: TSaveDialog;
+    <B>procedure</B> BtnPrintClick(Sender: TObject);
+    <B>procedure</B> BtnOpenClick(Sender: TObject);
+  <B>private</B>
+    IWord: Word_TLB._Application;
+    IExcel: Excel_TLB._Application;
+  <B>end</B>;
+
+<B>var</B>
+  FormOff: TFormOff;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>uses</B>
+  ComObj, ActiveX;
+
+<B>procedure</B> TFormOff.BtnPrintClick(Sender: TObject);
+<B>var</B>
+  Bookmark: TBookmark;
+  IDocument: Word_TLB.Document;
+  IRange: Word_TLB.Range;
+  DocVar: variant;
+  V1: OleVariant;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// create, show, add document</I></FONT>
+  IWord := Word_TLB.CoApplication_.Create;
+  IWord.Visible := True;
+  DocVar := IWord.Documents;
+  DocVar.Add;
+  IDocument := IWord.ActiveDocument;
+  <FONT COLOR="#000080"><I>// insert title</I></FONT>
+  IRange := IWord.Selection.FormattedText;
+  IRange.Text := <I>'American Capitals from '</I> + Table1.TableName + <I>#13</I>;
+  IRange.Bold := 1;
+  IRange.Font.Size := 30;
+
+  <FONT COLOR="#000080"><I>// disable the UI</I></FONT>
+  Table1.DisableControls;
+  <B>try</B>
+    <FONT COLOR="#000080"><I>// store the current position</I></FONT>
+    Bookmark := Table1.GetBookmark;
+    <B>try</B>
+      <FONT COLOR="#000080"><I>// scan the database table</I></FONT>
+      Table1.First;
+      <B>while</B> <B>not</B> Table1.EOF <B>do</B>
+      <B>begin</B>
+        <FONT COLOR="#000080"><I>// send the two fields</I></FONT>
+        <FONT COLOR="#000080"><I>// DocVar.Add; // adss a new doc</I></FONT>
+        V1 := NULL;
+        IDocument.Paragraphs.Add (v1);
+        IRange := IDocument.Paragraphs.Last.Range;
+        IRange.Text :=
+          Table1.FieldByName (<I>'Name'</I>).AsString + <I>#9</I> +
+          Table1.FieldByName (<I>'Capital'</I>).AsString + <I>#13</I>;
+        Table1.Next;
+      <B>end</B>;
+    <B>finally</B>
+      <FONT COLOR="#000080"><I>// go back to the bookmark and destroy it</I></FONT>
+      Table1.GotoBookmark (Bookmark);
+      Table1.FreeBookmark (Bookmark);
+    <B>end</B>;
+  <B>finally</B>
+    <FONT COLOR="#000080"><I>// re-enable the controls</I></FONT>
+    Table1.EnableControls;
+  <B>end</B>;
+  IRange := IDocument.Content;
+  IDocument.Tables.Add (IRange, 0, 2);
+<B>end</B>;
+
+<B>procedure</B> TFormOff.BtnOpenClick(Sender: TObject);
+<B>var</B>
+  IRange: Excel_TLB.Range;
+  I, Row: Integer;
+  Bookmark: TBookmark;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// create and show</I></FONT>
+  IExcel := Excel_TLB.CoApplication_.Create;
+  IExcel.Visible [0] := True;
+  IExcel.Workbooks.Add (NULL, 0);
+  <FONT COLOR="#000080"><I>// fill is the first row with field titles</I></FONT>
+  IRange := IExcel.ActiveCell;
+  <B>for</B> I := 0 <B>to</B> Table1.Fields.Count - 1 <B>do</B>
+  <B>begin</B>
+    IRange.Value := Table1.Fields [I].DisplayLabel;
+    IRange := IRange.Next;
+  <B>end</B>;
+  <FONT COLOR="#000080"><I>// add field data in following rows</I></FONT>
+  Table1.DisableControls;
+  <B>try</B>
+    Bookmark := Table1.GetBookmark;
+    <B>try</B>
+      Table1.First;
+      Row := 2;
+      <B>while</B> <B>not</B> Table1.EOF <B>do</B>
+      <B>begin</B>
+        IRange := IExcel.Range [<I>'A'</I> + IntToStr (Row),
+          <I>'A'</I> + IntToStr (Row)];
+        <B>for</B> I := 0 <B>to</B> Table1.Fields.Count - 1 <B>do</B>
+        <B>begin</B>
+          IRange.Value := Table1.Fields [I].AsString;
+          IRange := IRange.Next;
+        <B>end</B>;
+        Table1.Next;
+        Inc (Row);
+      <B>end</B>;
+    <B>finally</B>
+      Table1.GotoBookmark (Bookmark);
+      Table1.FreeBookmark (Bookmark);
+    <B>end</B>;
+  <B>finally</B>
+    Table1.EnableControls;
+  <B>end</B>;
+  <FONT COLOR="#000080"><I>// format the section</I></FONT>
+  IRange := IExcel.Range [<I>'A1'</I>, <I>'E'</I> + IntToStr (Row - 1)];
+  IRange.AutoFormat (1, NULL, NULL, NULL, NULL, NULL, NULL);
+<B>end</B>;
+
+<B>initialization</B>
+  CoInitialize (<B>nil</B>);
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=OFFICEFORM.DFM><H3>OFFICEFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> FormOff: TFormOff
+  Left = 125
+  Top = 113
+  Width = 414
+  Height = 209
+  Caption = <I>'DB Office'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clBlack
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Label3: TLabel
+    Left = 40
+    Top = 124
+    Width = 48
+    Height = 13
+    Caption = <I>'Continent:'</I>
+  <B>end</B>
+  <B>object</B> Label2: TLabel
+    Left = 40
+    Top = 91
+    Width = 35
+    Height = 13
+    Caption = <I>'Capital:'</I>
+  <B>end</B>
+  <B>object</B> Label1: TLabel
+    Left = 40
+    Top = 56
+    Width = 39
+    Height = 13
+    Caption = <I>'Country:'</I>
+  <B>end</B>
+  <B>object</B> DBEdit3: TDBEdit
+    Left = 104
+    Top = 120
+    Width = 169
+    Height = 21
+    DataField = <I>'Continent'</I>
+    DataSource = DataSource1
+    TabOrder = 0
+  <B>end</B>
+  <B>object</B> DBEdit2: TDBEdit
+    Left = 104
+    Top = 86
+    Width = 169
+    Height = 21
+    DataField = <I>'Capital'</I>
+    DataSource = DataSource1
+    MaxLength = 24
+    TabOrder = 1
+  <B>end</B>
+  <B>object</B> DBEdit1: TDBEdit
+    Left = 104
+    Top = 52
+    Width = 169
+    Height = 21
+    DataField = <I>'Name'</I>
+    DataSource = DataSource1
+    MaxLength = 24
+    TabOrder = 2
+  <B>end</B>
+  <B>object</B> DBNavigator1: TDBNavigator
+    Left = 0
+    Top = 0
+    Width = 406
+    Height = 25
+    DataSource = DataSource1
+    VisibleButtons = [nbFirst, nbPrior, nbNext, nbLast, nbInsert, nbEdit, nbPost, nbCancel]
+    Align = alTop
+    Flat = True
+    TabOrder = 3
+  <B>end</B>
+  <B>object</B> BtnWord: TButton
+    Left = 296
+    Top = 67
+    Width = 89
+    Height = 25
+    Caption = <I>'&amp;Word Table'</I>
+    TabOrder = 4
+    OnClick = BtnPrintClick
+  <B>end</B>
+  <B>object</B> BtnExcel: TButton
+    Left = 296
+    Top = 104
+    Width = 89
+    Height = 25
+    Caption = <I>'&amp;Excel Table'</I>
+    TabOrder = 5
+    OnClick = BtnOpenClick
+  <B>end</B>
+  <B>object</B> Table1: TTable
+    Active = True
+    DatabaseName = <I>'DBDEMOS'</I>
+    TableName = <I>'COUNTRY.DB'</I>
+    Left = 16
+    Top = 48
+  <B>end</B>
+  <B>object</B> DataSource1: TDataSource
+    DataSet = Table1
+    Left = 16
+    Top = 96
+  <B>end</B>
+  <B>object</B> SaveDialog1: TSaveDialog
+    DefaultExt = <I>'DOC'</I>
+    Filter = <I>'Word Document (*.doc)|*.doc|Any file (*.*)|*.*'</I>
+    Options = [ofPathMustExist, ofCreatePrompt]
+    Left = 16
+    Top = 136
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

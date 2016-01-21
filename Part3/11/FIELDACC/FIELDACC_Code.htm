@@ -1,0 +1,214 @@
+<HTML><HEAD>
+<TITLE>Project: FIELDACC.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: FIELDACC.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#FIELDACC.DPR> FIELDACC.DPR</A>
+<LI> <A HREF=#FIELDF.PAS> FIELDF.PAS</A>
+<LI> <A HREF=#FIELDF.DFM> FIELDF.DFM</A>
+</UL>
+<HR>
+<A NAME=FIELDACC.DPR><H3>FIELDACC.DPR</H3></A>
+
+<PRE>
+<B>program</B> FieldAcc;
+
+<B>uses</B>
+  Forms,
+  FieldF <B>in</B> <I>'FieldF.pas'</I> <FONT COLOR="#000080"><I>{Form2}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TForm2, Form2);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=FIELDF.PAS><H3>FIELDF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> FieldF;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes, Graphics, Controls, Dialogs,
+  StdCtrls, Forms, DBCtrls, DB, DBGrids, DBTables, Grids, ExtCtrls, Buttons,
+  Mask;
+
+<B>type</B>
+  TForm2 = <B>class</B>(TForm)
+    DBGrid1: TDBGrid;
+    DBNavigator: TDBNavigator;
+    Panel1: TPanel;
+    Panel2: TPanel;
+    DataSource1: TDataSource;
+    Table1: TTable;
+    SpeedButton1: TSpeedButton;
+    SpeedButton2: TSpeedButton;
+    SpeedButton3: TSpeedButton;
+    DBEdit1: TDBEdit;
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> SpeedButton1Click(Sender: TObject);
+    <B>procedure</B> SpeedButton2Click(Sender: TObject);
+    <B>procedure</B> SpeedButton3Click(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form2: TForm2;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm2.FormCreate(Sender: TObject);
+<B>begin</B>
+  Table1.Open;
+<B>end</B>;
+
+<B>procedure</B> TForm2.SpeedButton1Click(Sender: TObject);
+<B>begin</B>
+  (Table1.FieldByName (<I>'Population'</I>) <B>as</B> TFloatField).
+    DisplayFormat := <I>'###,###,###'</I>;
+<B>end</B>;
+
+<B>procedure</B> TForm2.SpeedButton2Click(Sender: TObject);
+<B>begin</B>
+  ShowMessage (<B>string</B> (Table1 [<I>'Name'</I>]) +
+    <I>': '</I> + <B>string</B> (Table1 [<I>'Population'</I>]));
+<B>end</B>;
+
+<B>procedure</B> TForm2.SpeedButton3Click(Sender: TObject);
+<B>var</B>
+  I: Integer;
+<B>begin</B>
+  <B>for</B> I := 0 <B>to</B> Table1.FieldCount - 1 <B>do</B>
+    Table1.Fields[I].Alignment := taCenter;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=FIELDF.DFM><H3>FIELDF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form2: TForm2
+  Left = 267
+  Top = 154
+  Width = 622
+  Height = 377
+  ActiveControl = Panel1
+  Caption = <I>'Field Access'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clBlack
+  Font.Height = -11
+  Font.Name = <I>'Arial'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  Position = poScreenCenter
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 14
+  <B>object</B> Panel1: TPanel
+    Left = 0
+    Top = 0
+    Width = 614
+    Height = 42
+    Align = alTop
+    TabOrder = 0
+    <B>object</B> SpeedButton1: TSpeedButton
+      Left = 8
+      Top = 8
+      Width = 57
+      Height = 25
+      Caption = <I>'Format'</I>
+      Flat = True
+      OnClick = SpeedButton1Click
+    <B>end</B>
+    <B>object</B> SpeedButton2: TSpeedButton
+      Left = 72
+      Top = 8
+      Width = 57
+      Height = 25
+      Caption = <I>'Show Pop'</I>
+      Flat = True
+      OnClick = SpeedButton2Click
+    <B>end</B>
+    <B>object</B> SpeedButton3: TSpeedButton
+      Left = 136
+      Top = 8
+      Width = 57
+      Height = 25
+      Caption = <I>'Center'</I>
+      Flat = True
+      OnClick = SpeedButton3Click
+    <B>end</B>
+    <B>object</B> Panel2: TPanel
+      Left = 420
+      Top = 1
+      Width = 193
+      Height = 40
+      Align = alRight
+      BevelOuter = bvNone
+      Caption = <I>'Panel2'</I>
+      TabOrder = 0
+      <B>object</B> DBNavigator: TDBNavigator
+        Left = 18
+        Top = 2
+        Width = 168
+        Height = 33
+        DataSource = DataSource1
+        VisibleButtons = [nbFirst, nbPrior, nbNext, nbLast]
+        Flat = True
+        TabOrder = 0
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> DBEdit1: TDBEdit
+      Left = 200
+      Top = 9
+      Width = 105
+      Height = 22
+      DataField = <I>'Name'</I>
+      DataSource = DataSource1
+      TabOrder = 1
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> DBGrid1: TDBGrid
+    Left = 0
+    Top = 42
+    Width = 614
+    Height = 308
+    Align = alClient
+    DataSource = DataSource1
+    TabOrder = 1
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clBlack
+    TitleFont.Height = -11
+    TitleFont.Name = <I>'Arial'</I>
+    TitleFont.Style = []
+  <B>end</B>
+  <B>object</B> DataSource1: TDataSource
+    DataSet = Table1
+    Left = 21
+    Top = 141
+  <B>end</B>
+  <B>object</B> Table1: TTable
+    DatabaseName = <I>'DBDEMOS'</I>
+    TableName = <I>'country.db'</I>
+    Left = 18
+    Top = 93
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

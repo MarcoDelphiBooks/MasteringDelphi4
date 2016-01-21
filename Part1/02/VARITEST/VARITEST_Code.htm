@@ -1,0 +1,148 @@
+<HTML><HEAD>
+<TITLE>Project: VARITEST.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: VARITEST.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#VARITEST.DPR> VARITEST.DPR</A>
+<LI> <A HREF=#VARIFORM.PAS> VARIFORM.PAS</A>
+<LI> <A HREF=#VARIFORM.DFM> VARIFORM.DFM</A>
+</UL>
+<HR>
+<A NAME=VARITEST.DPR><H3>VARITEST.DPR</H3></A>
+
+<PRE>
+<B>program</B> VariTest;
+
+<B>uses</B>
+  Forms,
+  VariForm <B>in</B> <I>'VariForm.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=VARIFORM.PAS><H3>VARIFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> VariForm;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    Button1: TButton;
+    Edit1: TEdit;
+    Edit2: TEdit;
+    Edit3: TEdit;
+    Button2: TButton;
+    <B>procedure</B> Button1Click(Sender: TObject);
+    <B>procedure</B> Button2Click(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.Button1Click(Sender: TObject);
+<B>var</B>
+  V: Variant;
+<B>begin</B>
+  V := 10;
+  Edit1.Text := V;
+  V := <I>'Hello, World'</I>;
+  Edit2.Text := V;
+  V := 45.55;
+  Edit3.Text := V;
+<B>end</B>;
+
+<B>procedure</B> TForm1.Button2Click(Sender: TObject);
+<B>var</B>
+  V: Variant;
+  N: Integer;
+<B>begin</B>
+  V := Edit1.Text;
+  N := Integer(V) * 2;
+  V := N;
+  Edit1.Text := V;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=VARIFORM.DFM><H3>VARIFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 224
+  Top = 117
+  Width = 301
+  Height = 168
+  Caption = <I>'Variant Test'</I>
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Button1: TButton
+    Left = 24
+    Top = 32
+    Width = 75
+    Height = 25
+    Caption = <I>'Assign'</I>
+    TabOrder = 0
+    OnClick = Button1Click
+  <B>end</B>
+  <B>object</B> Edit1: TEdit
+    Left = 136
+    Top = 24
+    Width = 121
+    Height = 21
+    TabOrder = 1
+  <B>end</B>
+  <B>object</B> Edit2: TEdit
+    Left = 136
+    Top = 56
+    Width = 121
+    Height = 21
+    TabOrder = 2
+  <B>end</B>
+  <B>object</B> Edit3: TEdit
+    Left = 136
+    Top = 88
+    Width = 121
+    Height = 21
+    TabOrder = 3
+  <B>end</B>
+  <B>object</B> Button2: TButton
+    Left = 24
+    Top = 72
+    Width = 75
+    Height = 25
+    Caption = <I>'Compute'</I>
+    TabOrder = 4
+    OnClick = Button2Click
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

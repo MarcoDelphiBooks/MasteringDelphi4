@@ -1,0 +1,179 @@
+<HTML><HEAD>
+<TITLE>Project: GETMAIL.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: GETMAIL.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#GETMAIL.DPR> GETMAIL.DPR</A>
+<LI> <A HREF=#GETMAILF.PAS> GETMAILF.PAS</A>
+<LI> <A HREF=#GETMAILF.DFM> GETMAILF.DFM</A>
+</UL>
+<HR>
+<A NAME=GETMAIL.DPR><H3>GETMAIL.DPR</H3></A>
+
+<PRE>
+<B>program</B> GetMail;
+
+<B>uses</B>
+  Forms,
+  GetMailF <B>in</B> <I>'GetMailF.pas'</I> <FONT COLOR="#000080"><I>{NewFmForm}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TNewFmForm, NewFmForm);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=GETMAILF.PAS><H3>GETMAILF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> GetMailF;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls, ShellAPi, Psock, NMpop3;
+
+<B>type</B>
+  TNewFmForm = <B>class</B>(TForm)
+    BtnGetMail: TButton;
+    ListBoxMail: TListBox;
+    Memo1: TMemo;
+    BtnSave: TButton;
+    PopMail: TNMPOP3;
+    SaveDialog1: TSaveDialog;
+    Label1: TLabel;
+    <B>procedure</B> BtnGetMailClick(Sender: TObject);
+    <B>procedure</B> BtnSaveClick(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  NewFmForm: TNewFmForm;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TNewFmForm.BtnGetMailClick(Sender: TObject);
+<B>var</B>
+  I, nPos: Integer;
+<B>begin</B>
+  Screen.Cursor := crHourglass;
+  PopMail.Connect;
+  <B>try</B>
+    Label1.Caption := <I>'Messages: '</I> + IntToStr (PopMail.MailCount);
+    <B>for</B> I := PopMail.MailCount <B>downto</B> 1 <B>do</B>
+    <B>begin</B>
+      PopMail.GetMailMessage (I);
+      nPos := Pos (<I>'Subscribe'</I>, PopMail.MailMessage.Subject);
+      <B>if</B> nPos &gt; 0 <B>then</B>
+      <B>begin</B>
+        ListBoxMail.Items.Add (PopMail.MailMessage.From);
+        <FONT COLOR="#000080"><I>// remove the mail message</I></FONT>
+        PopMail.DeleteMailMessage (I);
+      <B>end</B>
+      <B>else</B>
+        <FONT COLOR="#000080"><I>// error</I></FONT>
+        Memo1.Lines.Add (PopMail.MailMessage.Subject);
+    <B>end</B>;
+  <B>finally</B>
+    Screen.Cursor := crDefault;
+    PopMail.Disconnect;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TNewFmForm.BtnSaveClick(Sender: TObject);
+<B>begin</B>
+  <B>if</B> SaveDialog1.Execute <B>then</B>
+    ListBoxMail.Items.SaveToFile (SaveDialog1.FileName);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=GETMAILF.DFM><H3>GETMAILF.DFM</H3></A>
+
+<PRE>
+<B>object</B> NewFmForm: TNewFmForm
+  Left = 229
+  Top = 106
+  Width = 507
+  Height = 422
+  Caption = <I>'New From Mail'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Label1: TLabel
+    Left = 176
+    Top = 16
+    Width = 3
+    Height = 13
+  <B>end</B>
+  <B>object</B> BtnGetMail: TButton
+    Left = 8
+    Top = 8
+    Width = 75
+    Height = 25
+    Caption = <I>'Get Mail'</I>
+    TabOrder = 0
+    OnClick = BtnGetMailClick
+  <B>end</B>
+  <B>object</B> ListBoxMail: TListBox
+    Left = 8
+    Top = 40
+    Width = 321
+    Height = 345
+    ItemHeight = 13
+    TabOrder = 1
+  <B>end</B>
+  <B>object</B> Memo1: TMemo
+    Left = 336
+    Top = 40
+    Width = 153
+    Height = 345
+    Lines.Strings = (
+      <I>'Errors:'</I>)
+    TabOrder = 2
+  <B>end</B>
+  <B>object</B> BtnSave: TButton
+    Left = 88
+    Top = 8
+    Width = 75
+    Height = 25
+    Caption = <I>'Save to File'</I>
+    TabOrder = 3
+    OnClick = BtnSaveClick
+  <B>end</B>
+  <B>object</B> PopMail: TNMPOP3
+    Host = <I>'AST'</I>
+    Port = 110
+    ReportLevel = 0
+    UserID = <I>'marco'</I>
+    Password = <I>'marco'</I>
+    DeleteOnRead = False
+    Left = 184
+    Top = 8
+  <B>end</B>
+  <B>object</B> SaveDialog1: TSaveDialog
+    Left = 232
+    Top = 8
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

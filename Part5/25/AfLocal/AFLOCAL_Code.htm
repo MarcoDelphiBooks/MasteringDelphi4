@@ -1,0 +1,659 @@
+<HTML><HEAD>
+<TITLE>Project: AFLOCAL.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: AFLOCAL.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#AFLOCAL.DPR> AFLOCAL.DPR</A>
+<LI> <A HREF=#AFLOCAL_TLB.PAS> AFLOCAL_TLB.PAS</A>
+<LI> <A HREF=#LOCAL.PAS> LOCAL.PAS</A>
+<LI> <A HREF=#LOCAL.DFM> LOCAL.DFM</A>
+</UL>
+<HR>
+<A NAME=AFLOCAL.DPR><H3>AFLOCAL.DPR</H3></A>
+
+<PRE>
+<B>library</B> AfLocal;
+
+<B>uses</B>
+  ComServ,
+  AfLocal_TLB <B>in</B> <I>'AfLocal_TLB.pas'</I>,
+  Local <B>in</B> <I>'Local.pas'</I> <FONT COLOR="#000080"><I>{ActiveLocalData: TActiveForm}</I></FONT> <FONT COLOR="#000080"><I>{ActiveLocalData: CoClass}</I></FONT>;
+
+<B>exports</B>
+  DllGetClassObject,
+  DllCanUnloadNow,
+  DllRegisterServer,
+  DllUnregisterServer;
+
+<FONT COLOR="#000080"><I>{$R *.TLB}</I></FONT>
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<FONT COLOR="#000080"><I>{$E ocx}</I></FONT>
+
+<B>begin</B>
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=AFLOCAL_TLB.PAS><H3>AFLOCAL_TLB.PAS</H3></A>
+
+<PRE>
+<B>unit</B> AfLocal_TLB;
+
+<FONT COLOR="#000080"><I>{ This file contains pascal declarations imported from a type library.
+  This file will be written during each import or refresh of the type
+  library editor.  Changes to this file will be discarded during the
+  refresh process. }</I></FONT>
+
+<FONT COLOR="#000080"><I>{ AfLocal Library }</I></FONT>
+<FONT COLOR="#000080"><I>{ Version 1.0 }</I></FONT>
+
+<FONT COLOR="#000080"><I>{ Conversion log:
+  Hint: Class is not registered.  Ambient properties cannot be determined.
+ }</I></FONT>
+
+<B>interface</B>
+
+<B>uses</B> Windows, ActiveX, Classes, Graphics, OleCtrls, StdVCL;
+
+<B>const</B>
+  LIBID_AfLocal: TGUID = <I>'{CE612B45-243B-11D1-98D0-444553540000}'</I>;
+
+<B>const</B>
+
+<FONT COLOR="#000080"><I>{ TxActiveFormBorderStyle }</I></FONT>
+
+  afbNone = 0;
+  afbSingle = 1;
+  afbSunken = 2;
+  afbRaised = 3;
+
+<FONT COLOR="#000080"><I>{ TxPrintScale }</I></FONT>
+
+  poNone = 0;
+  poProportional = 1;
+  poPrintToFit = 2;
+
+<FONT COLOR="#000080"><I>{ TxMouseButton }</I></FONT>
+
+  mbLeft = 0;
+  mbRight = 1;
+  mbMiddle = 2;
+
+<FONT COLOR="#000080"><I>{ TxWindowState }</I></FONT>
+
+  wsNormal = 0;
+  wsMinimized = 1;
+  wsMaximized = 2;
+
+<B>const</B>
+
+<FONT COLOR="#000080"><I>{ Component class GUIDs }</I></FONT>
+  Class_ActiveLocalData: TGUID = <I>'{CE612B48-243B-11D1-98D0-444553540000}'</I>;
+
+<B>type</B>
+
+<FONT COLOR="#000080"><I>{ Forward declarations: Interfaces }</I></FONT>
+  IActiveLocalData = <B>interface</B>;
+  IActiveLocalDataDisp = <B>dispinterface</B>;
+  IActiveLocalDataEvents = <B>dispinterface</B>;
+
+<FONT COLOR="#000080"><I>{ Forward declarations: CoClasses }</I></FONT>
+  ActiveLocalData = IActiveLocalData;
+
+<FONT COLOR="#000080"><I>{ Forward declarations: Enums }</I></FONT>
+  TxActiveFormBorderStyle = TOleEnum;
+  TxPrintScale = TOleEnum;
+  TxMouseButton = TOleEnum;
+  TxWindowState = TOleEnum;
+
+<FONT COLOR="#000080"><I>{ Dispatch interface for ActiveLocalData Control }</I></FONT>
+
+  IActiveLocalData = <B>interface</B>(IDispatch)
+    [<I>'{CE612B46-243B-11D1-98D0-444553540000}'</I>]
+    <B>function</B> Get_AutoScroll: WordBool; safecall;
+    <B>procedure</B> Set_AutoScroll(Value: WordBool); safecall;
+    <B>function</B> Get_AxBorderStyle: TxActiveFormBorderStyle; safecall;
+    <B>procedure</B> Set_AxBorderStyle(Value: TxActiveFormBorderStyle); safecall;
+    <B>function</B> Get_Caption: WideString; safecall;
+    <B>procedure</B> Set_Caption(<B>const</B> Value: WideString); safecall;
+    <B>function</B> Get_Color: TColor; safecall;
+    <B>procedure</B> Set_Color(Value: TColor); safecall;
+    <B>function</B> Get_Font: Font; safecall;
+    <B>procedure</B> Set_Font(<B>const</B> Value: Font); safecall;
+    <B>function</B> Get_KeyPreview: WordBool; safecall;
+    <B>procedure</B> Set_KeyPreview(Value: WordBool); safecall;
+    <B>function</B> Get_PixelsPerInch: Integer; safecall;
+    <B>procedure</B> Set_PixelsPerInch(Value: Integer); safecall;
+    <B>function</B> Get_PrintScale: TxPrintScale; safecall;
+    <B>procedure</B> Set_PrintScale(Value: TxPrintScale); safecall;
+    <B>function</B> Get_Scaled: WordBool; safecall;
+    <B>procedure</B> Set_Scaled(Value: WordBool); safecall;
+    <B>function</B> Get_Active: WordBool; safecall;
+    <B>function</B> Get_DropTarget: WordBool; safecall;
+    <B>procedure</B> Set_DropTarget(Value: WordBool); safecall;
+    <B>function</B> Get_HelpFile: WideString; safecall;
+    <B>procedure</B> Set_HelpFile(<B>const</B> Value: WideString); safecall;
+    <B>function</B> Get_WindowState: TxWindowState; safecall;
+    <B>procedure</B> Set_WindowState(Value: TxWindowState); safecall;
+    <B>function</B> Get_Visible: WordBool; safecall;
+    <B>procedure</B> Set_Visible(Value: WordBool); safecall;
+    <B>function</B> Get_Enabled: WordBool; safecall;
+    <B>procedure</B> Set_Enabled(Value: WordBool); safecall;
+    <B>function</B> Get_Cursor: Smallint; safecall;
+    <B>procedure</B> Set_Cursor(Value: Smallint); safecall;
+    <B>property</B> AutoScroll: WordBool <B>read</B> Get_AutoScroll <B>write</B> Set_AutoScroll;
+    <B>property</B> AxBorderStyle: TxActiveFormBorderStyle <B>read</B> Get_AxBorderStyle <B>write</B> Set_AxBorderStyle;
+    <B>property</B> Caption: WideString <B>read</B> Get_Caption <B>write</B> Set_Caption;
+    <B>property</B> Color: TColor <B>read</B> Get_Color <B>write</B> Set_Color;
+    <B>property</B> Font: Font <B>read</B> Get_Font <B>write</B> Set_Font;
+    <B>property</B> KeyPreview: WordBool <B>read</B> Get_KeyPreview <B>write</B> Set_KeyPreview;
+    <B>property</B> PixelsPerInch: Integer <B>read</B> Get_PixelsPerInch <B>write</B> Set_PixelsPerInch;
+    <B>property</B> PrintScale: TxPrintScale <B>read</B> Get_PrintScale <B>write</B> Set_PrintScale;
+    <B>property</B> Scaled: WordBool <B>read</B> Get_Scaled <B>write</B> Set_Scaled;
+    <B>property</B> Active: WordBool <B>read</B> Get_Active;
+    <B>property</B> DropTarget: WordBool <B>read</B> Get_DropTarget <B>write</B> Set_DropTarget;
+    <B>property</B> HelpFile: WideString <B>read</B> Get_HelpFile <B>write</B> Set_HelpFile;
+    <B>property</B> WindowState: TxWindowState <B>read</B> Get_WindowState <B>write</B> Set_WindowState;
+    <B>property</B> Visible: WordBool <B>read</B> Get_Visible <B>write</B> Set_Visible;
+    <B>property</B> Enabled: WordBool <B>read</B> Get_Enabled <B>write</B> Set_Enabled;
+    <B>property</B> Cursor: Smallint <B>read</B> Get_Cursor <B>write</B> Set_Cursor;
+  <B>end</B>;
+
+<FONT COLOR="#000080"><I>{ DispInterface declaration for Dual Interface IActiveLocalData }</I></FONT>
+
+  IActiveLocalDataDisp = <B>dispinterface</B>
+    [<I>'{CE612B46-243B-11D1-98D0-444553540000}'</I>]
+    <B>property</B> AutoScroll: WordBool <B>dispid</B> 1;
+    <B>property</B> AxBorderStyle: TxActiveFormBorderStyle <B>dispid</B> 2;
+    <B>property</B> Caption: WideString <B>dispid</B> 3;
+    <B>property</B> Color: TColor <B>dispid</B> 4;
+    <B>property</B> Font: Font <B>dispid</B> 5;
+    <B>property</B> KeyPreview: WordBool <B>dispid</B> 6;
+    <B>property</B> PixelsPerInch: Integer <B>dispid</B> 7;
+    <B>property</B> PrintScale: TxPrintScale <B>dispid</B> 8;
+    <B>property</B> Scaled: WordBool <B>dispid</B> 9;
+    <B>property</B> Active: WordBool readonly <B>dispid</B> 10;
+    <B>property</B> DropTarget: WordBool <B>dispid</B> 11;
+    <B>property</B> HelpFile: WideString <B>dispid</B> 12;
+    <B>property</B> WindowState: TxWindowState <B>dispid</B> 13;
+    <B>property</B> Visible: WordBool <B>dispid</B> 14;
+    <B>property</B> Enabled: WordBool <B>dispid</B> 15;
+    <B>property</B> Cursor: Smallint <B>dispid</B> 16;
+  <B>end</B>;
+
+<FONT COLOR="#000080"><I>{ Events interface for ActiveLocalData Control }</I></FONT>
+
+  IActiveLocalDataEvents = <B>dispinterface</B>
+    [<I>'{CE612B47-243B-11D1-98D0-444553540000}'</I>]
+    <B>procedure</B> OnActivate; <B>dispid</B> 1;
+    <B>procedure</B> OnClick; <B>dispid</B> 2;
+    <B>procedure</B> OnCreate; <B>dispid</B> 3;
+    <B>procedure</B> OnDblClick; <B>dispid</B> 4;
+    <B>procedure</B> OnDestroy; <B>dispid</B> 5;
+    <B>procedure</B> OnDeactivate; <B>dispid</B> 6;
+    <B>procedure</B> OnKeyPress(<B>var</B> Key: Smallint); <B>dispid</B> 7;
+    <B>procedure</B> OnPaint; <B>dispid</B> 8;
+  <B>end</B>;
+
+<FONT COLOR="#000080"><I>{ ActiveLocalDataControl }</I></FONT>
+
+  TActiveLocalDataOnKeyPress = <B>procedure</B>(Sender: TObject; <B>var</B> Key: Smallint) <B>of</B> <B>object</B>;
+
+  TActiveLocalData = <B>class</B>(TOleControl)
+  <B>private</B>
+    FOnActivate: TNotifyEvent;
+    FOnClick: TNotifyEvent;
+    FOnCreate: TNotifyEvent;
+    FOnDblClick: TNotifyEvent;
+    FOnDestroy: TNotifyEvent;
+    FOnDeactivate: TNotifyEvent;
+    FOnKeyPress: TActiveLocalDataOnKeyPress;
+    FOnPaint: TNotifyEvent;
+    FIntf: IActiveLocalData;
+  <B>protected</B>
+    <B>procedure</B> InitControlData; <B>override</B>;
+    <B>procedure</B> InitControlInterface(<B>const</B> Obj: IUnknown); <B>override</B>;
+  <B>public</B>
+    <B>property</B> ControlInterface: IActiveLocalData <B>read</B> FIntf;
+    <B>property</B> Active: WordBool <B>index</B> 10 <B>read</B> GetWordBoolProp;
+  <B>published</B>
+    <B>property</B> AutoScroll: WordBool <B>index</B> 1 <B>read</B> GetWordBoolProp <B>write</B> SetWordBoolProp <B>stored</B> False;
+    <B>property</B> AxBorderStyle: TxActiveFormBorderStyle <B>index</B> 2 <B>read</B> GetTOleEnumProp <B>write</B> SetTOleEnumProp <B>stored</B> False;
+    <B>property</B> Caption: WideString <B>index</B> 3 <B>read</B> GetWideStringProp <B>write</B> SetWideStringProp <B>stored</B> False;
+    <B>property</B> Color: TColor <B>index</B> 4 <B>read</B> GetTColorProp <B>write</B> SetTColorProp <B>stored</B> False;
+    <B>property</B> Font: TFont <B>index</B> 5 <B>read</B> GetTFontProp <B>write</B> SetTFontProp <B>stored</B> False;
+    <B>property</B> KeyPreview: WordBool <B>index</B> 6 <B>read</B> GetWordBoolProp <B>write</B> SetWordBoolProp <B>stored</B> False;
+    <B>property</B> PixelsPerInch: Integer <B>index</B> 7 <B>read</B> GetIntegerProp <B>write</B> SetIntegerProp <B>stored</B> False;
+    <B>property</B> PrintScale: TxPrintScale <B>index</B> 8 <B>read</B> GetTOleEnumProp <B>write</B> SetTOleEnumProp <B>stored</B> False;
+    <B>property</B> Scaled: WordBool <B>index</B> 9 <B>read</B> GetWordBoolProp <B>write</B> SetWordBoolProp <B>stored</B> False;
+    <B>property</B> DropTarget: WordBool <B>index</B> 11 <B>read</B> GetWordBoolProp <B>write</B> SetWordBoolProp <B>stored</B> False;
+    <B>property</B> HelpFile: WideString <B>index</B> 12 <B>read</B> GetWideStringProp <B>write</B> SetWideStringProp <B>stored</B> False;
+    <B>property</B> WindowState: TxWindowState <B>index</B> 13 <B>read</B> GetTOleEnumProp <B>write</B> SetTOleEnumProp <B>stored</B> False;
+    <B>property</B> Visible: WordBool <B>index</B> 14 <B>read</B> GetWordBoolProp <B>write</B> SetWordBoolProp <B>stored</B> False;
+    <B>property</B> Enabled: WordBool <B>index</B> 15 <B>read</B> GetWordBoolProp <B>write</B> SetWordBoolProp <B>stored</B> False;
+    <B>property</B> Cursor: Smallint <B>index</B> 16 <B>read</B> GetSmallintProp <B>write</B> SetSmallintProp <B>stored</B> False;
+    <B>property</B> OnActivate: TNotifyEvent <B>read</B> FOnActivate <B>write</B> FOnActivate;
+    <B>property</B> OnClick: TNotifyEvent <B>read</B> FOnClick <B>write</B> FOnClick;
+    <B>property</B> OnCreate: TNotifyEvent <B>read</B> FOnCreate <B>write</B> FOnCreate;
+    <B>property</B> OnDblClick: TNotifyEvent <B>read</B> FOnDblClick <B>write</B> FOnDblClick;
+    <B>property</B> OnDestroy: TNotifyEvent <B>read</B> FOnDestroy <B>write</B> FOnDestroy;
+    <B>property</B> OnDeactivate: TNotifyEvent <B>read</B> FOnDeactivate <B>write</B> FOnDeactivate;
+    <B>property</B> OnKeyPress: TActiveLocalDataOnKeyPress <B>read</B> FOnKeyPress <B>write</B> FOnKeyPress;
+    <B>property</B> OnPaint: TNotifyEvent <B>read</B> FOnPaint <B>write</B> FOnPaint;
+  <B>end</B>;
+
+<B>procedure</B> <B>Register</B>;
+
+<B>implementation</B>
+
+<B>uses</B> ComObj;
+
+<B>procedure</B> TActiveLocalData.InitControlData;
+<B>const</B>
+  CEventDispIDs: <B>array</B>[0..7] <B>of</B> Integer = (
+    $00000001, $00000002, $00000003, $00000004, $00000005, $00000006,
+    $00000007, $00000008);
+  CTFontIDs: <B>array</B> [0..0] <B>of</B> Integer = (
+    $00000005);
+  CControlData: TControlData = (
+    ClassID: <I>'{CE612B48-243B-11D1-98D0-444553540000}'</I>;
+    EventIID: <I>'{CE612B47-243B-11D1-98D0-444553540000}'</I>;
+    EventCount: 8;
+    EventDispIDs: @CEventDispIDs;
+    LicenseKey: <B>nil</B>;
+    Flags: $00000000;
+    Version: 300;
+    FontCount: 1;
+    FontIDs: @CTFontIDs);
+<B>begin</B>
+  ControlData := @CControlData;
+<B>end</B>;
+
+<B>procedure</B> TActiveLocalData.InitControlInterface(<B>const</B> Obj: IUnknown);
+<B>begin</B>
+  FIntf := Obj <B>as</B> IActiveLocalData;
+<B>end</B>;
+
+
+<B>procedure</B> <B>Register</B>;
+<B>begin</B>
+  RegisterComponents(<I>'ActiveX'</I>, [TActiveLocalData]);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=LOCAL.PAS><H3>LOCAL.PAS</H3></A>
+
+<PRE>
+<B>unit</B> Local;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  ActiveX, AxCtrls, AfLocal_TLB, Grids, DBGrids, Db, DBTables, ExtCtrls;
+
+<B>type</B>
+  TActiveLocalData = <B>class</B>(TActiveForm, IActiveLocalData)
+    Table1: TTable;
+    DataSource1: TDataSource;
+    DBGrid1: TDBGrid;
+    Panel1: TPanel;
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+    FEvents: IActiveLocalDataEvents;
+    <B>procedure</B> ActivateEvent(Sender: TObject);
+    <B>procedure</B> ClickEvent(Sender: TObject);
+    <B>procedure</B> CreateEvent(Sender: TObject);
+    <B>procedure</B> DblClickEvent(Sender: TObject);
+    <B>procedure</B> DeactivateEvent(Sender: TObject);
+    <B>procedure</B> DestroyEvent(Sender: TObject);
+    <B>procedure</B> KeyPressEvent(Sender: TObject; <B>var</B> Key: Char);
+    <B>procedure</B> PaintEvent(Sender: TObject);
+  <B>protected</B>
+    <FONT COLOR="#000080"><I>{ Protected declarations }</I></FONT>
+    <B>procedure</B> EventSinkChanged(<B>const</B> EventSink: IUnknown); <B>override</B>;
+    <B>procedure</B> Initialize; <B>override</B>;
+    <B>function</B> Get_Active: WordBool; safecall;
+    <B>function</B> Get_AutoScroll: WordBool; safecall;
+    <B>function</B> Get_AxBorderStyle: TxActiveFormBorderStyle; safecall;
+    <B>function</B> Get_Caption: WideString; safecall;
+    <B>function</B> Get_Color: TColor; safecall;
+    <B>function</B> Get_Cursor: Smallint; safecall;
+    <B>function</B> Get_DropTarget: WordBool; safecall;
+    <B>function</B> Get_Enabled: WordBool; safecall;
+    <B>function</B> Get_Font: Font; safecall;
+    <B>function</B> Get_HelpFile: WideString; safecall;
+    <B>function</B> Get_KeyPreview: WordBool; safecall;
+    <B>function</B> Get_PixelsPerInch: Integer; safecall;
+    <B>function</B> Get_PrintScale: TxPrintScale; safecall;
+    <B>function</B> Get_Scaled: WordBool; safecall;
+    <B>function</B> Get_Visible: WordBool; safecall;
+    <B>function</B> Get_WindowState: TxWindowState; safecall;
+    <B>procedure</B> Set_AutoScroll(Value: WordBool); safecall;
+    <B>procedure</B> Set_AxBorderStyle(Value: TxActiveFormBorderStyle); safecall;
+    <B>procedure</B> Set_Caption(<B>const</B> Value: WideString); safecall;
+    <B>procedure</B> Set_Color(Value: TColor); safecall;
+    <B>procedure</B> Set_Cursor(Value: Smallint); safecall;
+    <B>procedure</B> Set_DropTarget(Value: WordBool); safecall;
+    <B>procedure</B> Set_Enabled(Value: WordBool); safecall;
+    <B>procedure</B> Set_Font(<B>const</B> Value: Font); safecall;
+    <B>procedure</B> Set_HelpFile(<B>const</B> Value: WideString); safecall;
+    <B>procedure</B> Set_KeyPreview(Value: WordBool); safecall;
+    <B>procedure</B> Set_PixelsPerInch(Value: Integer); safecall;
+    <B>procedure</B> Set_PrintScale(Value: TxPrintScale); safecall;
+    <B>procedure</B> Set_Scaled(Value: WordBool); safecall;
+    <B>procedure</B> Set_Visible(Value: WordBool); safecall;
+    <B>procedure</B> Set_WindowState(Value: TxWindowState); safecall;
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>implementation</B>
+
+<B>uses</B> ComServ;
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<FONT COLOR="#000080"><I>{ TActiveLocalData }</I></FONT>
+
+<B>procedure</B> TActiveLocalData.EventSinkChanged(<B>const</B> EventSink: IUnknown);
+<B>begin</B>
+  FEvents := EventSink <B>as</B> IActiveLocalDataEvents;
+<B>end</B>;
+
+<B>procedure</B> TActiveLocalData.Initialize;
+<B>begin</B>
+  OnActivate := ActivateEvent;
+  OnClick := ClickEvent;
+  OnCreate := CreateEvent;
+  OnDblClick := DblClickEvent;
+  OnDeactivate := DeactivateEvent;
+  OnDestroy := DestroyEvent;
+  OnKeyPress := KeyPressEvent;
+  OnPaint := PaintEvent;
+<B>end</B>;
+
+<B>function</B> TActiveLocalData.Get_Active: WordBool;
+<B>begin</B>
+  Result := Active;
+<B>end</B>;
+
+<B>function</B> TActiveLocalData.Get_AutoScroll: WordBool;
+<B>begin</B>
+  Result := AutoScroll;
+<B>end</B>;
+
+<B>function</B> TActiveLocalData.Get_AxBorderStyle: TxActiveFormBorderStyle;
+<B>begin</B>
+  Result := Ord(AxBorderStyle);
+<B>end</B>;
+
+<B>function</B> TActiveLocalData.Get_Caption: WideString;
+<B>begin</B>
+  Result := WideString(Caption);
+<B>end</B>;
+
+<B>function</B> TActiveLocalData.Get_Color: TColor;
+<B>begin</B>
+  Result := Color;
+<B>end</B>;
+
+<B>function</B> TActiveLocalData.Get_Cursor: Smallint;
+<B>begin</B>
+  Result := Smallint(Cursor);
+<B>end</B>;
+
+<B>function</B> TActiveLocalData.Get_DropTarget: WordBool;
+<B>begin</B>
+  Result := DropTarget;
+<B>end</B>;
+
+<B>function</B> TActiveLocalData.Get_Enabled: WordBool;
+<B>begin</B>
+  Result := Enabled;
+<B>end</B>;
+
+<B>function</B> TActiveLocalData.Get_Font: Font;
+<B>begin</B>
+  GetOleFont(Font, Result);
+<B>end</B>;
+
+<B>function</B> TActiveLocalData.Get_HelpFile: WideString;
+<B>begin</B>
+  Result := WideString(HelpFile);
+<B>end</B>;
+
+<B>function</B> TActiveLocalData.Get_KeyPreview: WordBool;
+<B>begin</B>
+  Result := KeyPreview;
+<B>end</B>;
+
+<B>function</B> TActiveLocalData.Get_PixelsPerInch: Integer;
+<B>begin</B>
+  Result := PixelsPerInch;
+<B>end</B>;
+
+<B>function</B> TActiveLocalData.Get_PrintScale: TxPrintScale;
+<B>begin</B>
+  Result := Ord(PrintScale);
+<B>end</B>;
+
+<B>function</B> TActiveLocalData.Get_Scaled: WordBool;
+<B>begin</B>
+  Result := Scaled;
+<B>end</B>;
+
+<B>function</B> TActiveLocalData.Get_Visible: WordBool;
+<B>begin</B>
+  Result := Visible;
+<B>end</B>;
+
+<B>function</B> TActiveLocalData.Get_WindowState: TxWindowState;
+<B>begin</B>
+  Result := Ord(WindowState);
+<B>end</B>;
+
+<B>procedure</B> TActiveLocalData.Set_AutoScroll(Value: WordBool);
+<B>begin</B>
+  AutoScroll := Value;
+<B>end</B>;
+
+<B>procedure</B> TActiveLocalData.Set_AxBorderStyle(
+  Value: TxActiveFormBorderStyle);
+<B>begin</B>
+  AxBorderStyle := TActiveFormBorderStyle(Value);
+<B>end</B>;
+
+<B>procedure</B> TActiveLocalData.Set_Caption(<B>const</B> Value: WideString);
+<B>begin</B>
+  Caption := TCaption(Value);
+<B>end</B>;
+
+<B>procedure</B> TActiveLocalData.Set_Color(Value: TColor);
+<B>begin</B>
+  Color := Value;
+<B>end</B>;
+
+<B>procedure</B> TActiveLocalData.Set_Cursor(Value: Smallint);
+<B>begin</B>
+  Cursor := TCursor(Value);
+<B>end</B>;
+
+<B>procedure</B> TActiveLocalData.Set_DropTarget(Value: WordBool);
+<B>begin</B>
+  DropTarget := Value;
+<B>end</B>;
+
+<B>procedure</B> TActiveLocalData.Set_Enabled(Value: WordBool);
+<B>begin</B>
+  Enabled := Value;
+<B>end</B>;
+
+<B>procedure</B> TActiveLocalData.Set_Font(<B>const</B> Value: Font);
+<B>begin</B>
+  SetOleFont(Font, Value);
+<B>end</B>;
+
+<B>procedure</B> TActiveLocalData.Set_HelpFile(<B>const</B> Value: WideString);
+<B>begin</B>
+  HelpFile := <B>String</B>(Value);
+<B>end</B>;
+
+<B>procedure</B> TActiveLocalData.Set_KeyPreview(Value: WordBool);
+<B>begin</B>
+  KeyPreview := Value;
+<B>end</B>;
+
+<B>procedure</B> TActiveLocalData.Set_PixelsPerInch(Value: Integer);
+<B>begin</B>
+  PixelsPerInch := Value;
+<B>end</B>;
+
+<B>procedure</B> TActiveLocalData.Set_PrintScale(Value: TxPrintScale);
+<B>begin</B>
+  PrintScale := TPrintScale(Value);
+<B>end</B>;
+
+<B>procedure</B> TActiveLocalData.Set_Scaled(Value: WordBool);
+<B>begin</B>
+  Scaled := Value;
+<B>end</B>;
+
+<B>procedure</B> TActiveLocalData.Set_Visible(Value: WordBool);
+<B>begin</B>
+  Visible := Value;
+<B>end</B>;
+
+<B>procedure</B> TActiveLocalData.Set_WindowState(Value: TxWindowState);
+<B>begin</B>
+  WindowState := TWindowState(Value);
+<B>end</B>;
+
+<B>procedure</B> TActiveLocalData.ActivateEvent(Sender: TObject);
+<B>var</B>
+  ModuleName: <B>string</B>;
+<B>begin</B>
+  <B>if</B> FEvents &lt;&gt; <B>nil</B> <B>then</B>
+    FEvents.OnActivate;
+  <FONT COLOR="#000080"><I>// specific code</I></FONT>
+  SetLength (ModuleName, 1000);
+  GetModuleFileName (HInstance, pChar (ModuleName), 1000);
+  Table1.DatabaseName := ExtractFilePath (PChar (ModuleName));
+  Panel1.Caption := Table1.DatabaseName +
+    <I>'/'</I> + Table1.TableName;
+  Table1.Open;
+<B>end</B>;
+
+<B>procedure</B> TActiveLocalData.ClickEvent(Sender: TObject);
+<B>begin</B>
+  <B>if</B> FEvents &lt;&gt; <B>nil</B> <B>then</B> FEvents.OnClick;
+<B>end</B>;
+
+<B>procedure</B> TActiveLocalData.CreateEvent(Sender: TObject);
+<B>begin</B>
+  <B>if</B> FEvents &lt;&gt; <B>nil</B> <B>then</B> FEvents.OnCreate;
+<B>end</B>;
+
+<B>procedure</B> TActiveLocalData.DblClickEvent(Sender: TObject);
+<B>begin</B>
+  <B>if</B> FEvents &lt;&gt; <B>nil</B> <B>then</B> FEvents.OnDblClick;
+<B>end</B>;
+
+<B>procedure</B> TActiveLocalData.DeactivateEvent(Sender: TObject);
+<B>begin</B>
+  <B>if</B> FEvents &lt;&gt; <B>nil</B> <B>then</B> FEvents.OnDeactivate;
+<B>end</B>;
+
+<B>procedure</B> TActiveLocalData.DestroyEvent(Sender: TObject);
+<B>begin</B>
+  <B>if</B> FEvents &lt;&gt; <B>nil</B> <B>then</B> FEvents.OnDestroy;
+<B>end</B>;
+
+<B>procedure</B> TActiveLocalData.KeyPressEvent(Sender: TObject; <B>var</B> Key: Char);
+<B>var</B>
+  TempKey: Smallint;
+<B>begin</B>
+  TempKey := Smallint(Key);
+  <B>if</B> FEvents &lt;&gt; <B>nil</B> <B>then</B> FEvents.OnKeyPress(TempKey);
+  Key := Char(TempKey);
+<B>end</B>;
+
+<B>procedure</B> TActiveLocalData.PaintEvent(Sender: TObject);
+<B>begin</B>
+  <B>if</B> FEvents &lt;&gt; <B>nil</B> <B>then</B> FEvents.OnPaint;
+<B>end</B>;
+
+<B>initialization</B>
+  TActiveFormFactory.Create(
+    ComServer,
+    TActiveFormControl,
+    TActiveLocalData,
+    Class_ActiveLocalData,
+    1,
+    <I>''</I>,
+    OLEMISC_SIMPLEFRAME <B>or</B> OLEMISC_ACTSLIKELABEL);
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=LOCAL.DFM><H3>LOCAL.DFM</H3></A>
+
+<PRE>
+<B>object</B> ActiveLocalData: TActiveLocalData
+  Left = 219
+  Top = 159
+  Width = 391
+  Height = 249
+  Caption = <I>'ActiveLocalData'</I>
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> DBGrid1: TDBGrid
+    Left = 0
+    Top = 41
+    Width = 383
+    Height = 181
+    Align = alClient
+    DataSource = DataSource1
+    TabOrder = 0
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = <I>'MS Sans Serif'</I>
+    TitleFont.Style = []
+  <B>end</B>
+  <B>object</B> Panel1: TPanel
+    Left = 0
+    Top = 0
+    Width = 383
+    Height = 41
+    Align = alTop
+    Caption = <I>'Panel1'</I>
+    TabOrder = 1
+  <B>end</B>
+  <B>object</B> Table1: TTable
+    ReadOnly = True
+    TableName = <I>'COUNTRY.DB'</I>
+    Left = 24
+    Top = 16
+  <B>end</B>
+  <B>object</B> DataSource1: TDataSource
+    AutoEdit = False
+    DataSet = Table1
+    Left = 64
+    Top = 16
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

@@ -1,0 +1,91 @@
+<HTML><HEAD>
+<TITLE>Project: OLECONT.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: OLECONT.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#OLECONT.DPR> OLECONT.DPR</A>
+<LI> <A HREF=#OLEFORM.PAS> OLEFORM.PAS</A>
+<LI> <A HREF=#OLEFORM.DFM> OLEFORM.DFM</A>
+</UL>
+<HR>
+<A NAME=OLECONT.DPR><H3>OLECONT.DPR</H3></A>
+
+<PRE>
+<B>program</B> Olecont;
+
+<B>uses</B>
+  Forms,
+  OleForm <B>in</B> <I>'OleForm.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=OLEFORM.PAS><H3>OLEFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> Oleform;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes, Graphics, Controls,
+  Forms, Dialogs, Menus, ExtCtrls, OleCtnrs;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    OleContainer1: TOleContainer;
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=OLEFORM.DFM><H3>OLEFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 179
+  Top = 115
+  Width = 253
+  Height = 245
+  Caption = <I>'Minimal OLE Container'</I>
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clBlack
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> OleContainer1: TOleContainer
+    Left = 0
+    Top = 0
+    Width = 245
+    Height = 218
+    Align = alClient
+    SizeMode = smCenter
+    TabOrder = 0
+    Data = <FONT COLOR="#000080"><I>{...skipped...}</I></FONT>
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

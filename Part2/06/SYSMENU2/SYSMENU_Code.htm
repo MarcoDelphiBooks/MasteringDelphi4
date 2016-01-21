@@ -1,0 +1,271 @@
+<HTML><HEAD>
+<TITLE>Project: SYSMENU.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: SYSMENU.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#SYSMENU.DPR> SYSMENU.DPR</A>
+<LI> <A HREF=#SYSFORM.PAS> SYSFORM.PAS</A>
+<LI> <A HREF=#SYSFORM.DFM> SYSFORM.DFM</A>
+</UL>
+<HR>
+<A NAME=SYSMENU.DPR><H3>SYSMENU.DPR</H3></A>
+
+<PRE>
+<B>program</B> sysmenu;
+
+<B>uses</B>
+  Forms,
+  sysform <B>in</B> <I>'sysform.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=SYSFORM.PAS><H3>SYSFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> sysform;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes, Graphics, Controls, Forms, Dialogs,
+  Menus, StdCtrls;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    Button1: TButton;
+    MainMenu1: TMainMenu;
+    File1: TMenuItem;
+    Exit1: TMenuItem;
+    Edit1: TMenuItem;
+    Undo1: TMenuItem;
+    N1: TMenuItem;
+    Cut1: TMenuItem;
+    Copy1: TMenuItem;
+    Paste1: TMenuItem;
+    Help1: TMenuItem;
+    About1: TMenuItem;
+    New1: TMenuItem;
+    Open1: TMenuItem;
+    N2: TMenuItem;
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> Button1Click(Sender: TObject);
+    <B>procedure</B> New1Click(Sender: TObject);
+    <B>procedure</B> Open1Click(Sender: TObject);
+    <B>procedure</B> Exit1Click(Sender: TObject);
+    <B>procedure</B> Undo1Click(Sender: TObject);
+    <B>procedure</B> Cut1Click(Sender: TObject);
+    <B>procedure</B> Copy1Click(Sender: TObject);
+    <B>procedure</B> Paste1Click(Sender: TObject);
+    <B>procedure</B> About1Click(Sender: TObject);
+  <B>public</B>
+    <B>procedure</B> WMSysCommand (<B>var</B> Msg: TWMSysCommand);
+      <B>message</B> wm_SysCommand;
+    <B>procedure</B> AppMessage (<B>var</B> Msg: TMsg;
+      <B>var</B> Handled: Boolean);
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>const</B>
+  idSysAbout = 100;
+
+<B>procedure</B> TForm1.FormCreate(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// add a separator and a menu item to the system menu</I></FONT>
+  AppendMenu (GetSystemMenu (Handle, FALSE),
+    MF_SEPARATOR, 0, <I>''</I>);
+  AppendMenu (GetSystemMenu (Handle, FALSE),
+    MF_STRING, idSysAbout, <I>'&amp;About...'</I>);
+
+  <FONT COLOR="#000080"><I>// add the same items to the application system menu</I></FONT>
+  AppendMenu (GetSystemMenu (Application.Handle, FALSE),
+    MF_SEPARATOR, 0, <I>''</I>);
+  AppendMenu (GetSystemMenu (Application.Handle, FALSE),
+    MF_STRING, idSysAbout, <I>'&amp;About...'</I>);
+
+  <FONT COLOR="#000080"><I>// handle application messages</I></FONT>
+  Application.OnMessage := AppMessage;
+<B>end</B>;
+
+<B>procedure</B> TForm1.WMSysCommand (<B>var</B> Msg: TWMSysCommand);
+<B>var</B>
+  Item: TMenuItem;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// handle a specific command</I></FONT>
+  <B>if</B> Msg.CmdType = idSysAbout <B>then</B>
+    ShowMessage (<I>'Mastering Delphi: SysMenu2 example'</I>);
+
+  <FONT COLOR="#000080"><I>// activate standard menu handling code</I></FONT>
+  Item := MainMenu1.FindItem (Msg.CmdType, fkCommand);
+  <B>if</B> <B>not</B> (Item = <B>nil</B>) <B>then</B>
+    Item.Click;
+
+  <FONT COLOR="#000080"><I>// default system menu commands</I></FONT>
+  <B>inherited</B>;
+<B>end</B>;
+
+<B>procedure</B> TForm1.AppMessage (<B>var</B> Msg: TMsg;
+  <B>var</B> Handled: Boolean);
+<B>begin</B>
+  <B>if</B> (Msg.<B>Message</B> = wm_SysCommand) <B>and</B>
+    (Msg.wParam = idSysAbout) <B>then</B>
+  <B>begin</B>
+    ShowMessage (<I>'Mastering Delphi: SysMenu2 example'</I>);
+    Handled := True;
+  <B>end</B>;
+<B>end</B>;
+
+
+<B>procedure</B> TForm1.Button1Click(Sender: TObject);
+<B>var</B>
+  I: Integer;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// add a separator</I></FONT>
+  AppendMenu (GetSystemMenu (Handle, FALSE), MF_SEPARATOR, 0, <I>''</I>);
+  <FONT COLOR="#000080"><I>// add the main menu to the system menu</I></FONT>
+  <B>with</B> MainMenu1 <B>do</B>
+    <B>for</B> I := 0 <B>to</B> Items.Count - 1 <B>do</B>
+      AppendMenu (GetSystemMenu (self.Handle, FALSE),
+        mf_Popup, Items[I].Handle, PChar (Items[I].Caption));
+  <FONT COLOR="#000080"><I>// disable the button</I></FONT>
+  Button1.Enabled := False;
+<B>end</B>;
+
+<B>procedure</B> TForm1.New1Click(Sender: TObject);
+<B>begin</B>
+  ShowMessage (<I>'File New menu command'</I>);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Open1Click(Sender: TObject);
+<B>begin</B>
+  ShowMessage (<I>'File Open menu command'</I>);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Exit1Click(Sender: TObject);
+<B>begin</B>
+  Close;
+<B>end</B>;
+
+<B>procedure</B> TForm1.Undo1Click(Sender: TObject);
+<B>begin</B>
+  ShowMessage (<I>'Edit Undo menu command'</I>);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Cut1Click(Sender: TObject);
+<B>begin</B>
+  ShowMessage (<I>'Edit Cut menu command'</I>);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Copy1Click(Sender: TObject);
+<B>begin</B>
+  ShowMessage (<I>'Edit Copy menu command'</I>);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Paste1Click(Sender: TObject);
+<B>begin</B>
+  ShowMessage (<I>'Edit Paste menu command'</I>);
+<B>end</B>;
+
+<B>procedure</B> TForm1.About1Click(Sender: TObject);
+<B>begin</B>
+    ShowMessage (<I>'Mastering Delphi: SysMenu2 example'</I>);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=SYSFORM.DFM><H3>SYSFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 245
+  Top = 138
+  Width = 292
+  Height = 119
+  Caption = <I>'SysMenu'</I>
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Button1: TButton
+    Left = 78
+    Top = 34
+    Width = 129
+    Height = 25
+    Caption = <I>'Copy to System Menu'</I>
+    TabOrder = 0
+    OnClick = Button1Click
+  <B>end</B>
+  <B>object</B> MainMenu1: TMainMenu
+    Left = 16
+    Top = 8
+    <B>object</B> File1: TMenuItem
+      Caption = <I>'&amp;File'</I>
+      <B>object</B> New1: TMenuItem
+        Caption = <I>'&amp;New'</I>
+        OnClick = New1Click
+      <B>end</B>
+      <B>object</B> Open1: TMenuItem
+        Caption = <I>'&amp;Open...'</I>
+        OnClick = Open1Click
+      <B>end</B>
+      <B>object</B> N2: TMenuItem
+        Caption = <I>'-'</I>
+      <B>end</B>
+      <B>object</B> Exit1: TMenuItem
+        Caption = <I>'&amp;Exit'</I>
+        OnClick = Exit1Click
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> Edit1: TMenuItem
+      Caption = <I>'&amp;Edit'</I>
+      <B>object</B> Undo1: TMenuItem
+        Caption = <I>'&amp;Undo'</I>
+        OnClick = Undo1Click
+      <B>end</B>
+      <B>object</B> N1: TMenuItem
+        Caption = <I>'-'</I>
+      <B>end</B>
+      <B>object</B> Cut1: TMenuItem
+        Caption = <I>'Cu&amp;t'</I>
+        OnClick = Cut1Click
+      <B>end</B>
+      <B>object</B> Copy1: TMenuItem
+        Caption = <I>'&amp;Copy'</I>
+        OnClick = Copy1Click
+      <B>end</B>
+      <B>object</B> Paste1: TMenuItem
+        Caption = <I>'&amp;Paste'</I>
+        OnClick = Paste1Click
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> Help1: TMenuItem
+      Caption = <I>'Help'</I>
+      <B>object</B> About1: TMenuItem
+        Caption = <I>'&amp;About...'</I>
+        OnClick = About1Click
+      <B>end</B>
+    <B>end</B>
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

@@ -1,0 +1,224 @@
+<HTML><HEAD>
+<TITLE>Project: TABONLY.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: TABONLY.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#TABONLY.DPR> TABONLY.DPR</A>
+<LI> <A HREF=#VIEWER.PAS> VIEWER.PAS</A>
+<LI> <A HREF=#VIEWER.DFM> VIEWER.DFM</A>
+</UL>
+<HR>
+<A NAME=TABONLY.DPR><H3>TABONLY.DPR</H3></A>
+
+<PRE>
+<B>program</B> Tabonly;
+
+<B>uses</B>
+  Forms,
+  Viewer <B>in</B> <I>'VIEWER.PAS'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=VIEWER.PAS><H3>VIEWER.PAS</H3></A>
+
+<PRE>
+<B>unit</B> Viewer;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Classes, Graphics, Forms, Controls, StdCtrls,
+  Tabs, Menus, Dialogs, ExtCtrls, ComCtrls, FileCtrl;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    OpenDialog1: TOpenDialog;
+    MainMenu1: TMainMenu;
+    File1: TMenuItem;
+    Open1: TMenuItem;
+    N1: TMenuItem;
+    Exit1: TMenuItem;
+    Help1: TMenuItem;
+    AboutImageViewer1: TMenuItem;
+    TabControl1: TTabControl;
+    Image1: TImage;
+    <B>procedure</B> Open1Click(Sender: TObject);
+    <B>procedure</B> Exit1Click(Sender: TObject);
+    <B>procedure</B> About1Click(Sender: TObject);
+    <B>procedure</B> TabControl1Change(Sender: TObject);
+    <B>procedure</B> TabControl1DrawTab(Control: TCustomTabControl;
+      TabIndex: Integer; <B>const</B> Rect: TRect; Active: Boolean);
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> FormDestroy(Sender: TObject);
+  <B>private</B>
+    TabBmp: TBitmap;
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>const</B>
+  BmpSide = 20;
+
+<B>procedure</B> TForm1.Open1Click(Sender: TObject);
+<B>begin</B>
+  <B>if</B> OpenDialog1.Execute <B>then</B>
+  <B>begin</B>
+    TabControl1.Tabs := OpenDialog1.Files;
+    TabControl1.TabIndex := 0;
+    TabControl1Change (TabControl1);
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TForm1.Exit1Click(Sender: TObject);
+<B>begin</B>
+  Close;
+<B>end</B>;
+
+<B>procedure</B> TForm1.About1Click(Sender: TObject);
+<B>begin</B>
+  MessageDlg (<I>'Bitmap Viewer with Tabs, from &quot;Mastering Delphi&quot;'</I>,
+    mtInformation, [mbOk], 0);
+<B>end</B>;
+
+<B>procedure</B> TForm1.TabControl1Change(Sender: TObject);
+<B>begin</B>
+  Image1.Picture.LoadFromFile (
+    TabControl1.Tabs [TabControl1.TabIndex]);
+<B>end</B>;
+
+<B>procedure</B> TForm1.TabControl1DrawTab(Control: TCustomTabControl;
+  TabIndex: Integer; <B>const</B> Rect: TRect; Active: Boolean);
+<B>var</B>
+ TabText: <B>string</B>;
+ OutRect: TRect;
+<B>begin</B>
+  TabText := TabControl1.Tabs [TabIndex];
+  OutRect := Rect;
+  InflateRect (OutRect, -3, -3);
+  OutRect.Left := OutRect.Left + BmpSide + 3;
+  DrawText (Control.Canvas.Handle,
+    PChar (ExtractFileName (TabText)),
+    Length (ExtractFileName (TabText)),
+    OutRect, dt_Left <B>or</B> dt_SingleLine <B>or</B> dt_VCenter);
+  <B>if</B> TabText &lt;&gt; <I>'None'</I> <B>then</B>
+  <B>begin</B>
+    TabBmp.LoadFromFile (TabText);
+    OutRect.Left := OutRect.Left - BmpSide - 3;
+    OutRect.Right := OutRect.Left + BmpSide;
+    Control.Canvas.StretchDraw (OutRect, TabBmp);
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TForm1.FormCreate(Sender: TObject);
+<B>begin</B>
+  TabControl1.TabHeight := BmpSide + 6;
+  TabBmp := TBitmap.Create;
+<B>end</B>;
+
+<B>procedure</B> TForm1.FormDestroy(Sender: TObject);
+<B>begin</B>
+  TabBmp.Free;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=VIEWER.DFM><H3>VIEWER.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 90
+  Top = 150
+  Width = 632
+  Height = 373
+  Caption = <I>'Bitmap Viewer'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clBlack
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  Menu = MainMenu1
+  OldCreateOrder = True
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> TabControl1: TTabControl
+    Left = 0
+    Top = 0
+    Width = 624
+    Height = 327
+    Align = alClient
+    MultiLine = True
+    OwnerDraw = True
+    TabHeight = 20
+    TabOrder = 0
+    Tabs.Strings = (
+      <I>'None'</I>)
+    TabIndex = 0
+    TabWidth = 120
+    OnChange = TabControl1Change
+    OnDrawTab = TabControl1DrawTab
+    <B>object</B> Image1: TImage
+      Left = 4
+      Top = 26
+      Width = 616
+      Height = 297
+      Align = alClient
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> OpenDialog1: TOpenDialog
+    DefaultExt = <I>'*.bmp'</I>
+    Filter = <I>'Bitmap files (*.bmp)|*.bmp|Other files (*.*)|*.*'</I>
+    Options = [ofAllowMultiSelect, ofPathMustExist, ofFileMustExist, ofShareAware]
+    Title = <I>'Select one or more images'</I>
+    Left = 40
+    Top = 32
+  <B>end</B>
+  <B>object</B> MainMenu1: TMainMenu
+    Left = 40
+    Top = 80
+    <B>object</B> File1: TMenuItem
+      Caption = <I>'&amp;File'</I>
+      <B>object</B> Open1: TMenuItem
+        Caption = <I>'&amp;Open...'</I>
+        OnClick = Open1Click
+      <B>end</B>
+      <B>object</B> N1: TMenuItem
+        Caption = <I>'-'</I>
+      <B>end</B>
+      <B>object</B> Exit1: TMenuItem
+        Caption = <I>'&amp;Exit'</I>
+        OnClick = Exit1Click
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> Help1: TMenuItem
+      Caption = <I>'&amp;Help'</I>
+      <B>object</B> AboutImageViewer1: TMenuItem
+        Caption = <I>'&amp;About Image Viewer...'</I>
+        OnClick = About1Click
+      <B>end</B>
+    <B>end</B>
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

@@ -1,0 +1,480 @@
+<HTML><HEAD>
+<TITLE>Project: DBEVTS.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: DBEVTS.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#DBEVTS.DPR> DBEVTS.DPR</A>
+<LI> <A HREF=#DBEVTSF.PAS> DBEVTSF.PAS</A>
+<LI> <A HREF=#DBEVTSF.DFM> DBEVTSF.DFM</A>
+</UL>
+<HR>
+<A NAME=DBEVTS.DPR><H3>DBEVTS.DPR</H3></A>
+
+<PRE>
+<B>program</B> DbEvts;
+
+<B>uses</B>
+  Forms,
+  DbEvtsF <B>in</B> <I>'DbEvtsF.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=DBEVTSF.PAS><H3>DBEVTSF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> DbEvtsF;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, WinTypes, WinProcs, Messages, Classes, Graphics, Controls,
+  Forms, Dialogs, StdCtrls, DBTables, DB, Mask, DBCtrls, Grids, DBGrids,
+  Menus, ExtCtrls;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    Table1: TTable;
+    DataSource1: TDataSource;
+    DBGrid1: TDBGrid;
+    Table1Name: TStringField;
+    Table1Capital: TStringField;
+    Table1Continent: TStringField;
+  Table1Population: TFloatField;
+    Table1Area: TFloatField;
+    ListBox1: TListBox;
+    Splitter1: TSplitter;
+    PopupList: TPopupMenu;
+    Addblank1: TMenuItem;
+    Clear1: TMenuItem;
+    SaveToDisk1: TMenuItem;
+    SaveDialog1: TSaveDialog;
+    Timer1: TTimer;
+    <B>procedure</B> Table1AfterCancel(DataSet: TDataset);
+    <B>procedure</B> Table1AfterClose(DataSet: TDataset);
+    <B>procedure</B> Table1AfterDelete(DataSet: TDataset);
+    <B>procedure</B> Table1AfterEdit(DataSet: TDataset);
+    <B>procedure</B> Table1AfterInsert(DataSet: TDataset);
+    <B>procedure</B> Table1AfterOpen(DataSet: TDataset);
+    <B>procedure</B> Table1AfterPost(DataSet: TDataset);
+    <B>procedure</B> Table1BeforeCancel(DataSet: TDataset);
+    <B>procedure</B> Table1BeforeClose(DataSet: TDataset);
+    <B>procedure</B> Table1BeforeDelete(DataSet: TDataset);
+    <B>procedure</B> Table1BeforeEdit(DataSet: TDataset);
+    <B>procedure</B> Table1BeforeInsert(DataSet: TDataset);
+    <B>procedure</B> Table1BeforeOpen(DataSet: TDataset);
+    <B>procedure</B> Table1BeforePost(DataSet: TDataset);
+    <B>procedure</B> Table1NewRecord(DataSet: TDataset);
+    <B>procedure</B> DataSource1DataChange(Sender: TObject; Field: TField);
+    <B>procedure</B> DataSource1StateChange(Sender: TObject);
+    <B>procedure</B> DataSource1UpdateData(Sender: TObject);
+    <B>procedure</B> DBGrid1ColEnter(Sender: TObject);
+    <B>procedure</B> DBGrid1ColExit(Sender: TObject);
+    <B>procedure</B> AddBlankClick(Sender: TObject);
+    <B>procedure</B> ClearClick(Sender: TObject);
+    <B>procedure</B> SaveToDiskClick(Sender: TObject);
+    <B>procedure</B> Table1AfterScroll(DataSet: TDataSet);
+    <B>procedure</B> Table1BeforeScroll(DataSet: TDataSet);
+    <B>procedure</B> Table1DeleteError(DataSet: TDataSet; E: EDatabaseError;
+      <B>var</B> Action: TDataAction);
+    <B>procedure</B> Table1EditError(DataSet: TDataSet; E: EDatabaseError;
+      <B>var</B> Action: TDataAction);
+    <B>procedure</B> Table1FilterRecord(DataSet: TDataSet; <B>var</B> Accept: Boolean);
+    <B>procedure</B> Table1CalcFields(DataSet: TDataSet);
+    <B>procedure</B> Table1PostError(DataSet: TDataSet; E: EDatabaseError;
+      <B>var</B> Action: TDataAction);
+    <B>procedure</B> Table1UpdateError(DataSet: TDataSet; E: EDatabaseError;
+      UpdateKind: TUpdateKind; <B>var</B> UpdateAction: TUpdateAction);
+    <B>procedure</B> Table1UpdateRecord(DataSet: TDataSet;
+      UpdateKind: TUpdateKind; <B>var</B> UpdateAction: TUpdateAction);
+    <B>procedure</B> DBGrid1CellClick(Column: TColumn);
+    <B>procedure</B> FieldChange(Sender: TField);
+    <B>procedure</B> FieldValidate(Sender: TField);
+    <B>procedure</B> Timer1Timer(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <B>procedure</B> AddToList (Str: <B>string</B>);
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.Table1AfterCancel(DataSet: TDataset);
+<B>begin</B>
+  AddToList (<I>'Table: AfterCancel'</I>);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Table1AfterClose(DataSet: TDataset);
+<B>begin</B>
+  AddToList (<I>'Table: AfterClose'</I>);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Table1AfterDelete(DataSet: TDataset);
+<B>begin</B>
+  AddToList (<I>'Table: AfterDelete'</I>)
+<B>end</B>;
+
+<B>procedure</B> TForm1.Table1AfterEdit(DataSet: TDataset);
+<B>begin</B>
+  AddToList (<I>'Table: AfterEdit'</I>);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Table1AfterInsert(DataSet: TDataset);
+<B>begin</B>
+  AddToList (<I>'Table: AfterInsert'</I>);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Table1AfterOpen(DataSet: TDataset);
+<B>begin</B>
+  AddToList (<I>'Table: AfterOpen'</I>);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Table1AfterPost(DataSet: TDataset);
+<B>begin</B>
+  AddToList (<I>'Table: AfterPost'</I>);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Table1BeforeCancel(DataSet: TDataset);
+<B>begin</B>
+  AddToList (<I>'Table: BeforeCancel'</I>);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Table1BeforeClose(DataSet: TDataset);
+<B>begin</B>
+  AddToList (<I>'Table: BeforeClose'</I>);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Table1BeforeDelete(DataSet: TDataset);
+<B>begin</B>
+  AddToList (<I>'Table: BeforeDelete'</I>);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Table1BeforeEdit(DataSet: TDataset);
+<B>begin</B>
+  AddToList (<I>'Table: BeforeEdit'</I>);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Table1BeforeInsert(DataSet: TDataset);
+<B>begin</B>
+  AddToList (<I>'Table: BeforeInsert'</I>);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Table1BeforeOpen(DataSet: TDataset);
+<B>begin</B>
+  AddToList (<I>'Table: BeforeOpen'</I>);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Table1BeforePost(DataSet: TDataset);
+<B>begin</B>
+  AddToList (<I>'Table: BeforePost'</I>);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Table1NewRecord(DataSet: TDataset);
+<B>begin</B>
+  AddToList (<I>'Table: OnNewRecord'</I>);
+<B>end</B>;
+
+<B>procedure</B> TForm1.DataSource1DataChange(Sender: TObject; Field: TField);
+<B>begin</B>
+  AddToList (<I>'DataSource: OnDataChange'</I>);
+<B>end</B>;
+
+<B>const</B>
+  States: <B>array</B> [0..5] <B>of</B> <B>string</B> =
+  (<I>'dsInactive'</I>, <I>'dsBrowse'</I>, <I>'dsEdit'</I>,
+ <I>'dsInsert'</I>, <I>'dsSetKey'</I>, <I>'dsCalcFields'</I>);
+
+<B>procedure</B> TForm1.DataSource1StateChange(Sender: TObject);
+<B>var</B>
+  CurrState: <B>string</B>;
+<B>begin</B>
+  CurrState := States [
+    Integer (DataSource1.State)];
+  AddToList (
+    <I>'DataSource: StateChange ('</I> + CurrState + <I>')'</I>);
+<B>end</B>;
+
+<B>procedure</B> TForm1.DataSource1UpdateData(Sender: TObject);
+<B>begin</B>
+  AddToList (<I>'DataSource: UpdateData'</I>)
+<B>end</B>;
+
+<B>procedure</B> TForm1.DBGrid1ColEnter(Sender: TObject);
+<B>begin</B>
+  AddToList (<I>'DBGrid: OnColEnter'</I>)
+<B>end</B>;
+
+<B>procedure</B> TForm1.DBGrid1ColExit(Sender: TObject);
+<B>begin</B>
+  AddToList (<I>'DBGrid: OnColExit'</I>)
+<B>end</B>;
+
+<B>procedure</B> TForm1.AddBlankClick(Sender: TObject);
+<B>begin</B>
+  AddToList (<I>''</I>);
+<B>end</B>;
+
+<B>procedure</B> TForm1.ClearClick(Sender: TObject);
+<B>begin</B>
+  Listbox1.Items.Clear;
+<B>end</B>;
+
+<B>procedure</B> TForm1.SaveToDiskClick(Sender: TObject);
+<B>begin</B>
+  <B>if</B> SaveDialog1.Execute <B>then</B>
+    ListBox1.Items.SaveToFile (SaveDialog1.FileName);
+<B>end</B>;
+
+<B>procedure</B> TForm1.AddToList(Str: <B>string</B>);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// add item and select it</I></FONT>
+  Listbox1.ItemIndex :=
+    Listbox1.Items.Add (Str);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Table1AfterScroll(DataSet: TDataSet);
+<B>begin</B>
+  AddToList (<I>'Table: AfterScroll'</I>);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Table1BeforeScroll(DataSet: TDataSet);
+<B>begin</B>
+  AddToList (<I>'Table: BeforeScroll'</I>);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Table1DeleteError(DataSet: TDataSet; E: EDatabaseError;
+  <B>var</B> Action: TDataAction);
+<B>begin</B>
+  AddToList (<I>'Table: OnDeleteError'</I>);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Table1EditError(DataSet: TDataSet; E: EDatabaseError;
+  <B>var</B> Action: TDataAction);
+<B>begin</B>
+  AddToList (<I>'Table: OnEditError'</I>);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Table1FilterRecord(DataSet: TDataSet;
+  <B>var</B> Accept: Boolean);
+<B>begin</B>
+  AddToList (<I>'Table: OnFilterRecord'</I>);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Table1CalcFields(DataSet: TDataSet);
+<B>begin</B>
+  AddToList (<I>'Table: OnCalcFields'</I>);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Table1PostError(DataSet: TDataSet; E: EDatabaseError;
+  <B>var</B> Action: TDataAction);
+<B>begin</B>
+  AddToList (<I>'Table: OnPostError'</I>);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Table1UpdateError(DataSet: TDataSet; E: EDatabaseError;
+  UpdateKind: TUpdateKind; <B>var</B> UpdateAction: TUpdateAction);
+<B>begin</B>
+  AddToList (<I>'Table: OnUpdateError'</I>);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Table1UpdateRecord(DataSet: TDataSet;
+  UpdateKind: TUpdateKind; <B>var</B> UpdateAction: TUpdateAction);
+<B>begin</B>
+  AddToList (<I>'Table: OnUpdateRecord'</I>);
+<B>end</B>;
+
+<B>procedure</B> TForm1.DBGrid1CellClick(Column: TColumn);
+<B>begin</B>
+  AddToList (<I>'DBGrid: OnCellClick'</I>);
+<B>end</B>;
+
+<B>procedure</B> TForm1.FieldChange(Sender: TField);
+<B>begin</B>
+  AddToList (<I>'Field '</I> + Sender.FieldName + <I>': OnChange'</I>);
+<B>end</B>;
+
+<B>procedure</B> TForm1.FieldValidate(Sender: TField);
+<B>begin</B>
+  AddToList (<I>'Field '</I> + Sender.FieldName + <I>': OnValidate'</I>);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Timer1Timer(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// if the last item is not an empty line</I></FONT>
+  <B>if</B> ListBox1.Items [ListBox1.Items.Count -1] &lt;&gt; <I>''</I> <B>then</B>
+    <FONT COLOR="#000080"><I>// add one without moving the current selection</I></FONT>
+    ListBox1.Items.Add (<I>''</I>);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=DBEVTSF.DFM><H3>DBEVTSF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 192
+  Top = 109
+  Width = 665
+  Height = 460
+  Caption = <I>'Database Events'</I>
+  Color = clBtnFace
+  Font.Charset = ANSI_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -12
+  Font.Name = <I>'Arial'</I>
+  Font.Style = [fsBold]
+  OldCreateOrder = True
+  PixelsPerInch = 96
+  TextHeight = 15
+  <B>object</B> Splitter1: TSplitter
+    Left = 449
+    Top = 0
+    Width = 4
+    Height = 433
+    Cursor = crHSplit
+  <B>end</B>
+  <B>object</B> DBGrid1: TDBGrid
+    Left = 0
+    Top = 0
+    Width = 449
+    Height = 433
+    Align = alLeft
+    DataSource = DataSource1
+    TabOrder = 0
+    TitleFont.Charset = ANSI_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -12
+    TitleFont.Name = <I>'Arial'</I>
+    TitleFont.Style = [fsBold]
+    OnCellClick = DBGrid1CellClick
+    OnColEnter = DBGrid1ColEnter
+    OnColExit = DBGrid1ColExit
+  <B>end</B>
+  <B>object</B> ListBox1: TListBox
+    Left = 453
+    Top = 0
+    Width = 204
+    Height = 433
+    Align = alClient
+    ItemHeight = 15
+    PopupMenu = PopupList
+    TabOrder = 1
+  <B>end</B>
+  <B>object</B> Table1: TTable
+    Active = True
+    BeforeOpen = Table1BeforeOpen
+    AfterOpen = Table1AfterOpen
+    BeforeClose = Table1BeforeClose
+    AfterClose = Table1AfterClose
+    BeforeInsert = Table1BeforeInsert
+    AfterInsert = Table1AfterInsert
+    BeforeEdit = Table1BeforeEdit
+    AfterEdit = Table1AfterEdit
+    BeforePost = Table1BeforePost
+    AfterPost = Table1AfterPost
+    BeforeCancel = Table1BeforeCancel
+    AfterCancel = Table1AfterCancel
+    BeforeDelete = Table1BeforeDelete
+    AfterDelete = Table1AfterDelete
+    BeforeScroll = Table1BeforeScroll
+    AfterScroll = Table1AfterScroll
+    OnCalcFields = Table1CalcFields
+    OnDeleteError = Table1DeleteError
+    OnEditError = Table1EditError
+    OnNewRecord = Table1NewRecord
+    OnPostError = Table1PostError
+    OnUpdateError = Table1UpdateError
+    OnUpdateRecord = Table1UpdateRecord
+    DatabaseName = <I>'DBDEMOS'</I>
+    OnFilterRecord = Table1FilterRecord
+    TableName = <I>'COUNTRY.DB'</I>
+    Left = 8
+    Top = 8
+    <B>object</B> Table1Name: TStringField
+      DisplayLabel = <I>'Country'</I>
+      DisplayWidth = 15
+      FieldName = <I>'Name'</I>
+      OnChange = FieldChange
+      OnValidate = FieldValidate
+      Size = 24
+    <B>end</B>
+    <B>object</B> Table1Capital: TStringField
+      DisplayWidth = 17
+      FieldName = <I>'Capital'</I>
+      OnChange = FieldChange
+      OnValidate = FieldValidate
+      Size = 24
+    <B>end</B>
+    <B>object</B> Table1Continent: TStringField
+      DisplayWidth = 24
+      FieldName = <I>'Continent'</I>
+      OnChange = FieldChange
+      OnValidate = FieldValidate
+      Size = 24
+    <B>end</B>
+    <B>object</B> Table1Population: TFloatField
+      DisplayWidth = 10
+      FieldName = <I>'Population'</I>
+      OnChange = FieldChange
+      OnValidate = FieldValidate
+    <B>end</B>
+    <B>object</B> Table1Area: TFloatField
+      FieldName = <I>'Area'</I>
+      OnChange = FieldChange
+      OnValidate = FieldValidate
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> DataSource1: TDataSource
+    DataSet = Table1
+    OnStateChange = DataSource1StateChange
+    OnDataChange = DataSource1DataChange
+    OnUpdateData = DataSource1UpdateData
+    Left = 40
+    Top = 8
+  <B>end</B>
+  <B>object</B> PopupList: TPopupMenu
+    Left = 488
+    Top = 16
+    <B>object</B> Addblank1: TMenuItem
+      Caption = <I>'Add blank'</I>
+      OnClick = AddBlankClick
+    <B>end</B>
+    <B>object</B> Clear1: TMenuItem
+      Caption = <I>'Clear'</I>
+      OnClick = ClearClick
+    <B>end</B>
+    <B>object</B> SaveToDisk1: TMenuItem
+      Caption = <I>'Save To Disk...'</I>
+      OnClick = SaveToDiskClick
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> SaveDialog1: TSaveDialog
+    DefaultExt = <I>'TXT'</I>
+    Filter = <I>'Text file (*.txt)|*.txt'</I>
+    Left = 32
+    Top = 64
+  <B>end</B>
+  <B>object</B> Timer1: TTimer
+    OnTimer = Timer1Timer
+    Left = 552
+    Top = 16
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

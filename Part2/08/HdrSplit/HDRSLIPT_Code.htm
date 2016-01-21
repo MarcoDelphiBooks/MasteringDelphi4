@@ -1,0 +1,242 @@
+<HTML><HEAD>
+<TITLE>Project: HDRSLIPT.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: HDRSLIPT.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#HDRSLIPT.DPR> HDRSLIPT.DPR</A>
+<LI> <A HREF=#SPLITF.PAS> SPLITF.PAS</A>
+<LI> <A HREF=#SPLITF.DFM> SPLITF.DFM</A>
+</UL>
+<HR>
+<A NAME=HDRSLIPT.DPR><H3>HDRSLIPT.DPR</H3></A>
+
+<PRE>
+<B>program</B> HdrSlipt;
+
+<B>uses</B>
+  Forms,
+  SplitF <B>in</B> <I>'SplitF.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=SPLITF.PAS><H3>SPLITF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> SplitF;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes, Graphics, Controls,
+  Forms, Dialogs, StdCtrls, ExtCtrls, ComCtrls;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    ListBox1: TListBox;
+    ListBox2: TListBox;
+    ListBox3: TListBox;
+    FontDialog1: TFontDialog;
+    HeaderControl1: THeaderControl;
+    <B>procedure</B> ListBoxDblClick(Sender: TObject);
+    <B>procedure</B> HeaderControl1SectionResize(HeaderControl: THeaderControl;
+      Section: THeaderSection);
+    <B>procedure</B> FormResize(Sender: TObject);
+    <B>procedure</B> HeaderControl1SectionClick(HeaderControl: THeaderControl;
+      Section: THeaderSection);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.ListBoxDblClick(Sender: TObject);
+<B>begin</B>
+  <B>with</B> Sender <B>as</B> TListbox <B>do</B>
+  <B>begin</B>
+    FontDialog1.Font := Font;
+    <B>if</B> FontDialog1.Execute <B>then</B>
+      Font := FontDialog1.Font;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TForm1.HeaderControl1SectionResize(HeaderControl: THeaderControl;
+  Section: THeaderSection);
+<B>begin</B>
+  ListBox1.Width := HeaderControl1.Sections[0].Width;
+  ListBox2.Left := ListBox1.Width;
+  ListBox2.Width := HeaderControl1.Sections[1].Width;
+  ListBox3.Left := ListBox2.Width + ListBox2.Left;
+  ListBox3.Width := self.Width -
+    HeaderControl1.Sections[0].Width -
+    HeaderControl1.Sections[1].Width;
+<B>end</B>;
+
+<B>procedure</B> TForm1.FormResize(Sender: TObject);
+<B>begin</B>
+  ListBox2.Height := ListBox1.Height;
+  ListBox3.Height := ListBox1.Height;
+  HeaderControl1SectionResize(HeaderControl1,
+    HeaderControl1.Sections [0]);
+<B>end</B>;
+
+<B>procedure</B> TForm1.HeaderControl1SectionClick(HeaderControl: THeaderControl;
+  Section: THeaderSection);
+<B>begin</B>
+  <B>if</B> Section = HeaderControl1.Sections[0] <B>then</B>
+    ListBox1.Sorted := True;
+  <B>if</B> Section = HeaderControl1.Sections[1] <B>then</B>
+    ListBox2.Sorted := True;
+  <B>if</B> Section = HeaderControl1.Sections[2] <B>then</B>
+    ListBox3.Sorted := True;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=SPLITF.DFM><H3>SPLITF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 210
+  Top = 124
+  ActiveControl = ListBox1
+  AutoScroll = False
+  Caption = <I>'Split with a HeaderControl'</I>
+  ClientHeight = 400
+  ClientWidth = 540
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clBlack
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  OnResize = FormResize
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> ListBox1: TListBox
+    Left = 0
+    Top = 20
+    Width = 280
+    Height = 380
+    Align = alLeft
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clBlack
+    Font.Height = -64
+    Font.Name = <I>'Arial'</I>
+    Font.Style = []
+    ItemHeight = 72
+    Items.Strings = (
+      <I>'Whale'</I>
+      <I>'Elephant'</I>
+      <I>'Rhino'</I>
+      <I>'Shark'</I>
+      <I>'Giraffe'</I>)
+    ParentFont = False
+    TabOrder = 0
+    OnDblClick = ListBoxDblClick
+  <B>end</B>
+  <B>object</B> ListBox2: TListBox
+    Left = 280
+    Top = 20
+    Width = 180
+    Height = 380
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clBlack
+    Font.Height = -32
+    Font.Name = <I>'Arial'</I>
+    Font.Style = []
+    ItemHeight = 36
+    Items.Strings = (
+      <I>'Dog'</I>
+      <I>'Cat'</I>
+      <I>'Hen'</I>
+      <I>'Monkey'</I>
+      <I>'Cow'</I>
+      <I>'Bull'</I>
+      <I>'Hare'</I>
+      <I>'Sheep'</I>)
+    ParentFont = False
+    TabOrder = 1
+    OnDblClick = ListBoxDblClick
+  <B>end</B>
+  <B>object</B> ListBox3: TListBox
+    Left = 460
+    Top = 20
+    Width = 266
+    Height = 380
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clBlack
+    Font.Height = -12
+    Font.Name = <I>'Arial'</I>
+    Font.Style = []
+    ItemHeight = 15
+    Items.Strings = (
+      <I>'Lizard'</I>
+      <I>'Ant'</I>
+      <I>'Shrimp'</I>
+      <I>'Bug'</I>
+      <I>'Bee'</I>)
+    ParentFont = False
+    TabOrder = 2
+    OnDblClick = ListBoxDblClick
+  <B>end</B>
+  <B>object</B> HeaderControl1: THeaderControl
+    Left = 0
+    Top = 0
+    Width = 540
+    Height = 20
+    Sections = &lt;
+      <B>item</B>
+        MaxWidth = 400
+        MinWidth = 40
+        Text = <I>'Big list'</I>
+        Width = 280
+      <B>end</B>
+      <B>item</B>
+        MaxWidth = 400
+        MinWidth = 40
+        Text = <I>'Medium list'</I>
+        Width = 180
+      <B>end</B>
+      <B>item</B>
+        MaxWidth = 1000
+        MinWidth = 40
+        Text = <I>'Small list'</I>
+        Width = 1000
+      <B>end</B>&gt;
+    OnSectionClick = HeaderControl1SectionClick
+    OnSectionResize = HeaderControl1SectionResize
+  <B>end</B>
+  <B>object</B> FontDialog1: TFontDialog
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = <I>'System'</I>
+    Font.Style = []
+    MinFontSize = 0
+    MaxFontSize = 0
+    Left = 488
+    Top = 336
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

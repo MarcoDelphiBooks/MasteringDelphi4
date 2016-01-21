@@ -1,0 +1,281 @@
+<HTML><HEAD>
+<TITLE>Project: DRAGTREE.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: DRAGTREE.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#DRAGTREE.DPR> DRAGTREE.DPR</A>
+<LI> <A HREF=#TREEFORM.PAS> TREEFORM.PAS</A>
+<LI> <A HREF=#TREEFORM.DFM> TREEFORM.DFM</A>
+</UL>
+<HR>
+<A NAME=DRAGTREE.DPR><H3>DRAGTREE.DPR</H3></A>
+
+<PRE>
+<B>program</B> DragTree;
+
+<B>uses</B>
+  Forms,
+  TreeForm <B>in</B> <I>'TreeForm.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=TREEFORM.PAS><H3>TREEFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> TreeForm;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls, ComCtrls, Menus;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    TreeView1: TTreeView;
+    MainMenu1: TMainMenu;
+    Options1: TMenuItem;
+    File1: TMenuItem;
+    Exit1: TMenuItem;
+    Help1: TMenuItem;
+    About1: TMenuItem;
+    Root1: TMenuItem;
+    Buttons1: TMenuItem;
+    Lines1: TMenuItem;
+    N1: TMenuItem;
+    Font1: TMenuItem;
+    FontDialog1: TFontDialog;
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> About1Click(Sender: TObject);
+    <B>procedure</B> Root1Click(Sender: TObject);
+    <B>procedure</B> Buttons1Click(Sender: TObject);
+    <B>procedure</B> Lines1Click(Sender: TObject);
+    <B>procedure</B> Exit1Click(Sender: TObject);
+    <B>procedure</B> Font1Click(Sender: TObject);
+    <B>procedure</B> TreeView1DragOver(Sender, Source: TObject; X, Y: Integer;
+      State: TDragState; <B>var</B> Accept: Boolean);
+    <B>procedure</B> TreeView1DragDrop(Sender, Source: TObject; X, Y: Integer);
+    <B>procedure</B> FormClose(Sender: TObject; <B>var</B> Action: TCloseAction);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.FormCreate(Sender: TObject);
+<B>begin</B>
+  TreeView1.LoadFromFile (
+    ExtractFilePath (Application.ExeName) + <I>'TreeText.txt'</I>);
+<B>end</B>;
+
+<B>procedure</B> TForm1.About1Click(Sender: TObject);
+<B>begin</B>
+  MessageDlg (<I>'DragTree Example'#13'by Marco Cantù'</I>  ,
+    mtInformation, [mbOk], 0);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Root1Click(Sender: TObject);
+<B>begin</B>
+  TreeView1.ShowRoot := <B>not</B> TreeView1.ShowRoot;
+  Root1.Checked := TreeView1.ShowRoot;
+<B>end</B>;
+
+<B>procedure</B> TForm1.Buttons1Click(Sender: TObject);
+<B>begin</B>
+  TreeView1.ShowButtons := <B>not</B> TreeView1.ShowButtons;
+  Buttons1.Checked := TreeView1.ShowButtons;
+<B>end</B>;
+
+<B>procedure</B> TForm1.Lines1Click(Sender: TObject);
+<B>begin</B>
+  TreeView1.ShowLines := <B>not</B> TreeView1.ShowLines;
+  Lines1.Checked := TreeView1.ShowLines;
+<B>end</B>;
+
+<B>procedure</B> TForm1.Exit1Click(Sender: TObject);
+<B>begin</B>
+  Close;
+<B>end</B>;
+
+<B>procedure</B> TForm1.Font1Click(Sender: TObject);
+<B>begin</B>
+  <B>if</B> FontDialog1.Execute <B>then</B>
+    TreeView1.Font := FontDialog1.Font;
+<B>end</B>;
+
+<B>procedure</B> TForm1.TreeView1DragOver(Sender, Source: TObject; X, Y: Integer;
+  State: TDragState; <B>var</B> Accept: Boolean);
+<B>var</B>
+  TargetNode, SourceNode: TTreeNode;
+<B>begin</B>
+  TargetNode := TreeView1.GetNodeAt (X, Y);
+  <FONT COLOR="#000080"><I>// accept dragging from itself</I></FONT>
+  <B>if</B> (Source = Sender) <B>and</B> (TargetNode &lt;&gt; <B>nil</B>) <B>then</B>
+  <B>begin</B>
+    Accept := True;
+    <FONT COLOR="#000080"><I>// determines source and target</I></FONT>
+    SourceNode := TreeView1.Selected;
+    <FONT COLOR="#000080"><I>// look up the target parent chain</I></FONT>
+    <B>while</B> (TargetNode.Parent &lt;&gt; <B>nil</B>) <B>and</B>
+        (TargetNode &lt;&gt; SourceNode) <B>do</B>
+      TargetNode := TargetNode.Parent;
+    <FONT COLOR="#000080"><I>// if source is found</I></FONT>
+    <B>if</B> TargetNode = SourceNode <B>then</B>
+      <FONT COLOR="#000080"><I>// do not allow dragging over a child</I></FONT>
+      Accept := False;
+  <B>end</B>
+  <B>else</B>
+    Accept := False;
+<B>end</B>;
+
+<B>procedure</B> CopyNodeUnder (TreeView: TTreeView;
+  SourceNode, TargetNode: TTreeNode);
+<B>var</B>
+  NewNode: TTreeNode;
+  I: Integer;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// add a new node</I></FONT>
+  NewNode := TreeView.Items.AddChildFirst (TargetNode, <I>''</I>);
+  <FONT COLOR="#000080"><I>// copy the source</I></FONT>
+  NewNode.Assign (SourceNode);
+  <FONT COLOR="#000080"><I>// recursively copy subitems</I></FONT>
+  <B>for</B> I := SourceNode.Count - 1 <B>downto</B> 0 <B>do</B>
+    CopyNodeUnder (TreeView, SourceNode.Item [I], NewNode);
+  <FONT COLOR="#000080"><I>// delete source after copy (move)</I></FONT>
+  TreeView.Items.Delete (SourceNode);
+<B>end</B>;
+
+<B>procedure</B> TForm1.TreeView1DragDrop(Sender, Source: TObject;
+  X, Y: Integer);
+<B>var</B>
+  TargetNode, SourceNode: TTreeNode;
+<B>begin</B>
+  TargetNode := TreeView1.GetNodeAt (X, Y);
+  <B>if</B> TargetNode &lt;&gt; <B>nil</B> <B>then</B>
+  <B>begin</B>
+    SourceNode := TreeView1.Selected;
+    SourceNode.MoveTo (TargetNode, naAddChildFirst);
+    TargetNode.Expand (False);
+    TreeView1.Selected := TargetNode;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TForm1.FormClose(Sender: TObject; <B>var</B> Action: TCloseAction);
+<B>begin</B>
+  TreeView1.SaveToFile (
+    ExtractFilePath (Application.ExeName) + <I>'TreeText.txt'</I>);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=TREEFORM.DFM><H3>TREEFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 195
+  Top = 108
+  Width = 440
+  Height = 304
+  Caption = <I>'DragTree'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  Menu = MainMenu1
+  OldCreateOrder = True
+  OnClose = FormClose
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> TreeView1: TTreeView
+    Left = 0
+    Top = 0
+    Width = 432
+    Height = 258
+    Align = alClient
+    DragMode = dmAutomatic
+    HotTrack = True
+    Indent = 19
+    TabOrder = 0
+    OnDragDrop = TreeView1DragDrop
+    OnDragOver = TreeView1DragOver
+  <B>end</B>
+  <B>object</B> MainMenu1: TMainMenu
+    Left = 32
+    Top = 8
+    <B>object</B> File1: TMenuItem
+      Caption = <I>'&amp;File'</I>
+      <B>object</B> Exit1: TMenuItem
+        Caption = <I>'E&amp;xit'</I>
+        ShortCut = 32883
+        OnClick = Exit1Click
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> Options1: TMenuItem
+      Caption = <I>'&amp;Options'</I>
+      <B>object</B> Root1: TMenuItem
+        Caption = <I>'&amp;Root'</I>
+        Checked = True
+        OnClick = Root1Click
+      <B>end</B>
+      <B>object</B> Buttons1: TMenuItem
+        Caption = <I>'&amp;Buttons'</I>
+        Checked = True
+        OnClick = Buttons1Click
+      <B>end</B>
+      <B>object</B> Lines1: TMenuItem
+        Caption = <I>'&amp;Lines'</I>
+        Checked = True
+        OnClick = Lines1Click
+      <B>end</B>
+      <B>object</B> N1: TMenuItem
+        Caption = <I>'-'</I>
+      <B>end</B>
+      <B>object</B> Font1: TMenuItem
+        Caption = <I>'Font...'</I>
+        OnClick = Font1Click
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> Help1: TMenuItem
+      Caption = <I>'&amp;Help'</I>
+      <B>object</B> About1: TMenuItem
+        Caption = <I>'&amp;About...'</I>
+        OnClick = About1Click
+      <B>end</B>
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> FontDialog1: TFontDialog
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = <I>'MS Sans Serif'</I>
+    Font.Style = []
+    MinFontSize = 0
+    MaxFontSize = 0
+    Left = 32
+    Top = 56
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

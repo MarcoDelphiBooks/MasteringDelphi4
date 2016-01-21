@@ -1,0 +1,262 @@
+<HTML><HEAD>
+<TITLE>Project: CREDITS.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: CREDITS.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#CREDITS.DPR> CREDITS.DPR</A>
+<LI> <A HREF=#USELESS.PAS> USELESS.PAS</A>
+<LI> <A HREF=#ABOUT.PAS> ABOUT.PAS</A>
+<LI> <A HREF=#USELESS.DFM> USELESS.DFM</A>
+<LI> <A HREF=#ABOUT.DFM> ABOUT.DFM</A>
+</UL>
+<HR>
+<A NAME=CREDITS.DPR><H3>CREDITS.DPR</H3></A>
+
+<PRE>
+<B>program</B> Credits;
+
+<B>uses</B>
+  Forms,
+  Useless <B>in</B> <I>'USELESS.PAS'</I> <FONT COLOR="#000080"><I>{UselessForm}</I></FONT>,
+  About <B>in</B> <I>'ABOUT.PAS'</I> <FONT COLOR="#000080"><I>{AboutBox}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TUselessForm, UselessForm);
+  Application.CreateForm(TAboutBox, AboutBox);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=USELESS.PAS><H3>USELESS.PAS</H3></A>
+
+<PRE>
+<B>unit</B> Useless;
+
+<B>interface</B>
+
+<B>uses</B> Windows, Classes, Graphics, Forms, Controls,
+     Menus, About;
+
+<B>type</B>
+  TUselessForm = <B>class</B>(TForm)
+    MainMenu1: TMainMenu;
+    Help1: TMenuItem;
+    Aboutthisprogram1: TMenuItem;
+    <B>procedure</B> Aboutthisprogram1Click(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  UselessForm: TUselessForm;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TUselessForm.Aboutthisprogram1Click(Sender: TObject);
+<B>begin</B>
+  AboutBox.ShowModal;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=ABOUT.PAS><H3>ABOUT.PAS</H3></A>
+
+<PRE>
+<B>unit</B> About;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Classes, Graphics, Forms,
+  Controls, Buttons, StdCtrls, ExtCtrls;
+
+<B>type</B>
+  TAboutBox = <B>class</B>(TForm)
+    BitBtn1: TBitBtn;
+    Panel1: TPanel;
+    Label1: TLabel;
+    Label2: TLabel;
+    PaintBox1: TPaintBox;
+    <B>procedure</B> Label1MouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  AboutBox: TAboutBox;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> Delay (Seconds, MilliSec: Word);
+<B>var</B>
+  TimeOut: TDateTime;
+<B>begin</B>
+  TimeOut := Now + EncodeTime (0,
+    Seconds <B>div</B> 60, Seconds <B>mod</B> 60, MilliSec);
+  <FONT COLOR="#000080"><I>// wait until he TimeOut time</I></FONT>
+  <B>while</B> Now &lt; TimeOut <B>do</B>
+    Application.ProcessMessages;
+<B>end</B>;
+
+<B>procedure</B> TAboutBox.Label1MouseDown(Sender: TObject;
+  Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+<B>var</B>
+  I, LineH: Integer;
+<B>begin</B>
+  <B>if</B> (Button = mbRight) <B>and</B> (ssShift <B>in</B> Shift) <B>then</B>
+  <B>begin</B>
+    Panel1.Visible := False;
+    LineH := PaintBox1.Canvas.TextHeight (<I>'0'</I>);
+    <B>for</B> I := 0 <B>to</B> 100 + LineH * 10 <B>do</B>
+      <B>with</B> PaintBox1.Canvas <B>do</B>
+      <B>begin</B>
+        <FONT COLOR="#000080"><I>// empty lines are used to delete descendants</I></FONT>
+        TextOut (40, 100 - I,
+          <I>'CREDITS example from:'</I>);
+        TextOut (40, 100 + LineH - I,
+          <I>'&quot;Mastering Delphi&quot;'</I>);
+        TextOut (40, 100 + LineH * 2 - I,
+          <I>'                          '</I>);
+        TextOut (40, 100 + LineH * 4 - I,
+          <I>'Author: Marco Cantù'</I>);
+        TextOut (40, 100 + LineH * 5 - I,
+          <I>'Publisher: Sybex'</I>);
+        TextOut (40, 100 + LineH * 6 - I,
+          <I>'                          '</I>);
+        TextOut (40, 100 + LineH * 8 - I,
+          <I>'Dedicated with love'</I>);
+        TextOut (40, 100 + LineH * 9 - I,
+          <I>'to my wife, Lella'</I>);
+        TextOut (40, 100 + LineH * 10 - I,
+          <I>'                          '</I>);
+        <FONT COLOR="#000080"><I>// wait 5 milliseconds</I></FONT>
+        Delay (0, 5);
+      <B>end</B>;
+    Panel1.Visible := True;
+  <B>end</B>;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=USELESS.DFM><H3>USELESS.DFM</H3></A>
+
+<PRE>
+<B>object</B> UselessForm: TUselessForm
+  Left = 227
+  Top = 156
+  Width = 225
+  Height = 169
+  Caption = <I>'Useless form'</I>
+  Font.Color = clWindowText
+  Font.Height = -13
+  Font.Name = <I>'System'</I>
+  Font.Style = []
+  Menu = MainMenu1
+  PixelsPerInch = 96
+  TextHeight = 16
+  <B>object</B> MainMenu1: TMainMenu
+    Left = 24
+    Top = 16
+    <B>object</B> Help1: TMenuItem
+      Caption = <I>'&amp;Help'</I>
+      <B>object</B> Aboutthisprogram1: TMenuItem
+        Caption = <I>'About this program...'</I>
+        OnClick = Aboutthisprogram1Click
+      <B>end</B>
+    <B>end</B>
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<A NAME=ABOUT.DFM><H3>ABOUT.DFM</H3></A>
+
+<PRE>
+<B>object</B> AboutBox: TAboutBox
+  Left = 228
+  Top = 182
+  ActiveControl = BitBtn1
+  BorderStyle = bsDialog
+  Caption = <I>'About this program'</I>
+  ClientHeight = 178
+  ClientWidth = 427
+  Font.Color = clBlack
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> PaintBox1: TPaintBox
+    Left = 0
+    Top = 8
+    Width = 425
+    Height = 121
+    Font.Color = clBlack
+    Font.Height = -19
+    Font.Name = <I>'Arial'</I>
+    Font.Style = []
+    ParentFont = False
+  <B>end</B>
+  <B>object</B> Panel1: TPanel
+    Left = 9
+    Top = 8
+    Width = 409
+    Height = 121
+    TabOrder = 1
+    <B>object</B> Label1: TLabel
+      Left = 20
+      Top = 16
+      Width = 370
+      Height = 57
+      AutoSize = False
+      Caption =
+         <I>'This program was written by Marco Cantù for the book &quot;Mastering '</I> +
+        <I>'Delphi&quot;, published by Sybex, to demonstrate how to build a hidde'</I> +
+        <I>'n credits screen. If you press the right mouse button on this te'</I> +
+        <I>'xt by holding down the Shift key, the presentation will begin. '</I>
+      WordWrap = True
+      OnMouseDown = Label1MouseDown
+    <B>end</B>
+    <B>object</B> Label2: TLabel
+      Left = 20
+      Top = 72
+      Width = 370
+      Height = 41
+      AutoSize = False
+      Caption =
+         <I>'Of course, you should not document how to reach the hidden credi'</I> +
+        <I>'t screen, or just give a generic hint. This text should be used '</I> +
+        <I>'for copyright information, version information, and similar stuf'</I> +
+        <I>'f. '</I>
+      WordWrap = True
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> BitBtn1: TBitBtn
+    Left = 173
+    Top = 136
+    Width = 81
+    Height = 33
+    TabOrder = 0
+    Kind = bkOK
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

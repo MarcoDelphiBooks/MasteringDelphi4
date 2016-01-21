@@ -1,0 +1,254 @@
+<HTML><HEAD>
+<TITLE>Project: BITMENU.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: BITMENU.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#BITMENU.DPR> BITMENU.DPR</A>
+<LI> <A HREF=#BITMENUF.PAS> BITMENUF.PAS</A>
+<LI> <A HREF=#BITMENUF.DFM> BITMENUF.DFM</A>
+</UL>
+<HR>
+<A NAME=BITMENU.DPR><H3>BITMENU.DPR</H3></A>
+
+<PRE>
+<B>program</B> BitMenu;
+
+<B>uses</B>
+  Forms,
+  BitMenuF <B>in</B> <I>'BitMenuF.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=BITMENUF.PAS><H3>BITMENUF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> BitMenuF;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  ExtCtrls, Menus;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    ShapeDemo: TShape;
+    MainMenu1: TMainMenu;
+    File1: TMenuItem;
+    Exit1: TMenuItem;
+    Shape1: TMenuItem;
+    Ellipse1: TMenuItem;
+    RoundRec1: TMenuItem;
+    Rectang1: TMenuItem;
+    Color1: TMenuItem;
+    Red1: TMenuItem;
+    Green1: TMenuItem;
+    Blue1: TMenuItem;
+    Help1: TMenuItem;
+    About1: TMenuItem;
+    <B>procedure</B> FormResize(Sender: TObject);
+    <B>procedure</B> Exit1Click(Sender: TObject);
+    <B>procedure</B> About1Click(Sender: TObject);
+    <B>procedure</B> Red1Click(Sender: TObject);
+    <B>procedure</B> Green1Click(Sender: TObject);
+    <B>procedure</B> Blue1Click(Sender: TObject);
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> Ellipse1Click(Sender: TObject);
+    <B>procedure</B> RoundRec1Click(Sender: TObject);
+    <B>procedure</B> Rectang1Click(Sender: TObject);
+    <B>procedure</B> FormDestroy(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.FormResize(Sender: TObject);
+<B>begin</B>
+  ShapeDemo.SetBounds (ClientWidth <B>div</B> 6, ClientHeight <B>div</B> 6,
+    2 * ClientWidth <B>div</B> 3, 2 * ClientHeight <B>div</B> 3);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Exit1Click(Sender: TObject);
+<B>begin</B>
+  Close;
+<B>end</B>;
+
+<B>procedure</B> TForm1.About1Click(Sender: TObject);
+<B>begin</B>
+  MessageDlg (<I>'Bitmap Menu example,'#13</I> +
+    <I>'from &quot;Mastering Delphi&quot; by Marco Cantù'</I>,
+    mtInformation, [mbOK], 0);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Red1Click(Sender: TObject);
+<B>begin</B>
+  ShapeDemo.Brush.Color := clRed;
+<B>end</B>;
+
+<B>procedure</B> TForm1.Green1Click(Sender: TObject);
+<B>begin</B>
+  ShapeDemo.Brush.Color := clLime;
+<B>end</B>;
+
+<B>procedure</B> TForm1.Blue1Click(Sender: TObject);
+<B>begin</B>
+  ShapeDemo.Brush.Color := clBlue;
+<B>end</B>;
+
+<B>procedure</B> TForm1.FormCreate(Sender: TObject);
+<B>var</B>
+  I: Integer;
+  Bmp: TBitmap;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// load the bitmaps for the shapes</I></FONT>
+  <B>for</B> I := 0 <B>to</B> Shape1.Count - 1 <B>do</B>
+  <B>begin</B>
+    Bmp := TBitmap.Create;
+    Bmp.LoadFromFile (Shape1.Items [I].Caption + <I>'.bmp'</I>);
+    ModifyMenu (Shape1.Handle,
+      Shape1.Items [I].MenuIndex,
+      mf_ByPosition <B>or</B> mf_Bitmap,
+      Shape1.Items [I].Command,
+      Pointer (Bmp.Handle));
+    Shape1.Items [I].Tag := Integer (Bmp);
+  <B>end</B>;
+  <FONT COLOR="#000080"><I>// load the bitmaps for the colors</I></FONT>
+  <B>for</B> I := 0 <B>to</B> Color1.Count - 1 <B>do</B>
+  <B>begin</B>
+    Bmp := TBitmap.Create;
+    Bmp.LoadFromFile (Color1.Items [I].Caption + <I>'.bmp'</I>);
+    ModifyMenu (Color1.Handle,
+      Color1.Items [I].MenuIndex,
+      mf_ByPosition <B>or</B> mf_Bitmap,
+      Color1.Items [I].Command,
+      Pointer (Bmp.Handle));
+    Color1.Items [I].Tag := Integer (Bmp);
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TForm1.Ellipse1Click(Sender: TObject);
+<B>begin</B>
+  ShapeDemo.Shape := stEllipse;
+<B>end</B>;
+
+<B>procedure</B> TForm1.RoundRec1Click(Sender: TObject);
+<B>begin</B>
+  ShapeDemo.Shape := stRoundRect;
+<B>end</B>;
+
+<B>procedure</B> TForm1.Rectang1Click(Sender: TObject);
+<B>begin</B>
+  ShapeDemo.Shape := stRectangle;
+<B>end</B>;
+
+<B>procedure</B> TForm1.FormDestroy(Sender: TObject);
+<B>var</B>
+  I: Integer;
+<B>begin</B>
+  <B>for</B> I := 0 <B>to</B> Shape1.Count - 1 <B>do</B>
+    TBitmap (Shape1.Items [I].Tag).Free;
+  <B>for</B> I := 0 <B>to</B> Color1.Count - 1 <B>do</B>
+    TBitmap (Color1.Items [I].Tag).Free;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=BITMENUF.DFM><H3>BITMENUF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 200
+  Top = 112
+  Width = 425
+  Height = 298
+  Caption = <I>'Bitmap Menu'</I>
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  Menu = MainMenu1
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  OnResize = FormResize
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> ShapeDemo: TShape
+    Left = 104
+    Top = 72
+    Width = 145
+    Height = 81
+    Shape = stEllipse
+  <B>end</B>
+  <B>object</B> MainMenu1: TMainMenu
+    Left = 56
+    Top = 16
+    <B>object</B> File1: TMenuItem
+      Caption = <I>'&amp;File'</I>
+      <B>object</B> Exit1: TMenuItem
+        Caption = <I>'E&amp;xit'</I>
+        OnClick = Exit1Click
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> Shape1: TMenuItem
+      Caption = <I>'&amp;Shape'</I>
+      <B>object</B> Ellipse1: TMenuItem
+        Caption = <I>'Ellipse'</I>
+        OnClick = Ellipse1Click
+      <B>end</B>
+      <B>object</B> RoundRec1: TMenuItem
+        Caption = <I>'RoundRec'</I>
+        OnClick = RoundRec1Click
+      <B>end</B>
+      <B>object</B> Rectang1: TMenuItem
+        Caption = <I>'Rectang'</I>
+        OnClick = Rectang1Click
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> Color1: TMenuItem
+      Caption = <I>'&amp;Color'</I>
+      <B>object</B> Red1: TMenuItem
+        Caption = <I>'Red'</I>
+        OnClick = Red1Click
+      <B>end</B>
+      <B>object</B> Green1: TMenuItem
+        Caption = <I>'Green'</I>
+        OnClick = Green1Click
+      <B>end</B>
+      <B>object</B> Blue1: TMenuItem
+        Caption = <I>'Blue'</I>
+        OnClick = Blue1Click
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> Help1: TMenuItem
+      Caption = <I>'&amp;Help'</I>
+      <B>object</B> About1: TMenuItem
+        Caption = <I>'&amp;About...'</I>
+        OnClick = About1Click
+      <B>end</B>
+    <B>end</B>
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

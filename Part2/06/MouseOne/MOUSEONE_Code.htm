@@ -1,0 +1,143 @@
+<HTML><HEAD>
+<TITLE>Project: MOUSEONE.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: MOUSEONE.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#MOUSEONE.DPR> MOUSEONE.DPR</A>
+<LI> <A HREF=#MOUSEF.PAS> MOUSEF.PAS</A>
+<LI> <A HREF=#MOUSEF.DFM> MOUSEF.DFM</A>
+</UL>
+<HR>
+<A NAME=MOUSEONE.DPR><H3>MOUSEONE.DPR</H3></A>
+
+<PRE>
+<B>program</B> MouseOne;
+
+<B>uses</B>
+  Forms,
+  MouseF <B>in</B> <I>'MouseF.pas'</I> <FONT COLOR="#000080"><I>{MouseForm}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TMouseForm, MouseForm);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MOUSEF.PAS><H3>MOUSEF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> MouseF;
+
+<B>interface</B>
+
+<B>uses</B> Windows, Classes, Graphics,
+  Controls, Forms, SysUtils;
+
+<B>type</B>
+  TMouseForm = <B>class</B>(TForm)
+    <B>procedure</B> FormMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    <B>procedure</B> FormMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    <B>procedure</B> FormMouseUp(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    <B>procedure</B> FormPaint(Sender: TObject);
+  <B>private</B>
+    fDragging: Boolean;
+    fRect: TRect;
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  MouseForm: TMouseForm;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TMouseForm.FormMouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+<B>begin</B>
+  <B>if</B> Button = mbLeft <B>then</B>
+  <B>begin</B>
+    fDragging := True;
+    SetCapture (Handle);
+    fRect.Left := X;
+    fRect.Top := Y;
+    fRect.BottomRight := fRect.TopLeft;
+    Canvas.DrawFocusRect (fRect);
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TMouseForm.FormMouseMove(Sender: TObject;
+  Shift: TShiftState; X, Y: Integer);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// display the position of the mouse in the caption</I></FONT>
+  Caption := Format (<I>'Mouse in x=%d, y=%d'</I>, [X, Y]);
+  <B>if</B> fDragging <B>then</B>
+  <B>begin</B>
+    <FONT COLOR="#000080"><I>// remove and redraw the dragging rectangle</I></FONT>
+    Canvas.DrawFocusRect (fRect);
+    fRect.Right := X;
+    fRect.Bottom := Y;
+    Canvas.DrawFocusRect (fRect);
+  <B>end</B>
+  <B>else</B>
+    <B>if</B> ssShift <B>in</B> Shift <B>then</B>
+      <FONT COLOR="#000080"><I>// mark points in yellow</I></FONT>
+      Canvas.Pixels [X, Y] := clYellow;
+<B>end</B>;
+
+<B>procedure</B> TMouseForm.FormMouseUp(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+<B>begin</B>
+  <B>if</B> fDragging <B>then</B>
+  <B>begin</B>
+    ReleaseCapture;
+    fDragging := False;
+    Invalidate;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TMouseForm.FormPaint(Sender: TObject);
+<B>begin</B>
+  Canvas.Rectangle (fRect.Left, fRect.Top,
+    fRect.Right, fRect.Bottom);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MOUSEF.DFM><H3>MOUSEF.DFM</H3></A>
+
+<PRE>
+<B>object</B> MouseForm: TMouseForm
+  Left = 223
+  Top = 108
+  Width = 435
+  Height = 300
+  Caption = <I>'Mouse'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -13
+  Font.Name = <I>'System'</I>
+  Font.Style = []
+  OldCreateOrder = False
+  OnMouseDown = FormMouseDown
+  OnMouseMove = FormMouseMove
+  OnMouseUp = FormMouseUp
+  OnPaint = FormPaint
+  PixelsPerInch = 96
+  TextHeight = 16
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

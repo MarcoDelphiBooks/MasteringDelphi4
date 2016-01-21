@@ -1,0 +1,156 @@
+<HTML><HEAD>
+<TITLE>Project: SCALE.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: SCALE.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#SCALE.DPR> SCALE.DPR</A>
+<LI> <A HREF=#SCALEF.PAS> SCALEF.PAS</A>
+<LI> <A HREF=#SCALEF.DFM> SCALEF.DFM</A>
+</UL>
+<HR>
+<A NAME=SCALE.DPR><H3>SCALE.DPR</H3></A>
+
+<PRE>
+<B>program</B> Scale;
+
+<B>uses</B>
+  Forms,
+  ScaleF <B>in</B> <I>'ScaleF.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=SCALEF.PAS><H3>SCALEF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> ScaleF;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes, Graphics, Controls,
+  Forms, Dialogs, StdCtrls, Spin, Mask, ComCtrls;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    ScaleButton: TButton;
+    RestoreButton: TButton;
+    Label1: TLabel;
+    Edit1: TEdit;
+    UpDown1: TUpDown;
+    <B>procedure</B> ScaleButtonClick(Sender: TObject);
+    <B>procedure</B> RestoreButtonClick(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+    AmountScaled: Integer;
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.ScaleButtonClick(Sender: TObject);
+<B>begin</B>
+  AmountScaled := UpDown1.Position;
+  ScaleBy (AmountScaled, 100);
+  UpDown1.Height := Edit1.Height;
+  ScaleButton.Enabled := False;
+  RestoreButton.Enabled := True;
+<B>end</B>;
+
+<B>procedure</B> TForm1.RestoreButtonClick(Sender: TObject);
+<B>begin</B>
+  ScaleBy (100, AmountScaled);
+  UpDown1.Height := Edit1.Height;
+  ScaleButton.Enabled := True;
+  RestoreButton.Enabled := False;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=SCALEF.DFM><H3>SCALEF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 230
+  Top = 133
+  ActiveControl = ScaleButton
+  AutoScroll = False
+  Caption = <I>'Scale'</I>
+  ClientHeight = 139
+  ClientWidth = 268
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clBlack
+  Font.Height = -16
+  Font.Name = <I>'Arial'</I>
+  Font.Style = [fsBold]
+  OldCreateOrder = True
+  PixelsPerInch = 96
+  TextHeight = 19
+  <B>object</B> Label1: TLabel
+    Left = 24
+    Top = 24
+    Width = 69
+    Height = 19
+    Caption = <I>'&amp;ScaleBy:'</I>
+  <B>end</B>
+  <B>object</B> ScaleButton: TButton
+    Left = 144
+    Top = 25
+    Width = 97
+    Height = 33
+    Caption = <I>'&amp;Do Scale'</I>
+    TabOrder = 0
+    OnClick = ScaleButtonClick
+  <B>end</B>
+  <B>object</B> RestoreButton: TButton
+    Left = 144
+    Top = 72
+    Width = 97
+    Height = 33
+    Caption = <I>'&amp;Restore'</I>
+    Enabled = False
+    TabOrder = 1
+    OnClick = RestoreButtonClick
+  <B>end</B>
+  <B>object</B> Edit1: TEdit
+    Left = 24
+    Top = 48
+    Width = 57
+    Height = 27
+    TabOrder = 2
+    Text = <I>'100'</I>
+  <B>end</B>
+  <B>object</B> UpDown1: TUpDown
+    Left = 81
+    Top = 48
+    Width = 15
+    Height = 27
+    Associate = Edit1
+    Min = 30
+    Max = 300
+    Increment = 10
+    Position = 100
+    TabOrder = 3
+    Wrap = False
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

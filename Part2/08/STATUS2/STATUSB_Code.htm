@@ -1,0 +1,340 @@
+<HTML><HEAD>
+<TITLE>Project: STATUSB.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: STATUSB.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#STATUSB.DPR> STATUSB.DPR</A>
+<LI> <A HREF=#STATUSF.PAS> STATUSF.PAS</A>
+<LI> <A HREF=#STATUSF.DFM> STATUSF.DFM</A>
+</UL>
+<HR>
+<A NAME=STATUSB.DPR><H3>STATUSB.DPR</H3></A>
+
+<PRE>
+<B>program</B> Statusb;
+
+<B>uses</B>
+  Forms,
+  StatusF <B>in</B> <I>'StatusF.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=STATUSF.PAS><H3>STATUSF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> StatusF;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes, Graphics, Controls,
+  Forms, Dialogs, Menus, ExtCtrls, Buttons, ComCtrls;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    MainMenu1: TMainMenu;
+    File1: TMenuItem;
+    New1: TMenuItem;
+    Open1: TMenuItem;
+    Save1: TMenuItem;
+    Saveas1: TMenuItem;
+    N1: TMenuItem;
+    Exit1: TMenuItem;
+    Help1: TMenuItem;
+    About1: TMenuItem;
+    Edit1: TMenuItem;
+    Undo1: TMenuItem;
+    N2: TMenuItem;
+    Cut1: TMenuItem;
+    Copy1: TMenuItem;
+    Paste1: TMenuItem;
+    Panel2: TPanel;
+    SpeedButtonNote: TSpeedButton;
+    SpeedButtonBold: TSpeedButton;
+    SpeedButtonItalic: TSpeedButton;
+    SpeedButtonUnderline: TSpeedButton;
+    SpeedButtonLeft: TSpeedButton;
+    SpeedButtonCenter: TSpeedButton;
+    SpeedButtonRight: TSpeedButton;
+    StatusBar1: TStatusBar;
+    <B>procedure</B> FormCreate(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+    <B>procedure</B> ShowHint(Sender: TObject);
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.FormCreate(Sender: TObject);
+<B>begin</B>
+  Application.OnHint := ShowHint;
+<B>end</B>;
+
+<B>procedure</B> TForm1.ShowHint(Sender: TObject);
+<B>begin</B>
+  StatusBar1.SimpleText := Application.Hint;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=STATUSF.DFM><H3>STATUSF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 233
+  Top = 162
+  Width = 435
+  Height = 300
+  Caption = <I>'Status Bar'</I>
+  Font.Color = clBlack
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  Menu = MainMenu1
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Panel2: TPanel
+    Left = 0
+    Top = 0
+    Width = 427
+    Height = 30
+    Align = alTop
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 0
+    <B>object</B> SpeedButtonNote: TSpeedButton
+      Left = 8
+      Top = 2
+      Width = 25
+      Height = 25
+      Hint = <I>'Play Note|Play a note using the PC speaker'</I>
+      Glyph.Data = <FONT COLOR="#000080"><I>{
+        42010000424D4201000000000000760000002800000012000000110000000100
+        040000000000CC00000000000000000000001000000000000000000000000000
+        80000080000000808000800000008000800080800000C0C0C000808080000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333333333333
+        3333330000003330033333333333330000003300003330033333330000003300
+        0003000033333300000033300003000003333300000033333303300003333300
+        0000333333033333033333000000333333033333033333000000333333033333
+        0333330000003333330333330333330000003333330333330333330000003333
+        3300033303333300000033333303300003333300000033333300033303333300
+        0000333333333000033333000000333333333333333333000000333333333333
+        333333000000}</I></FONT>
+    <B>end</B>
+    <B>object</B> SpeedButtonBold: TSpeedButton
+      Left = 120
+      Top = 2
+      Width = 25
+      Height = 25
+      Hint = <I>'Bold|Show the text in bold'</I>
+      AllowAllUp = True
+      GroupIndex = 2
+      Glyph.Data = <FONT COLOR="#000080"><I>{
+        42010000424D4201000000000000760000002800000012000000110000000100
+        040000000000CC00000000000000000000001000000000000000000000000000
+        80000080000000808000800000008000800080800000C0C0C000808080000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333333333333
+        3333330000003333333333333333330000003333333333333333330000003333
+        0000000033333300000033330000000003333300000033333003333003333300
+        0000333330033330033333000000333330033300033333000000333330000000
+        3333330000003333300000000333330000003333300333300333330000003333
+        3003333003333300000033330000000003333300000033330000000033333300
+        0000333333333333333333000000333333333333333333000000333333333333
+        333333000000}</I></FONT>
+    <B>end</B>
+    <B>object</B> SpeedButtonItalic: TSpeedButton
+      Left = 144
+      Top = 2
+      Width = 25
+      Height = 25
+      Hint = <I>'Italic|Show the text in italics'</I>
+      AllowAllUp = True
+      GroupIndex = 2
+      Glyph.Data = <FONT COLOR="#000080"><I>{
+        42010000424D4201000000000000760000002800000012000000110000000100
+        040000000000CC00000000000000000000001000000000000000000000000000
+        80000080000000808000800000008000800080800000C0C0C000808080000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333333333333
+        3333330000003333333333333333330000003333333333333333330000003333
+        3000000333333300000033333330033333333300000033333330033333333300
+        0000333333300333333333000000333333330033333333000000333333330033
+        3333330000003333333300333333330000003333333330033333330000003333
+        3333300333333300000033333330000003333300000033333333333333333300
+        0000333333333333333333000000333333333333333333000000333333333333
+        333333000000}</I></FONT>
+    <B>end</B>
+    <B>object</B> SpeedButtonUnderline: TSpeedButton
+      Left = 168
+      Top = 2
+      Width = 25
+      Height = 25
+      Hint = <I>'Underlined|Show the text underlined'</I>
+      AllowAllUp = True
+      GroupIndex = 2
+      Glyph.Data = <FONT COLOR="#000080"><I>{
+        42010000424D4201000000000000760000002800000012000000110000000100
+        040000000000CC00000000000000000000001000000000000000000000000000
+        80000080000000808000800000008000800080800000C0C0C000808080000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333333333333
+        3333330000003333333333333333330000003333333333333333330000003333
+</I></FONT>        3000000003333300000033333000000003333300000033333333333333333300
+        0000333333300030033333000000333333000000033333000000333333003000
+        3333330000003333330033003333330000003333330033003333330000003333
+        3300330033333300000033333000300033333300000033333333333333333300
+        0000333333333333333333000000333333333333333333000000333333333333
+        333333000000}
+    <B>end</B>
+    <B>object</B> SpeedButtonLeft: TSpeedButton
+      Left = 40
+      Top = 2
+      Width = 25
+      Height = 25
+      Hint = <I>'Left|Left justify the text'</I>
+      GroupIndex = 1
+      Glyph.Data = <FONT COLOR="#000080"><I>{
+        42010000424D4201000000000000760000002800000012000000110000000100
+        040000000000CC00000000000000000000001000000000000000000000000000
+        80000080000000808000800000008000800080800000C0C0C000808080000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333333333333
+        333333000000330000000000000033000000330FFFFFFFFFFFF033000000330F
+        0000000FFFF033000000330FFFFFFFFFFFF033000000330F000FFFFFFFF03300
+        0000330FFFFFFFFFFFF033000000330F00000FFFFFF033000000330FFFFFFFFF
+        FFF033000000330F000FFFFFFFF033000000330FFFFFFFFFFFF033000000330F
+        00000000FFF033000000330FFFFFFFFFFFF033000000330F000000FFFFF03300
+        0000330FFFFFFFFFFFF033000000330000000000000033000000333333333333
+        333333000000}</I></FONT>
+    <B>end</B>
+    <B>object</B> SpeedButtonCenter: TSpeedButton
+      Left = 64
+      Top = 2
+      Width = 25
+      Height = 25
+      Hint = <I>'Center|Center the text'</I>
+      GroupIndex = 1
+      Glyph.Data = <FONT COLOR="#000080"><I>{
+        42010000424D4201000000000000760000002800000012000000110000000100
+        040000000000CC00000000000000000000001000000000000000000000000000
+        80000080000000808000800000008000800080800000C0C0C000808080000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333333333333
+        333333000000330000000000000033000000330FFFFFFFFFFFF033000000330F
+        FF000000FFF033000000330FFFFFFFFFFFF033000000330FFFF0000FFFF03300
+        0000330FFFFFFFFFFFF033000000330FFF000000FFF033000000330FFFFFFFFF
+        FFF033000000330FFFFF00FFFFF033000000330FFFFFFFFFFFF033000000330F
+        F00000000FF033000000330FFFFFFFFFFFF033000000330FFF000000FFF03300
+        0000330FFFFFFFFFFFF033000000330000000000000033000000333333333333
+        333333000000}</I></FONT>
+    <B>end</B>
+    <B>object</B> SpeedButtonRight: TSpeedButton
+      Left = 88
+      Top = 2
+      Width = 25
+      Height = 25
+      Hint = <I>'Right|Right justify the text'</I>
+      GroupIndex = 1
+      Glyph.Data = <FONT COLOR="#000080"><I>{
+        42010000424D4201000000000000760000002800000012000000110000000100
+        040000000000CC00000000000000000000001000000000000000000000000000
+        80000080000000808000800000008000800080800000C0C0C000808080000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333333333333
+        333333000000330000000000000033000000330FFFFFFFFFFFF033000000330F
+        FFF0000000F033000000330FFFFFFFFFFFF033000000330FFFFFFFF000F03300
+        0000330FFFFFFFFFFFF033000000330FFFFFF00000F033000000330FFFFFFFFF
+        FFF033000000330FFFFFFFF000F033000000330FFFFFFFFFFFF033000000330F
+        FF00000000F033000000330FFFFFFFFFFFF033000000330FFFFF000000F03300
+        0000330FFFFFFFFFFFF033000000330000000000000033000000333333333333
+        333333000000}</I></FONT>
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> StatusBar1: TStatusBar
+    Left = 0
+    Top = 235
+    Width = 427
+    Height = 19
+    Panels = &lt;&gt;
+    SimplePanel = True
+  <B>end</B>
+  <B>object</B> MainMenu1: TMainMenu
+    Left = 24
+    Top = 48
+    <B>object</B> File1: TMenuItem
+      Caption = <I>'&amp;File'</I>
+      Hint = <I>'Operations on files'</I>
+      <B>object</B> New1: TMenuItem
+        Caption = <I>'&amp;New...'</I>
+        Hint = <I>'Create a new file'</I>
+      <B>end</B>
+      <B>object</B> Open1: TMenuItem
+        Caption = <I>'&amp;Open...'</I>
+        Hint = <I>'Open an existing file'</I>
+      <B>end</B>
+      <B>object</B> Save1: TMenuItem
+        Caption = <I>'&amp;Save'</I>
+        Hint = <I>'Save the current file'</I>
+      <B>end</B>
+      <B>object</B> Saveas1: TMenuItem
+        Caption = <I>'Save &amp;as...'</I>
+        Hint = <I>'Save the file with a new name'</I>
+      <B>end</B>
+      <B>object</B> N1: TMenuItem
+        Caption = <I>'-'</I>
+      <B>end</B>
+      <B>object</B> Exit1: TMenuItem
+        Caption = <I>'E&amp;xit'</I>
+        Hint = <I>'Terminate the application'</I>
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> Edit1: TMenuItem
+      Caption = <I>'&amp;Edit'</I>
+      Hint = <I>'Operations on the text'</I>
+      <B>object</B> Undo1: TMenuItem
+        Caption = <I>'&amp;Undo'</I>
+        Hint = <I>'Reverse the last action'</I>
+      <B>end</B>
+      <B>object</B> N2: TMenuItem
+        Caption = <I>'-'</I>
+      <B>end</B>
+      <B>object</B> Cut1: TMenuItem
+        Caption = <I>'Cu&amp;t'</I>
+        Hint = <I>'Delete the selection, moving it to the clipboard'</I>
+      <B>end</B>
+      <B>object</B> Copy1: TMenuItem
+        Caption = <I>'&amp;Copy'</I>
+        Hint = <I>'Make a copy of the current selection in the clipboard'</I>
+      <B>end</B>
+      <B>object</B> Paste1: TMenuItem
+        Caption = <I>'&amp;Paste'</I>
+        Hint = <I>'Paste the current clipboard data'</I>
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> Help1: TMenuItem
+      Caption = <I>'&amp;Help'</I>
+      Hint = <I>'Access to information about the program'</I>
+      <B>object</B> About1: TMenuItem
+        Caption = <I>'About...'</I>
+        Hint = <I>'Display the About Box'</I>
+      <B>end</B>
+    <B>end</B>
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

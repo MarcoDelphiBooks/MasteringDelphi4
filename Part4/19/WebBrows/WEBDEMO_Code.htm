@@ -1,0 +1,255 @@
+<HTML><HEAD>
+<TITLE>Project: WEBDEMO.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: WEBDEMO.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#WEBDEMO.DPR> WEBDEMO.DPR</A>
+<LI> <A HREF=#WEBDEMOF.PAS> WEBDEMOF.PAS</A>
+<LI> <A HREF=#WEBDEMOF.DFM> WEBDEMOF.DFM</A>
+</UL>
+<HR>
+<A NAME=WEBDEMO.DPR><H3>WEBDEMO.DPR</H3></A>
+
+<PRE>
+<B>program</B> WebDemo;
+
+<B>uses</B>
+  Forms,
+  WebDemoF <B>in</B> <I>'WebDemoF.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=WEBDEMOF.PAS><H3>WEBDEMOF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> WebDemoF;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  Buttons, ExtCtrls, OleCtrls, SHDocVw_TLB, StdCtrls, ComCtrls, ToolWin,
+  ImgList;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    WebBrowser1: TWebBrowser;
+    OpenDialog1: TOpenDialog;
+    StatusBar1: TStatusBar;
+    ControlBar1: TControlBar;
+    Panel1: TPanel;
+    BtnOpen: TSpeedButton;
+    BtnGo: TSpeedButton;
+    ComboURL: TComboBox;
+    <B>procedure</B> BtnOpenClick(Sender: TObject);
+    <B>procedure</B> WebBrowser1DownloadComplete(Sender: TObject);
+    <B>procedure</B> WebBrowser1TitleChange(Sender: TObject;
+      <B>const</B> Text: WideString);
+    <B>procedure</B> BtnGoClick(Sender: TObject);
+    <B>procedure</B> ComboURLKeyPress(Sender: TObject; <B>var</B> Key: Char);
+    <B>procedure</B> FormShow(Sender: TObject);
+    <B>procedure</B> WebBrowser1StatusTextChange(Sender: TObject;
+      <B>const</B> Text: WideString);
+    <B>procedure</B> WebBrowser1DownloadBegin(Sender: TObject);
+    <B>procedure</B> FormCreate(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <B>procedure</B> GotoPage (ReqUrl: <B>string</B>);
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.BtnOpenClick(Sender: TObject);
+<B>begin</B>
+  <B>if</B> OpenDialog1.Execute <B>then</B>
+      GotoPage (OpenDialog1.FileName);
+<B>end</B>;
+
+<B>procedure</B> TForm1.WebBrowser1DownloadComplete(Sender: TObject);
+<B>var</B>
+  NewUrl: <B>string</B>;
+<B>begin</B>
+  StatusBar1.Panels[0].Text := <I>'Done'</I>;
+  <FONT COLOR="#000080"><I>// add URL to combobox</I></FONT>
+  NewUrl := WebBrowser1.LocationURL;
+  <B>if</B> (NewUrl &lt;&gt; <I>''</I>) <B>and</B>
+      (ComboURL.Items.IndexOf (NewUrl) &lt; 0) <B>then</B>
+    ComboURL.Items.Add (NewUrl);
+<B>end</B>;
+
+<B>procedure</B> TForm1.WebBrowser1TitleChange(Sender: TObject;
+  <B>const</B> Text: WideString);
+<B>begin</B>
+  Caption := Text;
+<B>end</B>;
+
+<B>procedure</B> TForm1.BtnGoClick(Sender: TObject);
+<B>begin</B>
+  GotoPage (ComboUrl.Text);
+<B>end</B>;
+
+<B>procedure</B> TForm1.ComboURLKeyPress(Sender: TObject; <B>var</B> Key: Char);
+<B>begin</B>
+  <B>if</B> Key = <I>#13</I> <B>then</B>
+    GotoPage (ComboUrl.Text);
+<B>end</B>;
+
+<B>procedure</B> TForm1.FormShow(Sender: TObject);
+<B>begin</B>
+<FONT COLOR="#000080"><I>{  GotoPage (ExtractFilePath (Application.ExeName) +
+    'greeting.htm');}</I></FONT>
+<B>end</B>;
+
+<B>procedure</B> TForm1.GotoPage(ReqUrl: <B>string</B>);
+<B>var</B>
+  v1, v2, v3, v4: OleVariant;
+<B>begin</B>
+  WebBrowser1.Navigate (ReqUrl, v1, v2, v3, v4);
+<B>end</B>;
+
+<B>procedure</B> TForm1.WebBrowser1StatusTextChange(Sender: TObject;
+  <B>const</B> Text: WideString);
+<B>begin</B>
+  StatusBar1.Panels[1].Text := Text;
+<B>end</B>;
+
+<B>procedure</B> TForm1.WebBrowser1DownloadBegin(Sender: TObject);
+<B>begin</B>
+  StatusBar1.Panels[0].Text := <I>'Downloading '</I> +
+    WebBrowser1.LocationURL + <I>'...'</I>;
+<B>end</B>;
+
+<B>procedure</B> TForm1.FormCreate(Sender: TObject);
+<B>begin</B>
+  GotoPage (ExtractFilePath (Application.ExeName) +
+    <I>'greeting.htm'</I>);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=WEBDEMOF.DFM><H3>WEBDEMOF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 204
+  Top = 127
+  Width = 696
+  Height = 480
+  Caption = <I>'WebDemo'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = False
+  OnCreate = FormCreate
+  OnShow = FormShow
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> WebBrowser1: TWebBrowser
+    Left = 0
+    Top = 36
+    Width = 688
+    Height = 398
+    Align = alClient
+    TabOrder = 0
+    OnStatusTextChange = WebBrowser1StatusTextChange
+    OnDownloadBegin = WebBrowser1DownloadBegin
+    OnDownloadComplete = WebBrowser1DownloadComplete
+    OnTitleChange = WebBrowser1TitleChange
+    ControlData = <FONT COLOR="#000080"><I>{
+      4C0000001B470000222900000100000005000000000000000000000000000000
+      000000004C000000000000000000000001000000E0D057007335CF11AE690800
+      2B2E126208000000000000004C0000000114020000000000C000000000000046
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000100000000000000000000000000000000000000}</I></FONT>
+  <B>end</B>
+  <B>object</B> StatusBar1: TStatusBar
+    Left = 0
+    Top = 434
+    Width = 688
+    Height = 19
+    Panels = &lt;
+      <B>item</B>
+        Width = 250
+      <B>end</B>
+      <B>item</B>
+        Width = 50
+      <B>end</B>&gt;
+    SimplePanel = False
+  <B>end</B>
+  <B>object</B> ControlBar1: TControlBar
+    Left = 0
+    Top = 0
+    Width = 688
+    Height = 36
+    Align = alTop
+    AutoSize = True
+    BevelKind = bkSoft
+    DockSite = False
+    RowSize = 32
+    TabOrder = 2
+    <B>object</B> Panel1: TPanel
+      Left = 11
+      Top = 2
+      Width = 514
+      Height = 28
+      BevelOuter = bvNone
+      TabOrder = 0
+      <B>object</B> BtnOpen: TSpeedButton
+        Left = 1
+        Top = 3
+        Width = 73
+        Height = 23
+        Caption = <I>'Open File...'</I>
+        Flat = True
+        OnClick = BtnOpenClick
+      <B>end</B>
+      <B>object</B> BtnGo: TSpeedButton
+        Left = 478
+        Top = 3
+        Width = 32
+        Height = 22
+        Caption = <I>'Go'</I>
+        Flat = True
+        OnClick = BtnGoClick
+      <B>end</B>
+      <B>object</B> ComboURL: TComboBox
+        Left = 77
+        Top = 3
+        Width = 396
+        Height = 21
+        ItemHeight = 13
+        TabOrder = 0
+        OnKeyPress = ComboURLKeyPress
+      <B>end</B>
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> OpenDialog1: TOpenDialog
+    Filter = <I>'HTML file (*.htm)|*.htm|Any file (*.*)|*.*'</I>
+    Left = 40
+    Top = 64
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

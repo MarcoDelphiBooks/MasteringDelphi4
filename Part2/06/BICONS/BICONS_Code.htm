@@ -1,0 +1,133 @@
+<HTML><HEAD>
+<TITLE>Project: BICONS.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: BICONS.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#BICONS.DPR> BICONS.DPR</A>
+<LI> <A HREF=#BICONSF.PAS> BICONSF.PAS</A>
+<LI> <A HREF=#BICONSF.DFM> BICONSF.DFM</A>
+</UL>
+<HR>
+<A NAME=BICONS.DPR><H3>BICONS.DPR</H3></A>
+
+<PRE>
+<B>program</B> Bicons;
+
+<B>uses</B>
+  Forms,
+  BIconsF <B>in</B> <I>'BIconsF.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=BICONSF.PAS><H3>BICONSF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> BIconsF;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes, Graphics, Controls,
+  Forms, Dialogs, Menus;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    MainMenu1: TMainMenu;
+    BorderIcons1: TMenuItem;
+    SystemMenu1: TMenuItem;
+    MinimizeBox1: TMenuItem;
+    MaximizeBox1: TMenuItem;
+    Help1: TMenuItem;
+    <B>procedure</B> SetIcons(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.SetIcons(Sender: TObject);
+<B>var</B>
+  BorIco: TBorderIcons;
+<B>begin</B>
+  (Sender <B>as</B> TMenuItem).Checked :=
+    <B>not</B> (Sender <B>as</B> TMenuItem).Checked;
+  <B>if</B> SystemMenu1.Checked <B>then</B>
+    BorIco := [biSystemMenu]
+  <B>else</B>
+    BorIco := [];
+  <B>if</B> MaximizeBox1.Checked <B>then</B>
+    Include (BorIco, biMaximize);
+  <B>if</B> MinimizeBox1.Checked <B>then</B>
+    Include (BorIco, biMinimize);
+  <B>if</B> Help1.Checked <B>then</B>
+    Include (BorIco, biHelp);
+  BorderIcons := BorIco;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=BICONSF.DFM><H3>BICONSF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 209
+  Top = 129
+  Width = 435
+  Height = 300
+  BorderIcons = [biSystemMenu, biMinimize, biMaximize, biHelp]
+  Caption = <I>'Toggle Border Icons'</I>
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  Menu = MainMenu1
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> MainMenu1: TMainMenu
+    Left = 24
+    Top = 8
+    <B>object</B> BorderIcons1: TMenuItem
+      Caption = <I>'&amp;Border Icons'</I>
+      <B>object</B> SystemMenu1: TMenuItem
+        Caption = <I>'&amp;System Menu'</I>
+        Checked = True
+        OnClick = SetIcons
+      <B>end</B>
+      <B>object</B> MinimizeBox1: TMenuItem
+        Caption = <I>'&amp;Minimize Box'</I>
+        Checked = True
+        OnClick = SetIcons
+      <B>end</B>
+      <B>object</B> MaximizeBox1: TMenuItem
+        Caption = <I>'M&amp;aximize Box'</I>
+        Checked = True
+        OnClick = SetIcons
+      <B>end</B>
+      <B>object</B> Help1: TMenuItem
+        Caption = <I>'&amp;Help'</I>
+        OnClick = SetIcons
+      <B>end</B>
+    <B>end</B>
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

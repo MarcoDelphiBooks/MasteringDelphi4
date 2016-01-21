@@ -1,0 +1,488 @@
+<HTML><HEAD>
+<TITLE>Project: CLIENT2.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: CLIENT2.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#CLIENT2.DPR> CLIENT2.DPR</A>
+<LI> <A HREF=#CLIENTFORM.PAS> CLIENTFORM.PAS</A>
+<LI> <A HREF=#CLIBMP.PAS> CLIBMP.PAS</A>
+<LI> <A HREF=#CLITEXT.PAS> CLITEXT.PAS</A>
+<LI> <A HREF=#CLIENTFORM.DFM> CLIENTFORM.DFM</A>
+<LI> <A HREF=#CLIBMP.DFM> CLIBMP.DFM</A>
+<LI> <A HREF=#CLITEXT.DFM> CLITEXT.DFM</A>
+</UL>
+<HR>
+<A NAME=CLIENT2.DPR><H3>CLIENT2.DPR</H3></A>
+
+<PRE>
+<B>program</B> Client2;
+
+<B>uses</B>
+  Forms,
+  ClientForm <B>in</B> <I>'ClientForm.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>,
+  CliBmp <B>in</B> <I>'CliBmp.pas'</I> <FONT COLOR="#000080"><I>{FormBmp}</I></FONT>,
+  CliText <B>in</B> <I>'CliText.pas'</I> <FONT COLOR="#000080"><I>{FormText}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=CLIENTFORM.PAS><H3>CLIENTFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> ClientForm;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls, ScktComp, ExtCtrls;
+
+<B>type</B>
+  TCliStatus = (csIdle, csList, csBitmap, csText, csError);
+
+  TForm1 = <B>class</B>(TForm)
+    ClientSocket1: TClientSocket;
+    cbActivate: TCheckBox;
+    EditServer: TEdit;
+    Label4: TLabel;
+    btnExec: TButton;
+    EditServerFile: TEdit;
+    Label2: TLabel;
+    ListFiles: TListBox;
+    Label1: TLabel;
+    EditDir: TEdit;
+    btnGetDir: TButton;
+    LabelDir: TLabel;
+    Bevel1: TBevel;
+    btnBitmap: TButton;
+    btnText: TButton;
+    <B>procedure</B> ClientSocket1Connect(Sender: TObject;
+      Socket: TCustomWinSocket);
+    <B>procedure</B> ClientSocket1Disconnect(Sender: TObject;
+      Socket: TCustomWinSocket);
+    <B>procedure</B> cbActivateClick(Sender: TObject);
+    <B>procedure</B> btnExecClick(Sender: TObject);
+    <B>procedure</B> ClientSocket1Read(Sender: TObject; Socket: TCustomWinSocket);
+    <B>procedure</B> btnGetDirClick(Sender: TObject);
+    <B>procedure</B> ListFilesClick(Sender: TObject);
+    <B>procedure</B> btnBitmapClick(Sender: TObject);
+    <B>procedure</B> btnTextClick(Sender: TObject);
+    <B>procedure</B> FormCreate(Sender: TObject);
+  <B>private</B>
+    CliStatus: TCliStatus;
+    Buffer: <B>array</B> [0..9999] <B>of</B> Char;
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>uses</B>
+  CliBmp, CliText;
+
+<B>procedure</B> TForm1.ClientSocket1Connect(Sender: TObject;
+  Socket: TCustomWinSocket);
+<B>begin</B>
+  Caption := <I>'Connected'</I>;
+<B>end</B>;
+
+<B>procedure</B> TForm1.ClientSocket1Disconnect(Sender: TObject;
+  Socket: TCustomWinSocket);
+<B>begin</B>
+  Caption := <I>'Disconnected'</I>;
+<B>end</B>;
+
+<B>procedure</B> TForm1.cbActivateClick(Sender: TObject);
+<B>begin</B>
+  <B>if</B> <B>not</B> ClientSocket1.Active <B>then</B>
+    ClientSocket1.Address := EditServer.Text;
+  ClientSocket1.Active := cbActivate.Checked;
+<B>end</B>;
+
+<B>procedure</B> TForm1.btnExecClick(Sender: TObject);
+<B>begin</B>
+  ClientSocket1.Socket.SendText (<I>'EXEC!'</I> + EditServerFile.Text);
+<B>end</B>;
+
+<B>procedure</B> TForm1.ClientSocket1Read(Sender: TObject;
+  Socket: TCustomWinSocket);
+<B>var</B>
+  strIn: <B>string</B>;
+  Stream: TMemoryStream;
+  nReceived: Integer;
+  Time1: Cardinal;
+<B>begin</B>
+  <B>case</B> CliStatus <B>of</B>
+    <FONT COLOR="#000080"><I>// look for data to receive</I></FONT>
+    csIdle:
+    <B>begin</B>
+      Socket.ReceiveBuf (Buffer, 5);
+      strIn := Copy (Buffer, 1, 5);
+      <B>if</B> strIn = <I>'TEXT!'</I> <B>then</B>
+        CliStatus := csText
+      <B>else</B> <B>if</B> strIn = <I>'BITM!'</I> <B>then</B>
+        CliStatus := csBitmap
+      <B>else</B> <B>if</B> strIn = <I>'LIST!'</I> <B>then</B>
+        CliStatus := csList
+      <B>else</B> <B>if</B> strIn = <I>'ERROR'</I> <B>then</B>
+        CliStatus := csError;
+    <B>end</B>;
+    <FONT COLOR="#000080"><I>// show the messages (might actually not be an error)</I></FONT>
+    csError:
+    <B>begin</B>
+      ShowMessage (Socket.ReceiveText);
+      cliStatus := csIdle;
+    <B>end</B>;
+    <FONT COLOR="#000080"><I>// get a directory listing</I></FONT>
+    csList:
+    <B>begin</B>
+      ListFiles.Items.Text := Socket.ReceiveText;
+      cliStatus := csIdle;
+    <B>end</B>;
+    <FONT COLOR="#000080"><I>// read a text file</I></FONT>
+    csText:
+    <B>begin</B>
+      <B>with</B> TFormText.Create (Application) <B>do</B>
+      <B>begin</B>
+        Memo1.Text := Socket.ReceiveText;
+        Show;
+      <B>end</B>;
+      cliStatus := csIdle;
+    <B>end</B>;
+    <FONT COLOR="#000080"><I>// read a bitmap file</I></FONT>
+    csBitmap:
+      <B>with</B> TFormBmp.Create (Application) <B>do</B>
+      <B>begin</B>
+        Stream := TMemoryStream.Create;
+        Screen.Cursor := crHourglass;
+        <B>try</B>
+          <B>while</B> True <B>do</B>
+          <B>begin</B>
+            nReceived := Socket.ReceiveBuf (Buffer, sizeof (Buffer));
+            <B>if</B> nReceived &lt;= 0 <B>then</B>
+              Break
+            <B>else</B>
+              Stream.<B>Write</B> (Buffer, nReceived);
+            <FONT COLOR="#000080"><I>// delay (200 milliseconds)</I></FONT>
+            Time1 := GetTickCount;
+            <B>while</B> GetTickCount - Time1 &lt; 200 <B>do</B>;
+          <B>end</B>;
+          <FONT COLOR="#000080"><I>// reset and load the temporary file</I></FONT>
+          Stream.Position := 0;
+          Image1.Picture.Bitmap.LoadFromStream (Stream);
+        <B>finally</B>
+          Stream.Free;
+          Screen.Cursor := crDefault;
+        <B>end</B>;
+        Show;
+      cliStatus := csIdle;
+      <B>end</B>;
+  <B>end</B>; <FONT COLOR="#000080"><I>// case</I></FONT>
+<B>end</B>;
+
+<B>procedure</B> TForm1.btnGetDirClick(Sender: TObject);
+<B>begin</B>
+  ClientSocket1.Socket.SendText (<I>'LIST!'</I> + EditDir.Text);
+  LabelDir.Caption := EditDir.Text;
+<B>end</B>;
+
+<B>procedure</B> TForm1.ListFilesClick(Sender: TObject);
+<B>begin</B>
+  EditServerFile.Text := LabelDir.Caption + <I>'\'</I> +
+    ListFiles.Items [ListFiles.ItemIndex];
+<B>end</B>;
+
+<B>procedure</B> TForm1.btnBitmapClick(Sender: TObject);
+<B>begin</B>
+  ClientSocket1.Socket.SendText (<I>'BITM!'</I> + EditServerFile.Text);
+<B>end</B>;
+
+<B>procedure</B> TForm1.btnTextClick(Sender: TObject);
+<B>begin</B>
+  ClientSocket1.Socket.SendText (<I>'TEXT!'</I> + EditServerFile.Text);
+<B>end</B>;
+
+<B>procedure</B> TForm1.FormCreate(Sender: TObject);
+<B>begin</B>
+  CliStatus := csIdle;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=CLIBMP.PAS><H3>CLIBMP.PAS</H3></A>
+
+<PRE>
+<B>unit</B> CliBmp;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  ExtCtrls;
+
+<B>type</B>
+  TFormBmp = <B>class</B>(TForm)
+    Image1: TImage;
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  FormBmp: TFormBmp;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=CLITEXT.PAS><H3>CLITEXT.PAS</H3></A>
+
+<PRE>
+<B>unit</B> CliText;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls;
+
+<B>type</B>
+  TFormText = <B>class</B>(TForm)
+    Memo1: TMemo;
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  FormText: TFormText;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=CLIENTFORM.DFM><H3>CLIENTFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 196
+  Top = 109
+  Width = 521
+  Height = 322
+  Caption = <I>'Client'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Bevel1: TBevel
+    Left = 16
+    Top = 64
+    Width = 313
+    Height = 209
+  <B>end</B>
+  <B>object</B> Label4: TLabel
+    Left = 16
+    Top = 8
+    Width = 87
+    Height = 13
+    Caption = <I>'Server IP address:'</I>
+  <B>end</B>
+  <B>object</B> Label2: TLabel
+    Left = 344
+    Top = 64
+    Width = 50
+    Height = 13
+    Caption = <I>'Server file:'</I>
+  <B>end</B>
+  <B>object</B> Label1: TLabel
+    Left = 40
+    Top = 88
+    Width = 45
+    Height = 13
+    Caption = <I>'Directory:'</I>
+  <B>end</B>
+  <B>object</B> LabelDir: TLabel
+    Left = 40
+    Top = 120
+    Width = 26
+    Height = 13
+    Caption = <I>'None'</I>
+  <B>end</B>
+  <B>object</B> cbActivate: TCheckBox
+    Left = 160
+    Top = 24
+    Width = 97
+    Height = 17
+    Caption = <I>'Activate'</I>
+    TabOrder = 0
+    OnClick = cbActivateClick
+  <B>end</B>
+  <B>object</B> EditServer: TEdit
+    Left = 16
+    Top = 24
+    Width = 121
+    Height = 21
+    TabOrder = 1
+    Text = <I>'222.1.1.1'</I>
+  <B>end</B>
+  <B>object</B> btnExec: TButton
+    Left = 376
+    Top = 120
+    Width = 75
+    Height = 25
+    Caption = <I>'&amp;Exec'</I>
+    TabOrder = 2
+    OnClick = btnExecClick
+  <B>end</B>
+  <B>object</B> EditServerFile: TEdit
+    Left = 344
+    Top = 88
+    Width = 145
+    Height = 21
+    TabOrder = 3
+    Text = <I>'c:\windows\win.ini'</I>
+  <B>end</B>
+  <B>object</B> ListFiles: TListBox
+    Left = 40
+    Top = 136
+    Width = 257
+    Height = 113
+    ItemHeight = 13
+    TabOrder = 4
+    OnClick = ListFilesClick
+  <B>end</B>
+  <B>object</B> EditDir: TEdit
+    Left = 93
+    Top = 85
+    Width = 121
+    Height = 21
+    TabOrder = 5
+    Text = <I>'c:\windows'</I>
+  <B>end</B>
+  <B>object</B> btnGetDir: TButton
+    Left = 221
+    Top = 84
+    Width = 75
+    Height = 23
+    Caption = <I>'&amp;Get Dir'</I>
+    TabOrder = 6
+    OnClick = btnGetDirClick
+  <B>end</B>
+  <B>object</B> btnBitmap: TButton
+    Left = 376
+    Top = 160
+    Width = 75
+    Height = 25
+    Caption = <I>'&amp;Bitmap'</I>
+    TabOrder = 7
+    OnClick = btnBitmapClick
+  <B>end</B>
+  <B>object</B> btnText: TButton
+    Left = 376
+    Top = 200
+    Width = 75
+    Height = 25
+    Caption = <I>'&amp;Text'</I>
+    TabOrder = 8
+    OnClick = btnTextClick
+  <B>end</B>
+  <B>object</B> ClientSocket1: TClientSocket
+    Active = False
+    Address = <I>'222.1.1.1'</I>
+    ClientType = ctNonBlocking
+    Port = 51
+    OnConnect = ClientSocket1Connect
+    OnDisconnect = ClientSocket1Disconnect
+    OnRead = ClientSocket1Read
+    Left = 272
+    Top = 16
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<A NAME=CLIBMP.DFM><H3>CLIBMP.DFM</H3></A>
+
+<PRE>
+<B>object</B> FormBmp: TFormBmp
+  Left = 192
+  Top = 107
+  Width = 551
+  Height = 348
+  Caption = <I>'FormBmp'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = False
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Image1: TImage
+    Left = 0
+    Top = 0
+    Width = 543
+    Height = 321
+    Align = alClient
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<A NAME=CLITEXT.DFM><H3>CLITEXT.DFM</H3></A>
+
+<PRE>
+<B>object</B> FormText: TFormText
+  Left = 233
+  Top = 154
+  Width = 696
+  Height = 480
+  Caption = <I>'FormText'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = False
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Memo1: TMemo
+    Left = 0
+    Top = 0
+    Width = 688
+    Height = 453
+    Align = alClient
+    TabOrder = 0
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

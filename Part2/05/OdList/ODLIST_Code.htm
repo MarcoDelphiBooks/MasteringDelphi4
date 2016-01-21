@@ -1,0 +1,151 @@
+<HTML><HEAD>
+<TITLE>Project: ODLIST.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: ODLIST.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#ODLIST.DPR> ODLIST.DPR</A>
+<LI> <A HREF=#ODLISTF.PAS> ODLISTF.PAS</A>
+<LI> <A HREF=#ODLISTF.DFM> ODLISTF.DFM</A>
+</UL>
+<HR>
+<A NAME=ODLIST.DPR><H3>ODLIST.DPR</H3></A>
+
+<PRE>
+<B>program</B> ODList;
+
+<B>uses</B>
+  Forms,
+  ODListF <B>in</B> <I>'ODListF.pas'</I> <FONT COLOR="#000080"><I>{ODListForm}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TODListForm, ODListForm);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=ODLISTF.PAS><H3>ODLISTF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> ODListF;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls;
+
+<B>type</B>
+  TODListForm = <B>class</B>(TForm)
+    ListBox1: TListBox;
+    ColorDialog1: TColorDialog;
+    <B>procedure</B> ListBox1DrawItem(Control: TWinControl; <B>Index</B>: Integer;
+      Rect: TRect; State: TOwnerDrawState);
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> ListBox1DblClick(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <B>procedure</B> AddColors (Colors: <B>array</B> <B>of</B> TColor);
+  <B>end</B>;
+
+<B>var</B>
+  ODListForm: TODListForm;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TODListForm.ListBox1DrawItem(Control: TWinControl; <B>Index</B>: Integer;
+  Rect: TRect; State: TOwnerDrawState);
+<B>begin</B>
+  <B>with</B> Control <B>as</B> TListbox <B>do</B>
+  <B>begin</B>
+    <FONT COLOR="#000080"><I>// erase</I></FONT>
+    Canvas.FillRect (Rect);
+    <FONT COLOR="#000080"><I>// draw item</I></FONT>
+    Canvas.Font.Color := TColor (
+      Items.Objects [<B>Index</B>]);
+    Canvas.TextOut(Rect.Left, Rect.Top,
+      Listbox1.Items[<B>Index</B>]);
+
+<FONT COLOR="#000080"><I>//    InflateRect (Rect, -1, -1);</I></FONT>
+    <B>if</B> (odFocused <B>in</B> State) <B>and</B> (odSelected <B>in</B> State) <B>then</B>
+      Canvas.DrawFocusRect (Rect);
+   <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TODListForm.AddColors (Colors: <B>array</B> <B>of</B> TColor);
+<B>var</B>
+  I: Integer;
+<B>begin</B>
+  <B>for</B> I := Low (Colors) <B>to</B> High (Colors) <B>do</B>
+    ListBox1.Items.AddObject (
+      ColorToString (Colors[I]),
+      TObject(Colors[I]));
+<B>end</B>;
+
+<B>procedure</B> TODListForm.FormCreate(Sender: TObject);
+<B>begin</B>
+  ListBox1.ItemHeight := Canvas.TextHeight(<I>'0'</I>);
+  AddColors ([clRed, clBlue, clYellow, clGreen, clFuchsia, clLime,
+    clGray, RGB (213, 23, 123), RGB (0, 0, 0),
+    clAqua, clNavy, clOlive, clPurple, clTeal]);
+<B>end</B>;
+
+<B>procedure</B> TODListForm.ListBox1DblClick(Sender: TObject);
+<B>begin</B>
+  <B>if</B> ColorDialog1.Execute <B>then</B>
+    AddColors ([ColorDialog1.Color]);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=ODLISTF.DFM><H3>ODLISTF.DFM</H3></A>
+
+<PRE>
+<B>object</B> ODListForm: TODListForm
+  Left = 242
+  Top = 121
+  Width = 423
+  Height = 442
+  Caption = <I>'Owner-draw Listbox'</I>
+  Color = clBtnFace
+  Font.Charset = ANSI_CHARSET
+  Font.Color = clBlack
+  Font.Height = -32
+  Font.Name = <I>'Arial'</I>
+  Font.Style = [fsBold]
+  OldCreateOrder = True
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 37
+  <B>object</B> ListBox1: TListBox
+    Left = 0
+    Top = 0
+    Width = 415
+    Height = 415
+    Align = alClient
+    ItemHeight = 16
+    Sorted = True
+    Style = lbOwnerDrawFixed
+    TabOrder = 0
+    OnDblClick = ListBox1DblClick
+    OnDrawItem = ListBox1DrawItem
+  <B>end</B>
+  <B>object</B> ColorDialog1: TColorDialog
+    Ctl3D = True
+    Left = 72
+    Top = 48
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

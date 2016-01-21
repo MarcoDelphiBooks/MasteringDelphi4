@@ -1,0 +1,170 @@
+<HTML><HEAD>
+<TITLE>Project: EXCEP.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: EXCEP.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#EXCEP.DPR> EXCEP.DPR</A>
+<LI> <A HREF=#EXCEPF.PAS> EXCEPF.PAS</A>
+<LI> <A HREF=#EXCEPF.DFM> EXCEPF.DFM</A>
+</UL>
+<HR>
+<A NAME=EXCEP.DPR><H3>EXCEP.DPR</H3></A>
+
+<PRE>
+<B>program</B> Excep;
+
+<B>uses</B>
+  Forms,
+  ExcepF <B>in</B> <I>'ExcepF.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=EXCEPF.PAS><H3>EXCEPF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> ExcepF;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes,
+  Graphics, Controls, Forms, Dialogs, StdCtrls;
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    BtnWrong: TButton;
+    BtnTryFinally: TButton;
+    BtnTryTry: TButton;
+    <B>procedure</B> BtnWrongClick(Sender: TObject);
+    <B>procedure</B> BtnTryFinallyClick(Sender: TObject);
+    <B>procedure</B> BtnTryTryClick(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.BtnWrongClick(Sender: TObject);
+<B>var</B>
+  I, J: Integer;
+<B>begin</B>
+  Screen.Cursor := crHourglass;
+  J := 0;
+  <FONT COLOR="#000080"><I>// long (and wrong) computation...</I></FONT>
+  <B>for</B> I := 1000 <B>downto</B> 0 <B>do</B>
+    J := J + J <B>div</B> I;
+  MessageDlg (<I>'Total: '</I> + IntToStr (J),
+    mtInformation, [mbOK], 0);
+  Screen.Cursor := crDefault;
+<B>end</B>;
+
+<B>procedure</B> TForm1.BtnTryFinallyClick(Sender: TObject);
+<B>var</B>
+  I, J: Integer;
+<B>begin</B>
+  Screen.Cursor := crHourglass;
+  J := 0;
+  <B>try</B>
+    <FONT COLOR="#000080"><I>// long (and wrong) computation...</I></FONT>
+    <B>for</B> I := 1000 <B>downto</B> 0 <B>do</B>
+      J := J + J <B>div</B> I;
+    MessageDlg (<I>'Total: '</I> + IntToStr (J),
+      mtInformation, [mbOK], 0);
+  <B>finally</B>
+    Screen.Cursor := crDefault;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TForm1.BtnTryTryClick(Sender: TObject);
+<B>var</B>
+  I, J: Integer;
+<B>begin</B>
+  Screen.Cursor := crHourglass;
+  J := 0;
+  <B>try</B> <B>try</B>
+    <FONT COLOR="#000080"><I>// long (and wrong) computation...</I></FONT>
+    <B>for</B> I := 1000 <B>downto</B> 0 <B>do</B>
+      J := J + J <B>div</B> I;
+    MessageDlg (<I>'Total: '</I> + IntToStr (J),
+      mtInformation, [mbOK], 0);
+  <B>finally</B>
+    Screen.Cursor := crDefault;
+  <B>end</B>;
+  <B>except</B>
+    <B>on</B> E: EDivByZero <B>do</B>
+    <B>begin</B>
+      <FONT COLOR="#000080"><I>// re-rasie the exception with a new message</I></FONT>
+      <B>raise</B> Exception.Create (<I>'Error in Algorithm'</I>);
+    <B>end</B>;
+  <B>end</B>;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=EXCEPF.DFM><H3>EXCEPF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 225
+  Top = 152
+  Width = 487
+  Height = 126
+  ActiveControl = BtnWrong
+  Caption = <I>'Exceptions test'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> BtnWrong: TButton
+    Left = 40
+    Top = 25
+    Width = 113
+    Height = 49
+    Caption = <I>'Wrong'</I>
+    TabOrder = 0
+    OnClick = BtnWrongClick
+  <B>end</B>
+  <B>object</B> BtnTryFinally: TButton
+    Left = 184
+    Top = 25
+    Width = 113
+    Height = 49
+    Caption = <I>'Try Finally'</I>
+    TabOrder = 1
+    OnClick = BtnTryFinallyClick
+  <B>end</B>
+  <B>object</B> BtnTryTry: TButton
+    Left = 328
+    Top = 24
+    Width = 113
+    Height = 49
+    Caption = <I>'Try Try'</I>
+    TabOrder = 2
+    OnClick = BtnTryTryClick
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

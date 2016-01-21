@@ -1,0 +1,337 @@
+<HTML><HEAD>
+<TITLE>Project: COOLBAR.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: COOLBAR.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#COOLBAR.DPR> COOLBAR.DPR</A>
+<LI> <A HREF=#COOLFORM.PAS> COOLFORM.PAS</A>
+<LI> <A HREF=#COOLFORM.DFM> COOLFORM.DFM</A>
+</UL>
+<HR>
+<A NAME=COOLBAR.DPR><H3>COOLBAR.DPR</H3></A>
+
+<PRE>
+<B>program</B> CoolBar;
+
+<B>uses</B>
+  Forms,
+  CoolForm <B>in</B> <I>'CoolForm.pas'</I> <FONT COLOR="#000080"><I>{CoolbarForm}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TCoolbarForm, CoolbarForm);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=COOLFORM.PAS><H3>COOLFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> CoolForm;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls, Buttons, ExtCtrls, ComCtrls, ToolWin, ColorGrd, ImgList;
+
+<B>type</B>
+  TCoolbarForm = <B>class</B>(TForm)
+    CoolBar1: TCoolBar;
+    ToolBar1: TToolBar;
+    ToolButton1: TToolButton;
+    ToolButton2: TToolButton;
+    ToolButton3: TToolButton;
+    ToolButton4: TToolButton;
+    ComboBox1: TComboBox;
+    Edit1: TEdit;
+    ToolButton5: TToolButton;
+    ColorGrid1: TColorGrid;
+    Label1: TLabel;
+    ImageListHighlight: TImageList;
+    ImageListNormal: TImageList;
+    <B>procedure</B> ToolButton1Click(Sender: TObject);
+    <B>procedure</B> ToolButton2Click(Sender: TObject);
+    <B>procedure</B> ToolButton3Click(Sender: TObject);
+    <B>procedure</B> ToolButton4Click(Sender: TObject);
+    <B>procedure</B> ColorGrid1Change(Sender: TObject);
+    <B>procedure</B> Edit1Change(Sender: TObject);
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> ComboBox1Change(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  CoolbarForm: TCoolbarForm;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+
+<B>procedure</B> TCoolbarForm.ToolButton1Click(Sender: TObject);
+<B>begin</B>
+  Beep;
+<B>end</B>;
+
+<B>procedure</B> TCoolbarForm.ToolButton2Click(Sender: TObject);
+<B>begin</B>
+  Label1.Alignment := taLeftJustify;
+<B>end</B>;
+
+<B>procedure</B> TCoolbarForm.ToolButton3Click(Sender: TObject);
+<B>begin</B>
+  Label1.Alignment := taCenter;
+<B>end</B>;
+
+<B>procedure</B> TCoolbarForm.ToolButton4Click(Sender: TObject);
+<B>begin</B>
+  Label1.Alignment := taRightJustify;
+<B>end</B>;
+
+<B>procedure</B> TCoolbarForm.ColorGrid1Change(Sender: TObject);
+<B>begin</B>
+  Label1.Color := ColorGrid1.BackgroundColor;
+  Label1.Font.Color := ColorGrid1.ForegroundColor;
+<B>end</B>;
+
+<B>procedure</B> TCoolbarForm.Edit1Change(Sender: TObject);
+<B>var</B>
+  Value: Integer;
+<B>begin</B>
+  Value := StrToIntDef (Edit1.Text, 0);
+  <B>if</B> Value &lt;&gt; 0 <B>then</B>
+    Label1.Font.Size := Value;
+<B>end</B>;
+
+<B>procedure</B> TCoolbarForm.FormCreate(Sender: TObject);
+<B>begin</B>
+  ComboBox1.Items := Screen.Fonts;
+  <FONT COLOR="#000080"><I>// select the current font</I></FONT>
+  ComboBox1.ItemIndex := ComboBox1.Items.IndexOf (Font.Name);
+<B>end</B>;
+
+               <B>procedure</B> TCoolbarForm.ComboBox1Change(Sender: TObject);
+<B>begin</B>
+  Label1.Font.Name := Combobox1.Text;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=COOLFORM.DFM><H3>COOLFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> CoolbarForm: TCoolbarForm
+  Left = 196
+  Top = 107
+  Width = 712
+  Height = 377
+  Caption = <I>'CoolbarForm'</I>
+  Color = clBtnFace
+  Font.Charset = ANSI_CHARSET
+  Font.Color = clBlack
+  Font.Height = -13
+  Font.Name = <I>'Arial'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 16
+  <B>object</B> Label1: TLabel
+    Left = 0
+    Top = 69
+    Width = 704
+    Height = 281
+    Align = alClient
+    Caption =
+       <I>'This is the text of the label, very bare if you compare it with '</I> +
+      <I>'the really cool toolbar at the top of this form...'</I>
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clBlack
+    Font.Height = -27
+    Font.Name = <I>'Arial'</I>
+    Font.Style = []
+    ParentFont = False
+    WordWrap = True
+  <B>end</B>
+  <B>object</B> TLabel
+    Left = 200
+    Top = 224
+    Width = 4
+    Height = 16
+  <B>end</B>
+  <B>object</B> CoolBar1: TCoolBar
+    Left = 0
+    Top = 0
+    Width = 704
+    Height = 69
+    AutoSize = True
+    BandBorderStyle = bsNone
+    Bands = &lt;
+      <B>item</B>
+        Break = False
+        Control = ToolBar1
+        HorizontalOnly = True
+        ImageIndex = 0
+        MinHeight = 33
+        Text = <I>'Toolbar'</I>
+        Width = 595
+      <B>end</B>
+      <B>item</B>
+        Break = False
+        Control = Edit1
+        ImageIndex = 0
+        Text = <I>'Size'</I>
+        Width = 101
+      <B>end</B>
+      <B>item</B>
+        Control = ColorGrid1
+        HorizontalOnly = True
+        ImageIndex = 0
+        MinHeight = 16
+        Text = <I>'Color'</I>
+        Width = 75
+      <B>end</B>
+      <B>item</B>
+        Break = False
+        Control = ComboBox1
+        ImageIndex = 0
+        MinHeight = 28
+        Text = <I>'Fonts'</I>
+        Width = 621
+      <B>end</B>&gt;
+    BorderWidth = 1
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clBlack
+    Font.Height = -16
+    Font.Name = <I>'MS Sans Serif'</I>
+    Font.Style = [fsBold]
+    ParentFont = False
+    ParentShowHint = False
+    Bitmap.Data = <FONT COLOR="#000080"><I>{...skipped...}</I></FONT>
+    ShowHint = True
+    <B>object</B> ComboBox1: TComboBox
+      Left = 137
+      Top = 33
+      Width = 555
+      Height = 28
+      ItemHeight = 20
+      TabOrder = 0
+      OnChange = ComboBox1Change
+    <B>end</B>
+    <B>object</B> ColorGrid1: TColorGrid
+      Left = 58
+      Top = 39
+      Width = 0
+      Height = 16
+      GridOrdering = go16x1
+      BackgroundIndex = 7
+      TabOrder = 1
+      OnChange = ColorGrid1Change
+    <B>end</B>
+    <B>object</B> Edit1: TEdit
+      Left = 646
+      Top = 4
+      Width = 46
+      Height = 25
+      TabOrder = 2
+      OnChange = Edit1Change
+    <B>end</B>
+    <B>object</B> ToolBar1: TToolBar
+      Left = 76
+      Top = 0
+      Width = 515
+      Height = 33
+      Align = alNone
+      ButtonHeight = 26
+      ButtonWidth = 126
+      EdgeBorders = []
+      EdgeInner = esNone
+      EdgeOuter = esNone
+      Flat = True
+      HotImages = ImageListHighlight
+      Images = ImageListNormal
+      Indent = 10
+      List = True
+      ShowCaptions = True
+      TabOrder = 3
+      Transparent = True
+      Wrapable = False
+      <B>object</B> ToolButton1: TToolButton
+        Left = 10
+        Top = 0
+        Hint = <I>'ToolButton1'</I>
+        AutoSize = True
+        Caption = <I>'Play Sound'</I>
+        ImageIndex = 0
+        OnClick = ToolButton1Click
+      <B>end</B>
+      <B>object</B> ToolButton5: TToolButton
+        Left = 132
+        Top = 0
+        Width = 8
+        Caption = <I>'ToolButton5'</I>
+        ImageIndex = 5
+        Style = tbsSeparator
+      <B>end</B>
+      <B>object</B> ToolButton2: TToolButton
+        Left = 140
+        Top = 0
+        Hint = <I>'ToolButton2'</I>
+        Caption = <I>'Left'</I>
+        Down = True
+        Grouped = True
+        ImageIndex = 1
+        Style = tbsCheck
+        OnClick = ToolButton2Click
+      <B>end</B>
+      <B>object</B> ToolButton3: TToolButton
+        Left = 266
+        Top = 0
+        Hint = <I>'ToolButton3'</I>
+        Caption = <I>'Center'</I>
+        Grouped = True
+        ImageIndex = 2
+        Style = tbsCheck
+        OnClick = ToolButton3Click
+      <B>end</B>
+      <B>object</B> ToolButton4: TToolButton
+        Left = 392
+        Top = 0
+        Hint = <I>'ToolButton4'</I>
+        Caption = <I>'Right'</I>
+        Grouped = True
+        ImageIndex = 3
+        Style = tbsCheck
+        OnClick = ToolButton4Click
+      <B>end</B>
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> ImageListNormal: TImageList
+    BlendColor = clOlive
+    DrawingStyle = dsTransparent
+    Masked = False
+    Left = 48
+    Top = 88
+    Bitmap = <FONT COLOR="#000080"><I>{...skipped...}</I></FONT>
+  <B>end</B>
+  <B>object</B> ImageListHighlight: TImageList
+    DrawingStyle = dsTransparent
+    Left = 48
+    Top = 144
+    Bitmap = <FONT COLOR="#000080"><I>{...skipped...}</I></FONT>
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

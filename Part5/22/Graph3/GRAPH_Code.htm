@@ -1,0 +1,556 @@
+<HTML><HEAD>
+<TITLE>Project: GRAPH.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: GRAPH.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#GRAPH.DPR> GRAPH.DPR</A>
+<LI> <A HREF=#GRAPHF.PAS> GRAPHF.PAS</A>
+<LI> <A HREF=#GRAPHF.DFM> GRAPHF.DFM</A>
+</UL>
+<HR>
+<A NAME=GRAPH.DPR><H3>GRAPH.DPR</H3></A>
+
+<PRE>
+<B>program</B> Graph;
+
+<B>uses</B>
+  Forms,
+  GraphF <B>in</B> <I>'GraphF.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=GRAPHF.PAS><H3>GRAPHF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> GraphF;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes, Graphics, Controls,
+  Forms, Dialogs, Grids, StdCtrls, TeEngine,
+  Series, ExtCtrls, TeeProcs, Chart, Menus;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    Chart1: TChart;
+    Series1: TBarSeries;
+    Series2: TBarSeries;
+    Series3: TBarSeries;
+    Series4: TBarSeries;
+    Panel1: TPanel;
+    ChBoxMarks: TCheckBox;
+    UpdateButton: TButton;
+    StringGrid1: TStringGrid;
+    ComboBox1: TComboBox;
+    ComboBox2: TComboBox;
+    ComboBox3: TComboBox;
+    ComboBox4: TComboBox;
+    MainMenu1: TMainMenu;
+    File1: TMenuItem;
+    Open1: TMenuItem;
+    Save1: TMenuItem;
+    SaveAs1: TMenuItem;
+    N1: TMenuItem;
+    Exit1: TMenuItem;
+    Help1: TMenuItem;
+    About1: TMenuItem;
+    OpenDialog1: TOpenDialog;
+    SaveDialog1: TSaveDialog;
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> UpdateButtonClick(Sender: TObject);
+    <B>procedure</B> StringGrid1GetEditMask(Sender: TObject; ACol, ARow: Longint;
+      <B>var</B> Value: <B>string</B>);
+    <B>procedure</B> ChBoxMarksClick(Sender: TObject);
+    <B>procedure</B> ComboChange(Sender: TObject);
+    <B>procedure</B> Open1Click(Sender: TObject);
+    <B>procedure</B> Save1Click(Sender: TObject);
+    <B>procedure</B> SaveAs1Click(Sender: TObject);
+    <B>procedure</B> About1Click(Sender: TObject);
+    <B>procedure</B> Exit1Click(Sender: TObject);
+    <B>procedure</B> FormCloseQuery(Sender: TObject; <B>var</B> CanClose: Boolean);
+  <B>private</B>
+    Combos: <B>array</B> [0..3] <B>of</B> TComboBox;
+    Modified: Boolean;
+    CurrentFile: <B>string</B>;
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.FormCreate(Sender: TObject);
+<B>var</B>
+  I, J: Integer;
+<B>begin</B>
+  <B>with</B> StringGrid1 <B>do</B>
+  <B>begin</B>
+    <FONT COLOR="#000080"><I>{fills the fixed column and row,
+    and the chart series names}</I></FONT>
+    <B>for</B> I := 1 <B>to</B> 5 <B>do</B>
+      Cells [I, 0] := Format (<I>'Group %d'</I>, [I]);
+    <B>for</B> J := 1 <B>to</B> 4 <B>do</B>
+    <B>begin</B>
+      Cells [0, J] := Format (<I>'Series %d'</I>, [J]);
+      Chart1.Series [J-1].Title := Format (<I>'Series %d'</I>, [J]);
+    <B>end</B>;
+
+    <FONT COLOR="#000080"><I>{fills the grid with random values}</I></FONT>
+    Randomize;
+    <B>for</B> I := 1 <B>to</B> 5 <B>do</B>
+      <B>for</B> J := 1 <B>to</B> 4 <B>do</B>
+        Cells [I, J] := IntToStr (Random (100));
+  <B>end</B>; <FONT COLOR="#000080"><I>// with</I></FONT>
+
+  <FONT COLOR="#000080"><I>// fill the Combos array</I></FONT>
+  Combos [0] := ComboBox1;
+  Combos [1] := ComboBox2;
+  Combos [2] := ComboBox3;
+  Combos [3] := ComboBox4;
+
+  <FONT COLOR="#000080"><I>// show the initial chart type</I></FONT>
+  <B>for</B> I := 0 <B>to</B> 3 <B>do</B>
+    Combos [I].ItemIndex := 1;
+
+  <FONT COLOR="#000080"><I>// update the chart</I></FONT>
+  UpdateButtonClick (self);
+<B>end</B>;
+
+<B>procedure</B> TForm1.UpdateButtonClick(Sender: TObject);
+<B>var</B>
+  I, J: Integer;
+<B>begin</B>
+  <B>for</B> I := 1 <B>to</B> 4 <B>do</B>
+  <B>begin</B>
+    Chart1.Series [I-1].Clear;
+    <B>for</B> J := 1 <B>to</B> 5 <B>do</B>
+      Chart1.Series [I-1].Add (
+        StrToInt (StringGrid1.Cells [J, I]),
+        <I>''</I>, Chart1.Series [I-1].SeriesColor);
+  <B>end</B>;
+  Modified := True;
+<B>end</B>;
+
+<B>procedure</B> TForm1.StringGrid1GetEditMask(Sender: TObject; ACol,
+  ARow: Longint; <B>var</B> Value: <B>string</B>);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// edit mask for the grid cells</I></FONT>
+  Value := <I>'09;0'</I>;
+<B>end</B>;
+
+<B>procedure</B> TForm1.ChBoxMarksClick(Sender: TObject);
+<B>var</B>
+  I: Integer;
+<B>begin</B>
+  <B>for</B> I := 1 <B>to</B> 4 <B>do</B>
+    Chart1.Series [I-1].Marks.Visible :=
+      ChBoxMarks.Checked;
+  Modified := True;
+<B>end</B>;
+
+<B>procedure</B> TForm1.ComboChange(Sender: TObject);
+<B>var</B>
+  I: Integer;
+  SeriesClass: TChartSeriesClass;
+  NewSeries: TChartSeries;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// destroy the existing series (in reverse order)</I></FONT>
+  <B>for</B> I := 3 <B>downto</B> 0 <B>do</B>
+    Chart1.Series [I].Free;
+  <FONT COLOR="#000080"><I>// create the new series</I></FONT>
+  <B>for</B> I := 0 <B>to</B> 3 <B>do</B>
+  <B>begin</B>
+    <B>case</B> Combos [I].ItemIndex <B>of</B>
+      0: SeriesClass := TLineSeries;
+      1: SeriesClass := TBarSeries;
+      2: SeriesClass := TAreaSeries;
+    <B>else</B> <FONT COLOR="#000080"><I>// 3: and default</I></FONT>
+      SeriesClass := TPointSeries;
+    <B>end</B>;
+    NewSeries := SeriesClass.Create (self);
+    NewSeries.ParentChart := Chart1;
+    NewSeries.Title :=
+      Format (<I>'Series %d'</I>, [I + 1]);
+  <B>end</B>;
+  <FONT COLOR="#000080"><I>// update the marks and update the data</I></FONT>
+  ChBoxMarksClick (self);
+  UpdateButtonClick (self);
+  Modified := True;
+<B>end</B>;
+
+<B>procedure</B> TForm1.Open1Click(Sender: TObject);
+<B>var</B>
+  LoadStream: TFileStream;
+  I, J, Value: Integer;
+<B>begin</B>
+  <B>if</B> OpenDialog1.Execute <B>then</B>
+  <B>begin</B>
+    CurrentFile := OpenDialog1.Filename;
+    Caption := <I>'Graph ['</I> + CurrentFile + <I>']'</I>;
+    <FONT COLOR="#000080"><I>// load from the current file</I></FONT>
+    LoadStream := TFileStream.Create (
+      CurrentFile, fmOpenRead);
+    <B>try</B>
+      <FONT COLOR="#000080"><I>// read the value of each grid element</I></FONT>
+      <B>for</B> I := 1 <B>to</B> 5 <B>do</B>
+        <B>for</B> J := 1 <B>to</B> 4 <B>do</B>
+        <B>begin</B>
+          LoadStream.<B>Read</B> (Value, sizeof (Integer));
+          StringGrid1.Cells [I, J] := IntToStr(Value);
+        <B>end</B>;
+      <FONT COLOR="#000080"><I>// load the status of the checkbox and the combo boxes</I></FONT>
+      LoadStream.<B>Read</B> (Value, sizeof (Integer));
+      ChBoxMarks.Checked := Boolean(Value);
+      <B>for</B> I := 0 <B>to</B> 3 <B>do</B>
+      <B>begin</B>
+        LoadStream.<B>Read</B> (Value, sizeof (Integer));
+        Combos [I].ItemIndex := Value;
+      <B>end</B>;
+    <B>finally</B>
+      LoadStream.Free;
+    <B>end</B>;
+    <FONT COLOR="#000080"><I>// fire udpate events</I></FONT>
+    ChBoxMarksClick (self);
+    ComboChange (self);
+    UpdateButtonClick (self);
+    Modified := False;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TForm1.Save1Click(Sender: TObject);
+<B>var</B>
+  SaveStream: TFileStream;
+  I, J, Value: Integer;
+<B>begin</B>
+  <B>if</B> Modified <B>then</B>
+    <B>if</B> CurrentFile = <I>''</I> <B>then</B> <FONT COLOR="#000080"><I>// call save as</I></FONT>
+      SaveAs1Click (self)
+    <B>else</B>
+    <B>begin</B>
+      <FONT COLOR="#000080"><I>// save to the current file</I></FONT>
+      SaveStream := TFileStream.Create (
+        CurrentFile, fmOpenWrite <B>or</B> fmCreate);
+      <B>try</B>
+        <FONT COLOR="#000080"><I>// write the value of each grid element}</I></FONT>
+        <B>for</B> I := 1 <B>to</B> 5 <B>do</B>
+          <B>for</B> J := 1 <B>to</B> 4 <B>do</B>
+          <B>begin</B>
+            Value := StrToIntDef (Trim (
+              StringGrid1.Cells [I, J]), 0);
+            SaveStream.<B>Write</B> (Value, sizeof (Integer));
+          <B>end</B>;
+        <FONT COLOR="#000080"><I>// save check box and combo boxes</I></FONT>
+        Value := Integer (ChBoxMarks.Checked);
+        SaveStream.<B>Write</B> (Value, sizeof (Integer));
+        <B>for</B> I := 0 <B>to</B> 3 <B>do</B>
+        <B>begin</B>
+          Value := Combos [I].ItemIndex;
+          SaveStream.<B>Write</B> (Value, sizeof (Integer));
+        <B>end</B>;
+        Modified := False;
+      <B>finally</B>
+        SaveStream.Free;
+      <B>end</B>;
+    <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TForm1.SaveAs1Click(Sender: TObject);
+<B>begin</B>
+  <B>if</B> SaveDialog1.Execute <B>then</B>
+  <B>begin</B>
+    CurrentFile := SaveDialog1.Filename;
+    Caption := <I>'Graph ['</I> + CurrentFile + <I>']'</I>;
+    <FONT COLOR="#000080"><I>// call save</I></FONT>
+    Modified := True;
+    Save1Click (self);
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TForm1.About1Click(Sender: TObject);
+<B>begin</B>
+  MessageDlg (<I>'Graph example with file support'</I> +
+    <I>#13'from &quot;Mastering Delphi&quot; by Marco Cantù'</I>,
+    mtInformation, [mbOk], 0);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Exit1Click(Sender: TObject);
+<B>begin</B>
+  Close;
+<B>end</B>;
+
+<B>procedure</B> TForm1.FormCloseQuery(Sender: TObject; <B>var</B> CanClose: Boolean);
+<B>var</B>
+  Code: Word;
+<B>begin</B>
+  <B>if</B> Modified <B>then</B>
+  <B>begin</B>
+    Code := MessageDlg (
+      <I>'Data has changed, do you want to save it?'</I>,
+      mtConfirmation, mbYesNoCancel, 0);
+    <B>if</B> Code = idYes <B>then</B>
+      Save1Click (self);
+    <B>if</B> Code = idCancel <B>then</B>
+      CanClose := False
+    <B>else</B>
+      CanClose := True;
+  <B>end</B>
+  <B>else</B>
+    CanClose := True;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=GRAPHF.DFM><H3>GRAPHF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 204
+  Top = 71
+  Width = 500
+  Height = 462
+  Caption = <I>'Graph'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clBlack
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  Menu = MainMenu1
+  OldCreateOrder = True
+  OnCloseQuery = FormCloseQuery
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Chart1: TChart
+    Left = 0
+    Top = 0
+    Width = 492
+    Height = 272
+    AnimatedZoom = True
+    BackWall.Color = clBtnFace
+    Title.Text.Strings = (
+      <I>'Simple TeeChart Demo for Mastering Delphi'</I>)
+    BackColor = clBtnFace
+    Align = alClient
+    BevelOuter = bvLowered
+    TabOrder = 0
+    <B>object</B> Series1: TBarSeries
+      Marks.ArrowLength = 20
+      Marks.Visible = False
+      SeriesColor = clRed
+      XValues.DateTime = False
+      XValues.Name = <I>'X'</I>
+      XValues.Multiplier = 1
+      XValues.Order = loAscending
+      YValues.DateTime = False
+      YValues.Name = <I>'Bar'</I>
+      YValues.Multiplier = 1
+      YValues.Order = loNone
+    <B>end</B>
+    <B>object</B> Series2: TBarSeries
+      Marks.ArrowLength = 20
+      Marks.Visible = False
+      SeriesColor = clGreen
+      XValues.DateTime = False
+      XValues.Name = <I>'X'</I>
+      XValues.Multiplier = 1
+      XValues.Order = loAscending
+      YValues.DateTime = False
+      YValues.Name = <I>'Bar'</I>
+      YValues.Multiplier = 1
+      YValues.Order = loNone
+    <B>end</B>
+    <B>object</B> Series3: TBarSeries
+      Marks.ArrowLength = 20
+      Marks.Visible = False
+      SeriesColor = clYellow
+      XValues.DateTime = False
+      XValues.Name = <I>'X'</I>
+      XValues.Multiplier = 1
+      XValues.Order = loAscending
+      YValues.DateTime = False
+      YValues.Name = <I>'Bar'</I>
+      YValues.Multiplier = 1
+      YValues.Order = loNone
+    <B>end</B>
+    <B>object</B> Series4: TBarSeries
+      Marks.ArrowLength = 20
+      Marks.Visible = False
+      SeriesColor = clBlue
+      XValues.DateTime = False
+      XValues.Name = <I>'X'</I>
+      XValues.Multiplier = 1
+      XValues.Order = loAscending
+      YValues.DateTime = False
+      YValues.Name = <I>'Bar'</I>
+      YValues.Multiplier = 1
+      YValues.Order = loNone
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> Panel1: TPanel
+    Left = 0
+    Top = 272
+    Width = 492
+    Height = 144
+    Align = alBottom
+    BevelOuter = bvLowered
+    TabOrder = 1
+    <B>object</B> ChBoxMarks: TCheckBox
+      Left = 429
+      Top = 12
+      Width = 57
+      Height = 17
+      Caption = <I>'Marks'</I>
+      TabOrder = 0
+      OnClick = ChBoxMarksClick
+    <B>end</B>
+    <B>object</B> UpdateButton: TButton
+      Left = 326
+      Top = 8
+      Width = 89
+      Height = 26
+      Caption = <I>'&amp;Update'</I>
+      TabOrder = 1
+      OnClick = UpdateButtonClick
+    <B>end</B>
+    <B>object</B> StringGrid1: TStringGrid
+      Left = 8
+      Top = 8
+      Width = 309
+      Height = 128
+      ColCount = 6
+      DefaultColWidth = 50
+      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goEditing]
+      ScrollBars = ssNone
+      TabOrder = 2
+      OnGetEditMask = StringGrid1GetEditMask
+    <B>end</B>
+    <B>object</B> ComboBox1: TComboBox
+      Left = 328
+      Top = 38
+      Width = 145
+      Height = 21
+      Style = csDropDownList
+      ItemHeight = 13
+      Items.Strings = (
+        <I>'Line'</I>
+        <I>'Bar'</I>
+        <I>'Area'</I>
+        <I>'Point'</I>)
+      TabOrder = 3
+      OnChange = ComboChange
+    <B>end</B>
+    <B>object</B> ComboBox2: TComboBox
+      Tag = 1
+      Left = 328
+      Top = 62
+      Width = 145
+      Height = 21
+      Style = csDropDownList
+      ItemHeight = 13
+      Items.Strings = (
+        <I>'Line'</I>
+        <I>'Bar'</I>
+        <I>'Area'</I>
+        <I>'Point'</I>)
+      TabOrder = 4
+      OnChange = ComboChange
+    <B>end</B>
+    <B>object</B> ComboBox3: TComboBox
+      Tag = 2
+      Left = 328
+      Top = 86
+      Width = 145
+      Height = 21
+      Style = csDropDownList
+      ItemHeight = 13
+      Items.Strings = (
+        <I>'Line'</I>
+        <I>'Bar'</I>
+        <I>'Area'</I>
+        <I>'Point'</I>)
+      TabOrder = 5
+      OnChange = ComboChange
+    <B>end</B>
+    <B>object</B> ComboBox4: TComboBox
+      Tag = 3
+      Left = 328
+      Top = 110
+      Width = 145
+      Height = 21
+      Style = csDropDownList
+      ItemHeight = 13
+      Items.Strings = (
+        <I>'Line'</I>
+        <I>'Bar'</I>
+        <I>'Area'</I>
+        <I>'Point'</I>)
+      TabOrder = 6
+      OnChange = ComboChange
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> MainMenu1: TMainMenu
+    Left = 24
+    Top = 24
+    <B>object</B> File1: TMenuItem
+      Caption = <I>'&amp;File'</I>
+      <B>object</B> Open1: TMenuItem
+        Caption = <I>'&amp;Open...'</I>
+        OnClick = Open1Click
+      <B>end</B>
+      <B>object</B> Save1: TMenuItem
+        Caption = <I>'&amp;Save'</I>
+        OnClick = Save1Click
+      <B>end</B>
+      <B>object</B> SaveAs1: TMenuItem
+        Caption = <I>'Save &amp;As...'</I>
+        OnClick = SaveAs1Click
+      <B>end</B>
+      <B>object</B> N1: TMenuItem
+        Caption = <I>'-'</I>
+      <B>end</B>
+      <B>object</B> Exit1: TMenuItem
+        Caption = <I>'E&amp;xit'</I>
+        OnClick = Exit1Click
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> Help1: TMenuItem
+      Caption = <I>'&amp;Help'</I>
+      <B>object</B> About1: TMenuItem
+        Caption = <I>'&amp;About Graph...'</I>
+        OnClick = About1Click
+      <B>end</B>
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> OpenDialog1: TOpenDialog
+    DefaultExt = <I>'CHR'</I>
+    Filter = <I>'Chart files (*.chr)|*.chr|Any file (*.*)|*.*'</I>
+    Options = [ofHideReadOnly, ofExtensionDifferent, ofFileMustExist]
+    Left = 80
+    Top = 24
+  <B>end</B>
+  <B>object</B> SaveDialog1: TSaveDialog
+    DefaultExt = <I>'CHR'</I>
+    Filter = <I>'Chart files (*.chr)|*.chr|Any file (*.*)|*.*'</I>
+    Options = [ofOverwritePrompt, ofHideReadOnly, ofPathMustExist, ofCreatePrompt]
+    Left = 144
+    Top = 24
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

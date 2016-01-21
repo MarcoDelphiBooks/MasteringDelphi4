@@ -1,0 +1,221 @@
+<HTML><HEAD>
+<TITLE>Project: STATUSB.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: STATUSB.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#STATUSB.DPR> STATUSB.DPR</A>
+<LI> <A HREF=#STATUSF.PAS> STATUSF.PAS</A>
+<LI> <A HREF=#STATUSF.DFM> STATUSF.DFM</A>
+</UL>
+<HR>
+<A NAME=STATUSB.DPR><H3>STATUSB.DPR</H3></A>
+
+<PRE>
+<B>program</B> Statusb;
+
+<B>uses</B>
+  Forms,
+  StatusF <B>in</B> <I>'StatusF.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=STATUSF.PAS><H3>STATUSF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> StatusF;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes, Graphics, Controls,
+  Forms, Dialogs, Menus, ExtCtrls, ComCtrls;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    MainMenu1: TMainMenu;
+    File1: TMenuItem;
+    New1: TMenuItem;
+    Open1: TMenuItem;
+    Save1: TMenuItem;
+    Saveas1: TMenuItem;
+    N1: TMenuItem;
+    Exit1: TMenuItem;
+    Help1: TMenuItem;
+    About1: TMenuItem;
+    Edit1: TMenuItem;
+    Undo1: TMenuItem;
+    N2: TMenuItem;
+    Cut1: TMenuItem;
+    Copy1: TMenuItem;
+    Paste1: TMenuItem;
+    StatusBar1: TStatusBar;
+    Timer1: TTimer;
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> FormKeyDown(Sender: TObject; <B>var</B> Key: Word;
+      Shift: TShiftState);
+    <B>procedure</B> Timer1Timer(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+    <B>procedure</B> ShowHint(Sender: TObject);
+    <B>procedure</B> CheckCapslock;
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.FormCreate(Sender: TObject);
+<B>begin</B>
+  Application.OnHint := ShowHint;
+<B>end</B>;
+
+<B>procedure</B> TForm1.ShowHint(Sender: TObject);
+<B>begin</B>
+  StatusBar1.Panels[0].Text := Application.Hint;
+<B>end</B>;
+
+<B>procedure</B> TForm1.CheckCapslock;
+<B>begin</B>
+  <B>if</B> Odd (GetKeyState (VK_CAPITAL)) <B>then</B>
+    StatusBar1.Panels[1].Text := <I>'CAPS'</I>
+  <B>else</B>
+    StatusBar1.Panels[1].Text := <I>''</I>;
+<B>end</B>;
+
+<B>procedure</B> TForm1.FormKeyDown(Sender: TObject; <B>var</B> Key: Word;
+  Shift: TShiftState);
+<B>begin</B>
+  CheckCapslock;
+<B>end</B>;
+
+<B>procedure</B> TForm1.Timer1Timer(Sender: TObject);
+<B>begin</B>
+  CheckCapslock;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=STATUSF.DFM><H3>STATUSF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 233
+  Top = 162
+  Width = 435
+  Height = 300
+  Caption = <I>'Status Bar'</I>
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clBlack
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  Menu = MainMenu1
+  OnCreate = FormCreate
+  OnKeyDown = FormKeyDown
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> StatusBar1: TStatusBar
+    Left = 0
+    Top = 235
+    Width = 427
+    Height = 19
+    Panels = &lt;
+      <B>item</B>
+        Width = 300
+      <B>end</B>
+      <B>item</B>
+        Alignment = taCenter
+        Width = 50
+      <B>end</B>
+      <B>item</B>
+        Width = 100
+      <B>end</B>&gt;
+    SimplePanel = False
+  <B>end</B>
+  <B>object</B> MainMenu1: TMainMenu
+    Left = 32
+    Top = 8
+    <B>object</B> File1: TMenuItem
+      Caption = <I>'&amp;File'</I>
+      Hint = <I>'Operations on files'</I>
+      <B>object</B> New1: TMenuItem
+        Caption = <I>'&amp;New...'</I>
+        Hint = <I>'Create a new file'</I>
+      <B>end</B>
+      <B>object</B> Open1: TMenuItem
+        Caption = <I>'&amp;Open...'</I>
+        Hint = <I>'Open an existing file'</I>
+      <B>end</B>
+      <B>object</B> Save1: TMenuItem
+        Caption = <I>'&amp;Save'</I>
+        Hint = <I>'Save the current file'</I>
+      <B>end</B>
+      <B>object</B> Saveas1: TMenuItem
+        Caption = <I>'Save &amp;as...'</I>
+        Hint = <I>'Save the current file with a new name'</I>
+      <B>end</B>
+      <B>object</B> N1: TMenuItem
+        Caption = <I>'-'</I>
+      <B>end</B>
+      <B>object</B> Exit1: TMenuItem
+        Caption = <I>'E&amp;xit'</I>
+        Hint = <I>'Terminate the application'</I>
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> Edit1: TMenuItem
+      Caption = <I>'&amp;Edit'</I>
+      Hint = <I>'Operations on the text'</I>
+      <B>object</B> Undo1: TMenuItem
+        Caption = <I>'&amp;Undo'</I>
+        Hint = <I>'Reverse the last action'</I>
+      <B>end</B>
+      <B>object</B> N2: TMenuItem
+        Caption = <I>'-'</I>
+      <B>end</B>
+      <B>object</B> Cut1: TMenuItem
+        Caption = <I>'Cu&amp;t'</I>
+        Hint = <I>'Delete the selection, moving it to the clipboard'</I>
+      <B>end</B>
+      <B>object</B> Copy1: TMenuItem
+        Caption = <I>'&amp;Copy'</I>
+        Hint = <I>'Make a copy of the current selection to the clipboard'</I>
+      <B>end</B>
+      <B>object</B> Paste1: TMenuItem
+        Caption = <I>'&amp;Paste'</I>
+        Hint = <I>'Paste the current clipboard data'</I>
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> Help1: TMenuItem
+      Caption = <I>'&amp;Help'</I>
+      Hint = <I>'Access information about the program'</I>
+      <B>object</B> About1: TMenuItem
+        Caption = <I>'About...'</I>
+        Hint = <I>'Display the About Box'</I>
+      <B>end</B>
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> Timer1: TTimer
+    OnTimer = Timer1Timer
+    Left = 80
+    Top = 8
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

@@ -1,0 +1,374 @@
+<HTML><HEAD>
+<TITLE>Project: LISTDEMO.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: LISTDEMO.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#LISTDEMO.DPR> LISTDEMO.DPR</A>
+<LI> <A HREF=#LISTFORM.PAS> LISTFORM.PAS</A>
+<LI> <A HREF=#DATES.PAS> DATES.PAS</A>
+<LI> <A HREF=#LISTFORM.DFM> LISTFORM.DFM</A>
+</UL>
+<HR>
+<A NAME=LISTDEMO.DPR><H3>LISTDEMO.DPR</H3></A>
+
+<PRE>
+<B>program</B> ListDemo;
+
+<B>uses</B>
+  Forms,
+  ListForm <B>in</B> <I>'ListForm.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>,
+  Dates <B>in</B> <I>'Dates.pas'</I>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=LISTFORM.PAS><H3>LISTFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> ListForm;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    ButtonAddNum: TButton;
+    ButtonListNum: TButton;
+    ListBox1: TListBox;
+    ButtonAddDate: TButton;
+    ButtonListDate: TButton;
+    ButtonWrong: TButton;
+    <B>procedure</B> ButtonAddNumClick(Sender: TObject);
+    <B>procedure</B> ButtonListNumClick(Sender: TObject);
+    <B>procedure</B> ButtonAddDateClick(Sender: TObject);
+    <B>procedure</B> ButtonListDateClick(Sender: TObject);
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> ButtonWrongClick(Sender: TObject);
+    <B>procedure</B> FormDestroy(Sender: TObject);
+  <B>private</B>
+    ListNum, ListDate: TList;
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>uses</B>
+  Dates;
+
+<B>procedure</B> TForm1.ButtonAddNumClick(Sender: TObject);
+<B>begin</B>
+  ListNum.Add (Pointer (Random (10000)));
+<B>end</B>;
+
+<B>procedure</B> TForm1.ButtonListNumClick(Sender: TObject);
+<B>var</B>
+  I: Integer;
+<B>begin</B>
+  ListBox1.Clear;
+  <B>for</B> I := 0 <B>to</B> ListNum.Count - 1 <B>do</B>
+    Listbox1.Items.Add (IntToStr (Integer (ListNum [I])));
+<B>end</B>;
+
+<B>procedure</B> TForm1.ButtonAddDateClick(Sender: TObject);
+<B>begin</B>
+  ListDate.Add (TDate.Create (
+    1900 + Random (200),
+    1 + Random (12),
+    1 + Random (31)));
+<B>end</B>;
+
+<B>procedure</B> TForm1.ButtonListDateClick(Sender: TObject);
+<B>var</B>
+  I: Integer;
+<B>begin</B>
+  ListBox1.Clear;
+  <B>for</B> I := 0 <B>to</B> ListDate.Count - 1 <B>do</B>
+    Listbox1.Items.Add ((
+      TObject(ListDate [I]) <B>as</B> TDate).GetText);
+<B>end</B>;
+
+<B>procedure</B> TForm1.FormCreate(Sender: TObject);
+<B>begin</B>
+  Randomize;
+  ListNum := TList.Create;
+  ListDate := TList.Create;
+<B>end</B>;
+
+<B>procedure</B> TForm1.ButtonWrongClick(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// add a button to both lists</I></FONT>
+  ListNum.Add (Sender);
+  ListDate.Add (Sender);
+<B>end</B>;
+
+<B>procedure</B> TForm1.FormDestroy(Sender: TObject);
+<B>var</B>
+  I: Integer;
+<B>begin</B>
+  <B>for</B> I := 0 <B>to</B> ListDate.Count - 1 <B>do</B>
+    TObject(ListDate [I]).Free;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=DATES.PAS><H3>DATES.PAS</H3></A>
+
+<PRE>
+<B>unit</B> Dates;
+
+<B>interface</B>
+
+<B>uses</B>
+  Classes, SysUtils;
+
+<B>type</B>
+  TDate = <B>class</B> (TComponent)
+  <B>private</B>
+    fDate: TDateTime;
+    FOnChange: TNotifyEvent;
+    <B>function</B> GetYear: Integer;
+    <B>function</B> GetDay: Integer;
+    <B>function</B> GetMonth: Integer;
+    <B>procedure</B> SetDay(<B>const</B> Value: Integer);
+    <B>procedure</B> SetMonth(<B>const</B> Value: Integer);
+    <B>procedure</B> SetYear(<B>const</B> Value: Integer);
+  <B>protected</B>
+    <B>procedure</B> DoChange; <B>virtual</B>;
+  <B>public</B>
+    <B>constructor</B> Create (AOwner: TComponent); <B>overload</B>; <B>override</B>;
+    <B>constructor</B> Create (y, m, d: Integer); <B>reintroduce</B>; <B>overload</B>;
+    <B>procedure</B> SetValue (y, m, d: Integer); <B>overload</B>;
+    <B>procedure</B> SetValue (NewDate: TDateTime); <B>overload</B>;
+    <B>function</B> LeapYear: Boolean;
+    <B>procedure</B> Increase (NumberOfDays: Integer = 1);
+    <B>procedure</B> Decrease (NumberOfDays: Integer = 1);
+    <B>function</B> GetText: <B>string</B>; <B>virtual</B>;
+    <B>property</B> Text: <B>string</B> <B>read</B> GetText;
+  <B>published</B>
+    <B>property</B> Day: Integer <B>read</B> GetDay <B>write</B> SetDay;
+    <B>property</B> Month: Integer <B>read</B> GetMonth <B>write</B> SetMonth;
+    <B>property</B> Year: Integer <B>read</B> GetYear <B>write</B> SetYear;
+    <B>property</B> OnChange: TNotifyEvent
+      <B>read</B> FonChange <B>write</B> FOnChange;
+  <B>end</B>;
+
+  <FONT COLOR="#000080"><I>// custom exception</I></FONT>
+  EDateOutOfRange = <B>class</B> (Exception)
+  <B>end</B>;
+
+<B>procedure</B> <B>Register</B>;
+
+<B>implementation</B>
+
+<B>procedure</B> TDate.SetValue (y, m, d: Integer);
+<B>begin</B>
+  fDate := EncodeDate (y, m, d);
+  <FONT COLOR="#000080"><I>// fire the event</I></FONT>
+  DoChange;
+<B>end</B>;
+
+<B>function</B> TDate.LeapYear: Boolean;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// compute leap years, considering &quot;exceptions&quot;</I></FONT>
+  <B>if</B> (GetYear <B>mod</B> 4 &lt;&gt; 0) <B>then</B>
+    LeapYear := False
+  <B>else</B> <B>if</B> (GetYear <B>mod</B> 100 &lt;&gt; 0) <B>then</B>
+    LeapYear := True
+  <B>else</B> <B>if</B> (GetYear <B>mod</B> 400 &lt;&gt; 0) <B>then</B>
+    LeapYear := False
+  <B>else</B>
+    LeapYear := True;
+<B>end</B>;
+
+<B>procedure</B> TDate.Increase (NumberOfDays: Integer = 1);
+<B>begin</B>
+  fDate := fDate + NumberOfDays;
+  <FONT COLOR="#000080"><I>// fire the event</I></FONT>
+  DoChange;
+<B>end</B>;
+
+<B>function</B> TDate.GetText: <B>string</B>;
+<B>begin</B>
+  GetText := DateToStr (fDate);
+<B>end</B>;
+
+<B>procedure</B> TDate.Decrease (NumberOfDays: Integer = 1);
+<B>begin</B>
+  fDate := fDate - NumberOfDays;
+  <FONT COLOR="#000080"><I>// fire the event</I></FONT>
+  DoChange;
+<B>end</B>;
+
+<B>constructor</B> TDate.Create (y, m, d: Integer);
+<B>begin</B>
+  fDate := EncodeDate (y, m, d);
+<B>end</B>;
+
+<B>constructor</B> TDate.Create (AOwner: TComponent);
+<B>begin</B>
+  <B>inherited</B> Create (AOwner);
+  <FONT COLOR="#000080"><I>// today...</I></FONT>
+  fDate := Date;
+<B>end</B>;
+
+<B>function</B> TDate.GetYear: Integer;
+<B>var</B>
+  y, m, d: Word;
+<B>begin</B>
+  DecodeDate (fDate, y, m, d);
+  Result := y;
+<B>end</B>;
+
+<B>procedure</B> TDate.SetValue(NewDate: TDateTime);
+<B>begin</B>
+  fDate := NewDate;
+  <FONT COLOR="#000080"><I>// fire the event</I></FONT>
+  DoChange;
+<B>end</B>;
+
+<B>function</B> TDate.GetDay: Integer;
+<B>var</B>
+  y, m, d: Word;
+<B>begin</B>
+  DecodeDate (fDate, y, m, d);
+  Result := d;
+<B>end</B>;
+
+<B>function</B> TDate.GetMonth: Integer;
+<B>var</B>
+  y, m, d: Word;
+<B>begin</B>
+  DecodeDate (fDate, y, m, d);
+  Result := m;
+<B>end</B>;
+
+<B>procedure</B> TDate.SetDay(<B>const</B> Value: Integer);
+<B>begin</B>
+  <B>if</B> (Value &lt; 0) <B>or</B> (Value &gt; 31) <B>then</B>
+    <B>raise</B> EDateOutOfRange.Create (<I>'Invalid month'</I>);
+  SetValue (Year, Month, Value);
+<B>end</B>;
+
+<B>procedure</B> TDate.SetMonth(<B>const</B> Value: Integer);
+<B>begin</B>
+  <B>if</B> (Value &lt; 0) <B>or</B> (Value &gt; 12) <B>then</B>
+    <B>raise</B> EDateOutOfRange.Create (<I>'Invalid month'</I>);
+  SetValue (Year, Value, Day);
+<B>end</B>;
+
+<B>procedure</B> TDate.SetYear(<B>const</B> Value: Integer);
+<B>begin</B>
+  SetValue (Value, Month, Day);
+<B>end</B>;
+
+<B>procedure</B> TDate.DoChange;
+<B>begin</B>
+  <B>if</B> Assigned (FOnChange) <B>then</B>
+    FOnChange (self);
+<B>end</B>;
+
+<B>procedure</B> <B>Register</B>;
+<B>begin</B>
+  RegisterComponents (<I>'Md4'</I>, [TDate]);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=LISTFORM.DFM><H3>LISTFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 205
+  Top = 106
+  Width = 408
+  Height = 304
+  Caption = <I>'List Demo'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> ButtonAddNum: TButton
+    Left = 24
+    Top = 24
+    Width = 89
+    Height = 25
+    Caption = <I>'&amp;Add Number'</I>
+    TabOrder = 0
+    OnClick = ButtonAddNumClick
+  <B>end</B>
+  <B>object</B> ButtonListNum: TButton
+    Left = 24
+    Top = 64
+    Width = 89
+    Height = 25
+    Caption = <I>'&amp;List Numbers'</I>
+    TabOrder = 1
+    OnClick = ButtonListNumClick
+  <B>end</B>
+  <B>object</B> ListBox1: TListBox
+    Left = 136
+    Top = 24
+    Width = 225
+    Height = 225
+    ItemHeight = 13
+    TabOrder = 2
+  <B>end</B>
+  <B>object</B> ButtonAddDate: TButton
+    Left = 24
+    Top = 128
+    Width = 89
+    Height = 25
+    Caption = <I>'Add &amp;Date'</I>
+    TabOrder = 3
+    OnClick = ButtonAddDateClick
+  <B>end</B>
+  <B>object</B> ButtonListDate: TButton
+    Left = 24
+    Top = 168
+    Width = 89
+    Height = 25
+    Caption = <I>'Lis&amp;t Dates'</I>
+    TabOrder = 4
+    OnClick = ButtonListDateClick
+  <B>end</B>
+  <B>object</B> ButtonWrong: TButton
+    Left = 24
+    Top = 224
+    Width = 89
+    Height = 25
+    Caption = <I>'Add &amp;Wrong'</I>
+    TabOrder = 5
+    OnClick = ButtonWrongClick
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

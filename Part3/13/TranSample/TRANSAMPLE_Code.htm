@@ -1,0 +1,293 @@
+<HTML><HEAD>
+<TITLE>Project: TRANSAMPLE.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: TRANSAMPLE.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#TRANSAMPLE.DPR> TRANSAMPLE.DPR</A>
+<LI> <A HREF=#MAIN.PAS> MAIN.PAS</A>
+<LI> <A HREF=#MAIN.DFM> MAIN.DFM</A>
+</UL>
+<HR>
+<A NAME=TRANSAMPLE.DPR><H3>TRANSAMPLE.DPR</H3></A>
+
+<PRE>
+<B>program</B> transample;
+
+<B>uses</B>
+  Forms,
+  main <B>in</B> <I>'main.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MAIN.PAS><H3>MAIN.PAS</H3></A>
+
+<PRE>
+<B>unit</B> main;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls, ExtCtrls, Db, DBTables, Grids, DBGrids;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    Panel1: TPanel;
+    DBGrid1: TDBGrid;
+    Database1: TDatabase;
+    Table1: TTable;
+    DataSource1: TDataSource;
+    grpIsolation: TRadioGroup;
+    grpTransaction: TGroupBox;
+    btnRollback: TButton;
+    btnStart: TButton;
+    btnCommit: TButton;
+    btnRefresh: TButton;
+    btnClose: TButton;
+    grpUpdate: TRadioGroup;
+    <B>procedure</B> grpIsolationClick(Sender: TObject);
+    <B>procedure</B> btnStartClick(Sender: TObject);
+    <B>procedure</B> btnCommitClick(Sender: TObject);
+    <B>procedure</B> btnRollbackClick(Sender: TObject);
+    <B>procedure</B> btnCloseClick(Sender: TObject);
+    <B>procedure</B> btnRefreshClick(Sender: TObject);
+    <B>procedure</B> grpUpdateClick(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.grpIsolationClick(Sender: TObject);
+<B>begin</B>
+  Database1.TransIsolation := TTransIsolation(grpIsolation.ItemIndex);
+<B>end</B>;
+
+<B>procedure</B> TForm1.btnStartClick(Sender: TObject);
+<B>begin</B>
+  Database1.StartTransaction;
+  btnStart.Enabled := False;
+  btnCommit.Enabled := True;
+  btnRollback.Enabled := True;
+<B>end</B>;
+
+<B>procedure</B> TForm1.btnCommitClick(Sender: TObject);
+<B>begin</B>
+  Database1.Commit;
+  btnStart.Enabled := True;
+  btnCommit.Enabled := False;
+  btnRollback.Enabled := False;
+<B>end</B>;
+
+<B>procedure</B> TForm1.btnRollbackClick(Sender: TObject);
+<B>begin</B>
+  Database1.Rollback;
+  btnStart.Enabled := True;
+  btnCommit.Enabled := False;
+  btnRollback.Enabled := False;
+<B>end</B>;
+
+<B>procedure</B> TForm1.btnCloseClick(Sender: TObject);
+<B>begin</B>
+  Close;
+<B>end</B>;
+
+<B>procedure</B> TForm1.btnRefreshClick(Sender: TObject);
+<B>begin</B>
+  Table1.Close;
+  Table1.Open;
+<B>end</B>;
+
+<B>procedure</B> TForm1.grpUpdateClick(Sender: TObject);
+<B>begin</B>
+  Table1.UpdateMode := TUpdateMode(grpUpdate.ItemIndex);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MAIN.DFM><H3>MAIN.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 193
+  Top = 119
+  Width = 609
+  Height = 375
+  Caption = <I>'Transaction sample'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = False
+  Position = poDesktopCenter
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Panel1: TPanel
+    Left = 0
+    Top = 0
+    Width = 601
+    Height = 66
+    Align = alTop
+    BevelOuter = bvNone
+    TabOrder = 0
+    <B>object</B> grpIsolation: TRadioGroup
+      Left = 4
+      Top = 1
+      Width = 208
+      Height = 62
+      Caption = <I>'Current transaction will see:'</I>
+      ItemIndex = 1
+      Items.Strings = (
+        <I>'Uncommitted changes'</I>
+        <I>'Only committed changes'</I>
+        <I>'Same data when transaction started'</I>)
+      TabOrder = 0
+      OnClick = grpIsolationClick
+    <B>end</B>
+    <B>object</B> grpTransaction: TGroupBox
+      Left = 344
+      Top = 1
+      Width = 169
+      Height = 62
+      Caption = <I>'Transaction'</I>
+      TabOrder = 2
+      <B>object</B> btnRollback: TButton
+        Left = 114
+        Top = 20
+        Width = 50
+        Height = 25
+        Caption = <I>'Rollback'</I>
+        Enabled = False
+        TabOrder = 0
+        OnClick = btnRollbackClick
+      <B>end</B>
+      <B>object</B> btnStart: TButton
+        Left = 6
+        Top = 20
+        Width = 50
+        Height = 25
+        Caption = <I>'Start'</I>
+        TabOrder = 1
+        OnClick = btnStartClick
+      <B>end</B>
+      <B>object</B> btnCommit: TButton
+        Left = 60
+        Top = 20
+        Width = 50
+        Height = 25
+        Caption = <I>'Commit'</I>
+        Enabled = False
+        TabOrder = 2
+        OnClick = btnCommitClick
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> btnRefresh: TButton
+      Left = 521
+      Top = 6
+      Width = 75
+      Height = 25
+      Anchors = [akRight]
+      Caption = <I>'&amp;Refresh'</I>
+      TabOrder = 3
+      OnClick = btnRefreshClick
+    <B>end</B>
+    <B>object</B> btnClose: TButton
+      Left = 521
+      Top = 37
+      Width = 75
+      Height = 25
+      Anchors = [akRight]
+      Caption = <I>'&amp;Close'</I>
+      TabOrder = 4
+      OnClick = btnCloseClick
+    <B>end</B>
+    <B>object</B> grpUpdate: TRadioGroup
+      Left = 214
+      Top = 1
+      Width = 128
+      Height = 62
+      Caption = <I>'Update Mode'</I>
+      ItemIndex = 0
+      Items.Strings = (
+        <I>'All fields'</I>
+        <I>'Changed fields'</I>
+        <I>'Key fields'</I>)
+      TabOrder = 1
+      OnClick = grpUpdateClick
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> DBGrid1: TDBGrid
+    Left = 0
+    Top = 66
+    Width = 601
+    Height = 282
+    Align = alClient
+    DataSource = DataSource1
+    TabOrder = 1
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = <I>'MS Sans Serif'</I>
+    TitleFont.Style = []
+  <B>end</B>
+  <B>object</B> Database1: TDatabase
+    AliasName = <I>'IBLocal'</I>
+    Connected = True
+    DatabaseName = <I>'AppDB'</I>
+    LoginPrompt = False
+    Params.Strings = (
+      <I>'USER NAME=SYSDBA'</I>
+      <I>'OPEN MODE=READ/WRITE'</I>
+      <I>'SCHEMA CACHE SIZE=8'</I>
+      <I>'LANGDRIVER='</I>
+      <I>'SQLQRYMODE='</I>
+      <I>'SQLPASSTHRU MODE=SHARED AUTOCOMMIT'</I>
+      <I>'SCHEMA CACHE TIME=-1'</I>
+      <I>'MAX ROWS=-1'</I>
+      <I>'BATCH COUNT=200'</I>
+      <I>'ENABLE SCHEMA CACHE=FALSE'</I>
+      <I>'SCHEMA CACHE DIR='</I>
+      <I>'ENABLE BCD=FALSE'</I>
+      <I>'BLOBS TO CACHE=64'</I>
+      <I>'BLOB SIZE=32'</I>
+      <I>'PASSWORD=masterkey'</I>)
+    SessionName = <I>'Default'</I>
+    Left = 4
+    Top = 316
+  <B>end</B>
+  <B>object</B> Table1: TTable
+    Active = True
+    DatabaseName = <I>'AppDB'</I>
+    TableName = <I>'CUSTOMER'</I>
+    Left = 44
+    Top = 316
+  <B>end</B>
+  <B>object</B> DataSource1: TDataSource
+    DataSet = Table1
+    Left = 80
+    Top = 316
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

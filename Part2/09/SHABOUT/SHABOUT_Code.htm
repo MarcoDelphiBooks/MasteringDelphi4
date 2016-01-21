@@ -1,0 +1,101 @@
+<HTML><HEAD>
+<TITLE>Project: SHABOUT.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: SHABOUT.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#SHABOUT.DPR> SHABOUT.DPR</A>
+<LI> <A HREF=#SHABOUTF.PAS> SHABOUTF.PAS</A>
+<LI> <A HREF=#SHABOUTF.DFM> SHABOUTF.DFM</A>
+</UL>
+<HR>
+<A NAME=SHABOUT.DPR><H3>SHABOUT.DPR</H3></A>
+
+<PRE>
+<B>program</B> Shabout;
+
+<B>uses</B>
+  Forms,
+  ShAboutF <B>in</B> <I>'ShAboutF.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=SHABOUTF.PAS><H3>SHABOUTF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> ShAboutF;
+
+<B>interface</B>
+
+<B>uses</B> Windows, Classes, Graphics, Forms,
+  Controls, StdCtrls, SysUtils, ShellApi;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    Button1: TButton;
+    <B>procedure</B> Button1Click(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.Button1Click(Sender: TObject);
+<B>begin</B>
+  ShellAbout (Handle,
+    <I>'About ShellAbout Test#makes funny programs like'</I>,
+    <I>'Portions Copyright 1998 Marco Cantù'</I>,
+    Application.Icon.Handle);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=SHABOUTF.DFM><H3>SHABOUTF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 107
+  Top = 165
+  Width = 203
+  Height = 94
+  ActiveControl = Button1
+  Caption = <I>'ShellAbout Test'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Button1: TButton
+    Left = 45
+    Top = 17
+    Width = 105
+    Height = 33
+    Caption = <I>'&amp;About (Shell)...'</I>
+    TabOrder = 0
+    OnClick = Button1Click
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

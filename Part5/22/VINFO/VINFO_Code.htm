@@ -1,0 +1,176 @@
+<HTML><HEAD>
+<TITLE>Project: VINFO.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: VINFO.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#VINFO.DPR> VINFO.DPR</A>
+<LI> <A HREF=#VINFOF.PAS> VINFOF.PAS</A>
+<LI> <A HREF=#VINFOF.DFM> VINFOF.DFM</A>
+</UL>
+<HR>
+<A NAME=VINFO.DPR><H3>VINFO.DPR</H3></A>
+
+<PRE>
+<B>program</B> VInfo;
+
+<B>uses</B>
+  Forms,
+  VInfoF <B>in</B> <I>'VInfoF.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=VINFOF.PAS><H3>VINFOF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> VInfoF;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    Memo1: TMemo;
+    Button1: TButton;
+    <B>procedure</B> Button1Click(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.Button1Click(Sender: TObject);
+<B>var</B>
+  Size, Size2: DWord;
+  Pt, Pt2: Pointer;
+<B>begin</B>
+  Memo1.Lines.Clear;
+  Size := GetFileVersionInfoSize (
+    PChar (ParamStr (0)), Size2);
+  <B>if</B> Size &gt; 0 <B>then</B>
+  <B>begin</B>
+    GetMem (Pt, Size);
+    <B>try</B>
+       GetFileVersionInfo (PChar (ParamStr (0)), 0, Size, Pt);
+       <FONT COLOR="#000080"><I>// show the fixed information</I></FONT>
+       VerQueryValue (Pt, <I>'\'</I>, Pt2, Size2);
+       <B>with</B> TVSFixedFileInfo (Pt2^) <B>do</B>
+       <B>begin</B>
+         Memo1.Lines.Add (
+           <I>'Signature (should be invariably 0xFEEFO4BD): '</I> +
+           IntToHex (dwSignature, 16));
+         Memo1.Lines.Add (<I>'Major version number: '</I> +
+           IntToStr (HiWord (dwFileVersionMS)));
+         Memo1.Lines.Add (<I>'Minor version number: '</I> +
+           IntToStr (LoWord (dwFileVersionMS)));
+         Memo1.Lines.Add (<I>'Release version number: '</I> +
+           IntToStr (HiWord (dwFileVersionLS)));
+         Memo1.Lines.Add (<I>'Build version number: '</I> +
+           IntToStr (LoWord (dwFileVersionLS)));
+         <B>if</B> (dwFileFlagsMask <B>and</B> dwFileFlags
+             <B>and</B> VS_FF_DEBUG) &lt;&gt; 0 <B>then</B>
+           Memo1.Lines.Add (<I>'Debug info included'</I>);
+         <B>if</B> (dwFileFlagsMask <B>and</B> dwFileFlags <B>and</B>
+             VS_FF_PRERELEASE) &lt;&gt; 0 <B>then</B>
+           Memo1.Lines.Add (<I>'Pre-release (beta) version'</I>);
+         <B>if</B> (dwFileFlagsMask <B>and</B> dwFileFlags <B>and</B>
+             VS_FF_PRIVATEBUILD) &lt;&gt; 0 <B>then</B>
+           Memo1.Lines.Add (<I>'Private Build'</I>);
+         <B>if</B> (dwFileFlagsMask <B>and</B> dwFileFlags <B>and</B>
+             VS_FF_SPECIALBUILD) &lt;&gt; 0 <B>then</B>
+           Memo1.Lines.Add (<I>'Special Build'</I>);
+       <B>end</B>;
+
+       <FONT COLOR="#000080"><I>// show some of the strings</I></FONT>
+       VerQueryValue(Pt,
+         <I>'\StringFileInfo\040904E4\FileDescription'</I>,
+         Pt2, Size2);
+       Memo1.Lines.Add (<I>'File Description: '</I> +
+         PChar (Pt2));
+       VerQueryValue(Pt,
+         <I>'\StringFileInfo\040904E4\FileVersion'</I>,
+         Pt2, Size2);
+       Memo1.Lines.Add (<I>'File Version: '</I> + PChar (pt2));
+       VerQueryValue(Pt,
+         <I>'\StringFileInfo\040904E4\InternalName'</I>,
+         Pt2, Size2);
+       Memo1.Lines.Add (<I>'Internal Name: '</I> + PChar (pt2));
+       VerQueryValue(Pt,
+         <I>'\StringFileInfo\040904E4\LegalCopyright'</I>,
+         Pt2, Size2);
+       Memo1.Lines.Add (<I>'Legal Copyright: '</I> + PChar (pt2));
+       VerQueryValue(Pt,
+         <I>'\StringFileInfo\040904E4\ProductDescription'</I>,
+         Pt2, Size2);
+       Memo1.Lines.Add (<I>'Product Name: '</I> + PChar (pt2));
+       VerQueryValue(Pt,
+         <I>'\StringFileInfo\040904E4\ProductVersion'</I>,
+         Pt2, Size2);
+       Memo1.Lines.Add (<I>'Product Version: '</I> + PChar (pt2));
+    <B>finally</B>
+      FreeMem (Pt);
+    <B>end</B>;
+  <B>end</B>;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=VINFOF.DFM><H3>VINFOF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 200
+  Top = 108
+  Width = 440
+  Height = 300
+  Caption = <I>'Version Info'</I>
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Memo1: TMemo
+    Left = 8
+    Top = 40
+    Width = 417
+    Height = 225
+    Lines.Strings = (
+      <I>''</I>)
+    TabOrder = 0
+  <B>end</B>
+  <B>object</B> Button1: TButton
+    Left = 8
+    Top = 8
+    Width = 417
+    Height = 25
+    Caption = <I>'Read Version Info'</I>
+    TabOrder = 1
+    OnClick = Button1Click
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

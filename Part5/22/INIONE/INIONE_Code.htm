@@ -1,0 +1,143 @@
+<HTML><HEAD>
+<TITLE>Project: INIONE.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: INIONE.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#INIONE.DPR> INIONE.DPR</A>
+<LI> <A HREF=#INIFORM.PAS> INIFORM.PAS</A>
+<LI> <A HREF=#INIFORM.DFM> INIFORM.DFM</A>
+</UL>
+<HR>
+<A NAME=INIONE.DPR><H3>INIONE.DPR</H3></A>
+
+<PRE>
+<B>program</B> IniOne;
+
+<B>uses</B>
+  Forms,
+  IniForm <B>in</B> <I>'IniForm.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=INIFORM.PAS><H3>INIFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> IniForm;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes, Graphics, Controls,
+  Forms, Dialogs, IniFiles;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> FormClose(Sender: TObject;
+      <B>var</B> Action: TCloseAction);
+  <B>private</B>
+    IniFile: TIniFile;
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.FormCreate(Sender: TObject);
+<B>var</B>
+  Status: Integer;
+<B>begin</B>
+  IniFile := TIniFile.Create (ExtractFilePath (
+    Application.ExeName) + <I>'ini_one.ini'</I>);
+  <FONT COLOR="#000080"><I>{try to read a value and test if it exists}</I></FONT>
+  Status := IniFile.ReadInteger (<I>'MainForm'</I>, <I>'Status'</I>, 0);
+  <B>if</B> Status &lt;&gt; 0 <B>then</B>
+  <B>begin</B>
+    <FONT COLOR="#000080"><I>{read position and size using current values as default}</I></FONT>
+    Top := IniFile.ReadInteger (<I>'MainForm'</I>, <I>'Top'</I>, Top);
+    Left := IniFile.ReadInteger (<I>'MainForm'</I>, <I>'Left'</I>, Left);
+    Width := IniFile.ReadInteger (<I>'MainForm'</I>, <I>'Width'</I>, Width);
+    Height := IniFile.ReadInteger (<I>'MainForm'</I>, <I>'Height'</I>, Height);
+
+    <FONT COLOR="#000080"><I>{set the minimized or maximized status}</I></FONT>
+    <B>case</B> Status <B>of</B>
+      <FONT COLOR="#000080"><I>// 1: WindowState := wsNormal;</I></FONT>
+        <FONT COLOR="#000080"><I>//this is already the default</I></FONT>
+      2: WindowState := wsMinimized;
+      3: WindowState := wsMaximized;
+    <B>end</B>;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TForm1.FormClose(Sender: TObject; <B>var</B> Action: TCloseAction);
+<B>var</B>
+  Status: Integer;
+<B>begin</B>
+  <B>if</B> MessageDlg (<I>'Save the current status of the form?'</I>,
+    mtConfirmation, [mbYes, mbNo], 0) = IdYes <B>then</B>
+  <B>begin</B>
+    Status := 1; <FONT COLOR="#000080"><I>// default</I></FONT>
+    <B>case</B> WindowState <B>of</B>
+      wsNormal: <B>begin</B>
+        <FONT COLOR="#000080"><I>{save position and size only if the state is normal}</I></FONT>
+        IniFile.WriteInteger (<I>'MainForm'</I>, <I>'Top'</I>, Top);
+        IniFile.WriteInteger (<I>'MainForm'</I>, <I>'Left'</I>, Left);
+        IniFile.WriteInteger (<I>'MainForm'</I>, <I>'Width'</I>, Width);
+        IniFile.WriteInteger (<I>'MainForm'</I>, <I>'Height'</I>, Height);
+      <B>end</B>;
+      wsMinimized: Status := 2;  <FONT COLOR="#000080"><I>{useless: this value is never set by VCL!!}</I></FONT>
+      wsMaximized: Status := 3;
+    <B>end</B>;
+    <FONT COLOR="#000080"><I>{check if the window is minimized, that is, if the form
+    is hidden and not active}</I></FONT>
+    <B>if</B> <B>not</B> Active <B>then</B>
+      Status := 2;
+    <FONT COLOR="#000080"><I>{write status information}</I></FONT>
+    IniFile.WriteInteger (<I>'MainForm'</I>, <I>'Status'</I>, Status);
+  <B>end</B>;
+  <FONT COLOR="#000080"><I>{in any case destroy the IniFile object}</I></FONT>
+  IniFile.Free;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=INIFORM.DFM><H3>INIFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 357
+  Top = 172
+  Width = 217
+  Height = 201
+  Caption = <I>'IniOne'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -13
+  Font.Name = <I>'System'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  OnClose = FormClose
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 16
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

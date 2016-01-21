@@ -1,0 +1,209 @@
+<HTML><HEAD>
+<TITLE>Project: PARQUERY.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: PARQUERY.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#PARQUERY.DPR> PARQUERY.DPR</A>
+<LI> <A HREF=#PARQFORM.PAS> PARQFORM.PAS</A>
+<LI> <A HREF=#PARQFORM.DFM> PARQFORM.DFM</A>
+</UL>
+<HR>
+<A NAME=PARQUERY.DPR><H3>PARQUERY.DPR</H3></A>
+
+<PRE>
+<B>program</B> ParQuery;
+
+<B>uses</B>
+  Forms,
+  ParQForm <B>in</B> <I>'ParQForm.pas'</I> <FONT COLOR="#000080"><I>{QueryForm}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TQueryForm, QueryForm);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=PARQFORM.PAS><H3>PARQFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> ParQForm;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes, Graphics, Controls,
+  Forms, Dialogs, ExtCtrls, DBCtrls, StdCtrls, Mask, DB, DBTables, DBLookup,
+  Grids, DBGrids;
+
+<B>type</B>
+  TQueryForm = <B>class</B>(TForm)
+    DataSource1: TDataSource;
+    Query1: TQuery;
+    ListBox1: TListBox;
+    DBGrid1: TDBGrid;
+    Splitter1: TSplitter;
+    Query2: TQuery;
+    DBNavigator1: TDBNavigator;
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> ListBox1Click(Sender: TObject);
+    <B>procedure</B> FormDestroy(Sender: TObject);
+    <B>procedure</B> Query1BeforePost(DataSet: TDataSet);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  QueryForm: TQueryForm;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TQueryForm.FormCreate(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// get the list of continents</I></FONT>
+  Query2.Open;
+  <B>while</B> <B>not</B> Query2.EOF <B>do</B>
+  <B>begin</B>
+    ListBox1.Items.Add (Query2.Fields [0].AsString);
+    Query2.Next;
+  <B>end</B>;
+  ListBox1.ItemIndex := 0;
+
+  <FONT COLOR="#000080"><I>// prepare and open the first query</I></FONT>
+  Query1.Prepare;
+  Query1.Params[0].Value := ListBox1.Items [0];
+  Query1.Open;
+<B>end</B>;
+
+<B>procedure</B> TQueryForm.ListBox1Click(Sender: TObject);
+<B>begin</B>
+  Query1.Close;
+  Query1.Params[0].Value :=
+    ListBox1.Items [Listbox1.ItemIndex];
+  Query1.Open;
+<B>end</B>;
+
+<B>procedure</B> TQueryForm.FormDestroy(Sender: TObject);
+<B>begin</B>
+  Query1.Close;
+  Query1.Unprepare;
+<B>end</B>;
+
+<B>procedure</B> TQueryForm.Query1BeforePost(DataSet: TDataSet);
+<B>var</B>
+  StrNewCont: <B>string</B>;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// add the continent, if not already in the list</I></FONT>
+  StrNewCont := Query1.FieldByName (<I>'Continent'</I>).AsString;
+  <B>if</B> ListBox1.Items.IndexOf (StrNewCont) &lt; 0 <B>then</B>
+    ListBox1.Items.Add (StrNewCont);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=PARQFORM.DFM><H3>PARQFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> QueryForm: TQueryForm
+  Left = 318
+  Top = 128
+  Width = 457
+  Height = 271
+  Caption = <I>'Parameterized Query'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clBlack
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  Visible = True
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Splitter1: TSplitter
+    Left = 137
+    Top = 25
+    Width = 1
+    Height = 219
+    Cursor = crHSplit
+  <B>end</B>
+  <B>object</B> ListBox1: TListBox
+    Left = 0
+    Top = 25
+    Width = 137
+    Height = 219
+    Align = alLeft
+    ItemHeight = 13
+    TabOrder = 0
+    OnClick = ListBox1Click
+  <B>end</B>
+  <B>object</B> DBGrid1: TDBGrid
+    Left = 138
+    Top = 25
+    Width = 311
+    Height = 219
+    Align = alClient
+    DataSource = DataSource1
+    TabOrder = 1
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clBlack
+    TitleFont.Height = -11
+    TitleFont.Name = <I>'MS Sans Serif'</I>
+    TitleFont.Style = []
+  <B>end</B>
+  <B>object</B> DBNavigator1: TDBNavigator
+    Left = 0
+    Top = 0
+    Width = 449
+    Height = 25
+    DataSource = DataSource1
+    Align = alTop
+    TabOrder = 2
+  <B>end</B>
+  <B>object</B> DataSource1: TDataSource
+    DataSet = Query1
+    Left = 32
+    Top = 64
+  <B>end</B>
+  <B>object</B> Query1: TQuery
+    BeforePost = Query1BeforePost
+    DatabaseName = <I>'DBDEMOS'</I>
+    RequestLive = True
+    SQL.Strings = (
+      <I>'select * from Country '</I>
+      <I>'where Continent = :Continent'</I>)
+    Left = 32
+    Top = 16
+    ParamData = &lt;
+      <B>item</B>
+        DataType = ftString
+        Name = <I>'Continent'</I>
+        ParamType = ptUnknown
+        Value = <I>'North America'</I>
+      <B>end</B>&gt;
+  <B>end</B>
+  <B>object</B> Query2: TQuery
+    DatabaseName = <I>'DBDEMOS'</I>
+    SQL.Strings = (
+      <I>'select distinct Continent '</I>
+      <I>'from Country'</I>)
+    Left = 32
+    Top = 120
+    ParamData = &lt;&gt;
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

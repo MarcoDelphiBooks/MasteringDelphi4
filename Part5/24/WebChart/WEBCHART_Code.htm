@@ -1,0 +1,195 @@
+<HTML><HEAD>
+<TITLE>Project: WEBCHART.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: WEBCHART.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#WEBCHART.DPR> WEBCHART.DPR</A>
+<LI> <A HREF=#CHARTMOD.PAS> CHARTMOD.PAS</A>
+<LI> <A HREF=#CHARTMOD.DFM> CHARTMOD.DFM</A>
+</UL>
+<HR>
+<A NAME=WEBCHART.DPR><H3>WEBCHART.DPR</H3></A>
+
+<PRE>
+<B>library</B> WebChart;
+
+<B>uses</B>
+  HTTPApp,
+  ISAPIApp,
+  ChartMod <B>in</B> <I>'ChartMod.pas'</I> <FONT COLOR="#000080"><I>{WebModule1: TWebModule}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>exports</B>
+  GetExtensionVersion,
+  HttpExtensionProc,
+  TerminateExtension;
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TWebModule1, WebModule1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=CHARTMOD.PAS><H3>CHARTMOD.PAS</H3></A>
+
+<PRE>
+<B>unit</B> ChartMod;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, HTTPApp, Db, DBTables,
+  DbChart, Series, Jpeg, ExtCtrls;
+
+<B>type</B>
+  TWebModule1 = <B>class</B>(TWebModule)
+    Table1: TTable;
+    <B>procedure</B> WebModule1ActionAreaAction(Sender: TObject;
+      Request: TWebRequest; Response: TWebResponse; <B>var</B> Handled: Boolean);
+    <B>procedure</B> WebModule1ActionPopulationAction(Sender: TObject;
+      Request: TWebRequest; Response: TWebResponse; <B>var</B> Handled: Boolean);
+    <B>procedure</B> WebModule1Create(Sender: TObject);
+    <B>procedure</B> WebModule1Destroy(Sender: TObject);
+    <B>procedure</B> WebModule1AfterDispatch(Sender: TObject;
+      Request: TWebRequest; Response: TWebResponse; <B>var</B> Handled: Boolean);
+  <B>private</B>
+    Chart: TDBChart;
+    Series: TPieSeries;
+    Image: TImage;
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  WebModule1: TWebModule1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TWebModule1.WebModule1ActionAreaAction(Sender: TObject;
+  Request: TWebRequest; Response: TWebResponse; <B>var</B> Handled: Boolean);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// set specific values</I></FONT>
+  Chart.Title.Text.Clear;
+  Chart.Title.Text.Add (<I>'Area of Countries'</I>);
+  Chart.LeftAxis.Title.Caption := <I>'Area'</I>;
+  Series.Title := <I>'Area'</I>;
+  Series.PieValues.ValueSource := <I>'Area'</I>;
+<B>end</B>;
+
+<B>procedure</B> TWebModule1.WebModule1ActionPopulationAction(Sender: TObject;
+  Request: TWebRequest; Response: TWebResponse; <B>var</B> Handled: Boolean);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// set specific values</I></FONT>
+  Chart.Title.Text.Clear;
+  Chart.Title.Text.Add (<I>'Population of Countries'</I>);
+  Chart.LeftAxis.Title.Caption := <I>'Population'</I>;
+  Series.Title := <I>'Population'</I>;
+  Series.PieValues.ValueSource := <I>'Population'</I>;
+<B>end</B>;
+
+<B>procedure</B> TWebModule1.WebModule1Create(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// open the database table</I></FONT>
+  Table1.Open;
+  <FONT COLOR="#000080"><I>// create the chart</I></FONT>
+  Chart := TDBChart.Create (<B>nil</B>);
+  Chart.Width := 600;
+  Chart.Height := 400;
+  Chart.AxisVisible := False;
+  Chart.Legend.Visible := False;
+  Chart.BottomAxis.Title.Caption := <I>'Name'</I>;
+  <FONT COLOR="#000080"><I>// create the pie series</I></FONT>
+  Series := TPieSeries.Create (Chart);
+  Series.ParentChart := Chart;
+  Series.DataSource := Table1;
+  Series.XLabelsSource := <I>'Name'</I>;
+  Series.OtherSlice.Style := poBelowPercent;
+  Series.OtherSlice.Text := <I>'Others'</I>;
+  Series.OtherSlice.Value := 2;
+  Chart.AddSeries (Series);
+  <FONT COLOR="#000080"><I>// create the memory bitmap</I></FONT>
+  Image := TImage.Create (<B>nil</B>);
+  Image.Width := Chart.Width;
+  Image.Height := Chart.Height;
+<B>end</B>;
+
+<B>procedure</B> TWebModule1.WebModule1Destroy(Sender: TObject);
+<B>begin</B>
+  Chart.Free;
+  Series.Free;
+  Image.Free;
+<B>end</B>;
+
+<B>procedure</B> TWebModule1.WebModule1AfterDispatch(Sender: TObject;
+  Request: TWebRequest; Response: TWebResponse; <B>var</B> Handled: Boolean);
+<B>var</B>
+  Jpeg: TJpegImage;
+  MemStr: TMemoryStream;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// paint the chart on the memory bitmap</I></FONT>
+  Chart.Draw (Image.Canvas, Image.BoundsRect);
+  <FONT COLOR="#000080"><I>// create the jpeg and copy the iamge to it</I></FONT>
+  Jpeg := TJpegImage.Create;
+  <B>try</B>
+    Jpeg.Assign (Image.Picture.Bitmap);
+    MemStr := TMemoryStream.Create;
+    <B>try</B>
+      <FONT COLOR="#000080"><I>// save to a stream and return it</I></FONT>
+      Jpeg.SaveToStream (MemStr);
+      MemStr.Position := 0;
+      Response.ContentType := <I>'image/jpeg'</I>;
+      Response.ContentStream := MemStr;
+      Response.SendResponse;
+    <B>finally</B>
+      MemStr.Free;
+    <B>end</B>;
+  <B>finally</B>
+    Jpeg.Free;
+  <B>end</B>;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=CHARTMOD.DFM><H3>CHARTMOD.DFM</H3></A>
+
+<PRE>
+<B>object</B> WebModule1: TWebModule1
+  OldCreateOrder = False
+  OnCreate = WebModule1Create
+  OnDestroy = WebModule1Destroy
+  Actions = &lt;
+    <B>item</B>
+      Default = True
+      Name = <I>'ActionPopulation'</I>
+      PathInfo = <I>'/population'</I>
+      OnAction = WebModule1ActionPopulationAction
+    <B>end</B>
+    <B>item</B>
+      Name = <I>'ActionArea'</I>
+      PathInfo = <I>'/area'</I>
+      OnAction = WebModule1ActionAreaAction
+    <B>end</B>&gt;
+  AfterDispatch = WebModule1AfterDispatch
+  Left = 194
+  Top = 107
+  Height = 150
+  Width = 215
+  <B>object</B> Table1: TTable
+    DatabaseName = <I>'DBDEMOS'</I>
+    TableName = <I>'country.db'</I>
+    Left = 24
+    Top = 24
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

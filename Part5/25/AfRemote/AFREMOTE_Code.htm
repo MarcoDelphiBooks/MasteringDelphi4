@@ -1,0 +1,1235 @@
+<HTML><HEAD>
+<TITLE>Project: AFREMOTE.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: AFREMOTE.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#AFREMOTE.DPR> AFREMOTE.DPR</A>
+<LI> <A HREF=#AFREMOTE_TLB.PAS> AFREMOTE_TLB.PAS</A>
+<LI> <A HREF=#REMOTE.PAS> REMOTE.PAS</A>
+<LI> <A HREF=#RECONDLG.PAS> RECONDLG.PAS</A>
+<LI> <A HREF=#REMOTE.DFM> REMOTE.DFM</A>
+<LI> <A HREF=#RECONDLG.DFM> RECONDLG.DFM</A>
+</UL>
+<HR>
+<A NAME=AFREMOTE.DPR><H3>AFREMOTE.DPR</H3></A>
+
+<PRE>
+<B>library</B> AfRemote;
+
+<B>uses</B>
+  ComServ,
+  AfRemote_TLB <B>in</B> <I>'AfRemote_TLB.pas'</I>,
+  Remote <B>in</B> <I>'Remote.pas'</I> <FONT COLOR="#000080"><I>{ActiveRemote: TActiveForm}</I></FONT> <FONT COLOR="#000080"><I>{ActiveRemote: CoClass}</I></FONT>,
+  ReconDlg <B>in</B> <I>'ReconDlg.pas'</I> <FONT COLOR="#000080"><I>{ReconcileErrorForm}</I></FONT>;
+
+<B>exports</B>
+  DllGetClassObject,
+  DllCanUnloadNow,
+  DllRegisterServer,
+  DllUnregisterServer;
+
+<FONT COLOR="#000080"><I>{$R *.TLB}</I></FONT>
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<FONT COLOR="#000080"><I>{$E ocx}</I></FONT>
+
+<B>begin</B>
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=AFREMOTE_TLB.PAS><H3>AFREMOTE_TLB.PAS</H3></A>
+
+<PRE>
+<B>unit</B> AfRemote_TLB;
+
+<FONT COLOR="#000080"><I>{ This file contains pascal declarations imported from a type library.
+  This file will be written during each import or refresh of the type
+  library editor.  Changes to this file will be discarded during the
+  refresh process. }</I></FONT>
+
+<FONT COLOR="#000080"><I>{ AfRemote Library }</I></FONT>
+<FONT COLOR="#000080"><I>{ Version 1.0 }</I></FONT>
+
+<FONT COLOR="#000080"><I>{ Conversion log:
+  Hint: Class is not registered.  Ambient properties cannot be determined.
+ }</I></FONT>
+
+<B>interface</B>
+
+<B>uses</B> Windows, ActiveX, Classes, Graphics, OleCtrls, StdVCL;
+
+<B>const</B>
+  LIBID_AfRemote: TGUID = <I>'{CBF29741-2472-11D1-98D0-444553540000}'</I>;
+
+<B>const</B>
+
+<FONT COLOR="#000080"><I>{ TxActiveFormBorderStyle }</I></FONT>
+
+  afbNone = 0;
+  afbSingle = 1;
+  afbSunken = 2;
+  afbRaised = 3;
+
+<FONT COLOR="#000080"><I>{ TxPrintScale }</I></FONT>
+
+  poNone = 0;
+  poProportional = 1;
+  poPrintToFit = 2;
+
+<FONT COLOR="#000080"><I>{ TxMouseButton }</I></FONT>
+
+  mbLeft = 0;
+  mbRight = 1;
+  mbMiddle = 2;
+
+<FONT COLOR="#000080"><I>{ TxWindowState }</I></FONT>
+
+  wsNormal = 0;
+  wsMinimized = 1;
+  wsMaximized = 2;
+
+<B>const</B>
+
+<FONT COLOR="#000080"><I>{ Component class GUIDs }</I></FONT>
+  Class_ActiveRemote: TGUID = <I>'{CBF29744-2472-11D1-98D0-444553540000}'</I>;
+
+<B>type</B>
+
+<FONT COLOR="#000080"><I>{ Forward declarations: Interfaces }</I></FONT>
+  IActiveRemote = <B>interface</B>;
+  IActiveRemoteDisp = <B>dispinterface</B>;
+  IActiveRemoteEvents = <B>dispinterface</B>;
+
+<FONT COLOR="#000080"><I>{ Forward declarations: CoClasses }</I></FONT>
+  ActiveRemote = IActiveRemote;
+
+<FONT COLOR="#000080"><I>{ Forward declarations: Enums }</I></FONT>
+  TxActiveFormBorderStyle = TOleEnum;
+  TxPrintScale = TOleEnum;
+  TxMouseButton = TOleEnum;
+  TxWindowState = TOleEnum;
+
+<FONT COLOR="#000080"><I>{ Dispatch interface for ActiveRemote Control }</I></FONT>
+
+  IActiveRemote = <B>interface</B>(IDispatch)
+    [<I>'{CBF29742-2472-11D1-98D0-444553540000}'</I>]
+    <B>function</B> Get_AutoScroll: WordBool; safecall;
+    <B>procedure</B> Set_AutoScroll(Value: WordBool); safecall;
+    <B>function</B> Get_AxBorderStyle: TxActiveFormBorderStyle; safecall;
+    <B>procedure</B> Set_AxBorderStyle(Value: TxActiveFormBorderStyle); safecall;
+    <B>function</B> Get_Caption: WideString; safecall;
+    <B>procedure</B> Set_Caption(<B>const</B> Value: WideString); safecall;
+    <B>function</B> Get_Color: TColor; safecall;
+    <B>procedure</B> Set_Color(Value: TColor); safecall;
+    <B>function</B> Get_Font: Font; safecall;
+    <B>procedure</B> Set_Font(<B>const</B> Value: Font); safecall;
+    <B>function</B> Get_KeyPreview: WordBool; safecall;
+    <B>procedure</B> Set_KeyPreview(Value: WordBool); safecall;
+    <B>function</B> Get_PixelsPerInch: Integer; safecall;
+    <B>procedure</B> Set_PixelsPerInch(Value: Integer); safecall;
+    <B>function</B> Get_PrintScale: TxPrintScale; safecall;
+    <B>procedure</B> Set_PrintScale(Value: TxPrintScale); safecall;
+    <B>function</B> Get_Scaled: WordBool; safecall;
+    <B>procedure</B> Set_Scaled(Value: WordBool); safecall;
+    <B>function</B> Get_Active: WordBool; safecall;
+    <B>function</B> Get_DropTarget: WordBool; safecall;
+    <B>procedure</B> Set_DropTarget(Value: WordBool); safecall;
+    <B>function</B> Get_HelpFile: WideString; safecall;
+    <B>procedure</B> Set_HelpFile(<B>const</B> Value: WideString); safecall;
+    <B>function</B> Get_WindowState: TxWindowState; safecall;
+    <B>procedure</B> Set_WindowState(Value: TxWindowState); safecall;
+    <B>function</B> Get_Visible: WordBool; safecall;
+    <B>procedure</B> Set_Visible(Value: WordBool); safecall;
+    <B>function</B> Get_Enabled: WordBool; safecall;
+    <B>procedure</B> Set_Enabled(Value: WordBool); safecall;
+    <B>function</B> Get_Cursor: Smallint; safecall;
+    <B>procedure</B> Set_Cursor(Value: Smallint); safecall;
+    <B>property</B> AutoScroll: WordBool <B>read</B> Get_AutoScroll <B>write</B> Set_AutoScroll;
+    <B>property</B> AxBorderStyle: TxActiveFormBorderStyle <B>read</B> Get_AxBorderStyle <B>write</B> Set_AxBorderStyle;
+    <B>property</B> Caption: WideString <B>read</B> Get_Caption <B>write</B> Set_Caption;
+    <B>property</B> Color: TColor <B>read</B> Get_Color <B>write</B> Set_Color;
+    <B>property</B> Font: Font <B>read</B> Get_Font <B>write</B> Set_Font;
+    <B>property</B> KeyPreview: WordBool <B>read</B> Get_KeyPreview <B>write</B> Set_KeyPreview;
+    <B>property</B> PixelsPerInch: Integer <B>read</B> Get_PixelsPerInch <B>write</B> Set_PixelsPerInch;
+    <B>property</B> PrintScale: TxPrintScale <B>read</B> Get_PrintScale <B>write</B> Set_PrintScale;
+    <B>property</B> Scaled: WordBool <B>read</B> Get_Scaled <B>write</B> Set_Scaled;
+    <B>property</B> Active: WordBool <B>read</B> Get_Active;
+    <B>property</B> DropTarget: WordBool <B>read</B> Get_DropTarget <B>write</B> Set_DropTarget;
+    <B>property</B> HelpFile: WideString <B>read</B> Get_HelpFile <B>write</B> Set_HelpFile;
+    <B>property</B> WindowState: TxWindowState <B>read</B> Get_WindowState <B>write</B> Set_WindowState;
+    <B>property</B> Visible: WordBool <B>read</B> Get_Visible <B>write</B> Set_Visible;
+    <B>property</B> Enabled: WordBool <B>read</B> Get_Enabled <B>write</B> Set_Enabled;
+    <B>property</B> Cursor: Smallint <B>read</B> Get_Cursor <B>write</B> Set_Cursor;
+  <B>end</B>;
+
+<FONT COLOR="#000080"><I>{ DispInterface declaration for Dual Interface IActiveRemote }</I></FONT>
+
+  IActiveRemoteDisp = <B>dispinterface</B>
+    [<I>'{CBF29742-2472-11D1-98D0-444553540000}'</I>]
+    <B>property</B> AutoScroll: WordBool <B>dispid</B> 1;
+    <B>property</B> AxBorderStyle: TxActiveFormBorderStyle <B>dispid</B> 2;
+    <B>property</B> Caption: WideString <B>dispid</B> 3;
+    <B>property</B> Color: TColor <B>dispid</B> 4;
+    <B>property</B> Font: Font <B>dispid</B> 5;
+    <B>property</B> KeyPreview: WordBool <B>dispid</B> 6;
+    <B>property</B> PixelsPerInch: Integer <B>dispid</B> 7;
+    <B>property</B> PrintScale: TxPrintScale <B>dispid</B> 8;
+    <B>property</B> Scaled: WordBool <B>dispid</B> 9;
+    <B>property</B> Active: WordBool readonly <B>dispid</B> 10;
+    <B>property</B> DropTarget: WordBool <B>dispid</B> 11;
+    <B>property</B> HelpFile: WideString <B>dispid</B> 12;
+    <B>property</B> WindowState: TxWindowState <B>dispid</B> 13;
+    <B>property</B> Visible: WordBool <B>dispid</B> 14;
+    <B>property</B> Enabled: WordBool <B>dispid</B> 15;
+    <B>property</B> Cursor: Smallint <B>dispid</B> 16;
+  <B>end</B>;
+
+<FONT COLOR="#000080"><I>{ Events interface for ActiveRemote Control }</I></FONT>
+
+  IActiveRemoteEvents = <B>dispinterface</B>
+    [<I>'{CBF29743-2472-11D1-98D0-444553540000}'</I>]
+    <B>procedure</B> OnActivate; <B>dispid</B> 1;
+    <B>procedure</B> OnClick; <B>dispid</B> 2;
+    <B>procedure</B> OnCreate; <B>dispid</B> 3;
+    <B>procedure</B> OnDblClick; <B>dispid</B> 4;
+    <B>procedure</B> OnDestroy; <B>dispid</B> 5;
+    <B>procedure</B> OnDeactivate; <B>dispid</B> 6;
+    <B>procedure</B> OnKeyPress(<B>var</B> Key: Smallint); <B>dispid</B> 7;
+    <B>procedure</B> OnPaint; <B>dispid</B> 8;
+  <B>end</B>;
+
+<FONT COLOR="#000080"><I>{ ActiveRemoteControl }</I></FONT>
+
+  TActiveRemoteOnKeyPress = <B>procedure</B>(Sender: TObject; <B>var</B> Key: Smallint) <B>of</B> <B>object</B>;
+
+  TActiveRemote = <B>class</B>(TOleControl)
+  <B>private</B>
+    FOnActivate: TNotifyEvent;
+    FOnClick: TNotifyEvent;
+    FOnCreate: TNotifyEvent;
+    FOnDblClick: TNotifyEvent;
+    FOnDestroy: TNotifyEvent;
+    FOnDeactivate: TNotifyEvent;
+    FOnKeyPress: TActiveRemoteOnKeyPress;
+    FOnPaint: TNotifyEvent;
+    FIntf: IActiveRemote;
+  <B>protected</B>
+    <B>procedure</B> InitControlData; <B>override</B>;
+    <B>procedure</B> InitControlInterface(<B>const</B> Obj: IUnknown); <B>override</B>;
+  <B>public</B>
+    <B>property</B> ControlInterface: IActiveRemote <B>read</B> FIntf;
+    <B>property</B> Active: WordBool <B>index</B> 10 <B>read</B> GetWordBoolProp;
+  <B>published</B>
+    <B>property</B> AutoScroll: WordBool <B>index</B> 1 <B>read</B> GetWordBoolProp <B>write</B> SetWordBoolProp <B>stored</B> False;
+    <B>property</B> AxBorderStyle: TxActiveFormBorderStyle <B>index</B> 2 <B>read</B> GetTOleEnumProp <B>write</B> SetTOleEnumProp <B>stored</B> False;
+    <B>property</B> Caption: WideString <B>index</B> 3 <B>read</B> GetWideStringProp <B>write</B> SetWideStringProp <B>stored</B> False;
+    <B>property</B> Color: TColor <B>index</B> 4 <B>read</B> GetTColorProp <B>write</B> SetTColorProp <B>stored</B> False;
+    <B>property</B> Font: TFont <B>index</B> 5 <B>read</B> GetTFontProp <B>write</B> SetTFontProp <B>stored</B> False;
+    <B>property</B> KeyPreview: WordBool <B>index</B> 6 <B>read</B> GetWordBoolProp <B>write</B> SetWordBoolProp <B>stored</B> False;
+    <B>property</B> PixelsPerInch: Integer <B>index</B> 7 <B>read</B> GetIntegerProp <B>write</B> SetIntegerProp <B>stored</B> False;
+    <B>property</B> PrintScale: TxPrintScale <B>index</B> 8 <B>read</B> GetTOleEnumProp <B>write</B> SetTOleEnumProp <B>stored</B> False;
+    <B>property</B> Scaled: WordBool <B>index</B> 9 <B>read</B> GetWordBoolProp <B>write</B> SetWordBoolProp <B>stored</B> False;
+    <B>property</B> DropTarget: WordBool <B>index</B> 11 <B>read</B> GetWordBoolProp <B>write</B> SetWordBoolProp <B>stored</B> False;
+    <B>property</B> HelpFile: WideString <B>index</B> 12 <B>read</B> GetWideStringProp <B>write</B> SetWideStringProp <B>stored</B> False;
+    <B>property</B> WindowState: TxWindowState <B>index</B> 13 <B>read</B> GetTOleEnumProp <B>write</B> SetTOleEnumProp <B>stored</B> False;
+    <B>property</B> Visible: WordBool <B>index</B> 14 <B>read</B> GetWordBoolProp <B>write</B> SetWordBoolProp <B>stored</B> False;
+    <B>property</B> Enabled: WordBool <B>index</B> 15 <B>read</B> GetWordBoolProp <B>write</B> SetWordBoolProp <B>stored</B> False;
+    <B>property</B> Cursor: Smallint <B>index</B> 16 <B>read</B> GetSmallintProp <B>write</B> SetSmallintProp <B>stored</B> False;
+    <B>property</B> OnActivate: TNotifyEvent <B>read</B> FOnActivate <B>write</B> FOnActivate;
+    <B>property</B> OnClick: TNotifyEvent <B>read</B> FOnClick <B>write</B> FOnClick;
+    <B>property</B> OnCreate: TNotifyEvent <B>read</B> FOnCreate <B>write</B> FOnCreate;
+    <B>property</B> OnDblClick: TNotifyEvent <B>read</B> FOnDblClick <B>write</B> FOnDblClick;
+    <B>property</B> OnDestroy: TNotifyEvent <B>read</B> FOnDestroy <B>write</B> FOnDestroy;
+    <B>property</B> OnDeactivate: TNotifyEvent <B>read</B> FOnDeactivate <B>write</B> FOnDeactivate;
+    <B>property</B> OnKeyPress: TActiveRemoteOnKeyPress <B>read</B> FOnKeyPress <B>write</B> FOnKeyPress;
+    <B>property</B> OnPaint: TNotifyEvent <B>read</B> FOnPaint <B>write</B> FOnPaint;
+  <B>end</B>;
+
+<B>procedure</B> <B>Register</B>;
+
+<B>implementation</B>
+
+<B>uses</B> ComObj;
+
+<B>procedure</B> TActiveRemote.InitControlData;
+<B>const</B>
+  CEventDispIDs: <B>array</B>[0..7] <B>of</B> Integer = (
+    $00000001, $00000002, $00000003, $00000004, $00000005, $00000006,
+    $00000007, $00000008);
+  CTFontIDs: <B>array</B> [0..0] <B>of</B> Integer = (
+    $00000005);
+  CControlData: TControlData = (
+    ClassID: <I>'{CBF29744-2472-11D1-98D0-444553540000}'</I>;
+    EventIID: <I>'{CBF29743-2472-11D1-98D0-444553540000}'</I>;
+    EventCount: 8;
+    EventDispIDs: @CEventDispIDs;
+    LicenseKey: <B>nil</B>;
+    Flags: $00000000;
+    Version: 300;
+    FontCount: 1;
+    FontIDs: @CTFontIDs);
+<B>begin</B>
+  ControlData := @CControlData;
+<B>end</B>;
+
+<B>procedure</B> TActiveRemote.InitControlInterface(<B>const</B> Obj: IUnknown);
+<B>begin</B>
+  FIntf := Obj <B>as</B> IActiveRemote;
+<B>end</B>;
+
+
+<B>procedure</B> <B>Register</B>;
+<B>begin</B>
+  RegisterComponents(<I>'ActiveX'</I>, [TActiveRemote]);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=REMOTE.PAS><H3>REMOTE.PAS</H3></A>
+
+<PRE>
+<B>unit</B> Remote;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  ActiveX, AxCtrls, AfRemote_TLB, StdCtrls, Db, DBClient, ExtCtrls, Grids,
+  DBGrids, MIDASCon, MConnect, SConnect;
+
+<B>type</B>
+  TActiveRemote = <B>class</B>(TActiveForm, IActiveRemote)
+    DBGrid1: TDBGrid;
+    Panel1: TPanel;
+    ClientDataSet1: TClientDataSet;
+    DataSource1: TDataSource;
+    CheckActive: TCheckBox;
+    BtnApply: TButton;
+    SocketConnection1: TSocketConnection;
+    <B>procedure</B> BtnApplyClick(Sender: TObject);
+    <B>procedure</B> CheckActiveClick(Sender: TObject);
+    <B>procedure</B> ClientDataSet1ReconcileError(DataSet: TClientDataSet;
+      E: EReconcileError; UpdateKind: TUpdateKind;
+      <B>var</B> Action: TReconcileAction);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+    FEvents: IActiveRemoteEvents;
+    <B>procedure</B> ActivateEvent(Sender: TObject);
+    <B>procedure</B> ClickEvent(Sender: TObject);
+    <B>procedure</B> CreateEvent(Sender: TObject);
+    <B>procedure</B> DblClickEvent(Sender: TObject);
+    <B>procedure</B> DeactivateEvent(Sender: TObject);
+    <B>procedure</B> DestroyEvent(Sender: TObject);
+    <B>procedure</B> KeyPressEvent(Sender: TObject; <B>var</B> Key: Char);
+    <B>procedure</B> PaintEvent(Sender: TObject);
+  <B>protected</B>
+    <FONT COLOR="#000080"><I>{ Protected declarations }</I></FONT>
+    <B>procedure</B> EventSinkChanged(<B>const</B> EventSink: IUnknown); <B>override</B>;
+    <B>procedure</B> Initialize; <B>override</B>;
+    <B>function</B> Get_Active: WordBool; safecall;
+    <B>function</B> Get_AutoScroll: WordBool; safecall;
+    <B>function</B> Get_AxBorderStyle: TxActiveFormBorderStyle; safecall;
+    <B>function</B> Get_Caption: WideString; safecall;
+    <B>function</B> Get_Color: TColor; safecall;
+    <B>function</B> Get_Cursor: Smallint; safecall;
+    <B>function</B> Get_DropTarget: WordBool; safecall;
+    <B>function</B> Get_Enabled: WordBool; safecall;
+    <B>function</B> Get_Font: Font; safecall;
+    <B>function</B> Get_HelpFile: WideString; safecall;
+    <B>function</B> Get_KeyPreview: WordBool; safecall;
+    <B>function</B> Get_PixelsPerInch: Integer; safecall;
+    <B>function</B> Get_PrintScale: TxPrintScale; safecall;
+    <B>function</B> Get_Scaled: WordBool; safecall;
+    <B>function</B> Get_Visible: WordBool; safecall;
+    <B>function</B> Get_WindowState: TxWindowState; safecall;
+    <B>procedure</B> Set_AutoScroll(Value: WordBool); safecall;
+    <B>procedure</B> Set_AxBorderStyle(Value: TxActiveFormBorderStyle); safecall;
+    <B>procedure</B> Set_Caption(<B>const</B> Value: WideString); safecall;
+    <B>procedure</B> Set_Color(Value: TColor); safecall;
+    <B>procedure</B> Set_Cursor(Value: Smallint); safecall;
+    <B>procedure</B> Set_DropTarget(Value: WordBool); safecall;
+    <B>procedure</B> Set_Enabled(Value: WordBool); safecall;
+    <B>procedure</B> Set_Font(<B>const</B> Value: Font); safecall;
+    <B>procedure</B> Set_HelpFile(<B>const</B> Value: WideString); safecall;
+    <B>procedure</B> Set_KeyPreview(Value: WordBool); safecall;
+    <B>procedure</B> Set_PixelsPerInch(Value: Integer); safecall;
+    <B>procedure</B> Set_PrintScale(Value: TxPrintScale); safecall;
+    <B>procedure</B> Set_Scaled(Value: WordBool); safecall;
+    <B>procedure</B> Set_Visible(Value: WordBool); safecall;
+    <B>procedure</B> Set_WindowState(Value: TxWindowState); safecall;
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>implementation</B>
+
+<B>uses</B> ComServ, ReconDlg;
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<FONT COLOR="#000080"><I>{ TActiveRemote }</I></FONT>
+
+<B>procedure</B> TActiveRemote.EventSinkChanged(<B>const</B> EventSink: IUnknown);
+<B>begin</B>
+  FEvents := EventSink <B>as</B> IActiveRemoteEvents;
+<B>end</B>;
+
+<B>procedure</B> TActiveRemote.Initialize;
+<B>begin</B>
+  OnActivate := ActivateEvent;
+  OnClick := ClickEvent;
+  OnCreate := CreateEvent;
+  OnDblClick := DblClickEvent;
+  OnDeactivate := DeactivateEvent;
+  OnDestroy := DestroyEvent;
+  OnKeyPress := KeyPressEvent;
+  OnPaint := PaintEvent;
+<B>end</B>;
+
+<B>function</B> TActiveRemote.Get_Active: WordBool;
+<B>begin</B>
+  Result := Active;
+<B>end</B>;
+
+<B>function</B> TActiveRemote.Get_AutoScroll: WordBool;
+<B>begin</B>
+  Result := AutoScroll;
+<B>end</B>;
+
+<B>function</B> TActiveRemote.Get_AxBorderStyle: TxActiveFormBorderStyle;
+<B>begin</B>
+  Result := Ord(AxBorderStyle);
+<B>end</B>;
+
+<B>function</B> TActiveRemote.Get_Caption: WideString;
+<B>begin</B>
+  Result := WideString(Caption);
+<B>end</B>;
+
+<B>function</B> TActiveRemote.Get_Color: TColor;
+<B>begin</B>
+  Result := Color;
+<B>end</B>;
+
+<B>function</B> TActiveRemote.Get_Cursor: Smallint;
+<B>begin</B>
+  Result := Smallint(Cursor);
+<B>end</B>;
+
+<B>function</B> TActiveRemote.Get_DropTarget: WordBool;
+<B>begin</B>
+  Result := DropTarget;
+<B>end</B>;
+
+<B>function</B> TActiveRemote.Get_Enabled: WordBool;
+<B>begin</B>
+  Result := Enabled;
+<B>end</B>;
+
+<B>function</B> TActiveRemote.Get_Font: Font;
+<B>begin</B>
+  GetOleFont(Font, Result);
+<B>end</B>;
+
+<B>function</B> TActiveRemote.Get_HelpFile: WideString;
+<B>begin</B>
+  Result := WideString(HelpFile);
+<B>end</B>;
+
+<B>function</B> TActiveRemote.Get_KeyPreview: WordBool;
+<B>begin</B>
+  Result := KeyPreview;
+<B>end</B>;
+
+<B>function</B> TActiveRemote.Get_PixelsPerInch: Integer;
+<B>begin</B>
+  Result := PixelsPerInch;
+<B>end</B>;
+
+<B>function</B> TActiveRemote.Get_PrintScale: TxPrintScale;
+<B>begin</B>
+  Result := Ord(PrintScale);
+<B>end</B>;
+
+<B>function</B> TActiveRemote.Get_Scaled: WordBool;
+<B>begin</B>
+  Result := Scaled;
+<B>end</B>;
+
+<B>function</B> TActiveRemote.Get_Visible: WordBool;
+<B>begin</B>
+  Result := Visible;
+<B>end</B>;
+
+<B>function</B> TActiveRemote.Get_WindowState: TxWindowState;
+<B>begin</B>
+  Result := Ord(WindowState);
+<B>end</B>;
+
+<B>procedure</B> TActiveRemote.Set_AutoScroll(Value: WordBool);
+<B>begin</B>
+  AutoScroll := Value;
+<B>end</B>;
+
+<B>procedure</B> TActiveRemote.Set_AxBorderStyle(Value: TxActiveFormBorderStyle);
+<B>begin</B>
+  AxBorderStyle := TActiveFormBorderStyle(Value);
+<B>end</B>;
+
+<B>procedure</B> TActiveRemote.Set_Caption(<B>const</B> Value: WideString);
+<B>begin</B>
+  Caption := TCaption(Value);
+<B>end</B>;
+
+<B>procedure</B> TActiveRemote.Set_Color(Value: TColor);
+<B>begin</B>
+  Color := Value;
+<B>end</B>;
+
+<B>procedure</B> TActiveRemote.Set_Cursor(Value: Smallint);
+<B>begin</B>
+  Cursor := TCursor(Value);
+<B>end</B>;
+
+<B>procedure</B> TActiveRemote.Set_DropTarget(Value: WordBool);
+<B>begin</B>
+  DropTarget := Value;
+<B>end</B>;
+
+<B>procedure</B> TActiveRemote.Set_Enabled(Value: WordBool);
+<B>begin</B>
+  Enabled := Value;
+<B>end</B>;
+
+<B>procedure</B> TActiveRemote.Set_Font(<B>const</B> Value: Font);
+<B>begin</B>
+  SetOleFont(Font, Value);
+<B>end</B>;
+
+<B>procedure</B> TActiveRemote.Set_HelpFile(<B>const</B> Value: WideString);
+<B>begin</B>
+  HelpFile := <B>String</B>(Value);
+<B>end</B>;
+
+<B>procedure</B> TActiveRemote.Set_KeyPreview(Value: WordBool);
+<B>begin</B>
+  KeyPreview := Value;
+<B>end</B>;
+
+<B>procedure</B> TActiveRemote.Set_PixelsPerInch(Value: Integer);
+<B>begin</B>
+  PixelsPerInch := Value;
+<B>end</B>;
+
+<B>procedure</B> TActiveRemote.Set_PrintScale(Value: TxPrintScale);
+<B>begin</B>
+  PrintScale := TPrintScale(Value);
+<B>end</B>;
+
+<B>procedure</B> TActiveRemote.Set_Scaled(Value: WordBool);
+<B>begin</B>
+  Scaled := Value;
+<B>end</B>;
+
+<B>procedure</B> TActiveRemote.Set_Visible(Value: WordBool);
+<B>begin</B>
+  Visible := Value;
+<B>end</B>;
+
+<B>procedure</B> TActiveRemote.Set_WindowState(Value: TxWindowState);
+<B>begin</B>
+  WindowState := TWindowState(Value);
+<B>end</B>;
+
+<B>procedure</B> TActiveRemote.ActivateEvent(Sender: TObject);
+<B>begin</B>
+  <B>if</B> FEvents &lt;&gt; <B>nil</B> <B>then</B> FEvents.OnActivate;
+<B>end</B>;
+
+<B>procedure</B> TActiveRemote.ClickEvent(Sender: TObject);
+<B>begin</B>
+  <B>if</B> FEvents &lt;&gt; <B>nil</B> <B>then</B> FEvents.OnClick;
+<B>end</B>;
+
+<B>procedure</B> TActiveRemote.CreateEvent(Sender: TObject);
+<B>begin</B>
+  <B>if</B> FEvents &lt;&gt; <B>nil</B> <B>then</B> FEvents.OnCreate;
+<B>end</B>;
+
+<B>procedure</B> TActiveRemote.DblClickEvent(Sender: TObject);
+<B>begin</B>
+  <B>if</B> FEvents &lt;&gt; <B>nil</B> <B>then</B> FEvents.OnDblClick;
+<B>end</B>;
+
+<B>procedure</B> TActiveRemote.DeactivateEvent(Sender: TObject);
+<B>begin</B>
+  <B>if</B> FEvents &lt;&gt; <B>nil</B> <B>then</B> FEvents.OnDeactivate;
+<B>end</B>;
+
+<B>procedure</B> TActiveRemote.DestroyEvent(Sender: TObject);
+<B>begin</B>
+  <B>if</B> FEvents &lt;&gt; <B>nil</B> <B>then</B> FEvents.OnDestroy;
+<B>end</B>;
+
+<B>procedure</B> TActiveRemote.KeyPressEvent(Sender: TObject; <B>var</B> Key: Char);
+<B>var</B>
+  TempKey: Smallint;
+<B>begin</B>
+  TempKey := Smallint(Key);
+  <B>if</B> FEvents &lt;&gt; <B>nil</B> <B>then</B> FEvents.OnKeyPress(TempKey);
+  Key := Char(TempKey);
+<B>end</B>;
+
+<B>procedure</B> TActiveRemote.PaintEvent(Sender: TObject);
+<B>begin</B>
+  <B>if</B> FEvents &lt;&gt; <B>nil</B> <B>then</B> FEvents.OnPaint;
+<B>end</B>;
+
+<B>procedure</B> TActiveRemote.BtnApplyClick(Sender: TObject);
+<B>begin</B>
+  <B>if</B> ClientDataSet1.Active <B>then</B>
+    ClientDataSet1.ApplyUpdates (-1);
+<B>end</B>;
+
+<B>procedure</B> TActiveRemote.CheckActiveClick(Sender: TObject);
+<B>begin</B>
+  <B>if</B> CheckActive.Checked <B>and</B> <B>not</B> SocketConnection1.Connected <B>then</B>
+    SocketConnection1.Connected := True;
+  ClientDataSet1.Active := CheckActive.Checked;
+<B>end</B>;
+
+<B>procedure</B> TActiveRemote.ClientDataSet1ReconcileError(
+  DataSet: TClientDataSet; E: EReconcileError; UpdateKind: TUpdateKind;
+  <B>var</B> Action: TReconcileAction);
+<B>begin</B>
+  Action := HandleReconcileError (DataSet, UpdateKind, E);
+<B>end</B>;
+
+<B>initialization</B>
+  TActiveFormFactory.Create(
+    ComServer,
+    TActiveFormControl,
+    TActiveRemote,
+    Class_ActiveRemote,
+    1,
+    <I>''</I>,
+    OLEMISC_SIMPLEFRAME <B>or</B> OLEMISC_ACTSLIKELABEL);
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=RECONDLG.PAS><H3>RECONDLG.PAS</H3></A>
+
+<PRE>
+
+<FONT COLOR="#000080"><I>{*******************************************************}</I></FONT>
+<FONT COLOR="#000080"><I>{                                                       }</I></FONT>
+<FONT COLOR="#000080"><I>{       Delphi Visual Component Library                 }</I></FONT>
+<FONT COLOR="#000080"><I>{       ClientDataSet Standard Reconcile Error Dialog   }</I></FONT>
+<FONT COLOR="#000080"><I>{                                                       }</I></FONT>
+<FONT COLOR="#000080"><I>{       Copyright (c) 1997 Borland International        }</I></FONT>
+<FONT COLOR="#000080"><I>{                                                       }</I></FONT>
+<FONT COLOR="#000080"><I>{*******************************************************}</I></FONT>
+
+<FONT COLOR="#000080"><I>{ Note: To use this dialog you should add a call to HandleReconcileError in
+  the OnReconcileError event handler of TClientDataSet (see the Client dataset
+  demos for an example).  Also, after adding this unit to your project you must
+  go into the Project Options dialog and remove this form from the list of
+  Auto-created forms or an error will occur when compiling. }</I></FONT>
+
+<B>unit</B> ReconDlg;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls, Grids, DB, DBTables, DBClient, BDEProv, ExtCtrls;
+
+<B>const</B>
+  ActionStr: <B>array</B>[TReconcileAction] <B>of</B> <B>string</B> = (<I>'Skip'</I>, <I>'Abort'</I>, <I>'Merge'</I>,
+    <I>'Correct'</I>, <I>'Cancel'</I>, <I>'Refresh'</I>);
+  UpdateKindStr: <B>array</B>[TUpdateKind] <B>of</B> <B>string</B> = (<I>'Modified'</I>, <I>'Inserted'</I>,
+    <I>'Deleted'</I>);
+  SCaption = <I>'Update Error - %s'</I>;
+  SUnchanged = <I>'&lt;Unchanged&gt;'</I>;
+  SBinary = <I>'(Binary)'</I>;
+  SFieldName = <I>'Field Name'</I>;
+  SOriginal = <I>'Original Value'</I>;
+  SConflict = <I>'Conflicting Value'</I>;
+  SValue = <I>' Value'</I>;
+  SNoData = <I>'&lt;No Records&gt;'</I>;
+  SNew = <I>'New'</I>;
+
+<B>type</B>
+  TReconcileErrorForm = <B>class</B>(TForm)
+    UpdateType: TLabel;
+    UpdateData: TStringGrid;
+    ActionGroup: TRadioGroup;
+    CancelBtn: TButton;
+    OKBtn: TButton;
+    ConflictsOnly: TCheckBox;
+    IconImage: TImage;
+    ErrorMsg: TMemo;
+    ChangedOnly: TCheckBox;
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> FormDestroy(Sender: TObject);
+    <B>procedure</B> UpdateDataSetEditText(Sender: TObject; ACol, ARow: Integer;
+      <B>const</B> Value: <B>string</B>);
+    <B>procedure</B> DisplayFieldValues(Sender: TObject);
+    <B>procedure</B> UpdateDataSelectCell(Sender: TObject; Col, Row: Integer;
+      <B>var</B> CanSelect: Boolean);
+  <B>private</B>
+    FDataSet: TDataSet;
+    FError: EReconcileError;
+    FUpdateKind: TUpdateKind;
+    FDataFields: TList;
+    FCurColIdx: Integer;
+    FNewColIdx: Integer;
+    FOldColIdx: Integer;
+    <B>procedure</B> AdjustColumnWidths;
+    <B>procedure</B> InitDataFields;
+    <B>procedure</B> InitUpdateData(HasCurValues: Boolean);
+    <B>procedure</B> InitReconcileActions;
+    <B>procedure</B> SetFieldValues(DataSet: TDataSet);
+  <B>public</B>
+    <B>constructor</B> CreateForm(DataSet: TDataSet; UpdateKind: TUpdateKind;
+      Error: EReconcileError);
+  <B>end</B>;
+
+<B>function</B> HandleReconcileError(DataSet: TDataSet;  UpdateKind: TUpdateKind;
+  ReconcileError: EReconcileError): TReconcileAction;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>type</B>
+  PFieldData = ^TFieldData;
+  TFieldData = <B>record</B>
+    Field: TField;
+    NewValue: <B>string</B>;
+    OldValue: <B>string</B>;
+    CurValue: <B>string</B>;
+    EditValue: <B>string</B>;
+    Edited: Boolean;
+  <B>end</B>;
+
+<FONT COLOR="#000080"><I>{ Public and Private Methods }</I></FONT>
+
+<B>function</B> HandleReconcileError(DataSet: TDataSet; UpdateKind: TUpdateKind;
+  ReconcileError: EReconcileError): TReconcileAction;
+<B>var</B>
+  UpdateForm: TReconcileErrorForm;
+<B>begin</B>
+  UpdateForm := TReconcileErrorForm.CreateForm(DataSet, UpdateKind, ReconcileError);
+  <B>with</B> UpdateForm <B>do</B>
+  <B>try</B>
+    <B>if</B> ShowModal = mrOK <B>then</B>
+    <B>begin</B>
+      Result := TReconcileAction(ActionGroup.Items.Objects[ActionGroup.ItemIndex]);
+      <B>if</B> Result = raCorrect <B>then</B> SetFieldValues(DataSet);
+    <B>end</B> <B>else</B>
+      Result := raAbort;
+  <B>finally</B>
+    Free;
+  <B>end</B>;
+<B>end</B>;
+
+<FONT COLOR="#000080"><I>{ Routine to convert a variant value into a string.
+  Handles binary fields types and &quot;empty&quot; (Unchanged) field values specially }</I></FONT>
+
+<B>function</B> VarToStr(V: Variant; DataType: TFieldType): <B>string</B>;
+<B>const</B>
+  BinaryDataTypes: <B>set</B> <B>of</B> TFieldType = [ftBytes, ftVarBytes, ftBlob,
+    ftGraphic..ftCursor];
+<B>begin</B>
+  <B>try</B>
+    <B>if</B> VarIsEmpty(V) <B>then</B>
+      Result := SUnchanged
+    <B>else</B> <B>if</B> DataType <B>in</B> BinaryDataTypes <B>then</B>
+      Result := SBinary
+    <B>else</B>
+      Result := System.VarToStr(V);
+  <B>except</B>
+    <B>on</B> E: Exception <B>do</B>
+      Result := E.<B>Message</B>;
+  <B>end</B>;
+<B>end</B>;
+
+<FONT COLOR="#000080"><I>{ TReconcileErrorForm }</I></FONT>
+
+<B>constructor</B> TReconcileErrorForm.CreateForm(DataSet: TDataSet;
+  UpdateKind: TUpdateKind; Error: EReconcileError);
+<B>begin</B>
+  FDataSet := DataSet;
+  FUpdateKind := UpdateKind;
+  FError := Error;
+  <B>inherited</B> Create(Application);
+<B>end</B>;
+
+<FONT COLOR="#000080"><I>{ Create a list of the data fields in the dataset, and store string values
+  associated with NewValue, OldValue, and CurValue in string variables
+  to make display switching faster }</I></FONT>
+
+<B>procedure</B> TReconcileErrorForm.InitDataFields;
+<B>var</B>
+  I: Integer;
+  FD: PFieldData;
+  V: Variant;
+  HasCurValues: Boolean;
+<B>begin</B>
+  HasCurValues := False;
+  <B>for</B> I := 0 <B>to</B> FDataSet.FieldCount - 1 <B>do</B>
+  <B>with</B> FDataset.Fields[I] <B>do</B>
+  <B>begin</B>
+    <B>if</B> (FieldKind &lt;&gt; fkData) <B>then</B> Continue;
+    FD := New(PFieldData);
+    <B>try</B>
+      FD.Field := FDataset.Fields[I];
+      FD.Edited := False;
+      <B>if</B> FUpdateKind &lt;&gt; ukDelete <B>then</B>
+        FD.NewValue := VarToStr(NewValue, DataType);
+      V := CurValue;
+      <B>if</B> <B>not</B> VarIsEmpty(V) <B>then</B> HasCurValues := True;
+      FD.CurValue := VarToStr(CurValue, DataType);
+      <B>if</B> FUpdateKind &lt;&gt; ukInsert <B>then</B>
+        FD.OldValue := VarToStr(OldValue, DataType);
+      FDataFields.Add(FD);
+    <B>except</B>
+      Dispose(FD);
+      <B>raise</B>;
+    <B>end</B>;
+  <B>end</B>;
+  InitUpdateData(HasCurValues);
+<B>end</B>;
+
+<FONT COLOR="#000080"><I>{ Initialize the column indexes and grid titles }</I></FONT>
+
+<B>procedure</B> TReconcileErrorForm.InitUpdateData(HasCurValues: Boolean);
+<B>var</B>
+  FColCount: Integer;
+<B>begin</B>
+  FColCount := 1;
+  UpdateData.ColCount := 4;
+  UpdateData.Cells[0,0] := SFieldName;
+  <B>if</B> FUpdateKind &lt;&gt; ukDelete <B>then</B>
+  <B>begin</B>
+    FNewColIdx := FColCount;
+    Inc(FColCount);
+    UpdateData.Cells[FNewColIdx,0] := UpdateKindStr[FUpdateKind] + SValue;
+  <B>end</B> <B>else</B>
+  <B>begin</B>
+    FOldColIdx := FColCount;
+    Inc(FColCount);
+    UpdateData.Cells[FOldColIdx,0] := SOriginal;
+  <B>end</B>;
+  <B>if</B> HasCurValues <B>then</B>
+  <B>begin</B>
+    FCurColIdx := FColCount;
+    Inc(FColCount);
+    UpdateData.Cells[FCurColIdx,0] := SConflict;
+  <B>end</B>;
+  <B>if</B> FUpdateKind = ukModify <B>then</B>
+  <B>begin</B>
+    FOldColIdx := FColCount;
+    Inc(FColCount);
+    UpdateData.Cells[FOldColIdx,0] := SOriginal;
+  <B>end</B>;
+  UpdateData.ColCount := FColCount;
+<B>end</B>;
+
+<FONT COLOR="#000080"><I>{ Update the reconcile action radio group based on the valid reconcile actions }</I></FONT>
+
+<B>procedure</B> TReconcileErrorForm.InitReconcileActions;
+
+  <B>procedure</B> AddAction(Action: TReconcileAction);
+  <B>begin</B>
+    ActionGroup.Items.AddObject(ActionStr[Action], TObject(Action));
+  <B>end</B>;
+
+<B>begin</B>
+  AddAction(raSkip);
+  AddAction(raCancel);
+  AddAction(raCorrect);
+  <B>if</B> FCurColIdx &gt; 0 <B>then</B>
+  <B>begin</B>
+    AddAction(raRefresh);
+    AddAction(raMerge);
+  <B>end</B>;
+  ActionGroup.ItemIndex := 0;
+<B>end</B>;
+
+<FONT COLOR="#000080"><I>{ Update the grid based on the current display options }</I></FONT>
+
+<B>procedure</B> TReconcileErrorForm.DisplayFieldValues(Sender: TObject);
+<B>var</B>
+  I: Integer;
+  CurRow: Integer;
+  Action: TReconcileAction;
+<B>begin</B>
+  <B>if</B> <B>not</B> Visible <B>then</B> Exit;
+  Action := TReconcileAction(ActionGroup.Items.Objects[ActionGroup.ItemIndex]);
+  UpdateData.Col := 1;
+  UpdateData.Row := 1;
+  CurRow := 1;
+  UpdateData.Cells[0, CurRow] := SNoData;
+  <B>for</B> I := 1 <B>to</B> UpdateData.ColCount - 1 <B>do</B>
+    UpdateData.Cells[I, CurRow] := <I>''</I>;
+  <B>for</B> I := 0 <B>to</B> FDataFields.Count - 1 <B>do</B>
+    <B>with</B> PFieldData(FDataFields[I])^ <B>do</B>
+    <B>begin</B>
+      <B>if</B> ConflictsOnly.Checked <B>and</B> (CurValue = SUnChanged) <B>then</B> Continue;
+      <B>if</B> ChangedOnly.Checked <B>and</B> (NewValue = SUnChanged) <B>then</B> Continue;
+      UpdateData.RowCount := CurRow + 1;
+      UpdateData.Cells[0, CurRow] := Field.DisplayName;
+      <B>if</B> FNewColIdx &gt; 0 <B>then</B>
+      <B>begin</B>
+        <B>case</B> Action <B>of</B>
+          raCancel, raRefresh:
+            UpdateData.Cells[FNewColIdx, CurRow] := SUnChanged;
+          raCorrect:
+            <B>if</B> Edited <B>then</B>
+              UpdateData.Cells[FNewColIdx, CurRow] := EditValue <B>else</B>
+              UpdateData.Cells[FNewColIdx, CurRow] := NewValue;
+          <B>else</B>
+            UpdateData.Cells[FNewColIdx, CurRow] := NewValue;
+        <B>end</B>;
+        UpdateData.Objects[FNewColIdx, CurRow] := FDataFields[I];
+      <B>end</B>;
+      <B>if</B> FCurColIdx &gt; 0 <B>then</B>
+        UpdateData.Cells[FCurColIdx, CurRow] := CurValue;
+      <B>if</B> FOldColIdx &gt; 0 <B>then</B>
+        <B>if</B> (Action <B>in</B> [raMerge, raRefresh]) <B>and</B> (CurValue &lt;&gt; SUnchanged) <B>then</B>
+           UpdateData.Cells[FOldColIdx, CurRow] := CurValue <B>else</B>
+           UpdateData.Cells[FOldColIdx, CurRow] := OldValue;
+      Inc(CurRow);
+    <B>end</B>;
+  AdjustColumnWidths;
+<B>end</B>;
+
+<FONT COLOR="#000080"><I>{ For fields that the user has edited, copy the changes back into the
+  NewValue property of the associated field }</I></FONT>
+
+<B>procedure</B> TReconcileErrorForm.SetFieldValues(DataSet: TDataSet);
+<B>var</B>
+  I: Integer;
+<B>begin</B>
+  <B>for</B> I := 0 <B>to</B> FDataFields.Count - 1 <B>do</B>
+    <B>with</B> PFieldData(FDataFields[I])^ <B>do</B>
+      <B>if</B> Edited <B>then</B> Field.NewValue := EditValue;
+<B>end</B>;
+
+<B>procedure</B> TReconcileErrorForm.AdjustColumnWidths;
+<B>var</B>
+  NewWidth, I: integer;
+<B>begin</B>
+  <B>with</B> UpdateData <B>do</B>
+  <B>begin</B>
+    NewWidth := (ClientWidth - ColWidths[0]) <B>div</B> (ColCount - 1);
+    <B>for</B> I := 1 <B>to</B> ColCount - 1 <B>do</B>
+      ColWidths[I] := NewWidth - 1;
+  <B>end</B>;
+<B>end</B>;
+
+<FONT COLOR="#000080"><I>{ Event handlers }</I></FONT>
+
+<B>procedure</B> TReconcileErrorForm.FormCreate(Sender: TObject);
+<B>begin</B>
+  <B>if</B> FDataSet = <B>nil</B> <B>then</B> Exit;
+  FDataFields := TList.Create;
+  InitDataFields;
+  Caption := Format(SCaption, [FDataSet.Name]);
+  UpdateType.Caption := UpdateKindStr[FUpdateKind];
+  ErrorMsg.Text := FError.<B>Message</B>;
+  <B>if</B> FError.Context &lt;&gt; <I>''</I> <B>then</B>
+    ErrorMsg.Lines.Add(FError.Context);
+  ConflictsOnly.Enabled := FCurColIdx &gt; 0;
+  ConflictsOnly.Checked := ConflictsOnly.Enabled;
+  ChangedOnly.Enabled := FNewColIdx &gt; 0;
+  InitReconcileActions;
+  UpdateData.DefaultRowHeight := UpdateData.Canvas.TextHeight(<I>'SWgjp'</I>) + 7; <FONT COLOR="#000080"><I>{ Do not localize }</I></FONT>
+<B>end</B>;
+
+<B>procedure</B> TReconcileErrorForm.FormDestroy(Sender: TObject);
+<B>var</B>
+  I: Integer;
+<B>begin</B>
+  <B>if</B> Assigned(FDataFields) <B>then</B>
+  <B>begin</B>
+    <B>for</B> I := 0 <B>to</B> FDataFields.Count - 1 <B>do</B>
+      Dispose(PFieldData(FDataFields[I]));
+    FDataFields.Destroy;
+  <B>end</B>;
+<B>end</B>;
+
+<FONT COLOR="#000080"><I>{ Set the Edited flag in the DataField list and save the value }</I></FONT>
+
+<B>procedure</B> TReconcileErrorForm.UpdateDataSetEditText(Sender: TObject; ACol,
+  ARow: Integer; <B>const</B> Value: <B>string</B>);
+<B>begin</B>
+  PFieldData(UpdateData.Objects[ACol, ARow]).EditValue := Value;
+  PFieldData(UpdateData.Objects[ACol, ARow]).Edited := True;
+<B>end</B>;
+
+<FONT COLOR="#000080"><I>{ Enable the editing in the grid if we are on the NewValue column and the
+  current reconcile action is raCorrect }</I></FONT>
+
+<B>procedure</B> TReconcileErrorForm.UpdateDataSelectCell(Sender: TObject; Col,
+  Row: Integer; <B>var</B> CanSelect: Boolean);
+<B>begin</B>
+  <B>if</B> (Col = FNewColIdx) <B>and</B>
+    (TReconcileAction(ActionGroup.Items.Objects[ActionGroup.ItemIndex]) = raCorrect) <B>then</B>
+    UpdateData.Options := UpdateData.Options + [goEditing] <B>else</B>
+    UpdateData.Options := UpdateData.Options - [goEditing];
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=REMOTE.DFM><H3>REMOTE.DFM</H3></A>
+
+<PRE>
+<B>object</B> ActiveRemote: TActiveRemote
+  Left = 200
+  Top = 108
+  Width = 354
+  Height = 251
+  Caption = <I>'ActiveRemote'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> DBGrid1: TDBGrid
+    Left = 0
+    Top = 33
+    Width = 346
+    Height = 191
+    Align = alClient
+    DataSource = DataSource1
+    TabOrder = 0
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = <I>'MS Sans Serif'</I>
+    TitleFont.Style = []
+  <B>end</B>
+  <B>object</B> Panel1: TPanel
+    Left = 0
+    Top = 0
+    Width = 346
+    Height = 33
+    Align = alTop
+    TabOrder = 1
+    <B>object</B> CheckActive: TCheckBox
+      Left = 120
+      Top = 8
+      Width = 65
+      Height = 17
+      Caption = <I>'Active'</I>
+      TabOrder = 0
+      OnClick = CheckActiveClick
+    <B>end</B>
+    <B>object</B> BtnApply: TButton
+      Left = 9
+      Top = 4
+      Width = 96
+      Height = 25
+      Caption = <I>'Apply Updates'</I>
+      TabOrder = 1
+      OnClick = BtnApplyClick
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> ClientDataSet1: TClientDataSet
+    Aggregates = &lt;&gt;
+    Params = &lt;&gt;
+    ProviderName = <I>'Table1'</I>
+    RemoteServer = SocketConnection1
+    OnReconcileError = ClientDataSet1ReconcileError
+    Left = 40
+    Top = 80
+  <B>end</B>
+  <B>object</B> DataSource1: TDataSource
+    DataSet = ClientDataSet1
+    Left = 40
+    Top = 136
+  <B>end</B>
+  <B>object</B> SocketConnection1: TSocketConnection
+    ServerGUID = <I>'{C5DDE903-2214-11D1-98D0-444553540000}'</I>
+    ServerName = <I>'AppServ2.RdmCount'</I>
+    Address = <I>'222.1.1.1'</I>
+    Left = 40
+    Top = 24
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<A NAME=RECONDLG.DFM><H3>RECONDLG.DFM</H3></A>
+
+<PRE>
+<B>object</B> ReconcileErrorForm: TReconcileErrorForm
+  Left = 225
+  Top = 159
+  BorderStyle = bsDialog
+  Caption = <I>'Update Error'</I>
+  ClientHeight = 311
+  ClientWidth = 527
+  ParentFont = True
+  Position = poScreenCenter
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  OnShow = DisplayFieldValues
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Label1: TLabel
+    Left = 57
+    Top = 13
+    Width = 65
+    Height = 13
+    Caption = <I>'Update Type:'</I>
+  <B>end</B>
+  <B>object</B> UpdateType: TLabel
+    Left = 134
+    Top = 13
+    Width = 49
+    Height = 13
+    Caption = <I>'Modified'</I>
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clBlack
+    Font.Height = -11
+    Font.Name = <I>'Default'</I>
+    Font.Style = [fsBold]
+    ParentFont = False
+  <B>end</B>
+  <B>object</B> Label3: TLabel
+    Left = 57
+    Top = 33
+    Width = 71
+    Height = 13
+    Caption = <I>'Error Message:'</I>
+  <B>end</B>
+  <B>object</B> IconImage: TImage
+    Left = 12
+    Top = 12
+    Width = 34
+    Height = 34
+    Picture.Data = <FONT COLOR="#000080"><I>{
+      055449636F6E0000010002002020100000000000E80200002600000020200200
+      00000000300100000E0300002800000020000000400000000100040000000000
+      0002000000000000000000000000000000000000000000000000800000800000
+      00808000800000008000800080800000C0C0C000808080000000FF0000FF0000
+      00FFFF00FF000000FF00FF00FFFF0000FFFFFF00000008888888888888888888
+      8888880000008888888888888888888888888880003000000000000000000000
+      0008888803BBBBBBBBBBBBBBBBBBBBBBBB7088883BBBBBBBBBBBBBBBBBBBBBBB
+      BBB708883BBBBBBBBBBBBBBBBBBBBBBBBBBB08883BBBBBBBBBBBB7007BBBBBBB
+      BBBB08803BBBBBBBBBBBB0000BBBBBBBBBB7088003BBBBBBBBBBB0000BBBBBBB
+      BBB0880003BBBBBBBBBBB7007BBBBBBBBB708800003BBBBBBBBBBBBBBBBBBBBB
+      BB088000003BBBBBBBBBBB0BBBBBBBBBB70880000003BBBBBBBBB707BBBBBBBB
+      B08800000003BBBBBBBBB303BBBBBBBB7088000000003BBBBBBBB000BBBBBBBB
+      0880000000003BBBBBBB70007BBBBBB708800000000003BBBBBB30003BBBBBB0
+      88000000000003BBBBBB00000BBBBB70880000000000003BBBBB00000BBBBB08
+      800000000000003BBBBB00000BBBB7088000000000000003BBBB00000BBBB088
+      0000000000000003BBBB00000BBB708800000000000000003BBB70007BBB0880
+      00000000000000003BBBBBBBBBB70880000000000000000003BBBBBBBBB08800
+      000000000000000003BBBBBBBB7088000000000000000000003BBBBBBB088000
+      0000000000000000003BBBBBB708800000000000000000000003BBBBB0880000
+      00000000000000000003BBBB70800000000000000000000000003BB700000000
+      0000000000000000000003330000000000000000F8000003F0000001C0000000
+      80000000000000000000000000000001000000018000000380000003C0000007
+      C0000007E000000FE000000FF000001FF000001FF800003FF800003FFC00007F
+      FC00007FFE0000FFFE0000FFFF0001FFFF0001FFFF8003FFFF8003FFFFC007FF
+      FFC007FFFFE00FFFFFE01FFFFFF07FFFFFF8FFFF280000002000000040000000
+      0100010000000000800000000000000000000000000000000000000000000000
+      FFFFFF000000000000000000000000003FFFFFC07FFFFFE07FFFFFF07FFCFFF0
+      7FF87FE03FF87FE03FFCFFC01FFFFFC01FFDFF800FFDFF800FFDFF0007F8FF00
+      07F8FE0003F8FE0003F07C0001F07C0001F0780000F0780000F070000078F000
+      007FE000003FE000003FC000001FC000001F8000000F8000000F000000060000
+      00000000FFFFFFFFFFFFFFFFC000001F8000000F000000070000000700000007
+      000000078000000F8000000FC000001FC000001FE000003FE000003FF000007F
+      F000007FF80000FFF80000FFFC0001FFFC0001FFFE0003FFFE0003FFFF0007FF
+      FF0007FFFF800FFFFF800FFFFFC01FFFFFC01FFFFFE03FFFFFE03FFFFFF07FFF
+      FFF8FFFF}</I></FONT>
+  <B>end</B>
+  <B>object</B> UpdateData: TStringGrid
+    Left = 9
+    Top = 140
+    Width = 504
+    Height = 131
+    ColCount = 4
+    DefaultColWidth = 119
+    RowCount = 2
+    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goThumbTracking]
+    TabOrder = 1
+    OnSelectCell = UpdateDataSelectCell
+    OnSetEditText = UpdateDataSetEditText
+  <B>end</B>
+  <B>object</B> ActionGroup: TRadioGroup
+    Left = 410
+    Top = 10
+    Width = 102
+    Height = 113
+    Caption = <I>' Reconcile Action '</I>
+    TabOrder = 0
+    OnClick = DisplayFieldValues
+  <B>end</B>
+  <B>object</B> CancelBtn: TButton
+    Left = 438
+    Top = 281
+    Width = 75
+    Height = 25
+    Cancel = True
+    Caption = <I>'Cancel'</I>
+    ModalResult = 2
+    TabOrder = 5
+  <B>end</B>
+  <B>object</B> OKBtn: TButton
+    Left = 350
+    Top = 281
+    Width = 75
+    Height = 25
+    Caption = <I>'OK'</I>
+    Default = True
+    ModalResult = 1
+    TabOrder = 4
+  <B>end</B>
+  <B>object</B> ConflictsOnly: TCheckBox
+    Left = 11
+    Top = 282
+    Width = 153
+    Height = 17
+    Caption = <I>'Show conflicting fields only'</I>
+    TabOrder = 2
+    OnClick = DisplayFieldValues
+  <B>end</B>
+  <B>object</B> ErrorMsg: TMemo
+    Left = 56
+    Top = 52
+    Width = 342
+    Height = 71
+    TabStop = False
+    Color = clBtnFace
+    ReadOnly = True
+    TabOrder = 6
+  <B>end</B>
+  <B>object</B> ChangedOnly: TCheckBox
+    Left = 185
+    Top = 282
+    Width = 141
+    Height = 17
+    Caption = <I>'Show changed fields only'</I>
+    TabOrder = 3
+    OnClick = DisplayFieldValues
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

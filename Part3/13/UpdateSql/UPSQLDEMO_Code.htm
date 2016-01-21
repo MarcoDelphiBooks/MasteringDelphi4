@@ -1,0 +1,773 @@
+<HTML><HEAD>
+<TITLE>Project: UPSQLDEMO.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: UPSQLDEMO.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#UPSQLDEMO.DPR> UPSQLDEMO.DPR</A>
+<LI> <A HREF=#MAIN.PAS> MAIN.PAS</A>
+<LI> <A HREF=#DATA.PAS> DATA.PAS</A>
+<LI> <A HREF=#DEPTS.PAS> DEPTS.PAS</A>
+<LI> <A HREF=#JOBS.PAS> JOBS.PAS</A>
+<LI> <A HREF=#MAIN.DFM> MAIN.DFM</A>
+<LI> <A HREF=#DATA.DFM> DATA.DFM</A>
+<LI> <A HREF=#DEPTS.DFM> DEPTS.DFM</A>
+<LI> <A HREF=#JOBS.DFM> JOBS.DFM</A>
+</UL>
+<HR>
+<A NAME=UPSQLDEMO.DPR><H3>UPSQLDEMO.DPR</H3></A>
+
+<PRE>
+<B>program</B> upsqldemo;
+
+<B>uses</B>
+  Forms,
+  main <B>in</B> <I>'main.pas'</I> <FONT COLOR="#000080"><I>{MainForm}</I></FONT>,
+  data <B>in</B> <I>'data.pas'</I> <FONT COLOR="#000080"><I>{dmData: TDataModule}</I></FONT>,
+  depts <B>in</B> <I>'depts.pas'</I> <FONT COLOR="#000080"><I>{frmDepartments}</I></FONT>,
+  jobs <B>in</B> <I>'jobs.pas'</I> <FONT COLOR="#000080"><I>{frmJobs}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TdmData, dmData);
+  Application.CreateForm(TMainForm, MainForm);
+  Application.CreateForm(TfrmDepartments, frmDepartments);
+  Application.CreateForm(TfrmJobs, frmJobs);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MAIN.PAS><H3>MAIN.PAS</H3></A>
+
+<PRE>
+<B>unit</B> main;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  DBCtrls, Db, DBTables, Grids, DBGrids, ExtCtrls, StdCtrls;
+
+<B>type</B>
+  TMainForm = <B>class</B>(TForm)
+    Panel1: TPanel;
+    DBGrid1: TDBGrid;
+    DBNavigator1: TDBNavigator;
+    btnClose: TButton;
+    btnApply: TButton;
+    <B>procedure</B> btnCloseClick(Sender: TObject);
+    <B>procedure</B> FormCloseQuery(Sender: TObject; <B>var</B> CanClose: Boolean);
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> DBGrid1EditButtonClick(Sender: TObject);
+    <B>procedure</B> btnApplyClick(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  MainForm: TMainForm;
+
+<B>implementation</B>
+
+<B>uses</B>
+  Data, depts, jobs;
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+resourcestring
+  CloseMsg = <I>'Data has been modified.'#13#13'Save changes?'</I>  ;
+
+<B>procedure</B> TMainForm.btnCloseClick(Sender: TObject);
+<B>begin</B>
+  Close;
+<B>end</B>;
+
+<B>procedure</B> TMainForm.FormCloseQuery(Sender: TObject; <B>var</B> CanClose: Boolean);
+<B>var</B>
+  Res: Integer;
+<B>begin</B>
+  <B>with</B> dmData <B>do</B>
+    <B>if</B> qryEmployee.UpdatesPending <B>then</B>
+    <B>begin</B>
+      Res := MessageDlg(CloseMsg, mtInformation, mbYesNoCancel, 0);
+      <B>if</B> Res = mrYes <B>then</B>
+        AppDB.ApplyUpdates([qryEmployee]);
+      CanClose := Res &lt;&gt; mrCancel;
+    <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TMainForm.FormCreate(Sender: TObject);
+<B>begin</B>
+  dmData.qryEmployee.Open;
+<B>end</B>;
+
+<B>procedure</B> TMainForm.DBGrid1EditButtonClick(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// Department?</I></FONT>
+  <B>if</B> DBGrid1.SelectedField = dmData.qryEmployeeDEPARTMENT <B>then</B>
+    <B>with</B> TfrmDepartments.Create(self) <B>do</B>
+    <B>try</B>
+      dmData.qryDepartment.Locate(<I>'DEPT_NO'</I>,
+        dmData.qryEmployeeDEPT_NO.Value, []);
+      <B>if</B> ShowModal = mrOk <B>then</B>
+        <B>with</B> dmData <B>do</B>
+          <B>begin</B>
+            <B>if</B> <B>not</B> (qryEmployee.State <B>in</B> [dsEdit, dsInsert]) <B>then</B>
+              qryEmployee.Edit;
+            qryEmployeeDEPT_NO.Value :=  qryDepartment.Fields[0].Value;
+            qryEmployeeDEPARTMENT.Value := qryDepartment.Fields[1].Value;
+          <B>end</B>;
+    <B>finally</B>
+      Free;
+    <B>end</B>
+  <B>else</B>
+    <B>with</B> TfrmJobs.Create(self) <B>do</B>
+    <B>try</B>
+      <B>with</B> dmData <B>do</B>
+        qryJob.Locate(<I>'JOB_CODE;JOB_GRADE;JOB_COUNTRY'</I>,
+          VarArrayOf([qryEmployeeJOB_CODE.Value,qryEmployeeJOB_GRADE.Value,
+          qryEmployeeJOB_COUNTRY.Value]), []);
+      <B>if</B> ShowModal = mrOk <B>then</B>
+        <B>with</B> dmData <B>do</B>
+        <B>begin</B>
+          <B>if</B> <B>not</B> (qryEmployee.State <B>in</B> [dsEdit, dsInsert]) <B>then</B>
+            qryEmployee.Edit;
+          qryEmployeeJOB_CODE.Value :=  qryJob.Fields[0].Value;
+          qryEmployeeJOB_GRADE.Value := qryJob.Fields[1].Value;
+          qryEmployeeJOB_COUNTRY.Value := qryJob.Fields[2].Value;
+          qryEmployeeJOB_TITLE.Value := qryJob.Fields[3].Value;
+          <FONT COLOR="#000080"><I>// set salary to min_salary</I></FONT>
+          qryEmployeeSALARY.Value := qryJob.Fields[4].Value;
+        <B>end</B>;
+    <B>finally</B>
+      Free;
+    <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TMainForm.btnApplyClick(Sender: TObject);
+<B>begin</B>
+  <B>with</B> dmData <B>do</B>
+    <B>if</B> qryEmployee.UpdatesPending <B>then</B>
+    <B>begin</B>
+      AppDB.ApplyUpdates([qryEmployee]);
+      <FONT COLOR="#000080"><I>// refresh data</I></FONT>
+      qryEmployee.Close;
+      qryEmployee.Open;
+      btnApply.Enabled := False;
+    <B>end</B>;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=DATA.PAS><H3>DATA.PAS</H3></A>
+
+<PRE>
+<B>unit</B> data;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  DBTables, Db;
+
+<B>type</B>
+  TdmData = <B>class</B>(TDataModule)
+    spDelEmployee: TStoredProc;
+    EmpDS: TDataSource;
+    EmpUpdate: TUpdateSQL;
+    qryEmployee: TQuery;
+    qryEmployeeEMP_NO: TSmallintField;
+    qryEmployeeFIRST_NAME: TStringField;
+    qryEmployeeLAST_NAME: TStringField;
+    qryEmployeeDEPARTMENT: TStringField;
+    qryEmployeeJOB_TITLE: TStringField;
+    qryEmployeeSALARY: TFloatField;
+    AppDB: TDatabase;
+    qryDepartment: TQuery;
+    DepDS: TDataSource;
+    qryEmployeeDEPT_NO: TStringField;
+    qryJob: TQuery;
+    JobDS: TDataSource;
+    qryEmployeeJOB_CODE: TStringField;
+    qryEmployeeJOB_GRADE: TSmallintField;
+    qryEmployeeJOB_COUNTRY: TStringField;
+    <B>procedure</B> qryEmployeeUpdateRecord(DataSet: TDataSet;
+      UpdateKind: TUpdateKind; <B>var</B> UpdateAction: TUpdateAction);
+    <B>procedure</B> EmpDSUpdateData(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  dmData: TdmData;
+
+<B>implementation</B>
+
+<B>uses</B> main;
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TdmData.qryEmployeeUpdateRecord(DataSet: TDataSet;
+  UpdateKind: TUpdateKind; <B>var</B> UpdateAction: TUpdateAction);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// when deleting the record, use the Stored Procedure</I></FONT>
+  <B>if</B> UpdateKind = ukDelete <B>then</B>
+  <B>begin</B>
+    <FONT COLOR="#000080"><I>// assign emp_no value</I></FONT>
+    <B>with</B> dmData <B>do</B>
+      spDelEmployee.Params[0].Value := qryEmployeeEMP_NO.OldValue;
+    <B>try</B>
+      <FONT COLOR="#000080"><I>// invoke stored proc that tries to delete employee</I></FONT>
+      dmData.spDelEmployee.ExecProc;
+      UpdateAction := uaApplied; <FONT COLOR="#000080"><I>// success</I></FONT>
+    <B>except</B>
+      UpdateAction := uaFail;
+    <B>end</B>;
+  <B>end</B>
+  <B>else</B>
+  <B>try</B>
+    <FONT COLOR="#000080"><I>// apply updates</I></FONT>
+    dmData.EmpUpdate.Apply(UpdateKind);
+    UpdateAction := uaApplied;
+  <B>except</B>
+    UpdateAction := uaFail;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TdmData.EmpDSUpdateData(Sender: TObject);
+<B>begin</B>
+  MainForm.btnApply.Enabled := True;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=DEPTS.PAS><H3>DEPTS.PAS</H3></A>
+
+<PRE>
+<B>unit</B> depts;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  Grids, DBGrids, StdCtrls;
+
+<B>type</B>
+  TfrmDepartments = <B>class</B>(TForm)
+    btnAccept: TButton;
+    DBGrid1: TDBGrid;
+    Label1: TLabel;
+    btnCancel: TButton;
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> FormDestroy(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  frmDepartments: TfrmDepartments;
+
+<B>implementation</B>
+
+<B>uses</B> data;
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TfrmDepartments.FormCreate(Sender: TObject);
+<B>begin</B>
+  <B>try</B>
+    dmData.qryDepartment.Open;
+  <B>except</B>
+    Close;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TfrmDepartments.FormDestroy(Sender: TObject);
+<B>begin</B>
+  dmData.qryDepartment.Close;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=JOBS.PAS><H3>JOBS.PAS</H3></A>
+
+<PRE>
+<B>unit</B> jobs;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls, Grids, DBGrids;
+
+<B>type</B>
+  TfrmJobs = <B>class</B>(TForm)
+    DBGrid1: TDBGrid;
+    Label1: TLabel;
+    btnAccept: TButton;
+    btnCancel: TButton;
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> FormDestroy(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  frmJobs: TfrmJobs;
+
+<B>implementation</B>
+
+<B>uses</B> data;
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TfrmJobs.FormCreate(Sender: TObject);
+<B>begin</B>
+  <B>try</B>
+    dmData.qryJob.Open;
+  <B>except</B>
+    Close;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TfrmJobs.FormDestroy(Sender: TObject);
+<B>begin</B>
+  dmData.qryJob.Close;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MAIN.DFM><H3>MAIN.DFM</H3></A>
+
+<PRE>
+<B>object</B> MainForm: TMainForm
+  Left = 141
+  Top = 115
+  Width = 636
+  Height = 391
+  ActiveControl = DBGrid1
+  Caption = <I>'UpdateSQL Sample'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = False
+  Position = poDesktopCenter
+  OnCloseQuery = FormCloseQuery
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Panel1: TPanel
+    Left = 0
+    Top = 331
+    Width = 628
+    Height = 33
+    Align = alBottom
+    TabOrder = 0
+    <B>object</B> DBNavigator1: TDBNavigator
+      Left = 4
+      Top = 4
+      Width = 234
+      Height = 25
+      DataSource = dmData.EmpDS
+      VisibleButtons = [nbFirst, nbPrior, nbNext, nbLast, nbInsert, nbDelete, nbEdit, nbPost, nbCancel]
+      Flat = True
+      TabOrder = 0
+    <B>end</B>
+    <B>object</B> btnClose: TButton
+      Left = 548
+      Top = 4
+      Width = 75
+      Height = 25
+      Anchors = [akRight]
+      Caption = <I>'&amp;Close'</I>
+      TabOrder = 2
+      OnClick = btnCloseClick
+    <B>end</B>
+    <B>object</B> btnApply: TButton
+      Left = 244
+      Top = 4
+      Width = 89
+      Height = 25
+      Caption = <I>'&amp;Apply changes'</I>
+      Enabled = False
+      TabOrder = 1
+      OnClick = btnApplyClick
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> DBGrid1: TDBGrid
+    Left = 0
+    Top = 0
+    Width = 628
+    Height = 331
+    Align = alClient
+    DataSource = dmData.EmpDS
+    TabOrder = 1
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = <I>'MS Sans Serif'</I>
+    TitleFont.Style = []
+    OnEditButtonClick = DBGrid1EditButtonClick
+    Columns = &lt;
+      <B>item</B>
+        Expanded = False
+        FieldName = <I>'FIRST_NAME'</I>
+        Visible = True
+      <B>end</B>
+      <B>item</B>
+        Expanded = False
+        FieldName = <I>'LAST_NAME'</I>
+        Visible = True
+      <B>end</B>
+      <B>item</B>
+        ButtonStyle = cbsEllipsis
+        Expanded = False
+        FieldName = <I>'DEPARTMENT'</I>
+        Visible = True
+      <B>end</B>
+      <B>item</B>
+        ButtonStyle = cbsEllipsis
+        Expanded = False
+        FieldName = <I>'JOB_TITLE'</I>
+        Visible = True
+      <B>end</B>
+      <B>item</B>
+        Expanded = False
+        FieldName = <I>'SALARY'</I>
+        Visible = True
+      <B>end</B>&gt;
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<A NAME=DATA.DFM><H3>DATA.DFM</H3></A>
+
+<PRE>
+<B>object</B> dmData: TdmData
+  OldCreateOrder = False
+  Left = 192
+  Top = 107
+  Height = 194
+  Width = 322
+  <B>object</B> spDelEmployee: TStoredProc
+    DatabaseName = <I>'AppDB'</I>
+    StoredProcName = <I>'DELETE_EMPLOYEE'</I>
+    Left = 20
+    Top = 72
+    ParamData = &lt;
+      <B>item</B>
+        DataType = ftInteger
+        Name = <I>'EMP_NUM'</I>
+        ParamType = ptInput
+      <B>end</B>&gt;
+  <B>end</B>
+  <B>object</B> EmpDS: TDataSource
+    DataSet = qryEmployee
+    OnUpdateData = EmpDSUpdateData
+    Left = 188
+    Top = 8
+  <B>end</B>
+  <B>object</B> EmpUpdate: TUpdateSQL
+    ModifySQL.Strings = (
+      <I>'update EMPLOYEE'</I>
+      <I>'set'</I>
+      <I>'  FIRST_NAME = :FIRST_NAME,'</I>
+      <I>'  LAST_NAME = :LAST_NAME,'</I>
+      <I>'  SALARY = :SALARY,'</I>
+      <I>'  DEPT_NO = :DEPT_NO,'</I>
+      <I>'  JOB_CODE = :JOB_CODE,'</I>
+      <I>'  JOB_GRADE = :JOB_GRADE,'</I>
+      <I>'  JOB_COUNTRY = :JOB_COUNTRY'</I>
+      <I>'where'</I>
+      <I>'  EMP_NO = :OLD_EMP_NO'</I>)
+    InsertSQL.Strings = (
+      <I>'insert into EMPLOYEE'</I>
+      <I>'  (FIRST_NAME, LAST_NAME, SALARY, DEPT_NO, JOB_CODE, JOB_GRADE, '</I>
+      <I>'JOB_COUNTRY)'</I>
+      <I>'values'</I>
+
+              <I>'  (:FIRST_NAME, :LAST_NAME, :SALARY, :DEPT_NO, :JOB_CODE, :JOB_G'</I> +
+        <I>'RADE, '</I>
+      <I>':JOB_COUNTRY)'</I>)
+    DeleteSQL.Strings = (
+      <I>'delete from EMPLOYEE'</I>
+      <I>'where'</I>
+      <I>'  EMP_NO = :OLD_EMP_NO'</I>)
+    Left = 128
+    Top = 8
+  <B>end</B>
+  <B>object</B> qryEmployee: TQuery
+    CachedUpdates = True
+    OnUpdateRecord = qryEmployeeUpdateRecord
+    DatabaseName = <I>'AppDB'</I>
+    SQL.Strings = (
+
+              <I>'SELECT Employee.EMP_NO, Employee.FIRST_NAME, Employee.LAST_NAME,'</I> +
+        <I>' Department.DEPARTMENT, Job.JOB_TITLE, Employee.SALARY, Employee'</I> +
+        <I>'.DEPT_NO, Employee.JOB_CODE, Employee.JOB_GRADE, Employee.JOB_CO'</I> +
+        <I>'UNTRY'</I>
+      <I>'FROM EMPLOYEE Employee'</I>
+      <I>'   INNER JOIN DEPARTMENT Department'</I>
+      <I>'   ON  (Department.DEPT_NO = Employee.DEPT_NO)  '</I>
+      <I>'   INNER JOIN JOB Job'</I>
+      <I>'   ON  (Job.JOB_CODE = Employee.JOB_CODE)  '</I>
+      <I>'   AND  (Job.JOB_GRADE = Employee.JOB_GRADE)  '</I>
+      <I>'   AND  (Job.JOB_COUNTRY = Employee.JOB_COUNTRY)  '</I>
+      <I>'ORDER BY Department.DEPARTMENT'</I>)
+    UpdateMode = upWhereKeyOnly
+    UpdateObject = EmpUpdate
+    Left = 60
+    Top = 8
+    ParamData = &lt;&gt;
+    <B>object</B> qryEmployeeEMP_NO: TSmallintField
+      FieldName = <I>'EMP_NO'</I>
+      Visible = False
+    <B>end</B>
+    <B>object</B> qryEmployeeFIRST_NAME: TStringField
+      FieldName = <I>'FIRST_NAME'</I>
+      Size = 15
+    <B>end</B>
+    <B>object</B> qryEmployeeLAST_NAME: TStringField
+      FieldName = <I>'LAST_NAME'</I>
+    <B>end</B>
+    <B>object</B> qryEmployeeDEPARTMENT: TStringField
+      FieldName = <I>'DEPARTMENT'</I>
+      Size = 25
+    <B>end</B>
+    <B>object</B> qryEmployeeJOB_TITLE: TStringField
+      FieldName = <I>'JOB_TITLE'</I>
+      Size = 25
+    <B>end</B>
+    <B>object</B> qryEmployeeSALARY: TFloatField
+      FieldName = <I>'SALARY'</I>
+    <B>end</B>
+    <B>object</B> qryEmployeeDEPT_NO: TStringField
+      FieldName = <I>'DEPT_NO'</I>
+      Visible = False
+      Size = 3
+    <B>end</B>
+    <B>object</B> qryEmployeeJOB_CODE: TStringField
+      FieldName = <I>'JOB_CODE'</I>
+      Size = 5
+    <B>end</B>
+    <B>object</B> qryEmployeeJOB_GRADE: TSmallintField
+      FieldName = <I>'JOB_GRADE'</I>
+    <B>end</B>
+    <B>object</B> qryEmployeeJOB_COUNTRY: TStringField
+      FieldName = <I>'JOB_COUNTRY'</I>
+      Size = 15
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> AppDB: TDatabase
+    AliasName = <I>'IBLocal'</I>
+    Connected = True
+    DatabaseName = <I>'AppDB'</I>
+    LoginPrompt = False
+    Params.Strings = (
+      <I>'USER NAME=SYSDBA'</I>
+      <I>'OPEN MODE=READ/WRITE'</I>
+      <I>'SCHEMA CACHE SIZE=8'</I>
+      <I>'LANGDRIVER='</I>
+      <I>'SQLQRYMODE='</I>
+      <I>'SQLPASSTHRU MODE=SHARED AUTOCOMMIT'</I>
+      <I>'SCHEMA CACHE TIME=-1'</I>
+      <I>'MAX ROWS=-1'</I>
+      <I>'BATCH COUNT=200'</I>
+      <I>'ENABLE SCHEMA CACHE=FALSE'</I>
+      <I>'SCHEMA CACHE DIR='</I>
+      <I>'ENABLE BCD=FALSE'</I>
+      <I>'BLOBS TO CACHE=64'</I>
+      <I>'BLOB SIZE=32'</I>
+      <I>'PASSWORD=masterkey'</I>)
+    SessionName = <I>'Default'</I>
+    Left = 8
+    Top = 8
+  <B>end</B>
+  <B>object</B> qryDepartment: TQuery
+    DatabaseName = <I>'AppDB'</I>
+    SQL.Strings = (
+      <I>'SELECT DEPT_NO,Department'</I>
+      <I>'FROM Department'</I>)
+    Left = 90
+    Top = 74
+    ParamData = &lt;&gt;
+  <B>end</B>
+  <B>object</B> DepDS: TDataSource
+    DataSet = qryDepartment
+    Left = 148
+    Top = 76
+  <B>end</B>
+  <B>object</B> qryJob: TQuery
+    DatabaseName = <I>'AppDB'</I>
+    SQL.Strings = (
+
+              <I>'SELECT JOB_CODE, JOB_GRADE, JOB_COUNTRY, JOB_TITLE, MIN_SALARY, '</I> +
+        <I>'MAX_SALARY'</I>
+      <I>'FROM JOB Job'</I>)
+    Left = 200
+    Top = 76
+    ParamData = &lt;&gt;
+  <B>end</B>
+  <B>object</B> JobDS: TDataSource
+    DataSet = qryJob
+    Left = 248
+    Top = 76
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<A NAME=DEPTS.DFM><H3>DEPTS.DFM</H3></A>
+
+<PRE>
+<B>object</B> frmDepartments: TfrmDepartments
+  Left = 192
+  Top = 133
+  ActiveControl = DBGrid1
+  BorderStyle = bsDialog
+  Caption = <I>'Select a Department'</I>
+  ClientHeight = 256
+  ClientWidth = 338
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = False
+  Position = poDesktopCenter
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Label1: TLabel
+    Left = 8
+    Top = 8
+    Width = 100
+    Height = 13
+    Caption = <I>'Select a Department:'</I>
+  <B>end</B>
+  <B>object</B> btnAccept: TButton
+    Left = 8
+    Top = 224
+    Width = 75
+    Height = 25
+    Caption = <I>'&amp;Accept'</I>
+    Default = True
+    ModalResult = 1
+    TabOrder = 1
+  <B>end</B>
+  <B>object</B> DBGrid1: TDBGrid
+    Left = 9
+    Top = 28
+    Width = 320
+    Height = 185
+    DataSource = dmData.DepDS
+    Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit]
+    TabOrder = 0
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = <I>'MS Sans Serif'</I>
+    TitleFont.Style = []
+  <B>end</B>
+  <B>object</B> btnCancel: TButton
+    Left = 253
+    Top = 224
+    Width = 75
+    Height = 25
+    Cancel = True
+    Caption = <I>'&amp;Cancel'</I>
+    ModalResult = 2
+    TabOrder = 2
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<A NAME=JOBS.DFM><H3>JOBS.DFM</H3></A>
+
+<PRE>
+<B>object</B> frmJobs: TfrmJobs
+  Left = 195
+  Top = 232
+  ActiveControl = DBGrid1
+  BorderStyle = bsDialog
+  Caption = <I>'Select a Job'</I>
+  ClientHeight = 256
+  ClientWidth = 338
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = False
+  Position = poDesktopCenter
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Label1: TLabel
+    Left = 8
+    Top = 8
+    Width = 62
+    Height = 13
+    Caption = <I>'Select a Job:'</I>
+  <B>end</B>
+  <B>object</B> DBGrid1: TDBGrid
+    Left = 9
+    Top = 28
+    Width = 320
+    Height = 185
+    DataSource = dmData.JobDS
+    Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit]
+    TabOrder = 0
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = <I>'MS Sans Serif'</I>
+    TitleFont.Style = []
+  <B>end</B>
+  <B>object</B> btnAccept: TButton
+    Left = 8
+    Top = 224
+    Width = 75
+    Height = 25
+    Caption = <I>'&amp;Accept'</I>
+    Default = True
+    ModalResult = 1
+    TabOrder = 1
+  <B>end</B>
+  <B>object</B> btnCancel: TButton
+    Left = 253
+    Top = 224
+    Width = 75
+    Height = 25
+    Cancel = True
+    Caption = <I>'&amp;Cancel'</I>
+    ModalResult = 2
+    TabOrder = 2
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

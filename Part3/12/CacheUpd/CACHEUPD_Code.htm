@@ -1,0 +1,376 @@
+<HTML><HEAD>
+<TITLE>Project: CACHEUPD.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: CACHEUPD.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#CACHEUPD.DPR> CACHEUPD.DPR</A>
+<LI> <A HREF=#CACHEF.PAS> CACHEF.PAS</A>
+<LI> <A HREF=#ERRORF.PAS> ERRORF.PAS</A>
+<LI> <A HREF=#CACHEF.DFM> CACHEF.DFM</A>
+<LI> <A HREF=#ERRORF.DFM> ERRORF.DFM</A>
+</UL>
+<HR>
+<A NAME=CACHEUPD.DPR><H3>CACHEUPD.DPR</H3></A>
+
+<PRE>
+<B>program</B> CacheUpd;
+
+<B>uses</B>
+  Forms,
+  CacheF <B>in</B> <I>'CacheF.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>,
+  ErrorF <B>in</B> <I>'ErrorF.pas'</I> <FONT COLOR="#000080"><I>{ErrorsForm}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=CACHEF.PAS><H3>CACHEF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> CacheF;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls, Grids, DBGrids, DB, DBTables, ExtCtrls, ComCtrls;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    DataSource1: TDataSource;
+    DBGrid1: TDBGrid;
+    Panel1: TPanel;
+    BtnApply: TButton;
+    BtnCancel: TButton;
+    Query1: TQuery;
+    StatusBar1: TStatusBar;
+    <B>procedure</B> BtnApplyClick(Sender: TObject);
+    <B>procedure</B> BtnCancelClick(Sender: TObject);
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> Query1AfterPost(DataSet: TDataSet);
+    <B>procedure</B> Query1UpdateError(DataSet: TDataSet; E: EDatabaseError;
+      UpdateKind: TUpdateKind; <B>var</B> UpdateAction: TUpdateAction);
+    <B>procedure</B> FormClose(Sender: TObject; <B>var</B> Action: TCloseAction);
+    <B>procedure</B> Query1AfterScroll(DataSet: TDataSet);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<B>uses</B>
+  ErrorF;
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.BtnApplyClick(Sender: TObject);
+<B>begin</B>
+  <B>try</B>
+    <FONT COLOR="#000080"><I>// apply the updates and empty the cache</I></FONT>
+    Query1.ApplyUpdates;
+    Query1.CommitUpdates;
+    <FONT COLOR="#000080"><I>// set buttons</I></FONT>
+    BtnApply.Enabled := False;
+    BtnCancel.Enabled := False;
+  <B>except</B>;
+    <FONT COLOR="#000080"><I>// silent exception</I></FONT>
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TForm1.BtnCancelClick(Sender: TObject);
+<B>begin</B>
+  Query1.CancelUpdates;
+  <FONT COLOR="#000080"><I>// set buttons</I></FONT>
+  BtnApply.Enabled := False;
+  BtnCancel.Enabled := False;
+<B>end</B>;
+
+<B>procedure</B> TForm1.FormCreate(Sender: TObject);
+<B>begin</B>
+  Query1.Open;
+<B>end</B>;
+
+<B>procedure</B> TForm1.Query1AfterPost(DataSet: TDataSet);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// enables the two buttons</I></FONT>
+  BtnApply.Enabled := True;
+  BtnCancel.Enabled := True;
+<B>end</B>;
+
+<B>procedure</B> TForm1.Query1UpdateError(DataSet: TDataSet;
+  E: EDatabaseError; UpdateKind: TUpdateKind;
+  <B>var</B> UpdateAction: TUpdateAction);
+<B>var</B>
+  strDescr: <B>string</B>;
+  I, nRow: Integer;
+<B>begin</B>
+  nRow := 0;
+  <FONT COLOR="#000080"><I>// create the dialog box</I></FONT>
+  ErrorsForm := TErrorsForm.Create (<B>nil</B>);
+  <B>try</B>
+    <FONT COLOR="#000080"><I>// set the caption to a description of the record</I></FONT>
+    ErrorsForm.Caption := <I>'Record: '</I> +
+      DataSet.FieldByName(<I>'LastName'</I>).AsString;
+
+    <FONT COLOR="#000080"><I>// for each modified field</I></FONT>
+    <B>for</B> I := 0 <B>to</B> DataSet.FieldCount - 1 <B>do</B>
+      <B>if</B> DataSet.Fields [I].OldValue &lt;&gt;
+          DataSet.Fields [I].NewValue <B>then</B>
+        <B>begin</B>
+          <FONT COLOR="#000080"><I>// add a row to the string grid</I></FONT>
+          Inc (nRow);
+          ErrorsForm.StringGrid1.RowCount := nRow + 1;
+          <FONT COLOR="#000080"><I>// copy the data to the new row</I></FONT>
+          <B>with</B> ErrorsForm.StringGrid1, DataSet.Fields[I] <B>do</B>
+          <B>begin</B>
+            Cells [0, nRow] := FieldName;
+            Cells [1, nRow] := <B>string</B> (OldValue);
+            Cells [2, nRow] := <B>string</B> (NewValue);
+          <B>end</B>;
+        <B>end</B>;
+
+    <FONT COLOR="#000080"><I>// if new items were added, show the dialog</I></FONT>
+    <B>if</B> (nRow &gt; 0) <B>and</B>
+      (ErrorsForm.ShowModal = mrOk) <B>then</B>
+    <B>begin</B>
+      <FONT COLOR="#000080"><I>// revert the record and hide the message</I></FONT>
+      (DataSet <B>as</B> TQuery).RevertRecord;
+      UpdateAction := uaAbort
+    <B>end</B>
+    <B>else</B>
+      <FONT COLOR="#000080"><I>// skip the record, keeping it in the cache</I></FONT>
+      UpdateAction := uaSkip;
+  <B>finally</B>
+    ErrorsForm.Free;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TForm1.FormClose(Sender: TObject; <B>var</B> Action: TCloseAction);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// if there are pending changes, ask the user what to do</I></FONT>
+  <B>if</B> Query1.UpdatesPending <B>and</B>
+      (MessageDlg (<I>'Apply the pending updates?'</I>,
+      mtConfirmation, [mbYes, mbNo], 0) = mrYes) <B>then</B>
+    Query1.ApplyUpdates;
+<B>end</B>;
+
+<B>procedure</B> TForm1.Query1AfterScroll(DataSet: TDataSet);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// show the record update status in the status bar</I></FONT>
+  <B>case</B> Query1.UpdateStatus <B>of</B>
+    usUnmodified:
+      StatusBar1.SimpleText := <I>'Non Modified'</I>;
+    usModified:
+      StatusBar1.SimpleText := <I>'Modified'</I>;
+    usInserted:
+      StatusBar1.SimpleText := <I>'Inserted'</I>;
+  <B>end</B>;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=ERRORF.PAS><H3>ERRORF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> ErrorF;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls, CheckLst, Buttons, Grids;
+
+<B>type</B>
+  TErrorsForm = <B>class</B>(TForm)
+    BitBtn1: TBitBtn;
+    BitBtn2: TBitBtn;
+    Label1: TLabel;
+    StringGrid1: TStringGrid;
+    <B>procedure</B> FormCreate(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  ErrorsForm: TErrorsForm;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TErrorsForm.FormCreate(Sender: TObject);
+<B>begin</B>
+  StringGrid1.Cells [0, 0] := <I>'Field Name'</I>;
+  StringGrid1.Cells [1, 0] := <I>'Old Value'</I>;
+  StringGrid1.Cells [2, 0] := <I>'New Value'</I>;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=CACHEF.DFM><H3>CACHEF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 194
+  Top = 109
+  Width = 533
+  Height = 291
+  Caption = <I>'CacheUpd'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  OnClose = FormClose
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> DBGrid1: TDBGrid
+    Left = 0
+    Top = 41
+    Width = 525
+    Height = 204
+    Align = alClient
+    DataSource = DataSource1
+    TabOrder = 0
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = <I>'MS Sans Serif'</I>
+    TitleFont.Style = []
+  <B>end</B>
+  <B>object</B> Panel1: TPanel
+    Left = 0
+    Top = 0
+    Width = 525
+    Height = 41
+    Align = alTop
+    TabOrder = 1
+    <B>object</B> BtnApply: TButton
+      Left = 16
+      Top = 8
+      Width = 97
+      Height = 25
+      Caption = <I>'Apply Updates'</I>
+      Enabled = False
+      TabOrder = 0
+      OnClick = BtnApplyClick
+    <B>end</B>
+    <B>object</B> BtnCancel: TButton
+      Left = 120
+      Top = 8
+      Width = 97
+      Height = 25
+      Caption = <I>'Cancel Updates'</I>
+      Enabled = False
+      TabOrder = 1
+      OnClick = BtnCancelClick
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> StatusBar1: TStatusBar
+    Left = 0
+    Top = 245
+    Width = 525
+    Height = 19
+    Panels = &lt;&gt;
+    SimplePanel = True
+  <B>end</B>
+  <B>object</B> DataSource1: TDataSource
+    DataSet = Query1
+    Left = 448
+  <B>end</B>
+  <B>object</B> Query1: TQuery
+    CachedUpdates = True
+    AfterPost = Query1AfterPost
+    AfterScroll = Query1AfterScroll
+    OnUpdateError = Query1UpdateError
+    DatabaseName = <I>'DBDEMOS'</I>
+    RequestLive = True
+    SQL.Strings = (
+      <I>'select * from Employee'</I>)
+    Left = 400
+    ParamData = &lt;&gt;
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<A NAME=ERRORF.DFM><H3>ERRORF.DFM</H3></A>
+
+<PRE>
+<B>object</B> ErrorsForm: TErrorsForm
+  Left = 366
+  Top = 265
+  BorderStyle = bsDialog
+  Caption = <I>'Update Errors'</I>
+  ClientHeight = 229
+  ClientWidth = 381
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = False
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Label1: TLabel
+    Left = 8
+    Top = 8
+    Width = 70
+    Height = 13
+    Caption = <I>'Modified fields:'</I>
+  <B>end</B>
+  <B>object</B> BitBtn1: TBitBtn
+    Left = 112
+    Top = 192
+    Width = 75
+    Height = 25
+    Caption = <I>'Revert'</I>
+    TabOrder = 0
+    Kind = bkOK
+  <B>end</B>
+  <B>object</B> BitBtn2: TBitBtn
+    Left = 200
+    Top = 192
+    Width = 75
+    Height = 25
+    Caption = <I>'Skip'</I>
+    TabOrder = 1
+    Kind = bkCancel
+  <B>end</B>
+  <B>object</B> StringGrid1: TStringGrid
+    Left = 8
+    Top = 24
+    Width = 369
+    Height = 161
+    ColCount = 3
+    DefaultColWidth = 120
+    RowCount = 2
+    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine]
+    TabOrder = 2
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

@@ -1,0 +1,301 @@
+<HTML><HEAD>
+<TITLE>Project: CHECKDBG.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: CHECKDBG.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#CHECKDBG.DPR> CHECKDBG.DPR</A>
+<LI> <A HREF=#CHECKF.PAS> CHECKF.PAS</A>
+<LI> <A HREF=#CHECKF.DFM> CHECKF.DFM</A>
+</UL>
+<HR>
+<A NAME=CHECKDBG.DPR><H3>CHECKDBG.DPR</H3></A>
+
+<PRE>
+<B>program</B> CheckDbg;
+
+<B>uses</B>
+  Forms,
+  CheckF <B>in</B> <I>'CheckF.pas'</I> <FONT COLOR="#000080"><I>{DbaForm}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TDbaForm, DbaForm);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=CHECKF.PAS><H3>CHECKF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> CheckF;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  Db, DBTables, StdCtrls, Mask, DBCtrls, ExtCtrls, Grids, DBGrids, ComCtrls;
+
+<B>type</B>
+  TDbaForm = <B>class</B>(TForm)
+    Table1: TTable;
+    DataSource1: TDataSource;
+    Table1LastName: TStringField;
+    Table1FirstName: TStringField;
+    Table1Department: TSmallintField;
+    Table1Branch: TStringField;
+    Table1Senior: TBooleanField;
+    Table1HireDate: TDateField;
+    DBGrid1: TDBGrid;
+    DBCheckBox1: TDBCheckBox;
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> Table1DepartmentGetText(Sender: TField; <B>var</B> Text: <B>String</B>;
+      DisplayText: Boolean);
+    <B>procedure</B> Table1DepartmentSetText(Sender: TField; <B>const</B> Text: <B>String</B>);
+    <B>procedure</B> DBGrid1DrawColumnCell(Sender: TObject; <B>const</B> Rect: TRect;
+      DataCol: Integer; Column: TColumn; State: TGridDrawState);
+    <B>procedure</B> DBGrid1ColEnter(Sender: TObject);
+    <B>procedure</B> DBGrid1KeyPress(Sender: TObject; <B>var</B> Key: Char);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  DbaForm: TDbaForm;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TDbaForm.FormCreate(Sender: TObject);
+<B>begin</B>
+  <B>if</B> <B>not</B> Table1.Exists <B>then</B>
+  <B>begin</B>
+    Table1.CreateTable;
+    ShowMessage (<I>'You can add data to this table'#13</I> +
+      <I>'by using the DbAware example of Chapter 11'</I>);
+  <B>end</B>;
+  Table1.Open;
+<B>end</B>;
+
+<B>procedure</B> TDbaForm.Table1DepartmentGetText(Sender: TField;
+  <B>var</B> Text: <B>String</B>; DisplayText: Boolean);
+<B>begin</B>
+  <B>case</B> Sender.AsInteger <B>of</B>
+    1: Text := <I>'Sales'</I>;
+    2: Text := <I>'Accounting'</I>;
+    3: Text := <I>'Production'</I>;
+    4: Text := <I>'Management'</I>;
+  <B>else</B>
+    Text := <I>'[Error]'</I>;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TDbaForm.Table1DepartmentSetText(Sender: TField;
+  <B>const</B> Text: <B>String</B>);
+<B>begin</B>
+  <B>if</B> Text = <I>'Sales'</I> <B>then</B>
+    Sender.Value := 1
+  <B>else</B> <B>if</B> Text = <I>'Accounting'</I> <B>then</B>
+    Sender.Value := 2
+  <B>else</B> <B>if</B> Text = <I>'Production'</I> <B>then</B>
+    Sender.Value := 3
+  <B>else</B> <B>if</B> Text = <I>'Management'</I> <B>then</B>
+    Sender.Value := 4
+  <B>else</B>
+    <B>raise</B> Exception.Create (<I>'Error in Department field conversion'</I>);
+<B>end</B>;
+
+<B>procedure</B> TDbaForm.DBGrid1DrawColumnCell(Sender: TObject;
+  <B>const</B> Rect: TRect; DataCol: Integer; Column: TColumn;
+  State: TGridDrawState);
+<B>begin</B>
+  <B>if</B> (gdFocused <B>in</B> State) <B>and</B>
+    (Column.Field = Table1Senior) <B>then</B>
+  <B>begin</B>
+    DBCheckBox1.SetBounds (
+      Rect.Left + DBGrid1.Left + 1,
+      Rect.Top + DBGrid1.Top + 1,
+      Rect.Right - Rect.Left,
+      Rect.Bottom - Rect.Top);
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TDbaForm.DBGrid1ColEnter(Sender: TObject);
+<B>begin</B>
+  <B>if</B> DBGrid1.Columns [DBGrid1.SelectedIndex].
+      Field = Table1Senior <B>then</B>
+    DBCheckBox1.Visible := True
+  <B>else</B>
+    DBCheckBox1.Visible := False;
+<B>end</B>;
+
+<B>procedure</B> TDbaForm.DBGrid1KeyPress(Sender: TObject; <B>var</B> Key: Char);
+<B>begin</B>
+  <B>if</B> DBCheckBox1.Visible <B>and</B> (Ord (Key) &gt; 31) <B>then</B>
+  <B>begin</B>
+    Key := <I>#0</I>;
+    DBCheckBox1.Checked := <B>not</B>
+      DBCheckBox1.Checked;
+  <B>end</B>;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=CHECKF.DFM><H3>CHECKF.DFM</H3></A>
+
+<PRE>
+<B>object</B> DbaForm: TDbaForm
+  Left = 196
+  Top = 109
+  Width = 620
+  Height = 298
+  Caption = <I>'Workers (Checkbox DBGrid Demo)'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> DBGrid1: TDBGrid
+    Left = 0
+    Top = 0
+    Width = 612
+    Height = 271
+    Align = alClient
+    DataSource = DataSource1
+    TabOrder = 0
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = <I>'MS Sans Serif'</I>
+    TitleFont.Style = []
+    OnColEnter = DBGrid1ColEnter
+    OnDrawColumnCell = DBGrid1DrawColumnCell
+    OnKeyPress = DBGrid1KeyPress
+    Columns = &lt;
+      <B>item</B>
+        Expanded = False
+        FieldName = <I>'LastName'</I>
+        Visible = True
+      <B>end</B>
+      <B>item</B>
+        Expanded = False
+        FieldName = <I>'FirstName'</I>
+        Visible = True
+      <B>end</B>
+      <B>item</B>
+        Expanded = False
+        FieldName = <I>'Department'</I>
+        Visible = True
+      <B>end</B>
+      <B>item</B>
+        Expanded = False
+        FieldName = <I>'Branch'</I>
+        Visible = True
+      <B>end</B>
+      <B>item</B>
+        Expanded = False
+        FieldName = <I>'Senior'</I>
+        Width = 80
+        Visible = True
+      <B>end</B>
+      <B>item</B>
+        Expanded = False
+        FieldName = <I>'HireDate'</I>
+        Width = 69
+        Visible = True
+      <B>end</B>&gt;
+  <B>end</B>
+  <B>object</B> DBCheckBox1: TDBCheckBox
+    Left = 256
+    Top = 72
+    Width = 65
+    Height = 17
+    Caption = <I>'Senior'</I>
+    Color = clBtnFace
+    Ctl3D = True
+    DataField = <I>'Senior'</I>
+    DataSource = DataSource1
+    ParentColor = False
+    ParentCtl3D = False
+    TabOrder = 1
+    ValueChecked = <I>'True'</I>
+    ValueUnchecked = <I>'False'</I>
+    Visible = False
+  <B>end</B>
+  <B>object</B> Table1: TTable
+    DatabaseName = <I>'DBDEMOS'</I>
+    FieldDefs = &lt;
+      <B>item</B>
+        Name = <I>'LastName'</I>
+        DataType = ftString
+        Size = 20
+      <B>end</B>
+      <B>item</B>
+        Name = <I>'FirstName'</I>
+        DataType = ftString
+        Size = 20
+      <B>end</B>
+      <B>item</B>
+        Name = <I>'Department'</I>
+        DataType = ftSmallint
+      <B>end</B>
+      <B>item</B>
+        Name = <I>'Branch'</I>
+        DataType = ftString
+        Size = 20
+      <B>end</B>
+      <B>item</B>
+        Name = <I>'Senior'</I>
+        DataType = ftBoolean
+      <B>end</B>
+      <B>item</B>
+        Name = <I>'HireDate'</I>
+        DataType = ftDate
+      <B>end</B>&gt;
+    StoreDefs = True
+    TableName = <I>'Workers'</I>
+    Left = 392
+    Top = 8
+    <B>object</B> Table1LastName: TStringField
+      FieldName = <I>'LastName'</I>
+    <B>end</B>
+    <B>object</B> Table1FirstName: TStringField
+      FieldName = <I>'FirstName'</I>
+    <B>end</B>
+    <B>object</B> Table1Department: TSmallintField
+      Alignment = taLeftJustify
+      FieldName = <I>'Department'</I>
+      OnGetText = Table1DepartmentGetText
+      OnSetText = Table1DepartmentSetText
+    <B>end</B>
+    <B>object</B> Table1Branch: TStringField
+      FieldName = <I>'Branch'</I>
+    <B>end</B>
+    <B>object</B> Table1Senior: TBooleanField
+      FieldName = <I>'Senior'</I>
+    <B>end</B>
+    <B>object</B> Table1HireDate: TDateField
+      FieldName = <I>'HireDate'</I>
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> DataSource1: TDataSource
+    DataSet = Table1
+    Left = 344
+    Top = 8
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

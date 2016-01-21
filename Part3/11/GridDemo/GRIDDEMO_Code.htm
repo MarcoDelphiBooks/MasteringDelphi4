@@ -1,0 +1,183 @@
+<HTML><HEAD>
+<TITLE>Project: GRIDDEMO.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: GRIDDEMO.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#GRIDDEMO.DPR> GRIDDEMO.DPR</A>
+<LI> <A HREF=#GRIDF.PAS> GRIDF.PAS</A>
+<LI> <A HREF=#GRIDF.DFM> GRIDF.DFM</A>
+</UL>
+<HR>
+<A NAME=GRIDDEMO.DPR><H3>GRIDDEMO.DPR</H3></A>
+
+<PRE>
+<B>program</B> GridDemo;
+
+<B>uses</B>
+  Forms,
+  GridF <B>in</B> <I>'GridF.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=GRIDF.PAS><H3>GRIDF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> GridF;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes, Graphics, Controls,
+  Forms, Dialogs, Grids, DBGrids, DB, DBTables;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    Table1: TTable;
+    DataSource1: TDataSource;
+    DBGrid1: TDBGrid;
+    <B>procedure</B> DataSource1StateChange(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.DataSource1StateChange(Sender: TObject);
+<B>var</B>
+  Title: <B>string</B>;
+<B>begin</B>
+  <B>case</B> Table1.State <B>of</B>
+    dsBrowse: Title := <I>'Browse'</I>;
+    dsEdit: Title := <I>'Edit'</I>;
+    dsInsert: Title := <I>'Insert'</I>;
+  <B>else</B>
+    Title := <I>'Other state'</I>;
+  <B>end</B>;
+  Caption := <I>'Grid Demo - '</I> + Title;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=GRIDF.DFM><H3>GRIDF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 215
+  Top = 114
+  Width = 499
+  Height = 311
+  ActiveControl = DBGrid1
+  Caption = <I>'Grid Demo'</I>
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clBlack
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> DBGrid1: TDBGrid
+    Left = 0
+    Top = 0
+    Width = 491
+    Height = 284
+    Align = alClient
+    DataSource = DataSource1
+    TabOrder = 0
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clBlack
+    TitleFont.Height = -11
+    TitleFont.Name = <I>'MS Sans Serif'</I>
+    TitleFont.Style = []
+    Columns = &lt;
+      <B>item</B>
+        Alignment = taRightJustify
+        Color = clBtnShadow
+        Expanded = False
+        FieldName = <I>'Name'</I>
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWhite
+        Font.Height = -11
+        Font.Name = <I>'MS Sans Serif'</I>
+        Font.Style = [fsBold]
+        ReadOnly = True
+        Title.Alignment = taRightJustify
+        Title.Caption = <I>'Country'</I>
+        Title.Font.Charset = DEFAULT_CHARSET
+        Title.Font.Color = clBlack
+        Title.Font.Height = -11
+        Title.Font.Name = <I>'MS Sans Serif'</I>
+        Title.Font.Style = [fsBold]
+        Width = 133
+        Visible = True
+      <B>end</B>
+      <B>item</B>
+        Expanded = False
+        FieldName = <I>'Capital'</I>
+        Width = 83
+        Visible = True
+      <B>end</B>
+      <B>item</B>
+        Expanded = False
+        FieldName = <I>'Continent'</I>
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Height = -11
+        Font.Name = <I>'MS Sans Serif'</I>
+        Font.Style = [fsItalic]
+        PickList.Strings = (
+          <I>'Africa'</I>
+          <I>'Asia'</I>
+          <I>'Australia'</I>
+          <I>'Europe'</I>
+          <I>'North America'</I>
+          <I>'South America'</I>)
+        Width = 95
+        Visible = True
+      <B>end</B>
+      <B>item</B>
+        Expanded = False
+        FieldName = <I>'Area'</I>
+        Width = 72
+        Visible = True
+      <B>end</B>
+      <B>item</B>
+        Expanded = False
+        FieldName = <I>'Population'</I>
+        Visible = True
+      <B>end</B>&gt;
+  <B>end</B>
+  <B>object</B> Table1: TTable
+    Active = True
+    DatabaseName = <I>'DBDEMOS'</I>
+    TableName = <I>'COUNTRY.DB'</I>
+    Left = 24
+    Top = 144
+  <B>end</B>
+  <B>object</B> DataSource1: TDataSource
+    DataSet = Table1
+    OnStateChange = DataSource1StateChange
+    Left = 80
+    Top = 144
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

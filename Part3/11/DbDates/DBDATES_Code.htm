@@ -1,0 +1,225 @@
+<HTML><HEAD>
+<TITLE>Project: DBDATES.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: DBDATES.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#DBDATES.DPR> DBDATES.DPR</A>
+<LI> <A HREF=#DBDATESF.PAS> DBDATESF.PAS</A>
+<LI> <A HREF=#DBDATESF.DFM> DBDATESF.DFM</A>
+</UL>
+<HR>
+<A NAME=DBDATES.DPR><H3>DBDATES.DPR</H3></A>
+
+<PRE>
+<B>program</B> DbDates;
+
+<B>uses</B>
+  Forms,
+  DbDatesF <B>in</B> <I>'DbDatesF.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=DBDATESF.PAS><H3>DBDATESF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> DbDatesF;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  ComCtrls, StdCtrls, Mask, DBCtrls, Db, DBTables, ExtCtrls,
+  Grids, DBGrids, DBCGrids;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    Table1: TTable;
+    DBEdit2: TDBEdit;
+    DBNavigator1: TDBNavigator;
+    Table1EventNo: TAutoIncField;
+    Table1VenueNo: TIntegerField;
+    Table1Event_Name: TStringField;
+    Table1Event_Date: TDateField;
+    Table1Event_Time: TTimeField;
+    Table1Event_Description: TMemoField;
+    Table1Ticket_price: TCurrencyField;
+    Table1Event_Photo: TGraphicField;
+    DBImage1: TDBImage;
+    DBGrid1: TDBGrid;
+    Label2: TLabel;
+    DataSource1: TDataSource;
+    MonthCalendar1: TMonthCalendar;
+    <B>procedure</B> DataSource1DataChange(Sender: TObject; Field: TField);
+    <B>procedure</B> MonthCalendar1Click(Sender: TObject);
+    <B>procedure</B> DataSource1UpdateData(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.DataSource1DataChange(Sender: TObject; Field: TField);
+<B>begin</B>
+  MonthCalendar1.Date := Table1Event_Date.Value;
+<B>end</B>;
+
+<B>procedure</B> TForm1.MonthCalendar1Click(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// disconnect handler</I></FONT>
+  DataSource1.OnDataChange := <B>nil</B>;
+  <FONT COLOR="#000080"><I>// set table in edit mode</I></FONT>
+  Table1.Edit;
+  <FONT COLOR="#000080"><I>// reconnect handler</I></FONT>
+  DataSource1.OnDataChange := DataSource1DataChange;
+<B>end</B>;
+
+<B>procedure</B> TForm1.DataSource1UpdateData(Sender: TObject);
+<B>begin</B>
+  Table1Event_Date.Value := MonthCalendar1.Date;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=DBDATESF.DFM><H3>DBDATESF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 198
+  Top = 112
+  Width = 649
+  Height = 440
+  Caption = <I>'DbDates'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Label2: TLabel
+    Left = 40
+    Top = 16
+    Width = 28
+    Height = 13
+    Caption = <I>'Event'</I>
+  <B>end</B>
+  <B>object</B> DBEdit2: TDBEdit
+    Left = 40
+    Top = 35
+    Width = 161
+    Height = 21
+    DataField = <I>'Event_Name'</I>
+    DataSource = DataSource1
+    TabOrder = 0
+  <B>end</B>
+  <B>object</B> DBNavigator1: TDBNavigator
+    Left = 240
+    Top = 24
+    Width = 360
+    Height = 33
+    DataSource = DataSource1
+    TabOrder = 1
+  <B>end</B>
+  <B>object</B> DBImage1: TDBImage
+    Left = 40
+    Top = 80
+    Width = 161
+    Height = 121
+    DataField = <I>'Event_Photo'</I>
+    DataSource = DataSource1
+    Stretch = True
+    TabOrder = 3
+  <B>end</B>
+  <B>object</B> DBGrid1: TDBGrid
+    Left = 240
+    Top = 80
+    Width = 361
+    Height = 297
+    DataSource = DataSource1
+    TabOrder = 2
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = <I>'MS Sans Serif'</I>
+    TitleFont.Style = []
+  <B>end</B>
+  <B>object</B> MonthCalendar1: TMonthCalendar
+    Left = 24
+    Top = 224
+    Width = 193
+    Height = 153
+    Date = 35933.7775719907
+    ShowToday = False
+    TabOrder = 4
+    OnClick = MonthCalendar1Click
+  <B>end</B>
+  <B>object</B> Table1: TTable
+    Active = True
+    DatabaseName = <I>'DBDEMOS'</I>
+    TableName = <I>'EVENTS.DB'</I>
+    Left = 336
+    Top = 8
+    <B>object</B> Table1EventNo: TAutoIncField
+      FieldName = <I>'EventNo'</I>
+    <B>end</B>
+    <B>object</B> Table1VenueNo: TIntegerField
+      DisplayWidth = 12
+      FieldName = <I>'VenueNo'</I>
+    <B>end</B>
+    <B>object</B> Table1Event_Name: TStringField
+      DisplayWidth = 36
+      FieldName = <I>'Event_Name'</I>
+      Size = 30
+    <B>end</B>
+    <B>object</B> Table1Event_Date: TDateField
+      FieldName = <I>'Event_Date'</I>
+    <B>end</B>
+    <B>object</B> Table1Event_Time: TTimeField
+      FieldName = <I>'Event_Time'</I>
+    <B>end</B>
+    <B>object</B> Table1Event_Description: TMemoField
+      FieldName = <I>'Event_Description'</I>
+      BlobType = ftMemo
+      Size = 100
+    <B>end</B>
+    <B>object</B> Table1Ticket_price: TCurrencyField
+      DisplayWidth = 15
+      FieldName = <I>'Ticket_price'</I>
+    <B>end</B>
+    <B>object</B> Table1Event_Photo: TGraphicField
+      FieldName = <I>'Event_Photo'</I>
+      BlobType = ftGraphic
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> DataSource1: TDataSource
+    DataSet = Table1
+    OnDataChange = DataSource1DataChange
+    OnUpdateData = DataSource1UpdateData
+    Left = 392
+    Top = 8
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

@@ -1,0 +1,210 @@
+<HTML><HEAD>
+<TITLE>Project: EXCEP.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: EXCEP.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#EXCEP.DPR> EXCEP.DPR</A>
+<LI> <A HREF=#EXCEPF.PAS> EXCEPF.PAS</A>
+<LI> <A HREF=#EXCEPF.DFM> EXCEPF.DFM</A>
+</UL>
+<HR>
+<A NAME=EXCEP.DPR><H3>EXCEP.DPR</H3></A>
+
+<PRE>
+<B>program</B> Excep;
+
+<B>uses</B>
+  Forms,
+  ExcepF <B>in</B> <I>'ExcepF.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=EXCEPF.PAS><H3>EXCEPF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> ExcepF;
+
+<B>interface</B>
+
+<B>uses</B> SysUtils, Windows, Messages, Classes, Graphics, Controls,
+  Forms, Dialogs, StdCtrls;
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    ButtonDivide1: TButton;
+    ButtonDivide2: TButton;
+    ButtonRaise1: TButton;
+    ButtonRaise2: TButton;
+    Label1: TLabel;
+    Label2: TLabel;
+    <B>procedure</B> ButtonDivide1Click(Sender: TObject);
+    <B>procedure</B> ButtonDivide2Click(Sender: TObject);
+    <B>procedure</B> ButtonRaise1Click(Sender: TObject);
+    <B>procedure</B> ButtonRaise2Click(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<FONT COLOR="#000080"><I>{new type of exception}</I></FONT>
+<B>type</B>
+  EArrayFull = <B>class</B> (Exception);
+
+<FONT COLOR="#000080"><I>{protected version of the div operator}</I></FONT>
+<B>function</B> Divide (A, B: Integer): Integer;
+<B>begin</B>
+  <B>try</B>
+    <FONT COLOR="#000080"><I>{the following stetement is protected because it
+      can generate an error if B equals 0}</I></FONT>
+    Result := A <B>div</B> B;
+  <B>except</B>
+    <B>on</B> EDivByZero <B>do</B>
+    <B>begin</B>
+      Result := 0;
+      MessageDlg (<I>'Divide by zero corrected'</I>, mtError, [mbOK], 0);
+    <B>end</B>;
+    <B>on</B> E: Exception <B>do</B>
+    <B>begin</B>
+      Result := 0;
+      MessageDlg (E.<B>Message</B>, mtError, [mbOK], 0);
+    <B>end</B>;
+  <B>end</B>;
+<B>end</B>;
+
+<FONT COLOR="#000080"><I>{fake procedure: the array is always full}</I></FONT>
+<B>procedure</B> AddToArray (N: Integer);
+<B>begin</B>
+  <B>raise</B> EArrayFull.Create (<I>'Array full'</I>);
+  ShowMessage (<I>'Program never gets here'</I>);
+<B>end</B>;
+
+<B>procedure</B> TForm1.ButtonDivide1Click(Sender: TObject);
+<B>begin</B>
+  Divide (10, 0);
+  ShowMessage (<I>'Exception has already been handled'</I>);
+<B>end</B>;
+
+<B>procedure</B> TForm1.ButtonDivide2Click(Sender: TObject);
+<B>var</B>
+  A, B, C: Integer;
+<B>begin</B>
+  A := 10;
+  B := 0;
+  <FONT COLOR="#000080"><I>{generates an exception, which is not handled by us}</I></FONT>
+  C := A <B>div</B> B;
+  <FONT COLOR="#000080"><I>// uses C</I></FONT>
+  ShowMessage (<I>'Program never gets here:'</I> + IntToStr (C));
+<B>end</B>;
+
+<B>procedure</B> TForm1.ButtonRaise1Click(Sender: TObject);
+<B>begin</B>
+  <B>try</B>
+    <FONT COLOR="#000080"><I>{this procedure raises an exception}</I></FONT>
+    AddToArray (24);
+    ShowMessage (<I>'Program never gets here'</I>);
+  <B>except</B>
+    <FONT COLOR="#000080"><I>{simply ignores the exception}</I></FONT>
+    <B>on</B> EArrayFull <B>do</B>
+      ShowMessage (<I>'Handle the exception'</I>);
+  <B>end</B>;
+  ShowMessage (<I>'Exception has already been handled'</I>);
+<B>end</B>;
+
+<B>procedure</B> TForm1.ButtonRaise2Click(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>{unguarded call}</I></FONT>
+  AddToArray (24);
+  ShowMessage (<I>'Program never gets here'</I>);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=EXCEPF.DFM><H3>EXCEPF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 201
+  Top = 170
+  Width = 316
+  Height = 177
+  ActiveControl = ButtonDivide1
+  Caption = <I>'Exceptions test'</I>
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clBlack
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Label1: TLabel
+    Left = 32
+    Top = 16
+    Width = 94
+    Height = 13
+    Caption = <I>'Handled exceptions'</I>
+  <B>end</B>
+  <B>object</B> Label2: TLabel
+    Left = 163
+    Top = 16
+    Width = 106
+    Height = 13
+    Caption = <I>'Unhandled exceptions'</I>
+  <B>end</B>
+  <B>object</B> ButtonDivide1: TButton
+    Left = 32
+    Top = 40
+    Width = 97
+    Height = 41
+    Caption = <I>'Divide'</I>
+    TabOrder = 0
+    OnClick = ButtonDivide1Click
+  <B>end</B>
+  <B>object</B> ButtonDivide2: TButton
+    Left = 168
+    Top = 40
+    Width = 97
+    Height = 41
+    Caption = <I>'Divide'</I>
+    TabOrder = 1
+    OnClick = ButtonDivide2Click
+  <B>end</B>
+  <B>object</B> ButtonRaise1: TButton
+    Left = 32
+    Top = 88
+    Width = 97
+    Height = 41
+    Caption = <I>'Raise'</I>
+    TabOrder = 2
+    OnClick = ButtonRaise1Click
+  <B>end</B>
+  <B>object</B> ButtonRaise2: TButton
+    Left = 168
+    Top = 88
+    Width = 97
+    Height = 41
+    Caption = <I>'Raise'</I>
+    TabOrder = 3
+    OnClick = ButtonRaise2Click
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

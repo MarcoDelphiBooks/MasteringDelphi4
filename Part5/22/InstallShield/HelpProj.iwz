@@ -1,0 +1,208 @@
+
+[InstallShield Wizard]
+iDate=0
+iTime=0
+Flag=0
+ISX.EXE Size=630784
+ISX.EXE Date=12:43:52AM  2/24/1998
+ISX.EXE Ver=2.0.0.143
+SETUP.EXE Size=45312
+SETUP.EXE Date=11:53:32AM  1/18/1997
+SETUP.EXE Ver=3.0.111.0
+SETUP.INS Size=70160
+SETUP.INS Date=3:16:56PM  2/11/1998
+SETUP.INS Ver=Not available
+_INST16.EX_ Size=70160
+_INST16.EX_ Date=3:16:56PM  2/11/1998
+_INST16.EX_ Ver=Not available
+_INST32I.EX_ Size=320411
+_INST32I.EX_ Date=12:04:08AM  1/18/1997
+_INST32I.EX_ Ver=Not available
+ISDEPEND.INI Size=5492
+ISDEPEND.INI Date=7:05:06PM  5/21/1998
+ISDEPEND.INI Ver=Not available
+SWDEPEND.INI Size=10290
+SWDEPEND.INI Date=8:21:02PM  5/21/1998
+SWDEPEND.INI Ver=Not available
+ICOMP.EXE Size=119808
+ICOMP.EXE Date=4:05:10PM  1/15/1996
+ICOMP.EXE Ver=3.00.062
+SPLIT.EXE Size=90624
+SPLIT.EXE Date=4:09:36PM  1/15/1996
+SPLIT.EXE Ver=3.00.060
+PACKLIST.EXE Size=87552
+PACKLIST.EXE Date=4:10:30PM  1/15/1996
+PACKLIST.EXE Ver=3.00.060
+Version=2.02
+DevTool=for Delphi
+Platform=Win32
+DisksBuilt=1
+DisksDir=HELPPROJ\650MB\
+TabsVisit=11111111100001111
+LangNum=0
+LangDir=
+
+[VisualDesign]
+AppName=Help Project Demo
+AppExe=[Program Files]\HelpProj.exe
+AppExeFile=C:\Program Files\Borland\Allegro\Projects\HelpProj.exe
+Version=2.0.1.0
+Company=Big Boy Software
+Title=Help Project Demo Installation
+TitleType=1
+BackgrndBmp=
+BackgrndAlign=4
+Backgrnd=1
+BackgrndColor=10
+Uninstall=1
+Silent=1
+SmsMode=0
+
+[Types]
+Types=3
+Type1Components=2
+Type1Name=Custom
+Type1ComponentList=1 2 
+Type2Components=2
+Type2Name=Typical
+Type2ComponentList=1 2 
+Type3Components=1
+Type3Name=Compact
+Type3ComponentList=1 
+
+[Components]
+Components=2
+Component1Groups=1
+Component1Name=Application Files
+Component1Description=Application files needed to run the application
+Component1GroupList=1 
+Component2Groups=1
+Component2Name=Help and Tutorial Files
+Component2Description=Help and tutorial needed for online help
+Component2GroupList=2 
+
+[Groups]
+Groups=2
+Group1Size=286208
+Group1Files=1
+Group1Name=Program Files
+Group1Dir=<INSTALLDIR>
+Group1Update=0
+Group1TargetOS=-1
+Group1File1=C:\Program Files\Borland\Allegro\Projects\HelpProj.exe
+Group2Size=8007
+Group2Files=1
+Group2Name=Help Files
+Group2Dir=[Program Files]
+Group2Update=0
+Group2TargetOS=-1
+Group2File1=C:\Program Files\Borland\Allegro\Projects\Helpproj.hlp
+
+[Sequence]
+DestinationLocationDir=<ProgramFilesDir>\Big Boy Software\Help Project Demo
+SelectProgramFolderName=HelpProj
+WelcomeMessage=1
+WelcomeMessageFile=
+UserInformation=1
+DestinationLocation=1
+SetupType=1
+CustomSetup=1
+CustomSetupGroupSel=1
+SelectProgramFolder=1
+BeginFileTransfer=1
+ProgressBar=1
+SetupComplete=1
+SetupCompleteExec=[Program Files]\HelpProj.exe
+SetupCompleteExecParam=
+SetupCompleteExecReadme=
+
+[RegEntries]
+Reg1Path=HKEY_CLASSES_ROOT
+Reg1Val1Type=0
+Reg1Val1Name=(Default)
+Reg1Val1Data=(value not set)
+Reg1Vals=1
+Reg2Path=HKEY_CURRENT_USER
+Reg2Val1Type=0
+Reg2Val1Name=(Default)
+Reg2Val1Data=(value not set)
+Reg2Vals=1
+Reg3Path=HKEY_LOCAL_MACHINE
+Reg3Val1Type=0
+Reg3Val1Name=(Default)
+Reg3Val1Data=(value not set)
+Reg3Vals=1
+Reg4Path=HKEY_USERS
+Reg4Val1Type=0
+Reg4Val1Name=(Default)
+Reg4Val1Data=(value not set)
+Reg4Vals=1
+Reg5Path=HKEY_CURRENT_CONFIG
+Reg5Val1Type=0
+Reg5Val1Name=(Default)
+Reg5Val1Data=(value not set)
+Reg5Vals=1
+Reg6Path=HKEY_DYN_DATA
+Reg6Val1Type=0
+Reg6Val1Name=(Default)
+Reg6Val1Data=(value not set)
+Reg6Vals=1
+Reg7Path=HKEY_CLASSES_ROOT\Help.Document
+Reg7Val1Type=0
+Reg7Val1Name=(Default)
+Reg7Val1Data=(value not set)
+Reg7Vals=1
+Reg8Path=HKEY_CLASSES_ROOT\Help.Document\shell
+Reg8Val1Type=0
+Reg8Val1Name=(Default)
+Reg8Val1Data=(value not set)
+Reg8Vals=1
+Reg9Path=HKEY_CLASSES_ROOT\Help.Document\shell\open
+Reg9Val1Type=0
+Reg9Val1Name=(Default)
+Reg9Val1Data=(value not set)
+Reg9Vals=1
+Reg10Path=HKEY_CLASSES_ROOT\Help.Document\shell\open\command
+Reg10PathUninstall=1
+Reg10Val1Type=0
+Reg10Val1Name=(Default)
+Reg10Val1Data="[Program Files]\HelpProj.exe" "%1"
+Reg10Vals=1
+Regs=10
+
+[Registry]
+Reg1Path=HKEY_CLASSES_ROOT\Help.Document
+Reg2Path=HKEY_CLASSES_ROOT\Help.Document\shell
+Reg3Path=HKEY_CLASSES_ROOT\Help.Document\shell\open
+Reg4Path=HKEY_CLASSES_ROOT\Help.Document\shell\open\command
+Reg4PathUninstall=1
+Reg4ValName=(Default)
+Reg4ValType=0
+Reg4ValData="[Program Files]\HelpProj.exe" "%1"
+Regs=4
+
+[Icons]
+Icons=1
+Icon1Param=
+Icon1Cmd=[Program Files]\HelpProj.exe
+Icon1Description=HelpProject 1.0
+Icon1WorkingDir=[Program Files]
+Icon1IconFile=
+Icon1RealFile=C:\Program Files\Borland\Allegro\Projects\HelpProj.exe
+Icon1WhichIcon=0
+Icon1KeyVirtual=0
+Icon1KeyFlags=0
+Icon1StartMenu=0
+Icon1Window=0
+
+[Autoexec]
+PathDir=
+ShareLocks=
+ShareFiles=
+Command=
+
+[CopyToFloppy]
+DriveOption=
+DestinationPath=
+DestinationPathOneFile=
+Password=

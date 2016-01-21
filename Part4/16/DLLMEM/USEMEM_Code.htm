@@ -1,0 +1,244 @@
+<HTML><HEAD>
+<TITLE>Project: USEMEM.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: USEMEM.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#USEMEM.DPR> USEMEM.DPR</A>
+<LI> <A HREF=#USEMEMF.PAS> USEMEMF.PAS</A>
+<LI> <A HREF=#USEMEMF.DFM> USEMEMF.DFM</A>
+</UL>
+<HR>
+<A NAME=USEMEM.DPR><H3>USEMEM.DPR</H3></A>
+
+<PRE>
+<B>program</B> usemem;
+
+<B>uses</B>
+  Forms,
+  UseMemF <B>in</B> <I>'UseMemF.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=USEMEMF.PAS><H3>USEMEMF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> UseMemF;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls, Spin, ComCtrls;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    Button1: TButton;
+    Button2: TButton;
+    Button3: TButton;
+    Label1: TLabel;
+    Edit1: TEdit;
+    UpDown1: TUpDown;
+    Edit2: TEdit;
+    Button4: TButton;
+    Edit3: TEdit;
+    UpDown2: TUpDown;
+    Button5: TButton;
+    Edit4: TEdit;
+    <B>procedure</B> Button1Click(Sender: TObject);
+    <B>procedure</B> Button2Click(Sender: TObject);
+    <B>procedure</B> Button3Click(Sender: TObject);
+    <B>procedure</B> Button4Click(Sender: TObject);
+    <B>procedure</B> Button5Click(Sender: TObject);
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>function</B> GetData: Integer; <B>stdcall</B>;
+  <B>external</B> <I>'dllmem.dll'</I>;
+<B>procedure</B> SetData (I: Integer); <B>stdcall</B>;
+  <B>external</B> <I>'dllmem.dll'</I>;
+<B>function</B> GetShareData: Integer; <B>stdcall</B>;
+  <B>external</B> <I>'dllmem.dll'</I>;
+<B>procedure</B> SetShareData (I: Integer); <B>stdcall</B>;
+  <B>external</B> <I>'dllmem.dll'</I>;
+
+<B>procedure</B> TForm1.Button1Click(Sender: TObject);
+<B>begin</B>
+  SetData (UpDown1.Position);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Button2Click(Sender: TObject);
+<B>begin</B>
+  Edit2.Text := IntToStr (GetData);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Button3Click(Sender: TObject);
+<B>var</B>
+  HDLLInst: THandle;
+<B>begin</B>
+  HDLLInst := LoadLibrary (<I>'dllmem.dll'</I>);
+  Label1.Caption := Format (<I>'Address: %p'</I>, [
+    GetProcAddress (HDLLInst, <I>'SetData'</I>)]);
+  FreeLibrary (HDLLInst);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Button4Click(Sender: TObject);
+<B>begin</B>
+  SetShareData (UpDown2.Position);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Button5Click(Sender: TObject);
+<B>begin</B>
+  Edit4.Text := IntToStr (GetShareData);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=USEMEMF.DFM><H3>USEMEMF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 222
+  Top = 157
+  Width = 305
+  Height = 257
+  ActiveControl = Button1
+  Caption = <I>'DLL Memory Test'</I>
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  Visible = True
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Label1: TLabel
+    Left = 144
+    Top = 102
+    Width = 121
+    Height = 13
+    AutoSize = False
+    Caption = <I>'Address'</I>
+  <B>end</B>
+  <B>object</B> Button1: TButton
+    Left = 32
+    Top = 14
+    Width = 81
+    Height = 25
+    Caption = <I>'&amp;Set'</I>
+    Default = True
+    TabOrder = 0
+    OnClick = Button1Click
+  <B>end</B>
+  <B>object</B> Button2: TButton
+    Left = 32
+    Top = 48
+    Width = 81
+    Height = 25
+    Caption = <I>'&amp;Get'</I>
+    TabOrder = 1
+    OnClick = Button2Click
+  <B>end</B>
+  <B>object</B> Button3: TButton
+    Left = 32
+    Top = 96
+    Width = 81
+    Height = 25
+    Caption = <I>'Code &amp;Address'</I>
+    TabOrder = 2
+    OnClick = Button3Click
+  <B>end</B>
+  <B>object</B> Edit1: TEdit
+    Left = 144
+    Top = 16
+    Width = 105
+    Height = 21
+    TabOrder = 3
+    Text = <I>'20'</I>
+  <B>end</B>
+  <B>object</B> UpDown1: TUpDown
+    Left = 249
+    Top = 16
+    Width = 15
+    Height = 21
+    Associate = Edit1
+    Min = 0
+    Increment = 5
+    Position = 20
+    TabOrder = 4
+    Wrap = False
+  <B>end</B>
+  <B>object</B> Edit2: TEdit
+    Left = 144
+    Top = 48
+    Width = 121
+    Height = 21
+    TabOrder = 5
+    Text = <I>'0'</I>
+  <B>end</B>
+  <B>object</B> Button4: TButton
+    Left = 32
+    Top = 150
+    Width = 81
+    Height = 25
+    Caption = <I>'Se&amp;t Share'</I>
+    TabOrder = 6
+    OnClick = Button4Click
+  <B>end</B>
+  <B>object</B> Edit3: TEdit
+    Left = 144
+    Top = 152
+    Width = 105
+    Height = 21
+    TabOrder = 7
+    Text = <I>'30'</I>
+  <B>end</B>
+  <B>object</B> UpDown2: TUpDown
+    Left = 249
+    Top = 152
+    Width = 15
+    Height = 21
+    Associate = Edit3
+    Min = 0
+    Increment = 5
+    Position = 30
+    TabOrder = 8
+    Wrap = False
+  <B>end</B>
+  <B>object</B> Button5: TButton
+    Left = 32
+    Top = 184
+    Width = 81
+    Height = 25
+    Caption = <I>'Get S&amp;hare'</I>
+    TabOrder = 9
+    OnClick = Button5Click
+  <B>end</B>
+  <B>object</B> Edit4: TEdit
+    Left = 144
+    Top = 184
+    Width = 121
+    Height = 21
+    TabOrder = 10
+    Text = <I>'0'</I>
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

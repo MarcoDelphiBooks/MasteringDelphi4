@@ -1,0 +1,295 @@
+<HTML><HEAD>
+<TITLE>Project: THREADDBACCESS.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: THREADDBACCESS.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#THREADDBACCESS.DPR> THREADDBACCESS.DPR</A>
+<LI> <A HREF=#FORMDBTHREAD.PAS> FORMDBTHREAD.PAS</A>
+<LI> <A HREF=#THREADEDMODULE.PAS> THREADEDMODULE.PAS</A>
+<LI> <A HREF=#DBTHREADCLASS.PAS> DBTHREADCLASS.PAS</A>
+<LI> <A HREF=#FORMDBTHREAD.DFM> FORMDBTHREAD.DFM</A>
+<LI> <A HREF=#THREADEDMODULE.DFM> THREADEDMODULE.DFM</A>
+</UL>
+<HR>
+<A NAME=THREADDBACCESS.DPR><H3>THREADDBACCESS.DPR</H3></A>
+
+<PRE>
+<B>program</B> threaddbaccess;
+
+<B>uses</B>
+  Forms,
+  formDbthread <B>in</B> <I>'formDbthread.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>,
+  threadedmodule <B>in</B> <I>'threadedmodule.pas'</I> <FONT COLOR="#000080"><I>{DataModule2: TDataModule}</I></FONT>,
+  dbthreadclass <B>in</B> <I>'dbthreadclass.pas'</I>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.CreateForm(TDataModule2, DataModule2);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=FORMDBTHREAD.PAS><H3>FORMDBTHREAD.PAS</H3></A>
+
+<PRE>
+<B>unit</B> formDbThread;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  Db, Grids, DBGrids, DBTables, StdCtrls, dbthreadclass;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    Table1: TTable;
+    DataSource1: TDataSource;
+    DBGrid1: TDBGrid;
+    Table1Name: TStringField;
+    Table1Capital: TStringField;
+    Table1Continent: TStringField;
+    Table1Area: TFloatField;
+    Table1Population: TFloatField;
+    <B>procedure</B> Table1AfterPost(DataSet: TDataSet);
+    <B>procedure</B> FormCreate(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+    Th1: TDatabaseThread;
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.Table1AfterPost(DataSet: TDataSet);
+<B>begin</B>
+  <B>if</B> Th1.Suspended <B>then</B>
+    Th1.Resume
+  <B>else</B>
+  <B>begin</B>
+    Th1.Free;
+    Th1 := TDatabaseThread.Create (True);
+    Th1.Priority := tpLowest;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TForm1.FormCreate(Sender: TObject);
+<B>begin</B>
+  Th1 := TDatabaseThread.Create (True);
+  Th1.Priority := tpLowest;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=THREADEDMODULE.PAS><H3>THREADEDMODULE.PAS</H3></A>
+
+<PRE>
+<B>unit</B> threadedmodule;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  Db, DBTables;
+
+<B>type</B>
+  TDataModule2 = <B>class</B>(TDataModule)
+    Session1: TSession;
+    Table1: TTable;
+    Database1: TDatabase;
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  DataModule2: TDataModule2;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=DBTHREADCLASS.PAS><H3>DBTHREADCLASS.PAS</H3></A>
+
+<PRE>
+<B>unit</B> dbthreadclass;
+
+<B>interface</B>
+
+<B>uses</B>
+  Classes;
+
+<B>type</B>
+  TDatabaseThread = <B>class</B>(TThread)
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+    NewCaption: <B>string</B>;
+  <B>protected</B>
+    <B>procedure</B> Execute; <B>override</B>;
+    <B>procedure</B> UpdateCaption;
+  <B>end</B>;
+
+<B>implementation</B>
+
+<B>uses</B>
+  FormDbThread, ThreadedModule, SysUtils;
+
+<B>procedure</B> TDatabaseThread.UpdateCaption;
+<B>begin</B>
+  Form1.Caption := NewCaption;
+<B>end</B>;
+
+<B>procedure</B> TDatabaseThread.Execute;
+<B>var</B>
+  Tot: double;
+<B>begin</B>
+  <B>while</B> <B>not</B> Terminated <B>do</B>
+  <B>begin</B>
+    Tot := 0;
+    <B>with</B> DataModule2.Table1 <B>do</B>
+    <B>begin</B>
+      Open;
+      First;
+      <B>while</B> <B>not</B> EOF <B>do</B>
+      <B>begin</B>
+        Tot := Tot + FieldByName(<I>'Population'</I>).AsFloat;
+        Next;
+      <B>end</B>;
+      Close;
+    <B>end</B>;
+    NewCaption := <I>'Population '</I> + FloatToStr (Tot);
+    Synchronize (UpdateCaption);
+    Suspend;
+  <B>end</B>; <FONT COLOR="#000080"><I>// while</I></FONT>
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=FORMDBTHREAD.DFM><H3>FORMDBTHREAD.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 198
+  Top = 180
+  Width = 592
+  Height = 250
+  Caption = <I>'Form1'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> DBGrid1: TDBGrid
+    Left = 16
+    Top = 8
+    Width = 545
+    Height = 209
+    DataSource = DataSource1
+    TabOrder = 0
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = <I>'MS Sans Serif'</I>
+    TitleFont.Style = []
+  <B>end</B>
+  <B>object</B> Table1: TTable
+    Active = True
+    AfterPost = Table1AfterPost
+    DatabaseName = <I>'DBDEMOS'</I>
+    TableName = <I>'country.db'</I>
+    Left = 24
+    Top = 56
+    <B>object</B> Table1Name: TStringField
+      DisplayWidth = 14
+      FieldName = <I>'Name'</I>
+      Size = 24
+    <B>end</B>
+    <B>object</B> Table1Capital: TStringField
+      DisplayWidth = 18
+      FieldName = <I>'Capital'</I>
+      Size = 24
+    <B>end</B>
+    <B>object</B> Table1Continent: TStringField
+      CustomConstraint = <I>'X = ''South America'' OR X = ''North America'''</I>
+                ConstraintErrorMessage = <I>'Country is not in the American Continent'</I>
+      DefaultExpression = <I>'''South America'''</I>
+        DisplayWidth = 19
+      FieldName = <I>'Continent'</I>
+      Size = 24
+    <B>end</B>
+    <B>object</B> Table1Area: TFloatField
+      DisplayWidth = 12
+      FieldName = <I>'Area'</I>
+    <B>end</B>
+    <B>object</B> Table1Population: TFloatField
+      DisplayWidth = 12
+      FieldName = <I>'Population'</I>
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> DataSource1: TDataSource
+    DataSet = Table1
+    Left = 24
+    Top = 104
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<A NAME=THREADEDMODULE.DFM><H3>THREADEDMODULE.DFM</H3></A>
+
+<PRE>
+<B>object</B> DataModule2: TDataModule2
+  OldCreateOrder = True
+  Left = 570
+  Top = 402
+  Height = 150
+  Width = 154
+  <B>object</B> Session1: TSession
+    Active = True
+    AutoSessionName = True
+    Left = 24
+    Top = 16
+  <B>end</B>
+  <B>object</B> Table1: TTable
+    DatabaseName = <I>'mydb'</I>
+    SessionName = <I>'Session1_1'</I>
+    TableName = <I>'country.db'</I>
+    Left = 64
+    Top = 16
+  <B>end</B>
+  <B>object</B> Database1: TDatabase
+    AliasName = <I>'DBDEMOS'</I>
+    Connected = True
+    DatabaseName = <I>'mydb'</I>
+    Params.Strings = (
+      <I>'USER NAME=SYSDBA'</I>)
+    SessionName = <I>'Session1_1'</I>
+    Left = 24
+    Top = 64
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

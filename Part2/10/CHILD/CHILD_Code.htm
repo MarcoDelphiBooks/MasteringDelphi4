@@ -1,0 +1,153 @@
+<HTML><HEAD>
+<TITLE>Project: CHILD.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: CHILD.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#CHILD.DPR> CHILD.DPR</A>
+<LI> <A HREF=#MAINF.PAS> MAINF.PAS</A>
+<LI> <A HREF=#CHILDF.PAS> CHILDF.PAS</A>
+<LI> <A HREF=#MAINF.DFM> MAINF.DFM</A>
+<LI> <A HREF=#CHILDF.DFM> CHILDF.DFM</A>
+</UL>
+<HR>
+<A NAME=CHILD.DPR><H3>CHILD.DPR</H3></A>
+
+<PRE>
+<B>program</B> Child;
+
+<B>uses</B>
+  Forms,
+  MainF <B>in</B> <I>'MainF.pas'</I> <FONT COLOR="#000080"><I>{MainForm}</I></FONT>,
+  ChildF <B>in</B> <I>'ChildF.pas'</I> <FONT COLOR="#000080"><I>{ChildForm}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TMainForm, MainForm);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MAINF.PAS><H3>MAINF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> MainF;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes, Graphics, Controls,
+  Forms, Dialogs, Childf;
+
+<B>type</B>
+  TMainForm = <B>class</B>(TForm)
+    <B>procedure</B> FormClick(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+    Counter: Integer;
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  MainForm: TMainForm;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TMainForm.FormClick(Sender: TObject);
+<B>var</B>
+  NewForm: TChildForm;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// increase the child window counter</I></FONT>
+  Inc (Counter);
+  <FONT COLOR="#000080"><I>{create a new form and define it as child
+  of the current form}</I></FONT>
+  NewForm:= TChildForm.Create (self);
+  NewForm.Parent := self;
+  <FONT COLOR="#000080"><I>// add the number to the caption, and move it slightly</I></FONT>
+  NewForm.Caption := NewForm.Caption + <I>' '</I> + IntToStr (Counter);
+  NewForm.Left := (Counter * 20) <B>mod</B> 500;
+  NewForm.Top := (Counter * 20) <B>mod</B> 450;
+  <FONT COLOR="#000080"><I>// show the form</I></FONT>
+  NewForm.Show;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=CHILDF.PAS><H3>CHILDF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> ChildF;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes, Graphics, Controls,
+  Forms, Dialogs;
+
+<B>type</B>
+  TChildForm = <B>class</B>(TForm)
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  ChildForm: TChildForm;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MAINF.DFM><H3>MAINF.DFM</H3></A>
+
+<PRE>
+<B>object</B> MainForm: TMainForm
+  Left = 286
+  Top = 221
+  Width = 435
+  Height = 300
+  Caption = <I>'Main Form'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -13
+  Font.Name = <I>'System'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  OnClick = FormClick
+  PixelsPerInch = 96
+  TextHeight = 16
+<B>end</B></PRE>
+<HR>
+
+<A NAME=CHILDF.DFM><H3>CHILDF.DFM</H3></A>
+
+<PRE>
+<B>object</B> ChildForm: TChildForm
+  Left = 71
+  Top = 95
+  Width = 200
+  Height = 116
+  Caption = <I>'Child Form'</I>
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  PixelsPerInch = 96
+  TextHeight = 13
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

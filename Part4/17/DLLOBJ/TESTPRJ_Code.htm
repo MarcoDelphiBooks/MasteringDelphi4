@@ -1,0 +1,237 @@
+<HTML><HEAD>
+<TITLE>Project: TESTPRJ.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: TESTPRJ.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#TESTPRJ.DPR> TESTPRJ.DPR</A>
+<LI> <A HREF=#TESTFORM.PAS> TESTFORM.PAS</A>
+<LI> <A HREF=#BASE.PAS> BASE.PAS</A>
+<LI> <A HREF=#TESTFORM.DFM> TESTFORM.DFM</A>
+</UL>
+<HR>
+<A NAME=TESTPRJ.DPR><H3>TESTPRJ.DPR</H3></A>
+
+<PRE>
+<B>program</B> TestPrj;
+
+<B>uses</B>
+  Forms,
+  TestForm <B>in</B> <I>'TestForm.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>,
+  Base <B>in</B> <I>'Base.pas'</I>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=TESTFORM.PAS><H3>TESTFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> TestForm;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls, Spin, Base;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    SpinEdit1: TSpinEdit;
+    Button1: TButton;
+    Button2: TButton;
+    SpinEdit2: TSpinEdit;
+    Button3: TButton;
+    Button4: TButton;
+    Label1: TLabel;
+    Label2: TLabel;
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> Button1Click(Sender: TObject);
+    <B>procedure</B> Button2Click(Sender: TObject);
+    <B>procedure</B> Button3Click(Sender: TObject);
+    <B>procedure</B> Button4Click(Sender: TObject);
+    <B>procedure</B> FormDestroy(Sender: TObject);
+  <B>private</B>
+    Num1, Num2 : TDllNumber;
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>function</B> NewObject: TDllNumber; <B>stdcall</B>;
+  <B>external</B> <I>'DllObj.dll'</I>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.FormCreate(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// create first object</I></FONT>
+  Num1 := NewObject;
+  Num1.SetValue (SpinEdit1.Value);
+  Label1.Caption := <I>'Num1: '</I> + IntToStr (Num1.GetValue);
+  <FONT COLOR="#000080"><I>// create second object</I></FONT>
+  Num2 := NewObject;
+  Num2.SetValue (SpinEdit2.Value);
+  Label2.Caption := <I>'Num2: '</I> + IntToStr (Num2.GetValue);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Button1Click(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// change</I></FONT>
+  Num1.SetValue (SpinEdit1.Value);
+  Label1.Caption := <I>'Num1: '</I> + IntToStr (Num1.GetValue);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Button2Click(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// increase</I></FONT>
+  Num1.Increase;
+  Label1.Caption := <I>'Num1: '</I> + IntToStr (Num1.GetValue);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Button3Click(Sender: TObject);
+<B>begin</B>
+  Num2.SetValue (SpinEdit2.Value);
+  Label2.Caption := <I>'Num2: '</I> + IntToStr (Num2.GetValue);
+<B>end</B>;
+
+
+<B>procedure</B> TForm1.Button4Click(Sender: TObject);
+<B>begin</B>
+  Num2.Increase;
+  Label2.Caption := <I>'Num2: '</I> + IntToStr (Num2.GetValue);
+<B>end</B>;
+
+<B>procedure</B> TForm1.FormDestroy(Sender: TObject);
+<B>begin</B>
+  Num1.Free;
+  Num2.Free;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=BASE.PAS><H3>BASE.PAS</H3></A>
+
+<PRE>
+<B>unit</B> Base;
+
+<B>interface</B>
+
+<B>type</B>
+  TDllNumber = <B>class</B>
+  <B>public</B>
+    <B>function</B> GetValue: Integer; <B>virtual</B>; <B>abstract</B>;
+    <B>procedure</B> SetValue (New: Integer); <B>virtual</B>; <B>abstract</B>;
+    <B>procedure</B> Increase; <B>virtual</B>; <B>abstract</B>;
+  <B>end</B>;
+
+<B>implementation</B>
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=TESTFORM.DFM><H3>TESTFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 158
+  Top = 170
+  Width = 294
+  Height = 213
+  Caption = <I>'TestPrj'</I>
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Label1: TLabel
+    Left = 40
+    Top = 24
+    Width = 28
+    Height = 13
+    Caption = <I>'Num1'</I>
+  <B>end</B>
+  <B>object</B> Label2: TLabel
+    Left = 168
+    Top = 24
+    Width = 28
+    Height = 13
+    Caption = <I>'Num2'</I>
+  <B>end</B>
+  <B>object</B> SpinEdit1: TSpinEdit
+    Left = 40
+    Top = 48
+    Width = 73
+    Height = 22
+    MaxValue = 0
+    MinValue = 0
+    TabOrder = 0
+    Value = 22
+  <B>end</B>
+  <B>object</B> Button1: TButton
+    Left = 40
+    Top = 88
+    Width = 75
+    Height = 25
+    Caption = <I>'&amp;Change'</I>
+    TabOrder = 1
+    OnClick = Button1Click
+  <B>end</B>
+  <B>object</B> Button2: TButton
+    Left = 40
+    Top = 128
+    Width = 75
+    Height = 25
+    Caption = <I>'&amp;Next'</I>
+    TabOrder = 2
+    OnClick = Button2Click
+  <B>end</B>
+  <B>object</B> SpinEdit2: TSpinEdit
+    Left = 168
+    Top = 48
+    Width = 73
+    Height = 22
+    MaxValue = 0
+    MinValue = 0
+    TabOrder = 3
+    Value = 22
+  <B>end</B>
+  <B>object</B> Button3: TButton
+    Left = 168
+    Top = 88
+    Width = 75
+    Height = 25
+    Caption = <I>'C&amp;hange'</I>
+    TabOrder = 4
+    OnClick = Button3Click
+  <B>end</B>
+  <B>object</B> Button4: TButton
+    Left = 168
+    Top = 128
+    Width = 75
+    Height = 25
+    Caption = <I>'N&amp;ext'</I>
+    TabOrder = 5
+    OnClick = Button4Click
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

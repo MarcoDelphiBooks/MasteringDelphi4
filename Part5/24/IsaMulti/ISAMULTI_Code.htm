@@ -1,0 +1,366 @@
+<HTML><HEAD>
+<TITLE>Project: ISAMULTI.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: ISAMULTI.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#ISAMULTI.DPR> ISAMULTI.DPR</A>
+<LI> <A HREF=#MULTIWM.PAS> MULTIWM.PAS</A>
+<LI> <A HREF=#MULTIWM.DFM> MULTIWM.DFM</A>
+</UL>
+<HR>
+<A NAME=ISAMULTI.DPR><H3>ISAMULTI.DPR</H3></A>
+
+<PRE>
+<B>library</B> IsaMulti;
+
+<B>uses</B>
+  HTTPApp,
+  ISAPIApp,
+  MultiWm <B>in</B> <I>'MultiWm.pas'</I> <FONT COLOR="#000080"><I>{WebModule1: TWebModule}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>exports</B>
+  GetExtensionVersion,
+  HttpExtensionProc,
+  TerminateExtension;
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TWebModule1, WebModule1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MULTIWM.PAS><H3>MULTIWM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> MultiWm;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, HTTPApp, Db, DBTables, DSProd,
+  DBWeb;
+
+<B>type</B>
+  TWebModule1 = <B>class</B>(TWebModule)
+    Table1: TTable;
+    Table1EmpNo: TIntegerField;
+    Table1LastName: TStringField;
+    Table1FirstName: TStringField;
+    Table1PhoneExt: TStringField;
+    Table1HireDate: TDateTimeField;
+    Table1Salary: TFloatField;
+    PageHead: TPageProducer;
+    DataSetTableProducer1: TDataSetTableProducer;
+    DataSetPage: TDataSetPageProducer;
+    PageTail: TPageProducer;
+    <B>procedure</B> TimeAction(Sender: TObject; Request: TWebRequest;
+      Response: TWebResponse; <B>var</B> Handled: Boolean);
+    <B>procedure</B> DateAction(Sender: TObject; Request: TWebRequest;
+      Response: TWebResponse; <B>var</B> Handled: Boolean);
+    <B>procedure</B> MenuAction(Sender: TObject; Request: TWebRequest;
+      Response: TWebResponse; <B>var</B> Handled: Boolean);
+    <B>procedure</B> StatusAction(Sender: TObject;
+      Request: TWebRequest; Response: TWebResponse; <B>var</B> Handled: Boolean);
+    <B>procedure</B> TableAction(Sender: TObject;
+      Request: TWebRequest; Response: TWebResponse; <B>var</B> Handled: Boolean);
+    <B>procedure</B> RecordAction(Sender: TObject;
+      Request: TWebRequest; Response: TWebResponse; <B>var</B> Handled: Boolean);
+    <B>procedure</B> PageTailHTMLTag(Sender: TObject; Tag: TTag;
+      <B>const</B> TagString: <B>String</B>; TagParams: TStrings;
+      <B>var</B> ReplaceText: <B>String</B>);
+    <B>procedure</B> WebModule1BeforeDispatch(Sender: TObject;
+      Request: TWebRequest; Response: TWebResponse; <B>var</B> Handled: Boolean);
+    <B>procedure</B> DataSetTableProducer1FormatCell(Sender: TObject; CellRow,
+      CellColumn: Integer; <B>var</B> BgColor: THTMLBgColor;
+      <B>var</B> Align: THTMLAlign; <B>var</B> VAlign: THTMLVAlign; <B>var</B> CustomAttrs,
+      CellData: <B>String</B>);
+    <B>procedure</B> WebModule1AfterDispatch(Sender: TObject;
+      Request: TWebRequest; Response: TWebResponse; <B>var</B> Handled: Boolean);
+  <B>private</B>
+    ScriptName: <B>string</B>;
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  WebModule1: TWebModule1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TWebModule1.TimeAction(Sender: TObject;
+  Request: TWebRequest; Response: TWebResponse; <B>var</B> Handled: Boolean);
+<B>begin</B>
+  Response.Content := Response.Content +
+    <I>'Time at this site: '</I> + FormatDateTime(<I>'hh:mm:ss AM/PM'</I>, Now) + <I>'&lt;p&gt;'</I>;
+<B>end</B>;
+
+<B>procedure</B> TWebModule1.DateAction(Sender: TObject;
+  Request: TWebRequest; Response: TWebResponse; <B>var</B> Handled: Boolean);
+<B>begin</B>
+  Response.Content := Response.Content +
+    <I>'Today is '</I> + FormatDateTime(<I>'dddd, mmmm d, yyyy'</I>, Now) + <I>'&lt;p&gt;'</I>;
+<B>end</B>;
+
+<B>procedure</B> TWebModule1.MenuAction(Sender: TObject;
+  Request: TWebRequest; Response: TWebResponse; <B>var</B> Handled: Boolean);
+<B>var</B>
+  I: Integer;
+<B>begin</B>
+  Response.Content := Response.Content +
+    <I>'&lt;H3&gt;Menu&lt;/H3&gt;'#13</I> +
+    <I>'&lt;ul&gt;'#13</I>;
+  <B>for</B> I := 0 <B>to</B> Actions.Count - 1 <B>do</B>
+    Response.Content := Response.Content +
+      <I>'&lt;li&gt; &lt;a href=&quot;'</I> + ScriptName +
+      Action[I].PathInfo + <I>'&quot;&gt; '</I> + Action[I].Name + <I>'&lt;/a&gt;'#13</I>;
+  Response.Content := Response.Content + <I>'&lt;/ul&gt;'</I>;
+<B>end</B>;
+
+<B>procedure</B> TWebModule1.StatusAction(Sender: TObject;
+  Request: TWebRequest; Response: TWebResponse; <B>var</B> Handled: Boolean);
+<B>var</B>
+  I: Integer;
+<B>begin</B>
+  Response.Content := Response.Content +
+    <I>'&lt;H3&gt;Status&lt;/H3&gt;'#13</I> +
+    <I>'Method: '</I> + Request.Method + <I>'&lt;br&gt;'#13</I> +
+    <I>'ProtocolVersion: '</I> + Request.ProtocolVersion + <I>'&lt;br&gt;'#13</I> +
+    <I>'URL: '</I> + Request.URL + <I>'&lt;br&gt;'#13</I> +
+    <I>'Query: '</I> + Request.Query + <I>'&lt;br&gt;'#13</I> +
+    <I>'PathInfo: '</I> + Request.PathInfo + <I>'&lt;br&gt;'#13</I> +
+    <I>'PathTranslated: '</I> + Request.PathTranslated + <I>'&lt;br&gt;'#13</I> +
+    <I>'Authorization: '</I> + Request.Authorization + <I>'&lt;br&gt;'#13</I> +
+    <I>'CacheControl: '</I> + Request.CacheControl + <I>'&lt;br&gt;'#13</I> +
+    <I>'Cookie: '</I> + Request.Cookie + <I>'&lt;br&gt;'#13</I> +
+    <I>'Date: '</I> + DateTimeToStr (Request.Date) + <I>'&lt;br&gt;'#13</I> +
+    <I>'Accept: '</I> + Request.Accept + <I>'&lt;br&gt;'#13</I> +
+    <I>'From: '</I> + Request.From + <I>'&lt;br&gt;'#13</I> +
+    <I>'Host: '</I> + Request.Host + <I>'&lt;br&gt;'#13</I> +
+    <I>'IfModifiedSince: '</I> + DateTimeToStr (Request.IfModifiedSince) + <I>'&lt;br&gt;'#13</I> +
+    <I>'Referer: '</I> + Request.Referer + <I>'&lt;br&gt;'#13</I> +
+    <I>'UserAgent: '</I> + Request.UserAgent + <I>'&lt;br&gt;'#13</I> +
+    <I>'ContentEncoding: '</I> + Request.ContentEncoding + <I>'&lt;br&gt;'#13</I> +
+    <I>'ContentType: '</I> + Request.ContentType + <I>'&lt;br&gt;'#13</I> +
+    <I>'ContentLength: '</I> + IntToStr (Request.ContentLength) + <I>'&lt;br&gt;'#13</I> +
+    <I>'ContentVersion: '</I> + Request.ContentVersion + <I>'&lt;br&gt;'#13</I> +
+    <I>'Content: '</I> + Request.Content + <I>'&lt;br&gt;'#13</I> +
+    <I>'Connection: '</I> + Request.Connection + <I>'&lt;br&gt;'#13</I> +
+    <I>'DerivedFrom: '</I> + Request.DerivedFrom + <I>'&lt;br&gt;'#13</I> +
+    <I>'Expires: '</I> + DateTimeToStr (Request.Expires) + <I>'&lt;br&gt;'#13</I> +
+    <I>'Title: '</I> + Request.Title + <I>'&lt;br&gt;'#13</I> +
+    <I>'RemoteAddr: '</I> + Request.RemoteAddr + <I>'&lt;br&gt;'#13</I> +
+    <I>'RemoteHost: '</I> + Request.RemoteHost + <I>'&lt;br&gt;'#13</I> +
+    <I>'ScriptName: '</I> + Request.ScriptName + <I>'&lt;br&gt;'#13</I> +
+    <I>'ServerPort: '</I> + IntToStr (Request.ServerPort) + <I>'&lt;br&gt;'#13</I>;
+  <FONT COLOR="#000080"><I>// list of strings</I></FONT>
+  Response.Content := Response.Content +
+    <I>'ContentFields:&lt;ul&gt;'#13</I>;
+  <B>for</B> I := 0 <B>to</B> Request.ContentFields.Count - 1 <B>do</B>
+    Response.Content := Response.Content +
+      <I>'&lt;li&gt;'</I> + Request.ContentFields [I]+ <I>#13</I>;
+  Response.Content := Response.Content +
+    <I>'&lt;/ul&gt;CookieFields:&lt;ul&gt;'#13</I>;
+  <B>for</B> I := 0 <B>to</B> Request.CookieFields.Count - 1 <B>do</B>
+    Response.Content := Response.Content +
+      <I>'&lt;li&gt;'</I> + Request.CookieFields [I] + <I>#13</I>;
+  Response.Content := Response.Content +
+    <I>'&lt;/ul&gt;QueryFields:&lt;ul&gt;'#13</I>;
+  <B>for</B> I := 0 <B>to</B> Request.QueryFields.Count - 1 <B>do</B>
+    Response.Content := Response.Content +
+      <I>'&lt;li&gt;'</I> + Request.QueryFields [I] + <I>#13</I>;
+<B>end</B>;
+
+<B>procedure</B> TWebModule1.TableAction(Sender: TObject;
+  Request: TWebRequest; Response: TWebResponse; <B>var</B> Handled: Boolean);
+<B>begin</B>
+  Table1.Open;
+  Table1.First; <FONT COLOR="#000080"><I>// otherwise prints only from current record</I></FONT>
+  Response.Content := Response.Content +
+    DataSetTableProducer1.Content;
+<B>end</B>;
+
+<B>procedure</B> TWebModule1.RecordAction(Sender: TObject;
+  Request: TWebRequest; Response: TWebResponse; <B>var</B> Handled: Boolean);
+<B>begin</B>
+  Table1.Open;
+  <FONT COLOR="#000080"><I>// debug</I></FONT>
+  <FONT COLOR="#000080"><I>{Response.Content := Response.Content +
+    '&lt;I&gt;Last Name = ' + Request.QueryFields.Values['LastName'] +
+    ', First Name = ' + Request.QueryFields.Values['FirstName'] + '&lt;/I&gt;&lt;p&gt;';}</I></FONT>
+  <FONT COLOR="#000080"><I>// go to the requested record</I></FONT>
+  Table1.FindNearest ([Request.QueryFields.Values[<I>'LastName'</I>],
+    Request.QueryFields.Values[<I>'FirstName'</I>]]);
+  <FONT COLOR="#000080"><I>// get the output</I></FONT>
+  Response.Content := Response.Content +
+    DataSetPage.Content;
+<B>end</B>;
+
+<B>procedure</B> TWebModule1.PageTailHTMLTag(Sender: TObject; Tag: TTag;
+  <B>const</B> TagString: <B>String</B>; TagParams: TStrings; <B>var</B> ReplaceText: <B>String</B>);
+<B>begin</B>
+  <B>if</B> TagString = <I>'script'</I> <B>then</B>
+    ReplaceText := ScriptName;
+<B>end</B>;
+
+<B>procedure</B> TWebModule1.WebModule1BeforeDispatch(Sender: TObject;
+  Request: TWebRequest; Response: TWebResponse; <B>var</B> Handled: Boolean);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// code shared by all actions</I></FONT>
+  ScriptName := Request.ScriptName;
+  Response.Content := PageHead.Content;
+<B>end</B>;
+
+<B>procedure</B> TWebModule1.DataSetTableProducer1FormatCell(Sender: TObject;
+  CellRow, CellColumn: Integer; <B>var</B> BgColor: THTMLBgColor;
+  <B>var</B> Align: THTMLAlign; <B>var</B> VAlign: THTMLVAlign; <B>var</B> CustomAttrs,
+  CellData: <B>String</B>);
+<B>begin</B>
+  <B>if</B> (CellColumn = 0) <B>and</B> (CellRow &lt;&gt; 0) <B>then</B>
+    CellData := <I>'&lt;a href=&quot;'</I> + ScriptName + <I>'/record?LastName='</I> +
+      Table1[<I>'LastName'</I>] + <I>'&amp;FirstName='</I> + Table1 [<I>'FirstName'</I>] + <I>'&quot;&gt; '</I>
+      + CellData + <I>' &lt;/a&gt;'</I>;
+<B>end</B>;
+
+<B>procedure</B> TWebModule1.WebModule1AfterDispatch(Sender: TObject;
+  Request: TWebRequest; Response: TWebResponse; <B>var</B> Handled: Boolean);
+<B>begin</B>
+  Response.Content := Response.Content + PageTail.Content;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MULTIWM.DFM><H3>MULTIWM.DFM</H3></A>
+
+<PRE>
+<B>object</B> WebModule1: TWebModule1
+  OldCreateOrder = True
+  Actions = &lt;
+    <B>item</B>
+      Name = <I>'WaTime'</I>
+      PathInfo = <I>'/time'</I>
+      OnAction = TimeAction
+    <B>end</B>
+    <B>item</B>
+      Name = <I>'WaDate'</I>
+      PathInfo = <I>'/date'</I>
+      OnAction = DateAction
+    <B>end</B>
+    <B>item</B>
+      Default = True
+      Name = <I>'WaMenu'</I>
+      PathInfo = <I>'/menu'</I>
+      OnAction = MenuAction
+    <B>end</B>
+    <B>item</B>
+      Name = <I>'WaStatus'</I>
+      PathInfo = <I>'/status'</I>
+      OnAction = StatusAction
+    <B>end</B>
+    <B>item</B>
+      Name = <I>'WaTable'</I>
+      PathInfo = <I>'/table'</I>
+      OnAction = TableAction
+    <B>end</B>
+    <B>item</B>
+      Name = <I>'WaRecord'</I>
+      PathInfo = <I>'/record'</I>
+      OnAction = RecordAction
+    <B>end</B>&gt;
+  BeforeDispatch = WebModule1BeforeDispatch
+  AfterDispatch = WebModule1AfterDispatch
+  Left = 188
+  Top = 322
+  Height = 179
+  Width = 291
+  <B>object</B> Table1: TTable
+    DatabaseName = <I>'DBDEMOS'</I>
+    IndexName = <I>'ByName'</I>
+    TableName = <I>'EMPLOYEE.DB'</I>
+    Left = 48
+    Top = 24
+    <B>object</B> Table1EmpNo: TIntegerField
+      FieldName = <I>'EmpNo'</I>
+    <B>end</B>
+    <B>object</B> Table1LastName: TStringField
+      FieldName = <I>'LastName'</I>
+    <B>end</B>
+    <B>object</B> Table1FirstName: TStringField
+      FieldName = <I>'FirstName'</I>
+      Size = 15
+    <B>end</B>
+    <B>object</B> Table1PhoneExt: TStringField
+      FieldName = <I>'PhoneExt'</I>
+      Size = 4
+    <B>end</B>
+    <B>object</B> Table1HireDate: TDateTimeField
+      FieldName = <I>'HireDate'</I>
+    <B>end</B>
+    <B>object</B> Table1Salary: TFloatField
+      FieldName = <I>'Salary'</I>
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> PageHead: TPageProducer
+    HTMLDoc.Strings = (
+      <I>'&lt;HTML&gt;&lt;HEAD&gt;&lt;TITLE&gt;IsaMulti Demo&lt;/TITLE&gt;&lt;/HEAD&gt;'</I>
+      <I>'&lt;BODY&gt;'</I>
+      <I>'&lt;H1&gt;IsaMulti Demo&lt;/H1&gt;'</I>)
+    Left = 110
+    Top = 25
+  <B>end</B>
+  <B>object</B> DataSetTableProducer1: TDataSetTableProducer
+    Columns = &lt;
+      <B>item</B>
+        FieldName = <I>'LastName'</I>
+      <B>end</B>
+      <B>item</B>
+        FieldName = <I>'FirstName'</I>
+      <B>end</B>
+      <B>item</B>
+        FieldName = <I>'PhoneExt'</I>
+      <B>end</B>
+      <B>item</B>
+        FieldName = <I>'HireDate'</I>
+      <B>end</B>&gt;
+    DataSet = Table1
+    OnFormatCell = DataSetTableProducer1FormatCell
+    Left = 48
+    Top = 80
+  <B>end</B>
+  <B>object</B> DataSetPage: TDataSetPageProducer
+    HTMLDoc.Strings = (
+      <I>'&lt;H3&gt;Employee: &lt;#LastName&gt;&lt;/H3&gt;'</I>
+      <I>'&lt;ul&gt;'</I>
+      <I>'&lt;li&gt; Employee ID: &lt;#EmpNo&gt;'</I>
+      <I>'&lt;li&gt; Name: &lt;#FirstName&gt; &lt;#LastName&gt;'</I>
+      <I>'&lt;li&gt; Phone: &lt;#PhoneExt&gt;'</I>
+      <I>'&lt;li&gt; Hired On: &lt;#HireDate&gt;'</I>
+      <I>'&lt;li&gt; Salary: &lt;#Salary&gt;'</I>
+      <I>'&lt;/ul&gt;'</I>)
+    OnHTMLTag = PageTailHTMLTag
+    DataSet = Table1
+    Left = 112
+    Top = 80
+  <B>end</B>
+  <B>object</B> PageTail: TPageProducer
+    HTMLDoc.Strings = (
+      <I>'&lt;hr&gt;&lt;I&gt;Page generated by &lt;#script&gt;&lt;/I&gt;'</I>
+      <I>'&lt;/BODY&gt;'</I>
+      <I>'&lt;/HTML&gt;'</I>)
+    OnHTMLTag = PageTailHTMLTag
+    Left = 168
+    Top = 27
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

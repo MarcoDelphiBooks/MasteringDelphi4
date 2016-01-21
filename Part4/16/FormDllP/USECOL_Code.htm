@@ -1,0 +1,163 @@
+<HTML><HEAD>
+<TITLE>Project: USECOL.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: USECOL.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#USECOL.DPR> USECOL.DPR</A>
+<LI> <A HREF=#USECOLF.PAS> USECOLF.PAS</A>
+<LI> <A HREF=#ISNOLIB.PAS> ISNOLIB.PAS</A>
+<LI> <A HREF=#USECOLF.DFM> USECOLF.DFM</A>
+</UL>
+<HR>
+<A NAME=USECOL.DPR><H3>USECOL.DPR</H3></A>
+
+<PRE>
+<B>program</B> Usecol;
+
+<B>uses</B>
+  Forms,
+  UseColF <B>in</B> <I>'UseColF.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>,
+  IsNoLib <B>in</B> <I>'IsNoLib.pas'</I>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=USECOLF.PAS><H3>USECOLF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> UseColF;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes, Graphics, Controls,
+  Forms, Dialogs, StdCtrls;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    BtnChange: TButton;
+    BtnSelect: TButton;
+    BtnApp: TButton;
+    <B>procedure</B> BtnChangeClick(Sender: TObject);
+    <B>procedure</B> BtnSelectClick(Sender: TObject);
+    <B>procedure</B> BtnAppClick(Sender: TObject);
+    <B>procedure</B> FormCreate(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>function</B> GetColor (Col: LongInt): LongInt;
+  <B>stdcall</B>; <B>external</B> <I>'FormDLL.DLL'</I>;
+<B>procedure</B> ShowColor (Col: LongInt);
+  <B>stdcall</B>; <B>external</B> <I>'FormDLL.DLL'</I>;
+
+<B>procedure</B> TForm1.BtnChangeClick(Sender: TObject);
+<B>var</B>
+  Col: LongInt;
+<B>begin</B>
+  Col := ColorToRGB (Color);
+  Color := GetColor (Col)
+<B>end</B>;
+
+<B>procedure</B> TForm1.BtnSelectClick(Sender: TObject);
+<B>var</B>
+  Col: LongInt;
+<B>begin</B>
+  Col := ColorToRGB (Color);
+  ShowColor (Col);
+<B>end</B>;
+
+<B>procedure</B> TForm1.BtnAppClick(Sender: TObject);
+<B>begin</B>
+  ShowMessage (<I>'Application Handle: '</I> +
+    IntToStr (Application.Handle));
+<B>end</B>;
+
+<B>procedure</B> TForm1.FormCreate(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// reload the icon of the application</I></FONT>
+  Application.Icon.Handle :=
+    LoadIcon (HInstance, <I>'MAINICON'</I>);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=ISNOLIB.PAS><H3>ISNOLIB.PAS</H3></A>
+
+<PRE>
+<B>unit</B> IsNoLib;
+
+<B>interface</B>
+
+<B>implementation</B>
+
+<B>initialization</B>
+  IsLibrary := False;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=USECOLF.DFM><H3>USECOLF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 222
+  Top = 159
+  Width = 193
+  Height = 232
+  Caption = <I>'Test Form DLL'</I>
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clBlack
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> BtnChange: TButton
+    Left = 40
+    Top = 34
+    Width = 105
+    Height = 33
+    Caption = <I>'Change Color'</I>
+    TabOrder = 0
+    OnClick = BtnChangeClick
+  <B>end</B>
+  <B>object</B> BtnSelect: TButton
+    Left = 40
+    Top = 88
+    Width = 105
+    Height = 33
+    Caption = <I>'Select Color'</I>
+    TabOrder = 1
+    OnClick = BtnSelectClick
+  <B>end</B>
+  <B>object</B> BtnApp: TButton
+    Left = 40
+    Top = 136
+    Width = 105
+    Height = 33
+    Caption = <I>'Application'</I>
+    TabOrder = 2
+    OnClick = BtnAppClick
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

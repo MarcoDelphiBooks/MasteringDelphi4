@@ -1,0 +1,433 @@
+<HTML><HEAD>
+<TITLE>Project: PRINTBMP.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: PRINTBMP.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#PRINTBMP.DPR> PRINTBMP.DPR</A>
+<LI> <A HREF=#VIEWER.PAS> VIEWER.PAS</A>
+<LI> <A HREF=#PREVIEW.PAS> PREVIEW.PAS</A>
+<LI> <A HREF=#VIEWER.DFM> VIEWER.DFM</A>
+<LI> <A HREF=#PREVIEW.DFM> PREVIEW.DFM</A>
+</UL>
+<HR>
+<A NAME=PRINTBMP.DPR><H3>PRINTBMP.DPR</H3></A>
+
+<PRE>
+<B>program</B> Printbmp;
+
+<B>uses</B>
+  Forms,
+  Viewer <B>in</B> <I>'VIEWER.PAS'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>,
+  Preview <B>in</B> <I>'PREVIEW.PAS'</I> <FONT COLOR="#000080"><I>{PreviewForm}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TForm1, Form1);
+  Application.CreateForm(TPreviewForm, PreviewForm);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=VIEWER.PAS><H3>VIEWER.PAS</H3></A>
+
+<PRE>
+<B>unit</B> Viewer;
+
+<B>interface</B>
+
+<B>uses</B> Windows, Classes, Graphics, Forms, Controls, StdCtrls,
+  Tabs, Menus, Dialogs, ExtCtrls, Printers, Preview, ComCtrls;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    OpenDialog1: TOpenDialog;
+    MainMenu1: TMainMenu;
+    File1: TMenuItem;
+    Open1: TMenuItem;
+    N1: TMenuItem;
+    Exit1: TMenuItem;
+    Help1: TMenuItem;
+    About1: TMenuItem;
+    Print1: TMenuItem;
+    TabControl1: TTabControl;
+    Image1: TImage;
+    <B>procedure</B> Open1Click(Sender: TObject);
+    <B>procedure</B> Exit1Click(Sender: TObject);
+    <B>procedure</B> About1Click(Sender: TObject);
+    <B>procedure</B> Print1Click(Sender: TObject);
+    <B>procedure</B> TabControl1Change(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.Open1Click(Sender: TObject);
+<B>begin</B>
+  <B>if</B> OpenDialog1.Execute <B>then</B>
+  <B>begin</B>
+    TabControl1.Tabs := OpenDialog1.Files;
+    TabControl1.TabIndex := 0;
+    TabControl1Change (TabControl1);
+    Print1.Enabled := True;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TForm1.Exit1Click(Sender: TObject);
+<B>begin</B>
+  Close;
+<B>end</B>;
+
+<B>procedure</B> TForm1.About1Click(Sender: TObject);
+<B>begin</B>
+  MessageDlg (<I>'Bitmap Viewer with Tabs, from &quot;Mastering Delphi&quot;'</I>,
+    mtInformation, [mbOk], 0);
+<B>end</B>;
+
+<B>procedure</B> TForm1.Print1Click(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>{double checks if an image is selected}</I></FONT>
+  <B>if</B> Image1.Picture.Graphic &lt;&gt; <B>nil</B> <B>then</B>
+  <B>begin</B>
+    <FONT COLOR="#000080"><I>{set a default scale, and start the preview}</I></FONT>
+    PreviewForm.Scale := 2;
+    PreviewForm.SetPage;
+    PreviewForm.DrawPreview;
+    PreviewForm.ShowModal;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TForm1.TabControl1Change(Sender: TObject);
+<B>begin</B>
+  Image1.Picture.LoadFromFile (
+    TabControl1.Tabs [TabControl1.TabIndex]);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=PREVIEW.PAS><H3>PREVIEW.PAS</H3></A>
+
+<PRE>
+<B>unit</B> Preview;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes,
+  Graphics, Controls, Forms, Dialogs, ExtCtrls,
+  Buttons, Printers, StdCtrls;
+
+<B>type</B>
+  TPreviewForm = <B>class</B>(TForm)
+    Panel1: TPanel;
+    ScalePlusButton: TSpeedButton;
+    ScaleMinusButton: TSpeedButton;
+    PrintButton: TSpeedButton;
+    ScrollBox1: TScrollBox;
+    Image1: TImage;
+    CancelButton: TSpeedButton;
+    Label1: TLabel;
+    <B>procedure</B> ScalePlusButtonClick(Sender: TObject);
+    <B>procedure</B> ScaleMinusButtonClick(Sender: TObject);
+    <B>procedure</B> CancelButtonClick(Sender: TObject);
+    <B>procedure</B> PrintButtonClick(Sender: TObject);
+  <B>public</B>
+    Scale: Integer;
+    <B>procedure</B> DrawPreview;
+    <B>procedure</B> SetPage;
+  <B>end</B>;
+
+<B>var</B>
+  PreviewForm: TPreviewForm;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>uses</B>
+  Viewer;
+
+<B>procedure</B> TPreviewForm.SetPage;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>{set the image size to be proportional with the page size}</I></FONT>
+  Image1.Width := Printer.PageWidth <B>div</B> 5;
+  Image1.Height := Printer.PageHeight <B>div</B> 5;
+  <FONT COLOR="#000080"><I>{output the scale to the toolbar}</I></FONT>
+  Label1.Caption := IntToStr (Scale);
+<B>end</B>;
+
+<B>procedure</B> TPreviewForm.ScalePlusButtonClick(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>{increse the size of the bitmap}</I></FONT>
+  Scale := Scale * 2;
+  Label1.Caption := IntToStr (Scale);
+  DrawPreview;
+<B>end</B>;
+
+<B>procedure</B> TPreviewForm.DrawPreview;
+<B>var</B>
+  Rect: TRect;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>{compute the rectangle for the bitmap preview}</I></FONT>
+  Rect.Top := 10;
+  Rect.Left := 10;
+  Rect.Right := 10 +
+    (Form1.Image1.Picture.Graphic.Width * Scale) <B>div</B> 5;
+  Rect.Bottom := 10 +
+    (Form1.Image1.Picture.Graphic.Height * Scale) <B>div</B> 5;
+
+  <FONT COLOR="#000080"><I>{remove the current image}</I></FONT>
+  Image1.Canvas.Pen.Mode := pmWhite;
+  Image1.Canvas.Rectangle (0, 0, Image1.Width, Image1.Height);
+
+  <FONT COLOR="#000080"><I>{stretch the bitmap into the rectangle}</I></FONT>
+  Image1.Canvas.StretchDraw (Rect,
+    Form1.Image1.Picture.Graphic);
+<B>end</B>;
+
+<B>procedure</B> TPreviewForm.ScaleMinusButtonClick(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>{decrease the size of the image}</I></FONT>
+  <B>if</B> Scale &gt; 1 <B>then</B>
+  <B>begin</B>
+    Scale := Scale <B>div</B> 2;
+    Label1.Caption := IntToStr (Scale);
+    DrawPreview;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TPreviewForm.CancelButtonClick(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>{close (hide) the preview dialog}</I></FONT>
+  Close;
+<B>end</B>;
+
+<B>procedure</B> TPreviewForm.PrintButtonClick(Sender: TObject);
+<B>var</B>
+  Rect: TRect;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>{compute the rectangle for the printer}</I></FONT>
+  Rect.Top := 10;
+  Rect.Left := 10;
+  Rect.Right := 10 +
+    (Form1.Image1.Picture.Graphic.Width * Scale);
+  Rect.Bottom := 10 +
+    (Form1.Image1.Picture.Graphic.Height * Scale);
+  <FONT COLOR="#000080"><I>{print the bitmap}</I></FONT>
+  Printer.BeginDoc;
+  <B>try</B>
+    Printer.Canvas.StretchDraw (Rect,
+      Form1.Image1.Picture.Graphic);
+    Printer.EndDoc;
+  <B>except</B>
+    Printer.Abort;
+    <B>raise</B>;
+  <B>end</B>;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=VIEWER.DFM><H3>VIEWER.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 85
+  Top = 179
+  Width = 435
+  Height = 308
+  Caption = <I>'Bitmap Viewer'</I>
+  Font.Color = clBlack
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  Menu = MainMenu1
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> TabControl1: TTabControl
+    Left = 0
+    Top = 0
+    Width = 427
+    Height = 262
+    Align = alClient
+    TabIndex = 0
+    TabOrder = 0
+    Tabs.Strings = (
+      <I>'None'</I>)
+    OnChange = TabControl1Change
+    <B>object</B> Image1: TImage
+      Left = 4
+      Top = 24
+      Width = 419
+      Height = 234
+      Align = alClient
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> OpenDialog1: TOpenDialog
+    FileEditStyle = fsEdit
+    Filter = <I>'Bitmpas (*.bmp)|*.bmp'</I>
+    FilterIndex = 0
+    Options = [ofHideReadOnly, ofAllowMultiSelect, ofFileMustExist]
+    Left = 24
+    Top = 48
+  <B>end</B>
+  <B>object</B> MainMenu1: TMainMenu
+    Left = 24
+    Top = 104
+    <B>object</B> File1: TMenuItem
+      Caption = <I>'&amp;File'</I>
+      <B>object</B> Open1: TMenuItem
+        Caption = <I>'&amp;Open...'</I>
+        OnClick = Open1Click
+      <B>end</B>
+      <B>object</B> Print1: TMenuItem
+        Caption = <I>'Print...'</I>
+        Enabled = False
+        OnClick = Print1Click
+      <B>end</B>
+      <B>object</B> N1: TMenuItem
+        Caption = <I>'-'</I>
+      <B>end</B>
+      <B>object</B> Exit1: TMenuItem
+        Caption = <I>'E&amp;xit'</I>
+        OnClick = Exit1Click
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> Help1: TMenuItem
+      Caption = <I>'&amp;Help'</I>
+      <B>object</B> About1: TMenuItem
+        Caption = <I>'&amp;About...'</I>
+        OnClick = About1Click
+      <B>end</B>
+    <B>end</B>
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<A NAME=PREVIEW.DFM><H3>PREVIEW.DFM</H3></A>
+
+<PRE>
+<B>object</B> PreviewForm: TPreviewForm
+  Left = 163
+  Top = 140
+  Width = 550
+  Height = 375
+  Caption = <I>'Print Preview'</I>
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -13
+  Font.Name = <I>'System'</I>
+  Font.Style = []
+  PixelsPerInch = 96
+  TextHeight = 16
+  <B>object</B> Panel1: TPanel
+    Left = 0
+    Top = 0
+    Width = 542
+    Height = 41
+    Align = alTop
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clBlack
+    Font.Height = -21
+    Font.Name = <I>'Arial'</I>
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 0
+    <B>object</B> ScalePlusButton: TSpeedButton
+      Left = 8
+      Top = 8
+      Width = 25
+      Height = 25
+      Caption = <I>'+'</I>
+      OnClick = ScalePlusButtonClick
+    <B>end</B>
+    <B>object</B> ScaleMinusButton: TSpeedButton
+      Left = 40
+      Top = 8
+      Width = 25
+      Height = 25
+      Caption = <I>'-'</I>
+      OnClick = ScaleMinusButtonClick
+    <B>end</B>
+    <B>object</B> PrintButton: TSpeedButton
+      Left = 200
+      Top = 8
+      Width = 25
+      Height = 25
+      Glyph.Data = <FONT COLOR="#000080"><I>{
+        76010000424D7601000000000000760000002800000020000000100000000100
+        04000000000000010000130B0000130B00001000000000000000000000000000
+        800000800000008080008000000080008000808000007F7F7F00BFBFBF000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00300000000000
+        00033FFFFFFFFFFFFFFF0888888888888880777777777777777F088888888888
+        8880777777777777777F0000000000000000FFFFFFFFFFFFFFFF0F8F8F8F8F8F
+        8F80777777777777777F08F8F8F8F8F8F9F0777777777777777F0F8F8F8F8F8F
+        8F807777777777777F7F0000000000000000777777777777777F3330FFFFFFFF
+        03333337F3FFFF3F7F333330F0000F0F03333337F77773737F333330FFFFFFFF
+        03333337F3FF3FFF7F333330F00F000003333337F773777773333330FFFF0FF0
+        33333337F3FF7F3733333330F08F0F0333333337F7737F7333333330FFFF0033
+        33333337FFFF7733333333300000033333333337777773333333}</I></FONT>
+      NumGlyphs = 2
+      OnClick = PrintButtonClick
+    <B>end</B>
+    <B>object</B> CancelButton: TSpeedButton
+      Left = 232
+      Top = 8
+      Width = 25
+      Height = 25
+      Glyph.Data = <FONT COLOR="#000080"><I>{
+        76010000424D7601000000000000760000002800000020000000100000000100
+        04000000000000010000120B0000120B00001000000000000000000000000000
+        800000800000008080008000000080008000808000007F7F7F00BFBFBF000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333000000000
+        3333333777777777F3333330F777777033333337F3F3F3F7F3333330F0808070
+        33333337F7F7F7F7F3333330F080707033333337F7F7F7F7F3333330F0808070
+        33333337F7F7F7F7F3333330F080707033333337F7F7F7F7F3333330F0808070
+        333333F7F7F7F7F7F3F33030F080707030333737F7F7F7F7F7333300F0808070
+        03333377F7F7F7F773333330F080707033333337F7F7F7F7F333333070707070
+        33333337F7F7F7F7FF3333000000000003333377777777777F33330F88877777
+        0333337FFFFFFFFF7F3333000000000003333377777777777333333330777033
+        3333333337FFF7F3333333333000003333333333377777333333}</I></FONT>
+      NumGlyphs = 2
+      OnClick = CancelButtonClick
+    <B>end</B>
+    <B>object</B> Label1: TLabel
+      Left = 72
+      Top = 8
+      Width = 67
+      Height = 24
+      Caption = <I>'Label1'</I>
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> ScrollBox1: TScrollBox
+    Left = 0
+    Top = 41
+    Width = 542
+    Height = 307
+    Align = alClient
+    TabOrder = 1
+    <B>object</B> Image1: TImage
+      Left = 20
+      Top = 20
+      Width = 485
+      Height = 330
+      IncrementalDisplay = False
+    <B>end</B>
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

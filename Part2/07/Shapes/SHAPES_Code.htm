@@ -1,0 +1,520 @@
+<HTML><HEAD>
+<TITLE>Project: SHAPES.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: SHAPES.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#SHAPES.DPR> SHAPES.DPR</A>
+<LI> <A HREF=#SHAPESF.PAS> SHAPESF.PAS</A>
+<LI> <A HREF=#SHAPESH.PAS> SHAPESH.PAS</A>
+<LI> <A HREF=#SHAPESF.DFM> SHAPESF.DFM</A>
+</UL>
+<HR>
+<A NAME=SHAPES.DPR><H3>SHAPES.DPR</H3></A>
+
+<PRE>
+<B>program</B> Shapes;
+
+<B>uses</B>
+  Forms,
+  ShapesF <B>in</B> <I>'ShapesF.pas'</I> <FONT COLOR="#000080"><I>{ShapesForm}</I></FONT>,
+  ShapesH <B>in</B> <I>'ShapesH.pas'</I>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TShapesForm, ShapesForm);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=SHAPESF.PAS><H3>SHAPESF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> ShapesF;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Classes, Graphics, Forms, Controls, Menus,
+  Dialogs, SysUtils, ShapesH;
+
+<B>type</B>
+  TShapesForm = <B>class</B>(TForm)
+    MainMenu1: TMainMenu;
+    ColorDialog1: TColorDialog;
+    File1: TMenuItem;
+    New1: TMenuItem;
+    N1: TMenuItem;
+    Exit1: TMenuItem;
+    Colors1: TMenuItem;
+    PenColor1: TMenuItem;
+    BrushColor1: TMenuItem;
+    BackGroundColor1: TMenuItem;
+    Size1: TMenuItem;
+    IncreasePenSize1: TMenuItem;
+    DecreasePenSize1: TMenuItem;
+    Help1: TMenuItem;
+    AboutShapes1: TMenuItem;
+    <B>procedure</B> FormMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    <B>procedure</B> PenColor1Click(Sender: TObject);
+    <B>procedure</B> BrushColor1Click(Sender: TObject);
+    <B>procedure</B> BackGroundColor1Click(Sender: TObject);
+    <B>procedure</B> IncreasePenSize1Click(Sender: TObject);
+    <B>procedure</B> DecreasePenSize1Click(Sender: TObject);
+    <B>procedure</B> FormCreate(Sender: TObject);
+    <B>procedure</B> FormMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    <B>procedure</B> AboutShapes1Click(Sender: TObject);
+    <B>procedure</B> Exit1Click(Sender: TObject);
+    <B>procedure</B> New1Click(Sender: TObject);
+    <B>procedure</B> FormPaint(Sender: TObject);
+    <B>procedure</B> FormCloseQuery(Sender: TObject; <B>var</B> CanClose: Boolean);
+    <B>procedure</B> FormDestroy(Sender: TObject);
+    <B>procedure</B> FormMouseUp(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+    ShapesList: TList;
+    CurrShape: TBaseShape;
+    fDragging: Boolean;
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  ShapesForm: TShapesForm;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>function</B> NormalizeRect (ARect: TRect): TRect;
+<B>var</B>
+  tmp: Integer;
+<B>begin</B>
+  <B>if</B> ARect.Bottom &lt; ARect.Top <B>then</B>
+  <B>begin</B>
+    tmp := ARect.Bottom;
+    ARect.Bottom := ARect.Top;
+    ARect.Top := tmp;
+  <B>end</B>;
+  <B>if</B> ARect.Right &lt; ARect.Left <B>then</B>
+  <B>begin</B>
+    tmp := ARect.Right;
+    ARect.Right := ARect.Left;
+    ARect.Left := tmp;
+  <B>end</B>;
+  Result := ARect;
+<B>end</B>;
+
+<B>procedure</B> TShapesForm.FormMouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+<B>begin</B>
+  <B>if</B> Button = mbLeft <B>then</B>
+  <B>begin</B>
+    <FONT COLOR="#000080"><I>// activate dragging</I></FONT>
+    fDragging := True;
+    SetCapture (Handle);
+
+    <FONT COLOR="#000080"><I>// create the proper object</I></FONT>
+    <B>if</B> ssShift <B>in</B> Shift <B>then</B>
+      CurrShape := TEllShape.Create
+    <B>else</B>
+      CurrShape := TRectShape.Create;
+
+    <FONT COLOR="#000080"><I>// set the style and colors</I></FONT>
+    CurrShape.PenSize := Canvas.Pen.Width;
+    CurrShape.PenColor := Canvas.Pen.Color;
+    CurrShape.BrushColor := Canvas.Brush.Color;
+
+    <FONT COLOR="#000080"><I>// set the initial position</I></FONT>
+    CurrShape.Left := X;
+    CurrShape.Top := Y;
+    CurrShape.Right := X;
+    CurrShape.Bottom := Y;
+    Canvas.DrawFocusRect (CurrShape.Rect);
+
+    <FONT COLOR="#000080"><I>// add to the list</I></FONT>
+    ShapesList.Add (CurrShape);
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TShapesForm.PenColor1Click(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// select a new color for the pen</I></FONT>
+  ColorDialog1.Color := Canvas.Pen.Color;
+  <B>if</B> ColorDialog1.Execute <B>then</B>
+    Canvas.Pen.Color := ColorDialog1.Color;
+<B>end</B>;
+
+<B>procedure</B> TShapesForm.BrushColor1Click(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// select a new color for the brush</I></FONT>
+  ColorDialog1.Color := Canvas.Brush.Color;
+  <B>if</B> ColorDialog1.Execute <B>then</B>
+    Canvas.Brush.Color := ColorDialog1.Color;
+<B>end</B>;
+
+<B>procedure</B> TShapesForm.BackGroundColor1Click(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// select a new color for the background of the form</I></FONT>
+  ColorDialog1.Color := Color;
+  <B>if</B> ColorDialog1.Execute <B>then</B>
+    Color := ColorDialog1.Color;
+<B>end</B>;
+
+<B>procedure</B> TShapesForm.IncreasePenSize1Click(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// increase the size of the pen</I></FONT>
+  Canvas.Pen.Width := Canvas.Pen.Width + 2;
+  DecreasePenSize1.Enabled := True;
+<B>end</B>;
+
+<B>procedure</B> TShapesForm.DecreasePenSize1Click(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>{decrease the size of the pen,
+  avoiding to let it go below zero}</I></FONT>
+  Canvas.Pen.Width := Canvas.Pen.Width - 2;
+  <B>if</B> Canvas.Pen.Width &lt; 3 <B>then</B>
+    DecreasePenSize1.Enabled := False;
+<B>end</B>;
+
+<B>procedure</B> TShapesForm.FormCreate(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// initialization and creation of the list</I></FONT>
+  ShapesList := TList.Create;
+  Canvas.Pen.Style := psInsideFrame;
+<B>end</B>;
+
+<B>procedure</B> TShapesForm.FormMouseMove(Sender: TObject; Shift: TShiftState; X,
+  Y: Integer);
+<B>var</B>
+  ARect: TRect;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// copy the mouse coordinates to the title</I></FONT>
+  Caption := Format (<I>'Shapes (x=%d, y=%d)'</I>, [X, Y]);
+
+  <FONT COLOR="#000080"><I>// dragging code</I></FONT>
+  <B>if</B> fDragging <B>then</B>
+  <B>begin</B>
+    <FONT COLOR="#000080"><I>// remove and redraw the dragging rectangle</I></FONT>
+    ARect := NormalizeRect (CurrShape.Rect);
+    Canvas.DrawFocusRect (ARect);
+    CurrShape.Right := X;
+    CurrShape.Bottom := Y;
+    ARect := NormalizeRect (CurrShape.Rect);
+    Canvas.DrawFocusRect (ARect);
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TShapesForm.AboutShapes1Click(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// show a message box</I></FONT>
+  MessageDlg (<I>'Shapes application'#13</I> +
+    <I>'from &quot;Mastering Delphi&quot; by Marco Cantù'</I>,
+    mtInformation, [mbOK], 0);
+<B>end</B>;
+
+<B>procedure</B> TShapesForm.Exit1Click(Sender: TObject);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// close the form and the application</I></FONT>
+  Close;
+<B>end</B>;
+
+<B>procedure</B> TShapesForm.New1Click(Sender: TObject);
+<B>var</B>
+  I: Integer;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>{repaint the surface, after removing the elements
+  from the list, if there is any element and the
+  user confirms the request}</I></FONT>
+  <B>if</B> (ShapesList.Count &gt; 0) <B>and</B>
+    (MessageDlg (<I>'Are you sure you want to delete all the shapes?'</I>,
+    mtConfirmation, [mbYes, mbNo], 0) = idYes) <B>then</B>
+  <B>begin</B>
+    <FONT COLOR="#000080"><I>// delete each object</I></FONT>
+    <B>for</B> I := ShapesList.Count - 1 <B>downto</B> 0 <B>do</B>
+      TBaseShape (ShapesList [I]).Free;
+    ShapesList.Clear;
+    Refresh;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TShapesForm.FormPaint(Sender: TObject);
+<B>var</B>
+  I, OldPenW: Integer;
+  AShape: TBaseShape;
+  OldPenCol, OldBrushCol: TColor;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// store the current Canvas attributes</I></FONT>
+  OldPenCol := Canvas.Pen.Color;
+  OldPenW := Canvas.Pen.Width;
+  OldBrushCol := Canvas.Brush.Color;
+
+  <FONT COLOR="#000080"><I>// repaint each shape of the list</I></FONT>
+  <B>for</B> I := 0 <B>to</B> ShapesList.Count - 1 <B>do</B>
+  <B>begin</B>
+    AShape := ShapesList.Items [I];
+    AShape.Paint (Canvas);
+  <B>end</B>;
+
+  <FONT COLOR="#000080"><I>// reset the current Canvas attributes</I></FONT>
+  Canvas.Pen.Color := OldPenCol;
+  Canvas.Pen.Width := OldPenW;
+  Canvas.Brush.Color := OldBrushCol;
+<B>end</B>;
+
+<B>procedure</B> TShapesForm.FormCloseQuery(Sender: TObject;
+  <B>var</B> CanClose: Boolean);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>{ask the user to confirm closing}</I></FONT>
+  <B>if</B> MessageDlg (<I>'Are you sure you want to exit?'</I>,
+      mtConfirmation, [mbYes, mbNo], 0) = idNo <B>then</B>
+    CanClose := False;
+<B>end</B>;
+
+<B>procedure</B> TShapesForm.FormDestroy(Sender: TObject);
+<B>var</B>
+  I: Integer;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// delete each object</I></FONT>
+  <B>for</B> I := ShapesList.Count - 1 <B>downto</B> 0 <B>do</B>
+    TBaseShape (ShapesList [I]).Free;
+  ShapesList.Free;
+<B>end</B>;
+
+<B>procedure</B> TShapesForm.FormMouseUp(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+<B>var</B>
+  ARect: TRect;
+<B>begin</B>
+  <B>if</B> fDragging <B>then</B>
+  <B>begin</B>
+    <FONT COLOR="#000080"><I>// end dragging</I></FONT>
+    ReleaseCapture;
+    fDragging := False;
+
+    <FONT COLOR="#000080"><I>// set the final size</I></FONT>
+    ARect := NormalizeRect (CurrShape.Rect);
+    Canvas.DrawFocusRect (ARect);
+    CurrShape.Right := X;
+    CurrShape.Bottom := Y;
+
+    <FONT COLOR="#000080"><I>// optimized invalidate code</I></FONT>
+    ARect := NormalizeRect (CurrShape.Rect);
+    InvalidateRect (Handle, @ARect, False);
+  <B>end</B>;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=SHAPESH.PAS><H3>SHAPESH.PAS</H3></A>
+
+<PRE>
+<B>unit</B> ShapesH;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Graphics;
+
+<B>type</B>
+  TBaseShape = <B>class</B>
+  <B>private</B>
+    FBrushColor: TColor;
+    FPenColor: TColor;
+    FPenSize: Integer;
+    <B>procedure</B> SetBrushColor(<B>const</B> Value: TColor);
+    <B>procedure</B> SetPenColor(<B>const</B> Value: TColor);
+    <B>procedure</B> SetPenSize(<B>const</B> Value: Integer);
+    <B>procedure</B> SetBottom(<B>const</B> Value: Integer);
+    <B>procedure</B> SetLeft(<B>const</B> Value: Integer);
+    <B>procedure</B> SetRight(<B>const</B> Value: Integer);
+    <B>procedure</B> SetTop(<B>const</B> Value: Integer);
+  <B>protected</B>
+    FRect: TRect;
+  <B>public</B>
+    <B>procedure</B> Paint (Canvas: TCanvas); <B>virtual</B>;
+  <B>published</B>
+    <B>property</B> PenSize: Integer <B>read</B> FPenSize <B>write</B> SetPenSize;
+    <B>property</B> PenColor: TColor <B>read</B> FPenColor <B>write</B> SetPenColor;
+    <B>property</B> BrushColor: TColor <B>read</B> FBrushColor <B>write</B> SetBrushColor;
+    <B>property</B> Left: Integer <B>write</B> SetLeft;
+    <B>property</B> Right: Integer <B>write</B> SetRight;
+    <B>property</B> Top: Integer <B>write</B> SetTop;
+    <B>property</B> Bottom: Integer <B>write</B> SetBottom;
+    <B>property</B> Rect: TRect <B>read</B> FRect;
+  <B>end</B>;
+
+<B>type</B>
+  TEllShape = <B>class</B> (TBaseShape)
+    <B>procedure</B> Paint (Canvas: TCanvas); <B>override</B>;
+  <B>end</B>;
+
+  TRectShape = <B>class</B> (TBaseShape)
+    <B>procedure</B> Paint (Canvas: TCanvas); <B>override</B>;
+  <B>end</B>;
+
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{ TBaseShape }</I></FONT>
+
+<B>procedure</B> TBaseShape.Paint (Canvas: TCanvas);
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// set the attributes</I></FONT>
+  Canvas.Pen.Color := fPenColor;
+  Canvas.Pen.Width := fPenSize;
+  Canvas.Brush.Color := fBrushColor;
+<B>end</B>;
+
+<B>procedure</B> TBaseShape.SetBottom(<B>const</B> Value: Integer);
+<B>begin</B>
+  fRect.Bottom := Value;
+<B>end</B>;
+
+<B>procedure</B> TBaseShape.SetBrushColor(<B>const</B> Value: TColor);
+<B>begin</B>
+  FBrushColor := Value;
+<B>end</B>;
+
+<B>procedure</B> TBaseShape.SetLeft(<B>const</B> Value: Integer);
+<B>begin</B>
+  fRect.Left := Value;
+<B>end</B>;
+
+<B>procedure</B> TBaseShape.SetPenColor(<B>const</B> Value: TColor);
+<B>begin</B>
+  FPenColor := Value;
+<B>end</B>;
+
+<B>procedure</B> TBaseShape.SetPenSize(<B>const</B> Value: Integer);
+<B>begin</B>
+  FPenSize := Value;
+<B>end</B>;
+
+<B>procedure</B> TBaseShape.SetRight(<B>const</B> Value: Integer);
+<B>begin</B>
+  fRect.Right := Value;
+<B>end</B>;
+
+<B>procedure</B> TBaseShape.SetTop(<B>const</B> Value: Integer);
+<B>begin</B>
+  fRect.Top := Value;
+<B>end</B>;
+
+<FONT COLOR="#000080"><I>{ TEllShape }</I></FONT>
+
+<B>procedure</B> TEllShape.Paint(Canvas: TCanvas);
+<B>begin</B>
+  <B>inherited</B> Paint (Canvas);
+  Canvas.Ellipse (fRect.Left, fRect.Top,
+    fRect.Right, fRect.Bottom)
+<B>end</B>;
+
+<FONT COLOR="#000080"><I>{ TRectShape }</I></FONT>
+
+<B>procedure</B> TRectShape.Paint(Canvas: TCanvas);
+<B>begin</B>
+  <B>inherited</B> Paint (Canvas);
+  Canvas.Rectangle (fRect.Left, fRect.Top,
+    fRect.Right, fRect.Bottom)
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=SHAPESF.DFM><H3>SHAPESF.DFM</H3></A>
+
+<PRE>
+<B>object</B> ShapesForm: TShapesForm
+  Left = 253
+  Top = 143
+  Width = 435
+  Height = 300
+  Caption = <I>'Shapes'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -13
+  Font.Name = <I>'System'</I>
+  Font.Style = []
+  Menu = MainMenu1
+  OldCreateOrder = True
+  Position = poDefault
+  OnCloseQuery = FormCloseQuery
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  OnMouseDown = FormMouseDown
+  OnMouseMove = FormMouseMove
+  OnMouseUp = FormMouseUp
+  OnPaint = FormPaint
+  PixelsPerInch = 96
+  TextHeight = 16
+  <B>object</B> MainMenu1: TMainMenu
+    Left = 24
+    Top = 8
+    <B>object</B> File1: TMenuItem
+      Caption = <I>'&amp;File'</I>
+      <B>object</B> New1: TMenuItem
+        Caption = <I>'&amp;New'</I>
+        OnClick = New1Click
+      <B>end</B>
+      <B>object</B> N1: TMenuItem
+        Caption = <I>'-'</I>
+      <B>end</B>
+      <B>object</B> Exit1: TMenuItem
+        Caption = <I>'&amp;Exit'</I>
+        OnClick = Exit1Click
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> Colors1: TMenuItem
+      Caption = <I>'&amp;Colors'</I>
+      <B>object</B> PenColor1: TMenuItem
+        Caption = <I>'&amp;Pen Color...'</I>
+        OnClick = PenColor1Click
+      <B>end</B>
+      <B>object</B> BrushColor1: TMenuItem
+        Caption = <I>'&amp;Brush Color...'</I>
+        OnClick = BrushColor1Click
+      <B>end</B>
+      <B>object</B> BackGroundColor1: TMenuItem
+        Caption = <I>'Back&amp;Ground Color...'</I>
+        OnClick = BackGroundColor1Click
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> Size1: TMenuItem
+      Caption = <I>'&amp;Size'</I>
+      <B>object</B> IncreasePenSize1: TMenuItem
+        Caption = <I>'&amp;Increase Pen Size'</I>
+        OnClick = IncreasePenSize1Click
+      <B>end</B>
+      <B>object</B> DecreasePenSize1: TMenuItem
+        Caption = <I>'&amp;Decrease Pen Size'</I>
+        Enabled = False
+        OnClick = DecreasePenSize1Click
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> Help1: TMenuItem
+      Caption = <I>'&amp;Help'</I>
+      <B>object</B> AboutShapes1: TMenuItem
+        Caption = <I>'&amp;About Shapes...'</I>
+        OnClick = AboutShapes1Click
+      <B>end</B>
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> ColorDialog1: TColorDialog
+    Ctl3D = True
+    Left = 96
+    Top = 8
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

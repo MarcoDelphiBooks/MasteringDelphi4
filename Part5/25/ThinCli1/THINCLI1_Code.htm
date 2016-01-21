@@ -1,0 +1,122 @@
+<HTML><HEAD>
+<TITLE>Project: THINCLI1.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: THINCLI1.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#THINCLI1.DPR> THINCLI1.DPR</A>
+<LI> <A HREF=#THINFORM.PAS> THINFORM.PAS</A>
+<LI> <A HREF=#THINFORM.DFM> THINFORM.DFM</A>
+</UL>
+<HR>
+<A NAME=THINCLI1.DPR><H3>THINCLI1.DPR</H3></A>
+
+<PRE>
+<B>program</B> ThinCli1;
+
+<B>uses</B>
+  Forms,
+  ThinForm <B>in</B> <I>'ThinForm.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=THINFORM.PAS><H3>THINFORM.PAS</H3></A>
+
+<PRE>
+<B>unit</B> ThinForm;
+
+<B>interface</B>
+
+<B>uses</B>
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  Grids, DBGrids, Db, DBClient, MConnect, MidasCon;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    ClientDataSet1: TClientDataSet;
+    DataSource1: TDataSource;
+    DBGrid1: TDBGrid;
+    DCOMConnection1: TDCOMConnection;
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=THINFORM.DFM><H3>THINFORM.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 222
+  Top = 117
+  Width = 514
+  Height = 317
+  Caption = <I>'ThinClient1'</I>
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  OldCreateOrder = True
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> DBGrid1: TDBGrid
+    Left = 0
+    Top = 0
+    Width = 506
+    Height = 290
+    Align = alClient
+    DataSource = DataSource1
+    TabOrder = 0
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = <I>'MS Sans Serif'</I>
+    TitleFont.Style = []
+  <B>end</B>
+  <B>object</B> ClientDataSet1: TClientDataSet
+    Active = True
+    Aggregates = &lt;&gt;
+    Params = &lt;&gt;
+    ProviderName = <I>'Table1'</I>
+    RemoteServer = DCOMConnection1
+    Left = 64
+    Top = 72
+  <B>end</B>
+  <B>object</B> DataSource1: TDataSource
+    DataSet = ClientDataSet1
+    Left = 64
+    Top = 128
+  <B>end</B>
+  <B>object</B> DCOMConnection1: TDCOMConnection
+    Connected = True
+    ServerGUID = <I>'{AE857762-2114-11D1-98D0-444553540000}'</I>
+    ServerName = <I>'AppServ1.MdFirstRM'</I>
+    Left = 64
+    Top = 16
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

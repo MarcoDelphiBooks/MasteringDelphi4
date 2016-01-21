@@ -1,0 +1,331 @@
+<HTML><HEAD>
+<TITLE>Project: DYNAMENU.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: DYNAMENU.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#DYNAMENU.DPR> DYNAMENU.DPR</A>
+<LI> <A HREF=#MENUF.PAS> MENUF.PAS</A>
+<LI> <A HREF=#MENUF.DFM> MENUF.DFM</A>
+</UL>
+<HR>
+<A NAME=DYNAMENU.DPR><H3>DYNAMENU.DPR</H3></A>
+
+<PRE>
+<B>program</B> DynaMenu;
+
+<B>uses</B>
+  Forms,
+  MenuF <B>in</B> <I>'MenuF.pas'</I> <FONT COLOR="#000080"><I>{FormColorText}</I></FONT>; <FONT COLOR="#000080"><I>{FormColorText}</I></FONT>
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TFormColorText, FormColorText);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MENUF.PAS><H3>MENUF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> MenuF;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Classes, Graphics, Forms, Controls,
+  StdCtrls, Menus, Dialogs, ExtCtrls;
+
+<B>type</B>
+  TFormColorText = <B>class</B>(TForm)
+    Label1: TLabel;
+    ColorDialog1: TColorDialog;
+    MainMenu1: TMainMenu;
+    FontDialog1: TFontDialog;
+    Options1: TMenuItem;
+    Font1: TMenuItem;
+    BackColor1: TMenuItem;
+    N1: TMenuItem;
+    Left1: TMenuItem;
+    Center1: TMenuItem;
+    Right1: TMenuItem;
+    Help1: TMenuItem;
+    About1: TMenuItem;
+    File1: TMenuItem;
+    Exit1: TMenuItem;
+    N3: TMenuItem;
+    DisableHelp1: TMenuItem;
+    <B>procedure</B> About1Click(Sender: TObject);
+    <B>procedure</B> Font1Click(Sender: TObject);
+    <B>procedure</B> BackColor1Click(Sender: TObject);
+    <B>procedure</B> Left1Click(Sender: TObject);
+    <B>procedure</B> Center1Click(Sender: TObject);
+    <B>procedure</B> Right1Click(Sender: TObject);
+    <B>procedure</B> Exit1Click(Sender: TObject);
+    <B>procedure</B> DisableHelp1Click(Sender: TObject);
+    <B>procedure</B> FormCreate(Sender: TObject);
+  <B>public</B>
+    <B>procedure</B> SizeItemClick(Sender: TObject);
+    <B>procedure</B> SizeClick(Sender: TObject);
+  <B>end</B>;
+
+<B>var</B>
+  FormColorText: TFormColorText;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TFormColorText.About1Click(Sender: TObject);
+<B>begin</B>
+  MessageDlg (<I>'DynaMenu creates part of the menu at runtime'#13#13</I> +
+    <I>'from the book &quot;Mastering Delphi 4&quot; by Marco Cantù'</I>,
+    mtInformation, [mbOk], 0);
+<B>end</B>;
+
+<B>procedure</B> TFormColorText.Font1Click(Sender: TObject);
+<B>begin</B>
+  <B>with</B> FontDialog1 <B>do</B>
+  <B>begin</B>
+    Font := Label1.Font;
+    <B>if</B> Execute <B>then</B>
+      Label1.Font := Font;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TFormColorText.BackColor1Click(Sender: TObject);
+<B>begin</B>
+  <B>with</B> ColorDialog1 <B>do</B>
+  <B>begin</B>
+    Color := Label1.Color;
+    <B>if</B> Execute <B>then</B>
+      Label1.Color := Color;
+  <B>end</B>;
+<B>end</B>;
+
+<B>procedure</B> TFormColorText.Left1Click(Sender: TObject);
+<B>begin</B>
+  Label1.Alignment := taLeftJustify;
+  Left1.Checked := True;
+<B>end</B>;
+
+<B>procedure</B> TFormColorText.Center1Click(Sender: TObject);
+<B>begin</B>
+  Label1.Alignment := taCenter;
+  Center1.Checked := True;
+<B>end</B>;
+
+<B>procedure</B> TFormColorText.Right1Click(Sender: TObject);
+<B>begin</B>
+  Label1.Alignment := taRightJustify;
+  Right1.Checked := True;
+<B>end</B>;
+
+<B>procedure</B> TFormColorText.Exit1Click(Sender: TObject);
+<B>begin</B>
+  Close;
+<B>end</B>;
+
+<B>procedure</B> TFormColorText.DisableHelp1Click(Sender: TObject);
+<B>begin</B>
+  DisableHelp1.Checked := <B>not</B> DisableHelp1.Checked;
+  Help1.Enabled := <B>not</B> Help1.Enabled;
+<B>end</B>;
+
+<B>procedure</B> TFormColorText.FormCreate(Sender: TObject);
+<B>var</B>
+  PullDown, Item: TMenuItem;
+  Position, I: Integer;
+<B>begin</B>
+  <FONT COLOR="#000080"><I>// create the new pulldown menu</I></FONT>
+  PullDown := TMenuItem.Create (self);
+  PullDown.Caption := <I>'&amp;Size'</I>;
+  PullDown.OnClick := SizeClick;
+  <FONT COLOR="#000080"><I>// compute the position and add it</I></FONT>
+  Position := MainMenu1.Items.IndexOf (Options1);
+  MainMenu1.Items.Insert (Position + 1, PullDown);
+  <FONT COLOR="#000080"><I>// create menu items for various sizes</I></FONT>
+  I := 8;
+  <B>while</B> I &lt;= 48 <B>do</B>
+  <B>begin</B>
+    <FONT COLOR="#000080"><I>// create the new item</I></FONT>
+    Item := TMenuItem.Create (self);
+    Item.Caption := IntToStr (I);
+    <FONT COLOR="#000080"><I>// make it a radio item</I></FONT>
+    Item.GroupIndex := 1;
+    Item.RadioItem := True;
+    <FONT COLOR="#000080"><I>// handle click and insert</I></FONT>
+    Item.OnClick := SizeItemClick;
+    PullDown.Insert (PullDown.Count, Item);
+    I := I + 4;
+  <B>end</B>;
+  <FONT COLOR="#000080"><I>// add extra item at the end</I></FONT>
+  Item := TMenuItem.Create (self);
+  Item.Caption := <I>'More...'</I>;
+  <FONT COLOR="#000080"><I>// make it a radio item</I></FONT>
+  Item.GroupIndex := 1;
+  Item.RadioItem := True;
+  <FONT COLOR="#000080"><I>// handle it by showing the font selection dialog</I></FONT>
+  Item.OnClick := Font1Click;
+  PullDown.Insert (PullDown.Count, Item);
+<B>end</B>;
+
+<B>procedure</B> TFormColorText.SizeItemClick(Sender: TObject);
+<B>begin</B>
+  <B>with</B> Sender <B>as</B> TMenuItem <B>do</B>
+    Label1.Font.Size := StrToInt (Caption);
+<B>end</B>;
+
+<B>procedure</B> TFormColorText.SizeClick (Sender: TObject);
+<B>var</B>
+  I: Integer;
+  Found: Boolean;
+<B>begin</B>
+  Found := False;
+  <B>with</B> Sender <B>as</B> TMenuItem <B>do</B>
+  <B>begin</B>
+    <FONT COLOR="#000080"><I>// look for a match, skipping the last item</I></FONT>
+    <B>for</B> I := 0 <B>to</B> Count - 2 <B>do</B>
+      <B>if</B> StrToInt (Items [I].Caption) =
+        Label1.Font.Size <B>then</B>
+      <B>begin</B>
+        Items [I].Checked := True;
+        Found := True;
+        System.Break; <FONT COLOR="#000080"><I>// skip the rest of the loop</I></FONT>
+      <B>end</B>;
+    <B>if</B> <B>not</B> Found <B>then</B>
+      Items [Count - 1].Checked := True;
+  <B>end</B>;
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=MENUF.DFM><H3>MENUF.DFM</H3></A>
+
+<PRE>
+<B>object</B> FormColorText: TFormColorText
+  Left = 270
+  Top = 112
+  Width = 455
+  Height = 273
+  Caption = <I>'Dynamic Menu'</I>
+  Color = clBtnFace
+  Font.Charset = ANSI_CHARSET
+  Font.Color = clBlack
+  Font.Height = -11
+  Font.Name = <I>'MS Sans Serif'</I>
+  Font.Style = []
+  Menu = MainMenu1
+  OldCreateOrder = True
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  <B>object</B> Label1: TLabel
+    Left = 0
+    Top = 0
+    Width = 447
+    Height = 227
+    Align = alClient
+    Alignment = taCenter
+    AutoSize = False
+    Caption =
+       <I>'Select the menu commands to change the font or the background co'</I> +
+      <I>'lor of this label, and the alignment of its text'</I>
+    Color = clYellow
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clNavy
+    Font.Height = -37
+    Font.Name = <I>'Arial'</I>
+    Font.Style = []
+    ParentColor = False
+    ParentFont = False
+    WordWrap = True
+  <B>end</B>
+  <B>object</B> ColorDialog1: TColorDialog
+    Ctl3D = True
+    Left = 32
+    Top = 72
+  <B>end</B>
+  <B>object</B> MainMenu1: TMainMenu
+    Left = 32
+    Top = 136
+    <B>object</B> File1: TMenuItem
+      Caption = <I>'&amp;File'</I>
+      <B>object</B> Exit1: TMenuItem
+        Caption = <I>'E&amp;xit'</I>
+        OnClick = Exit1Click
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> Options1: TMenuItem
+      Caption = <I>'&amp;Options'</I>
+      <B>object</B> Font1: TMenuItem
+        Caption = <I>'&amp;Font...'</I>
+        OnClick = Font1Click
+      <B>end</B>
+      <B>object</B> BackColor1: TMenuItem
+        Caption = <I>'&amp;Back Color...'</I>
+        OnClick = BackColor1Click
+      <B>end</B>
+      <B>object</B> N1: TMenuItem
+        Caption = <I>'-'</I>
+      <B>end</B>
+      <B>object</B> Left1: TMenuItem
+        Caption = <I>'&amp;Left'</I>
+        GroupIndex = 1
+        RadioItem = True
+        ShortCut = 16460
+        OnClick = Left1Click
+      <B>end</B>
+      <B>object</B> Center1: TMenuItem
+        Caption = <I>'&amp;Center'</I>
+        Checked = True
+        GroupIndex = 1
+        RadioItem = True
+        ShortCut = 16451
+        OnClick = Center1Click
+      <B>end</B>
+      <B>object</B> Right1: TMenuItem
+        Caption = <I>'&amp;Right'</I>
+        GroupIndex = 1
+        RadioItem = True
+        ShortCut = 16466
+        OnClick = Right1Click
+      <B>end</B>
+      <B>object</B> N3: TMenuItem
+        Caption = <I>'-'</I>
+        GroupIndex = 1
+      <B>end</B>
+      <B>object</B> DisableHelp1: TMenuItem
+        Caption = <I>'Disable &amp;Help'</I>
+        GroupIndex = 1
+        OnClick = DisableHelp1Click
+      <B>end</B>
+    <B>end</B>
+    <B>object</B> Help1: TMenuItem
+      Caption = <I>'&amp;Help'</I>
+      <B>object</B> About1: TMenuItem
+        Caption = <I>'&amp;About...'</I>
+        OnClick = About1Click
+      <B>end</B>
+    <B>end</B>
+  <B>end</B>
+  <B>object</B> FontDialog1: TFontDialog
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = <I>'System'</I>
+    Font.Style = []
+    MinFontSize = 0
+    MaxFontSize = 0
+    Left = 32
+    Top = 16
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>

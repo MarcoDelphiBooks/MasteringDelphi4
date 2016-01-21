@@ -1,0 +1,347 @@
+<HTML><HEAD>
+<TITLE>Project: SCROLL.DPR</TITLE>
+<META NAME="GENERATOR" CONTENT="PasToHTML[Marco Cantù]">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><I>Marco Cant&ugrave; 1998, Mastering Delphi 4</I></CENTER>
+<H1><CENTER>Project: SCROLL.DPR</CENTER></H1><HR>
+<H3>Project Structure</H3><UL>
+<LI> <A HREF=#SCROLL.DPR> SCROLL.DPR</A>
+<LI> <A HREF=#SCROLLF.PAS> SCROLLF.PAS</A>
+<LI> <A HREF=#STATUSF.PAS> STATUSF.PAS</A>
+<LI> <A HREF=#SCROLLF.DFM> SCROLLF.DFM</A>
+<LI> <A HREF=#STATUSF.DFM> STATUSF.DFM</A>
+</UL>
+<HR>
+<A NAME=SCROLL.DPR><H3>SCROLL.DPR</H3></A>
+
+<PRE>
+<B>program</B> Scroll;
+
+<B>uses</B>
+  Forms,
+  ScrollF <B>in</B> <I>'ScrollF.pas'</I> <FONT COLOR="#000080"><I>{Form1}</I></FONT>,
+  StatusF <B>in</B> <I>'StatusF.pas'</I> <FONT COLOR="#000080"><I>{Status}</I></FONT>;
+
+<FONT COLOR="#000080"><I>{$R *.RES}</I></FONT>
+
+<B>begin</B>
+  Application.CreateForm(TForm1, Form1);
+  Application.CreateForm(TStatus, Status);
+  Application.Run;
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=SCROLLF.PAS><H3>SCROLLF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> ScrollF;
+
+<B>interface</B>
+
+<B>uses</B>
+ Windows, Classes, Graphics, Forms, Controls,
+ StdCtrls, SysUtils, Messages, Statusf;
+
+<B>type</B>
+  TForm1 = <B>class</B>(TForm)
+    ListBox1: TListBox;
+    ListBox2: TListBox;
+    ListBox3: TListBox;
+    ListBox4: TListBox;
+    ListBox5: TListBox;
+    ListBox6: TListBox;
+    <B>procedure</B> FormResize(Sender: TObject);
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <B>procedure</B> FormScroll (<B>var</B> ScrollData: TWMScroll); <B>message</B> wm_HScroll;
+  <B>end</B>;
+
+<B>var</B>
+  Form1: TForm1;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>procedure</B> TForm1.FormResize(Sender: TObject);
+<B>begin</B>
+  Status.Label3.Caption := IntToStr(ClientWidth);
+  Status.Label4.Caption := IntToStr(HorzScrollBar.Position);
+<B>end</B>;
+
+<B>procedure</B> TForm1.FormScroll (<B>var</B> ScrollData: TWMScroll);
+<B>begin</B>
+  <B>inherited</B>;
+  Status.Label3.Caption := IntToStr(ClientWidth);
+  Status.Label4.Caption := IntToStr(HorzScrollBar.Position);
+<B>end</B>;
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=STATUSF.PAS><H3>STATUSF.PAS</H3></A>
+
+<PRE>
+<B>unit</B> StatusF;
+
+<B>interface</B>
+
+<B>uses</B>
+  SysUtils, Windows, Messages, Classes, Graphics, Controls,
+  Forms, Dialogs, StdCtrls;
+
+<B>type</B>
+  TStatus = <B>class</B>(TForm)
+    Label1: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
+    Label4: TLabel;
+  <B>private</B>
+    <FONT COLOR="#000080"><I>{ Private declarations }</I></FONT>
+  <B>public</B>
+    <FONT COLOR="#000080"><I>{ Public declarations }</I></FONT>
+  <B>end</B>;
+
+<B>var</B>
+  Status: TStatus;
+
+<B>implementation</B>
+
+<FONT COLOR="#000080"><I>{$R *.DFM}</I></FONT>
+
+<B>end</B>.</PRE>
+<HR>
+
+<A NAME=SCROLLF.DFM><H3>SCROLLF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Form1: TForm1
+  Left = 213
+  Top = 101
+  Width = 458
+  Height = 368
+  HorzScrollBar.Range = 1000
+  VertScrollBar.Range = 305
+  ActiveControl = ListBox1
+  AutoScroll = False
+  Caption = <I>'Scrolling Form'</I>
+  Font.Color = clWindowText
+  Font.Height = -13
+  Font.Name = <I>'System'</I>
+  Font.Style = []
+  OnResize = FormResize
+  PixelsPerInch = 96
+  TextHeight = 16
+  <B>object</B> ListBox1: TListBox
+    Left = 44
+    Top = 112
+    Width = 137
+    Height = 193
+    ItemHeight = 16
+    Items.Strings = (
+      <I>'a'</I>
+      <I>'b'</I>
+      <I>'c'</I>
+      <I>'d'</I>
+      <I>'e'</I>
+      <I>'f'</I>
+      <I>'g'</I>
+      <I>'h'</I>
+      <I>'i'</I>
+      <I>'j'</I>
+      <I>'k'</I>
+      <I>'l'</I>
+      <I>'m'</I>
+      <I>'n'</I>
+      <I>'o'</I>
+      <I>'p'</I>
+      <I>'q'</I>)
+    TabOrder = 0
+  <B>end</B>
+  <B>object</B> ListBox2: TListBox
+    Left = 196
+    Top = 80
+    Width = 137
+    Height = 201
+    ItemHeight = 16
+    Items.Strings = (
+      <I>'AA'</I>
+      <I>'BB'</I>
+      <I>'CC'</I>
+      <I>'DD'</I>
+      <I>'EE'</I>
+      <I>'FF'</I>
+      <I>'GG'</I>
+      <I>'HH'</I>
+      <I>'II'</I>
+      <I>'JJ'</I>
+      <I>'KK'</I>
+      <I>'LL'</I>
+      <I>'MM'</I>
+      <I>'NN'</I>
+      <I>'OO'</I>
+      <I>'PP'</I>
+      <I>'QQ'</I>)
+    TabOrder = 1
+  <B>end</B>
+  <B>object</B> ListBox3: TListBox
+    Left = 348
+    Top = 32
+    Width = 137
+    Height = 233
+    ItemHeight = 16
+    Items.Strings = (
+      <I>'1'</I>
+      <I>'2'</I>
+      <I>'3'</I>
+      <I>'4'</I>
+      <I>'5'</I>
+      <I>'6'</I>
+      <I>'7'</I>
+      <I>'8'</I>
+      <I>'9'</I>
+      <I>'10'</I>
+      <I>'11'</I>
+      <I>'12'</I>
+      <I>'13'</I>
+      <I>'14'</I>
+      <I>'15'</I>
+      <I>'16'</I>
+      <I>'17'</I>
+      <I>'18'</I>
+      <I>'19'</I>
+      <I>'20'</I>)
+    TabOrder = 2
+  <B>end</B>
+  <B>object</B> ListBox4: TListBox
+    Left = 504
+    Top = 32
+    Width = 153
+    Height = 249
+    ItemHeight = 16
+    Items.Strings = (
+      <I>'ONE'</I>
+      <I>'TWO'</I>
+      <I>'THREE'</I>
+      <I>'FOUR'</I>
+      <I>'FIVE'</I>
+      <I>'SIX'</I>
+      <I>'SEVEN'</I>
+      <I>'EIGHT'</I>
+      <I>'NINE'</I>
+      <I>'TEN'</I>)
+    TabOrder = 3
+  <B>end</B>
+  <B>object</B> ListBox5: TListBox
+    Left = 680
+    Top = 32
+    Width = 129
+    Height = 241
+    ItemHeight = 16
+    Items.Strings = (
+      <I>'236'</I>
+      <I>'568'</I>
+      <I>'234'</I>
+      <I>'769'</I>
+      <I>'567'</I>
+      <I>'345'</I>
+      <I>'234'</I>
+      <I>'123'</I>
+      <I>'523'</I>
+      <I>'754'</I>
+      <I>'987'</I>
+      <I>'978'</I>
+      <I>'654'</I>
+      <I>'543'</I>
+      <I>'432'</I>
+      <I>'321'</I>
+      <I>'353'</I>
+      <I>'565'</I>
+      <I>'785'</I>
+      <I>'673'</I>
+      <I>'584'</I>
+      <I>'784'</I>
+      <I>'385'</I>
+      <I>'484'</I>
+      <I>''</I>)
+    TabOrder = 4
+  <B>end</B>
+  <B>object</B> ListBox6: TListBox
+    Left = 832
+    Top = 32
+    Width = 145
+    Height = 201
+    ItemHeight = 16
+    Items.Strings = (
+      <I>'QW'</I>
+      <I>'ER'</I>
+      <I>'TY'</I>
+      <I>'UI'</I>
+      <I>'OP'</I>
+      <I>'LK'</I>
+      <I>'JH'</I>
+      <I>'GF'</I>
+      <I>'DS'</I>
+      <I>'AZ'</I>
+      <I>'XC'</I>
+      <I>'VB'</I>
+      <I>'NM'</I>)
+    TabOrder = 5
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<A NAME=STATUSF.DFM><H3>STATUSF.DFM</H3></A>
+
+<PRE>
+<B>object</B> Status: TStatus
+  Left = 191
+  Top = 147
+  BorderIcons = [biSystemMenu]
+  BorderStyle = bsToolWindow
+  Caption = <I>'Status'</I>
+  ClientHeight = 47
+  ClientWidth = 189
+  Font.Color = clWindowText
+  Font.Height = -13
+  Font.Name = <I>'System'</I>
+  Font.Style = []
+  FormStyle = fsStayOnTop
+  Visible = True
+  PixelsPerInch = 96
+  TextHeight = 16
+  <B>object</B> Label1: TLabel
+    Left = 8
+    Top = 8
+    Width = 90
+    Height = 16
+    Caption = <I>'Form Size (x):'</I>
+  <B>end</B>
+  <B>object</B> Label2: TLabel
+    Left = 8
+    Top = 24
+    Width = 118
+    Height = 16
+    Caption = <I>'Scroll Position (x):'</I>
+  <B>end</B>
+  <B>object</B> Label3: TLabel
+    Left = 136
+    Top = 8
+    Width = 73
+    Height = 17
+    Caption = <I>'Label3'</I>
+  <B>end</B>
+  <B>object</B> Label4: TLabel
+    Left = 136
+    Top = 24
+    Width = 73
+    Height = 17
+    Caption = <I>'Label4'</I>
+  <B>end</B>
+<B>end</B></PRE>
+<HR>
+
+<BR><I><CENTER>Copyright Marco Cant&ugrave; 1998</CENTER></I>
+</BODY> </HTML>
