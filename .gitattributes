@@ -1,2 +1,3 @@
 # ignore linguistic for HTML as doc files
 *.html linguist-documentation
+*.htm linguist-documentation
